@@ -1,0 +1,3201 @@
+﻿namespace Holocron
+{
+    partial class Holocron
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Holocron));
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.backToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.forwardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.submodsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.readErrorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tabLookups = new System.Windows.Forms.TabPage();
+            this.LookupTabControl = new System.Windows.Forms.TabControl();
+            this.MatrixTab = new System.Windows.Forms.TabPage();
+            this.MatrixGroundRB = new System.Windows.Forms.RadioButton();
+            this.MatrixSpaceRB = new System.Windows.Forms.RadioButton();
+            this.MatrixGrid = new System.Windows.Forms.DataGridView();
+            this.ProjectileTab = new System.Windows.Forms.TabPage();
+            this.NameTab = new System.Windows.Forms.TabPage();
+            this.ShipnamesFilterDuplicatesCheckbox = new System.Windows.Forms.CheckBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
+            this.ShipnameCountLabel = new System.Windows.Forms.Label();
+            this.ShipnameFilterMinorCheckbox = new System.Windows.Forms.CheckBox();
+            this.ShipnameFilterGroundCheckbox = new System.Windows.Forms.CheckBox();
+            this.ShipnameFilterSpaceCheckbox = new System.Windows.Forms.CheckBox();
+            this.ShipnameFilterHeroCheckbox = new System.Windows.Forms.CheckBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.ShipnameSortAllRB = new System.Windows.Forms.RadioButton();
+            this.ShipnameSortHeroRB = new System.Windows.Forms.RadioButton();
+            this.ShipnameSortUnitRB = new System.Windows.Forms.RadioButton();
+            this.ShipnameSortNameRB = new System.Windows.Forms.RadioButton();
+            this.ShipnameDetailLabel = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.ShipnameSearchTextBox = new System.Windows.Forms.TextBox();
+            this.ShipnameListBox = new System.Windows.Forms.ListBox();
+            this.NameFileTab = new System.Windows.Forms.TabPage();
+            this.MissionTab = new System.Windows.Forms.TabPage();
+            this.MissionText = new System.Windows.Forms.RichTextBox();
+            this.MissionListBox = new System.Windows.Forms.ListBox();
+            this.SpawnTab = new System.Windows.Forms.TabPage();
+            this.SpawnText = new System.Windows.Forms.RichTextBox();
+            this.SpawnListBox = new System.Windows.Forms.ListBox();
+            this.CorporationTab = new System.Windows.Forms.TabPage();
+            this.HeroFTab = new System.Windows.Forms.TabPage();
+            this.StandardFTab = new System.Windows.Forms.TabPage();
+            this.StandardFText = new System.Windows.Forms.RichTextBox();
+            this.StandardFListBox = new System.Windows.Forms.ListBox();
+            this.RandomFTab = new System.Windows.Forms.TabPage();
+            this.RandomFText = new System.Windows.Forms.RichTextBox();
+            this.RandomFListBox = new System.Windows.Forms.ListBox();
+            this.RegionalTab = new System.Windows.Forms.TabPage();
+            this.tabUnits = new System.Windows.Forms.TabPage();
+            this.UnitListBox = new System.Windows.Forms.ListBox();
+            this.SpaceStructureRadioButton = new System.Windows.Forms.RadioButton();
+            this.FighterRadioButton = new System.Windows.Forms.RadioButton();
+            this.ExportButton = new System.Windows.Forms.Button();
+            this.GroundHeroRadioButton = new System.Windows.Forms.RadioButton();
+            this.HeroCompaniesRadioButton = new System.Windows.Forms.RadioButton();
+            this.SpaceHeroRadioButton = new System.Windows.Forms.RadioButton();
+            this.StructureRadioButton = new System.Windows.Forms.RadioButton();
+            this.UnitFIlterTypeLabel = new System.Windows.Forms.Label();
+            this.UnitFilterButton = new System.Windows.Forms.Button();
+            this.UnitSortTypeLabel = new System.Windows.Forms.Label();
+            this.UnitSortButton = new System.Windows.Forms.Button();
+            this.label5 = new System.Windows.Forms.Label();
+            this.UnitSearchTextBox = new System.Windows.Forms.TextBox();
+            this.UnitRadioButton = new System.Windows.Forms.RadioButton();
+            this.Unitpanel = new System.Windows.Forms.Panel();
+            this.CollapseUnitAvailPanel = new System.Windows.Forms.Button();
+            this.UnitAvailPanel = new System.Windows.Forms.Panel();
+            this.label14 = new System.Windows.Forms.Label();
+            this.FactionAvailableListbox = new System.Windows.Forms.ListBox();
+            this.AvailabilityLabel = new System.Windows.Forms.Label();
+            this.InfluenceLabel = new System.Windows.Forms.Label();
+            this.ShipyardLabel = new System.Windows.Forms.Label();
+            this.BuildLimitLabel = new System.Windows.Forms.Label();
+            this.ReqUnitLabel = new System.Windows.Forms.Label();
+            this.GoToReqStructButton = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
+            this.ReqStructuresListBox = new System.Windows.Forms.ListBox();
+            this.SpawnSetLabel = new System.Windows.Forms.Label();
+            this.SpawnSetListBox = new System.Windows.Forms.ListBox();
+            this.UnitAbilityPanel = new System.Windows.Forms.Panel();
+            this.AbilityStackingLabel = new System.Windows.Forms.Label();
+            this.UARadiusLabel = new System.Windows.Forms.Label();
+            this.AbilityActivationRadiusLabel = new System.Windows.Forms.Label();
+            this.AbilityRadiusLabel = new System.Windows.Forms.Label();
+            this.AbilityLinkedLabel = new System.Windows.Forms.Label();
+            this.AbilityTimeLabel = new System.Windows.Forms.Label();
+            this.AbilityValueLabel = new System.Windows.Forms.Label();
+            this.AbilityTargetUnitLabel = new System.Windows.Forms.Label();
+            this.AbilityExcludedUnitLabel = new System.Windows.Forms.Label();
+            this.AbilityTargetTypeLabel = new System.Windows.Forms.Label();
+            this.AbilityActivationLabel = new System.Windows.Forms.Label();
+            this.AbilityTypeLabel = new System.Windows.Forms.Label();
+            this.UATimeLabel = new System.Windows.Forms.Label();
+            this.UAStimLabel = new System.Windows.Forms.Label();
+            this.ClearAbilityButton = new System.Windows.Forms.Button();
+            this.UASpeedLabel = new System.Windows.Forms.Label();
+            this.UADefenseLabel = new System.Windows.Forms.Label();
+            this.UAShieldLabel = new System.Windows.Forms.Label();
+            this.UAReloadLabel = new System.Windows.Forms.Label();
+            this.UADamageLabel = new System.Windows.Forms.Label();
+            this.UnitAbilityDescLabel = new System.Windows.Forms.Label();
+            this.UnitAbilityNameLabel = new System.Windows.Forms.Label();
+            this.AbilityPictureBox = new System.Windows.Forms.PictureBox();
+            this.AbilityListBox = new System.Windows.Forms.ListBox();
+            this.UnitAbilityListBox = new System.Windows.Forms.ListBox();
+            this.CollapseUnitSubunitPanel = new System.Windows.Forms.Button();
+            this.UnitSubunitPanel = new System.Windows.Forms.Panel();
+            this.UnitSubsquadGotoButton = new System.Windows.Forms.Button();
+            this.UnitSubunitGotoButton = new System.Windows.Forms.Button();
+            this.SubsquadLabel = new System.Windows.Forms.Label();
+            this.SubUnitLabel = new System.Windows.Forms.Label();
+            this.UnitSubSquadListbox = new System.Windows.Forms.ListBox();
+            this.UnitSubunitListbox = new System.Windows.Forms.ListBox();
+            this.CollapseUnitAbilityPanel = new System.Windows.Forms.Button();
+            this.CollapseUnitStatPanel = new System.Windows.Forms.Button();
+            this.CollapseUnitTextPanel = new System.Windows.Forms.Button();
+            this.UnitStatPanel = new System.Windows.Forms.Panel();
+            this.AlphaCheckBox = new System.Windows.Forms.CheckBox();
+            this.FlagLabel = new System.Windows.Forms.Label();
+            this.CategoryLabel = new System.Windows.Forms.Label();
+            this.LocomotorLabel = new System.Windows.Forms.Label();
+            this.GarrisonTypeLabel = new System.Windows.Forms.Label();
+            this.GarrisonValueLabel = new System.Windows.Forms.Label();
+            this.GarrisonSlotLabel = new System.Windows.Forms.Label();
+            this.IncomingDamageLabel = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.IncomingDamageBox = new System.Windows.Forms.ComboBox();
+            this.UnitShieldAvgLabel = new System.Windows.Forms.Label();
+            this.UnitHpAvgLabel = new System.Windows.Forms.Label();
+            this.HPAccuracyLabel = new System.Windows.Forms.Label();
+            this.TimeToRegenLabel = new System.Windows.Forms.Label();
+            this.UnitsPerLabel = new System.Windows.Forms.Label();
+            this.TargetAccuracyLabel = new System.Windows.Forms.Label();
+            this.TargetAvgLabel = new System.Windows.Forms.Label();
+            this.TargetShieldLabel = new System.Windows.Forms.Label();
+            this.TargetArmorLabel = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.TargetRangeBox = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.TargetCategoryBox = new System.Windows.Forms.ComboBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.TargetShieldBox = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.TargetArmorBox = new System.Windows.Forms.ComboBox();
+            this.RawDPSLabel = new System.Windows.Forms.Label();
+            this.HPDetailLabel = new System.Windows.Forms.Label();
+            this.UnitHPListbox = new System.Windows.Forms.ListBox();
+            this.StatDisclaimerLabel = new System.Windows.Forms.Label();
+            this.UnitSpeedLabel = new System.Windows.Forms.Label();
+            this.UnitShieldLabel = new System.Windows.Forms.Label();
+            this.UnitHpLabel = new System.Windows.Forms.Label();
+            this.UnitBTSPanel = new System.Windows.Forms.Panel();
+            this.BTSRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.UnitTextPanel = new System.Windows.Forms.Panel();
+            this.MaintenanceLabel = new System.Windows.Forms.Label();
+            this.ShipNameRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.UnitSkirmTimeLabel = new System.Windows.Forms.Label();
+            this.UnitSkirmCostLabel = new System.Windows.Forms.Label();
+            this.MapsAndBombingRunLabel = new System.Windows.Forms.Label();
+            this.SortValueLabel = new System.Windows.Forms.Label();
+            this.IconPictureBox = new System.Windows.Forms.PictureBox();
+            this.UnitTooltipLabelRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.UnitTimeLabel = new System.Windows.Forms.Label();
+            this.UnitInternalLabel = new System.Windows.Forms.Label();
+            this.UnitCrewLabel = new System.Windows.Forms.Label();
+            this.UnitNameLabel = new System.Windows.Forms.Label();
+            this.UnitCostLabel = new System.Windows.Forms.Label();
+            this.UnitPopLabel = new System.Windows.Forms.Label();
+            this.SpaceRadioButton = new System.Windows.Forms.RadioButton();
+            this.GroundRadioButton = new System.Windows.Forms.RadioButton();
+            this.tabPlanets = new System.Windows.Forms.TabPage();
+            this.PlanetListBox = new System.Windows.Forms.ListBox();
+            this.PlanetPanel = new System.Windows.Forms.Panel();
+            this.label25 = new System.Windows.Forms.Label();
+            this.MapSearchBox = new System.Windows.Forms.TextBox();
+            this.PlanetCoordinateLabel = new System.Windows.Forms.Label();
+            this.PlanetGroundSlotsLabel = new System.Windows.Forms.Label();
+            this.PlanetStarbaseLabel = new System.Windows.Forms.Label();
+            this.PlanetMatchesLabel = new System.Windows.Forms.Label();
+            this.PlanetGroundMapRB = new System.Windows.Forms.RadioButton();
+            this.PlanetSpaceMapRB = new System.Windows.Forms.RadioButton();
+            this.PlanetGroundUnitsGoToButton = new System.Windows.Forms.Button();
+            this.PlanetSpaceUnitsGoToButton = new System.Windows.Forms.Button();
+            this.PlanetStructuresGoToButton = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.label23 = new System.Windows.Forms.Label();
+            this.button2 = new System.Windows.Forms.Button();
+            this.label24 = new System.Windows.Forms.Label();
+            this.button3 = new System.Windows.Forms.Button();
+            this.PlanetGoToGCButton = new System.Windows.Forms.Button();
+            this.label22 = new System.Windows.Forms.Label();
+            this.PlanetGCListBox = new System.Windows.Forms.ListBox();
+            this.label21 = new System.Windows.Forms.Label();
+            this.MapsInPlanetsListbox = new System.Windows.Forms.ListBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.SharedSpaceMapListBox = new System.Windows.Forms.ListBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.PlanetGroundListBox = new System.Windows.Forms.ListBox();
+            this.label18 = new System.Windows.Forms.Label();
+            this.PlanetSpaceListBox = new System.Windows.Forms.ListBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.PlanetStructureListBox = new System.Windows.Forms.ListBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.PlanetSearchBox = new System.Windows.Forms.TextBox();
+            this.SharedMapListBox = new System.Windows.Forms.ListBox();
+            this.PlanetShipyardLabel = new System.Windows.Forms.Label();
+            this.PlanetHistoryTextBox = new System.Windows.Forms.RichTextBox();
+            this.TerrainTypeLabel = new System.Windows.Forms.Label();
+            this.SpaceMapLabel = new System.Windows.Forms.Label();
+            this.GroundMapLabel = new System.Windows.Forms.Label();
+            this.PlanetCreditLabel = new System.Windows.Forms.Label();
+            this.PlanetCodeLabel = new System.Windows.Forms.Label();
+            this.PlanetNameLabel = new System.Windows.Forms.Label();
+            this.PlanetPictureBox = new System.Windows.Forms.PictureBox();
+            this.PlanetBTSTextBox = new System.Windows.Forms.RichTextBox();
+            this.tabGCs = new System.Windows.Forms.TabPage();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.tabFactions = new System.Windows.Forms.TabPage();
+            this.FactionPanel = new System.Windows.Forms.Panel();
+            this.HeroListbox = new System.Windows.Forms.Label();
+            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.FactionGroundListbox = new System.Windows.Forms.ListBox();
+            this.FactionSpaceListBox = new System.Windows.Forms.ListBox();
+            this.FactionInternalLabel = new System.Windows.Forms.Label();
+            this.FactionNameLabel = new System.Windows.Forms.Label();
+            this.FactionListBox = new System.Windows.Forms.ListBox();
+            this.MainTab = new System.Windows.Forms.TabControl();
+            this.tabGov = new System.Windows.Forms.TabPage();
+            this.tabGalaxy = new System.Windows.Forms.TabPage();
+            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.menuStrip1.SuspendLayout();
+            this.tabLookups.SuspendLayout();
+            this.LookupTabControl.SuspendLayout();
+            this.MatrixTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MatrixGrid)).BeginInit();
+            this.NameTab.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.MissionTab.SuspendLayout();
+            this.SpawnTab.SuspendLayout();
+            this.StandardFTab.SuspendLayout();
+            this.RandomFTab.SuspendLayout();
+            this.tabUnits.SuspendLayout();
+            this.Unitpanel.SuspendLayout();
+            this.UnitAvailPanel.SuspendLayout();
+            this.UnitAbilityPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AbilityPictureBox)).BeginInit();
+            this.UnitSubunitPanel.SuspendLayout();
+            this.UnitStatPanel.SuspendLayout();
+            this.UnitBTSPanel.SuspendLayout();
+            this.UnitTextPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.IconPictureBox)).BeginInit();
+            this.tabPlanets.SuspendLayout();
+            this.PlanetPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PlanetPictureBox)).BeginInit();
+            this.tabGCs.SuspendLayout();
+            this.tabFactions.SuspendLayout();
+            this.FactionPanel.SuspendLayout();
+            this.MainTab.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.backToolStripMenuItem,
+            this.forwardToolStripMenuItem,
+            this.submodsToolStripMenuItem,
+            this.readErrorsToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(1495, 24);
+            this.menuStrip1.TabIndex = 1;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // backToolStripMenuItem
+            // 
+            this.backToolStripMenuItem.Name = "backToolStripMenuItem";
+            this.backToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.backToolStripMenuItem.Text = "Back";
+            this.backToolStripMenuItem.Click += new System.EventHandler(this.backToolStripMenuItem_Click);
+            // 
+            // forwardToolStripMenuItem
+            // 
+            this.forwardToolStripMenuItem.Name = "forwardToolStripMenuItem";
+            this.forwardToolStripMenuItem.Size = new System.Drawing.Size(62, 20);
+            this.forwardToolStripMenuItem.Text = "Forward";
+            this.forwardToolStripMenuItem.Click += new System.EventHandler(this.forwardToolStripMenuItem_Click);
+            // 
+            // submodsToolStripMenuItem
+            // 
+            this.submodsToolStripMenuItem.Name = "submodsToolStripMenuItem";
+            this.submodsToolStripMenuItem.Size = new System.Drawing.Size(78, 20);
+            this.submodsToolStripMenuItem.Text = "Data Files...";
+            this.submodsToolStripMenuItem.Click += new System.EventHandler(this.submodsToolStripMenuItem_Click);
+            // 
+            // readErrorsToolStripMenuItem
+            // 
+            this.readErrorsToolStripMenuItem.Name = "readErrorsToolStripMenuItem";
+            this.readErrorsToolStripMenuItem.Size = new System.Drawing.Size(87, 20);
+            this.readErrorsToolStripMenuItem.Text = "Read Errors...";
+            this.readErrorsToolStripMenuItem.Click += new System.EventHandler(this.readErrorsToolStripMenuItem_Click);
+            // 
+            // tabLookups
+            // 
+            this.tabLookups.Controls.Add(this.LookupTabControl);
+            this.tabLookups.Location = new System.Drawing.Point(4, 22);
+            this.tabLookups.Name = "tabLookups";
+            this.tabLookups.Size = new System.Drawing.Size(1487, 781);
+            this.tabLookups.TabIndex = 5;
+            this.tabLookups.Text = "Lookups";
+            this.tabLookups.UseVisualStyleBackColor = true;
+            // 
+            // LookupTabControl
+            // 
+            this.LookupTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.LookupTabControl.Controls.Add(this.MatrixTab);
+            this.LookupTabControl.Controls.Add(this.ProjectileTab);
+            this.LookupTabControl.Controls.Add(this.NameTab);
+            this.LookupTabControl.Controls.Add(this.NameFileTab);
+            this.LookupTabControl.Controls.Add(this.MissionTab);
+            this.LookupTabControl.Controls.Add(this.SpawnTab);
+            this.LookupTabControl.Controls.Add(this.CorporationTab);
+            this.LookupTabControl.Controls.Add(this.HeroFTab);
+            this.LookupTabControl.Controls.Add(this.StandardFTab);
+            this.LookupTabControl.Controls.Add(this.RandomFTab);
+            this.LookupTabControl.Controls.Add(this.RegionalTab);
+            this.LookupTabControl.Location = new System.Drawing.Point(3, 3);
+            this.LookupTabControl.Name = "LookupTabControl";
+            this.LookupTabControl.SelectedIndex = 0;
+            this.LookupTabControl.Size = new System.Drawing.Size(1519, 775);
+            this.LookupTabControl.TabIndex = 0;
+            this.LookupTabControl.SelectedIndexChanged += new System.EventHandler(this.LookupTabControl_SelectedIndexChanged);
+            // 
+            // MatrixTab
+            // 
+            this.MatrixTab.Controls.Add(this.MatrixGroundRB);
+            this.MatrixTab.Controls.Add(this.MatrixSpaceRB);
+            this.MatrixTab.Controls.Add(this.MatrixGrid);
+            this.MatrixTab.Location = new System.Drawing.Point(4, 22);
+            this.MatrixTab.Name = "MatrixTab";
+            this.MatrixTab.Padding = new System.Windows.Forms.Padding(3);
+            this.MatrixTab.Size = new System.Drawing.Size(1511, 749);
+            this.MatrixTab.TabIndex = 0;
+            this.MatrixTab.Text = "Armor Matrix";
+            this.MatrixTab.UseVisualStyleBackColor = true;
+            // 
+            // MatrixGroundRB
+            // 
+            this.MatrixGroundRB.AutoSize = true;
+            this.MatrixGroundRB.Location = new System.Drawing.Point(61, 3);
+            this.MatrixGroundRB.Name = "MatrixGroundRB";
+            this.MatrixGroundRB.Size = new System.Drawing.Size(60, 17);
+            this.MatrixGroundRB.TabIndex = 3;
+            this.MatrixGroundRB.Text = "Ground";
+            this.MatrixGroundRB.UseVisualStyleBackColor = true;
+            this.MatrixGroundRB.CheckedChanged += new System.EventHandler(this.MatrixGroundRB_CheckedChanged);
+            // 
+            // MatrixSpaceRB
+            // 
+            this.MatrixSpaceRB.AutoSize = true;
+            this.MatrixSpaceRB.Checked = true;
+            this.MatrixSpaceRB.Location = new System.Drawing.Point(6, 3);
+            this.MatrixSpaceRB.Name = "MatrixSpaceRB";
+            this.MatrixSpaceRB.Size = new System.Drawing.Size(56, 17);
+            this.MatrixSpaceRB.TabIndex = 2;
+            this.MatrixSpaceRB.TabStop = true;
+            this.MatrixSpaceRB.Text = "Space";
+            this.MatrixSpaceRB.UseVisualStyleBackColor = true;
+            this.MatrixSpaceRB.CheckedChanged += new System.EventHandler(this.MatrixSpaceRB_CheckedChanged);
+            // 
+            // MatrixGrid
+            // 
+            this.MatrixGrid.AllowUserToAddRows = false;
+            this.MatrixGrid.AllowUserToDeleteRows = false;
+            this.MatrixGrid.AllowUserToOrderColumns = true;
+            this.MatrixGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.MatrixGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.MatrixGrid.Location = new System.Drawing.Point(3, 24);
+            this.MatrixGrid.Name = "MatrixGrid";
+            this.MatrixGrid.ReadOnly = true;
+            this.MatrixGrid.Size = new System.Drawing.Size(1505, 722);
+            this.MatrixGrid.TabIndex = 1;
+            // 
+            // ProjectileTab
+            // 
+            this.ProjectileTab.Location = new System.Drawing.Point(4, 22);
+            this.ProjectileTab.Name = "ProjectileTab";
+            this.ProjectileTab.Size = new System.Drawing.Size(1511, 749);
+            this.ProjectileTab.TabIndex = 9;
+            this.ProjectileTab.Text = "Projectiles";
+            this.ProjectileTab.UseVisualStyleBackColor = true;
+            // 
+            // NameTab
+            // 
+            this.NameTab.Controls.Add(this.ShipnamesFilterDuplicatesCheckbox);
+            this.NameTab.Controls.Add(this.label12);
+            this.NameTab.Controls.Add(this.label11);
+            this.NameTab.Controls.Add(this.ShipnameCountLabel);
+            this.NameTab.Controls.Add(this.ShipnameFilterMinorCheckbox);
+            this.NameTab.Controls.Add(this.ShipnameFilterGroundCheckbox);
+            this.NameTab.Controls.Add(this.ShipnameFilterSpaceCheckbox);
+            this.NameTab.Controls.Add(this.ShipnameFilterHeroCheckbox);
+            this.NameTab.Controls.Add(this.label10);
+            this.NameTab.Controls.Add(this.panel1);
+            this.NameTab.Controls.Add(this.ShipnameDetailLabel);
+            this.NameTab.Controls.Add(this.label7);
+            this.NameTab.Controls.Add(this.ShipnameSearchTextBox);
+            this.NameTab.Controls.Add(this.ShipnameListBox);
+            this.NameTab.Location = new System.Drawing.Point(4, 22);
+            this.NameTab.Name = "NameTab";
+            this.NameTab.Size = new System.Drawing.Size(1511, 749);
+            this.NameTab.TabIndex = 2;
+            this.NameTab.Text = "Unit Names";
+            this.NameTab.UseVisualStyleBackColor = true;
+            // 
+            // ShipnamesFilterDuplicatesCheckbox
+            // 
+            this.ShipnamesFilterDuplicatesCheckbox.AutoSize = true;
+            this.ShipnamesFilterDuplicatesCheckbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ShipnamesFilterDuplicatesCheckbox.Location = new System.Drawing.Point(595, 508);
+            this.ShipnamesFilterDuplicatesCheckbox.Name = "ShipnamesFilterDuplicatesCheckbox";
+            this.ShipnamesFilterDuplicatesCheckbox.Size = new System.Drawing.Size(264, 24);
+            this.ShipnamesFilterDuplicatesCheckbox.TabIndex = 13;
+            this.ShipnamesFilterDuplicatesCheckbox.Text = "Used by Space Units and Heroes";
+            this.ShipnamesFilterDuplicatesCheckbox.UseVisualStyleBackColor = true;
+            this.ShipnamesFilterDuplicatesCheckbox.CheckedChanged += new System.EventHandler(this.ShipnamesFilterDuplicatesCheckbox_CheckedChanged);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.Location = new System.Drawing.Point(440, 485);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(147, 20);
+            this.label12.TabIndex = 12;
+            this.label12.Text = "Include Names For:";
+            // 
+            // label11
+            // 
+            this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label11.AutoSize = true;
+            this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label11.Location = new System.Drawing.Point(1172, 725);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(325, 13);
+            this.label11.TabIndex = 11;
+            this.label11.Text = "A name list appearing twice means a name appears twice in that file";
+            // 
+            // ShipnameCountLabel
+            // 
+            this.ShipnameCountLabel.AutoSize = true;
+            this.ShipnameCountLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ShipnameCountLabel.Location = new System.Drawing.Point(664, 21);
+            this.ShipnameCountLabel.Name = "ShipnameCountLabel";
+            this.ShipnameCountLabel.Size = new System.Drawing.Size(74, 20);
+            this.ShipnameCountLabel.TabIndex = 10;
+            this.ShipnameCountLabel.Text = "Matches:";
+            // 
+            // ShipnameFilterMinorCheckbox
+            // 
+            this.ShipnameFilterMinorCheckbox.AutoSize = true;
+            this.ShipnameFilterMinorCheckbox.Checked = true;
+            this.ShipnameFilterMinorCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ShipnameFilterMinorCheckbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ShipnameFilterMinorCheckbox.Location = new System.Drawing.Point(444, 598);
+            this.ShipnameFilterMinorCheckbox.Name = "ShipnameFilterMinorCheckbox";
+            this.ShipnameFilterMinorCheckbox.Size = new System.Drawing.Size(123, 24);
+            this.ShipnameFilterMinorCheckbox.TabIndex = 9;
+            this.ShipnameFilterMinorCheckbox.Text = "Minor Heroes";
+            this.ShipnameFilterMinorCheckbox.UseVisualStyleBackColor = true;
+            this.ShipnameFilterMinorCheckbox.CheckedChanged += new System.EventHandler(this.ShipnameFilterMinorCheckbox_CheckedChanged);
+            // 
+            // ShipnameFilterGroundCheckbox
+            // 
+            this.ShipnameFilterGroundCheckbox.AutoSize = true;
+            this.ShipnameFilterGroundCheckbox.Checked = true;
+            this.ShipnameFilterGroundCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ShipnameFilterGroundCheckbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ShipnameFilterGroundCheckbox.Location = new System.Drawing.Point(444, 568);
+            this.ShipnameFilterGroundCheckbox.Name = "ShipnameFilterGroundCheckbox";
+            this.ShipnameFilterGroundCheckbox.Size = new System.Drawing.Size(123, 24);
+            this.ShipnameFilterGroundCheckbox.TabIndex = 8;
+            this.ShipnameFilterGroundCheckbox.Text = "Ground Units";
+            this.ShipnameFilterGroundCheckbox.UseVisualStyleBackColor = true;
+            this.ShipnameFilterGroundCheckbox.CheckedChanged += new System.EventHandler(this.ShipnameFilterGroundCheckbox_CheckedChanged);
+            // 
+            // ShipnameFilterSpaceCheckbox
+            // 
+            this.ShipnameFilterSpaceCheckbox.AutoSize = true;
+            this.ShipnameFilterSpaceCheckbox.Checked = true;
+            this.ShipnameFilterSpaceCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ShipnameFilterSpaceCheckbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ShipnameFilterSpaceCheckbox.Location = new System.Drawing.Point(444, 508);
+            this.ShipnameFilterSpaceCheckbox.Name = "ShipnameFilterSpaceCheckbox";
+            this.ShipnameFilterSpaceCheckbox.Size = new System.Drawing.Size(115, 24);
+            this.ShipnameFilterSpaceCheckbox.TabIndex = 7;
+            this.ShipnameFilterSpaceCheckbox.Text = "Space Units";
+            this.ShipnameFilterSpaceCheckbox.UseVisualStyleBackColor = true;
+            this.ShipnameFilterSpaceCheckbox.CheckedChanged += new System.EventHandler(this.ShipnameFilterSpaceCheckbox_CheckedChanged);
+            // 
+            // ShipnameFilterHeroCheckbox
+            // 
+            this.ShipnameFilterHeroCheckbox.AutoSize = true;
+            this.ShipnameFilterHeroCheckbox.Checked = true;
+            this.ShipnameFilterHeroCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ShipnameFilterHeroCheckbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ShipnameFilterHeroCheckbox.Location = new System.Drawing.Point(444, 538);
+            this.ShipnameFilterHeroCheckbox.Name = "ShipnameFilterHeroCheckbox";
+            this.ShipnameFilterHeroCheckbox.Size = new System.Drawing.Size(80, 24);
+            this.ShipnameFilterHeroCheckbox.TabIndex = 6;
+            this.ShipnameFilterHeroCheckbox.Text = "Heroes";
+            this.ShipnameFilterHeroCheckbox.UseVisualStyleBackColor = true;
+            this.ShipnameFilterHeroCheckbox.CheckedChanged += new System.EventHandler(this.ShipnameFilterHeroCheckbox_CheckedChanged);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Location = new System.Drawing.Point(440, 311);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(63, 20);
+            this.label10.TabIndex = 5;
+            this.label10.Text = "Sort by:";
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.ShipnameSortAllRB);
+            this.panel1.Controls.Add(this.ShipnameSortHeroRB);
+            this.panel1.Controls.Add(this.ShipnameSortUnitRB);
+            this.panel1.Controls.Add(this.ShipnameSortNameRB);
+            this.panel1.Location = new System.Drawing.Point(441, 343);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(217, 126);
+            this.panel1.TabIndex = 4;
+            // 
+            // ShipnameSortAllRB
+            // 
+            this.ShipnameSortAllRB.AutoSize = true;
+            this.ShipnameSortAllRB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ShipnameSortAllRB.Location = new System.Drawing.Point(3, 93);
+            this.ShipnameSortAllRB.Name = "ShipnameSortAllRB";
+            this.ShipnameSortAllRB.Size = new System.Drawing.Size(147, 24);
+            this.ShipnameSortAllRB.TabIndex = 3;
+            this.ShipnameSortAllRB.Text = "List+Hero Usage";
+            this.ShipnameSortAllRB.UseVisualStyleBackColor = true;
+            this.ShipnameSortAllRB.CheckedChanged += new System.EventHandler(this.ShipnameSortAllRB_CheckedChanged);
+            // 
+            // ShipnameSortHeroRB
+            // 
+            this.ShipnameSortHeroRB.AutoSize = true;
+            this.ShipnameSortHeroRB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ShipnameSortHeroRB.Location = new System.Drawing.Point(3, 63);
+            this.ShipnameSortHeroRB.Name = "ShipnameSortHeroRB";
+            this.ShipnameSortHeroRB.Size = new System.Drawing.Size(143, 24);
+            this.ShipnameSortHeroRB.TabIndex = 2;
+            this.ShipnameSortHeroRB.Text = "Usage in heroes";
+            this.ShipnameSortHeroRB.UseVisualStyleBackColor = true;
+            this.ShipnameSortHeroRB.CheckedChanged += new System.EventHandler(this.ShipnameSortHeroRB_CheckedChanged);
+            // 
+            // ShipnameSortUnitRB
+            // 
+            this.ShipnameSortUnitRB.AutoSize = true;
+            this.ShipnameSortUnitRB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ShipnameSortUnitRB.Location = new System.Drawing.Point(3, 33);
+            this.ShipnameSortUnitRB.Name = "ShipnameSortUnitRB";
+            this.ShipnameSortUnitRB.Size = new System.Drawing.Size(165, 24);
+            this.ShipnameSortUnitRB.TabIndex = 1;
+            this.ShipnameSortUnitRB.Text = "Usage in name lists";
+            this.ShipnameSortUnitRB.UseVisualStyleBackColor = true;
+            this.ShipnameSortUnitRB.CheckedChanged += new System.EventHandler(this.ShipnameSortUnitRB_CheckedChanged);
+            // 
+            // ShipnameSortNameRB
+            // 
+            this.ShipnameSortNameRB.AutoSize = true;
+            this.ShipnameSortNameRB.Checked = true;
+            this.ShipnameSortNameRB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ShipnameSortNameRB.Location = new System.Drawing.Point(3, 3);
+            this.ShipnameSortNameRB.Name = "ShipnameSortNameRB";
+            this.ShipnameSortNameRB.Size = new System.Drawing.Size(124, 24);
+            this.ShipnameSortNameRB.TabIndex = 0;
+            this.ShipnameSortNameRB.TabStop = true;
+            this.ShipnameSortNameRB.Text = "Alphabetically";
+            this.ShipnameSortNameRB.UseVisualStyleBackColor = true;
+            this.ShipnameSortNameRB.CheckedChanged += new System.EventHandler(this.ShipnameSortNameRB_CheckedChanged);
+            // 
+            // ShipnameDetailLabel
+            // 
+            this.ShipnameDetailLabel.AutoSize = true;
+            this.ShipnameDetailLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ShipnameDetailLabel.Location = new System.Drawing.Point(437, 80);
+            this.ShipnameDetailLabel.Name = "ShipnameDetailLabel";
+            this.ShipnameDetailLabel.Size = new System.Drawing.Size(13, 20);
+            this.ShipnameDetailLabel.TabIndex = 3;
+            this.ShipnameDetailLabel.Text = ".";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(437, 21);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(64, 20);
+            this.label7.TabIndex = 2;
+            this.label7.Text = "Search:";
+            // 
+            // ShipnameSearchTextBox
+            // 
+            this.ShipnameSearchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ShipnameSearchTextBox.Location = new System.Drawing.Point(507, 18);
+            this.ShipnameSearchTextBox.Name = "ShipnameSearchTextBox";
+            this.ShipnameSearchTextBox.Size = new System.Drawing.Size(151, 26);
+            this.ShipnameSearchTextBox.TabIndex = 1;
+            this.ShipnameSearchTextBox.TextChanged += new System.EventHandler(this.ShipnameSearchTextBox_TextChanged);
+            // 
+            // ShipnameListBox
+            // 
+            this.ShipnameListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.ShipnameListBox.FormattingEnabled = true;
+            this.ShipnameListBox.Location = new System.Drawing.Point(3, 3);
+            this.ShipnameListBox.Name = "ShipnameListBox";
+            this.ShipnameListBox.Size = new System.Drawing.Size(428, 732);
+            this.ShipnameListBox.TabIndex = 0;
+            this.ShipnameListBox.SelectedIndexChanged += new System.EventHandler(this.ShipnameListBox_SelectedIndexChanged);
+            // 
+            // NameFileTab
+            // 
+            this.NameFileTab.Location = new System.Drawing.Point(4, 22);
+            this.NameFileTab.Name = "NameFileTab";
+            this.NameFileTab.Size = new System.Drawing.Size(1511, 749);
+            this.NameFileTab.TabIndex = 10;
+            this.NameFileTab.Text = "Name Files";
+            this.NameFileTab.UseVisualStyleBackColor = true;
+            // 
+            // MissionTab
+            // 
+            this.MissionTab.Controls.Add(this.MissionText);
+            this.MissionTab.Controls.Add(this.MissionListBox);
+            this.MissionTab.Location = new System.Drawing.Point(4, 22);
+            this.MissionTab.Name = "MissionTab";
+            this.MissionTab.Padding = new System.Windows.Forms.Padding(3);
+            this.MissionTab.Size = new System.Drawing.Size(1511, 749);
+            this.MissionTab.TabIndex = 1;
+            this.MissionTab.Text = "Rewards";
+            this.MissionTab.UseVisualStyleBackColor = true;
+            // 
+            // MissionText
+            // 
+            this.MissionText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.MissionText.Location = new System.Drawing.Point(302, 6);
+            this.MissionText.Name = "MissionText";
+            this.MissionText.Size = new System.Drawing.Size(1203, 735);
+            this.MissionText.TabIndex = 1;
+            this.MissionText.Text = "";
+            // 
+            // MissionListBox
+            // 
+            this.MissionListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.MissionListBox.FormattingEnabled = true;
+            this.MissionListBox.Location = new System.Drawing.Point(6, 6);
+            this.MissionListBox.Name = "MissionListBox";
+            this.MissionListBox.Size = new System.Drawing.Size(290, 732);
+            this.MissionListBox.TabIndex = 0;
+            this.MissionListBox.SelectedIndexChanged += new System.EventHandler(this.MissionListBox_SelectedIndexChanged);
+            // 
+            // SpawnTab
+            // 
+            this.SpawnTab.Controls.Add(this.SpawnText);
+            this.SpawnTab.Controls.Add(this.SpawnListBox);
+            this.SpawnTab.Location = new System.Drawing.Point(4, 22);
+            this.SpawnTab.Name = "SpawnTab";
+            this.SpawnTab.Size = new System.Drawing.Size(1511, 749);
+            this.SpawnTab.TabIndex = 3;
+            this.SpawnTab.Text = "Spawn Sets";
+            this.SpawnTab.UseVisualStyleBackColor = true;
+            // 
+            // SpawnText
+            // 
+            this.SpawnText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.SpawnText.Location = new System.Drawing.Point(302, 7);
+            this.SpawnText.Name = "SpawnText";
+            this.SpawnText.Size = new System.Drawing.Size(1203, 735);
+            this.SpawnText.TabIndex = 3;
+            this.SpawnText.Text = "";
+            // 
+            // SpawnListBox
+            // 
+            this.SpawnListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.SpawnListBox.FormattingEnabled = true;
+            this.SpawnListBox.Location = new System.Drawing.Point(6, 7);
+            this.SpawnListBox.Name = "SpawnListBox";
+            this.SpawnListBox.Size = new System.Drawing.Size(290, 732);
+            this.SpawnListBox.TabIndex = 2;
+            this.SpawnListBox.SelectedIndexChanged += new System.EventHandler(this.SpawnListBox_SelectedIndexChanged);
+            // 
+            // CorporationTab
+            // 
+            this.CorporationTab.Location = new System.Drawing.Point(4, 22);
+            this.CorporationTab.Name = "CorporationTab";
+            this.CorporationTab.Size = new System.Drawing.Size(1511, 749);
+            this.CorporationTab.TabIndex = 7;
+            this.CorporationTab.Text = "Corporations";
+            this.CorporationTab.UseVisualStyleBackColor = true;
+            // 
+            // HeroFTab
+            // 
+            this.HeroFTab.Location = new System.Drawing.Point(4, 22);
+            this.HeroFTab.Name = "HeroFTab";
+            this.HeroFTab.Size = new System.Drawing.Size(1511, 749);
+            this.HeroFTab.TabIndex = 8;
+            this.HeroFTab.Text = "HeroFighters";
+            this.HeroFTab.UseVisualStyleBackColor = true;
+            // 
+            // StandardFTab
+            // 
+            this.StandardFTab.Controls.Add(this.StandardFText);
+            this.StandardFTab.Controls.Add(this.StandardFListBox);
+            this.StandardFTab.Location = new System.Drawing.Point(4, 22);
+            this.StandardFTab.Name = "StandardFTab";
+            this.StandardFTab.Size = new System.Drawing.Size(1511, 749);
+            this.StandardFTab.TabIndex = 4;
+            this.StandardFTab.Text = "Standard Fighters";
+            this.StandardFTab.UseVisualStyleBackColor = true;
+            // 
+            // StandardFText
+            // 
+            this.StandardFText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.StandardFText.Location = new System.Drawing.Point(302, 7);
+            this.StandardFText.Name = "StandardFText";
+            this.StandardFText.Size = new System.Drawing.Size(1203, 735);
+            this.StandardFText.TabIndex = 3;
+            this.StandardFText.Text = "";
+            // 
+            // StandardFListBox
+            // 
+            this.StandardFListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.StandardFListBox.FormattingEnabled = true;
+            this.StandardFListBox.Location = new System.Drawing.Point(6, 7);
+            this.StandardFListBox.Name = "StandardFListBox";
+            this.StandardFListBox.Size = new System.Drawing.Size(290, 732);
+            this.StandardFListBox.TabIndex = 2;
+            this.StandardFListBox.SelectedIndexChanged += new System.EventHandler(this.StandardFListBox_SelectedIndexChanged);
+            // 
+            // RandomFTab
+            // 
+            this.RandomFTab.Controls.Add(this.RandomFText);
+            this.RandomFTab.Controls.Add(this.RandomFListBox);
+            this.RandomFTab.Location = new System.Drawing.Point(4, 22);
+            this.RandomFTab.Name = "RandomFTab";
+            this.RandomFTab.Size = new System.Drawing.Size(1511, 749);
+            this.RandomFTab.TabIndex = 5;
+            this.RandomFTab.Text = "Random Fighters";
+            this.RandomFTab.UseVisualStyleBackColor = true;
+            // 
+            // RandomFText
+            // 
+            this.RandomFText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.RandomFText.Location = new System.Drawing.Point(302, 7);
+            this.RandomFText.Name = "RandomFText";
+            this.RandomFText.Size = new System.Drawing.Size(1203, 735);
+            this.RandomFText.TabIndex = 3;
+            this.RandomFText.Text = "";
+            // 
+            // RandomFListBox
+            // 
+            this.RandomFListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.RandomFListBox.FormattingEnabled = true;
+            this.RandomFListBox.Location = new System.Drawing.Point(6, 7);
+            this.RandomFListBox.Name = "RandomFListBox";
+            this.RandomFListBox.Size = new System.Drawing.Size(290, 732);
+            this.RandomFListBox.TabIndex = 2;
+            this.RandomFListBox.SelectedIndexChanged += new System.EventHandler(this.RandomFListBox_SelectedIndexChanged);
+            // 
+            // RegionalTab
+            // 
+            this.RegionalTab.Location = new System.Drawing.Point(4, 22);
+            this.RegionalTab.Name = "RegionalTab";
+            this.RegionalTab.Size = new System.Drawing.Size(1511, 749);
+            this.RegionalTab.TabIndex = 6;
+            this.RegionalTab.Text = "Regional Fighters";
+            this.RegionalTab.UseVisualStyleBackColor = true;
+            // 
+            // tabUnits
+            // 
+            this.tabUnits.Controls.Add(this.UnitListBox);
+            this.tabUnits.Controls.Add(this.SpaceStructureRadioButton);
+            this.tabUnits.Controls.Add(this.FighterRadioButton);
+            this.tabUnits.Controls.Add(this.ExportButton);
+            this.tabUnits.Controls.Add(this.GroundHeroRadioButton);
+            this.tabUnits.Controls.Add(this.HeroCompaniesRadioButton);
+            this.tabUnits.Controls.Add(this.SpaceHeroRadioButton);
+            this.tabUnits.Controls.Add(this.StructureRadioButton);
+            this.tabUnits.Controls.Add(this.UnitFIlterTypeLabel);
+            this.tabUnits.Controls.Add(this.UnitFilterButton);
+            this.tabUnits.Controls.Add(this.UnitSortTypeLabel);
+            this.tabUnits.Controls.Add(this.UnitSortButton);
+            this.tabUnits.Controls.Add(this.label5);
+            this.tabUnits.Controls.Add(this.UnitSearchTextBox);
+            this.tabUnits.Controls.Add(this.UnitRadioButton);
+            this.tabUnits.Controls.Add(this.Unitpanel);
+            this.tabUnits.Controls.Add(this.SpaceRadioButton);
+            this.tabUnits.Controls.Add(this.GroundRadioButton);
+            this.tabUnits.Location = new System.Drawing.Point(4, 22);
+            this.tabUnits.Name = "tabUnits";
+            this.tabUnits.Size = new System.Drawing.Size(1487, 781);
+            this.tabUnits.TabIndex = 2;
+            this.tabUnits.Text = "Units/Heroes";
+            this.tabUnits.UseVisualStyleBackColor = true;
+            // 
+            // UnitListBox
+            // 
+            this.UnitListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.UnitListBox.FormattingEnabled = true;
+            this.UnitListBox.Location = new System.Drawing.Point(135, 42);
+            this.UnitListBox.Name = "UnitListBox";
+            this.UnitListBox.Size = new System.Drawing.Size(255, 732);
+            this.UnitListBox.TabIndex = 44;
+            this.UnitListBox.SelectedIndexChanged += new System.EventHandler(this.UnitListBox_SelectedIndexChanged);
+            // 
+            // SpaceStructureRadioButton
+            // 
+            this.SpaceStructureRadioButton.AutoSize = true;
+            this.SpaceStructureRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SpaceStructureRadioButton.Location = new System.Drawing.Point(6, 272);
+            this.SpaceStructureRadioButton.Name = "SpaceStructureRadioButton";
+            this.SpaceStructureRadioButton.Size = new System.Drawing.Size(128, 20);
+            this.SpaceStructureRadioButton.TabIndex = 62;
+            this.SpaceStructureRadioButton.Text = "Space Structures";
+            this.SpaceStructureRadioButton.UseVisualStyleBackColor = true;
+            this.SpaceStructureRadioButton.CheckedChanged += new System.EventHandler(this.SpaceStructureRadioButton_CheckedChanged);
+            // 
+            // FighterRadioButton
+            // 
+            this.FighterRadioButton.AutoSize = true;
+            this.FighterRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FighterRadioButton.Location = new System.Drawing.Point(6, 133);
+            this.FighterRadioButton.Name = "FighterRadioButton";
+            this.FighterRadioButton.Size = new System.Drawing.Size(79, 22);
+            this.FighterRadioButton.TabIndex = 61;
+            this.FighterRadioButton.Text = "Fighters";
+            this.toolTip1.SetToolTip(this.FighterRadioButton, "Including heroes");
+            this.FighterRadioButton.UseVisualStyleBackColor = true;
+            this.FighterRadioButton.CheckedChanged += new System.EventHandler(this.FighterRadioButton_CheckedChanged);
+            // 
+            // ExportButton
+            // 
+            this.ExportButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ExportButton.Location = new System.Drawing.Point(8, 300);
+            this.ExportButton.Name = "ExportButton";
+            this.ExportButton.Size = new System.Drawing.Size(97, 27);
+            this.ExportButton.TabIndex = 60;
+            this.ExportButton.Text = "Export...";
+            this.toolTip1.SetToolTip(this.ExportButton, "Save the sort values and names of the unit list to a text file");
+            this.ExportButton.UseVisualStyleBackColor = true;
+            this.ExportButton.Click += new System.EventHandler(this.ExportButton_Click);
+            // 
+            // GroundHeroRadioButton
+            // 
+            this.GroundHeroRadioButton.AutoSize = true;
+            this.GroundHeroRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GroundHeroRadioButton.Location = new System.Drawing.Point(6, 217);
+            this.GroundHeroRadioButton.Name = "GroundHeroRadioButton";
+            this.GroundHeroRadioButton.Size = new System.Drawing.Size(129, 22);
+            this.GroundHeroRadioButton.TabIndex = 59;
+            this.GroundHeroRadioButton.Text = "Ground Heroes";
+            this.GroundHeroRadioButton.UseVisualStyleBackColor = true;
+            this.GroundHeroRadioButton.CheckedChanged += new System.EventHandler(this.GroundHeroRadioButton_CheckedChanged);
+            // 
+            // HeroCompaniesRadioButton
+            // 
+            this.HeroCompaniesRadioButton.AutoSize = true;
+            this.HeroCompaniesRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HeroCompaniesRadioButton.Location = new System.Drawing.Point(6, 189);
+            this.HeroCompaniesRadioButton.Name = "HeroCompaniesRadioButton";
+            this.HeroCompaniesRadioButton.Size = new System.Drawing.Size(109, 22);
+            this.HeroCompaniesRadioButton.TabIndex = 58;
+            this.HeroCompaniesRadioButton.Text = "Hero Teams";
+            this.HeroCompaniesRadioButton.UseVisualStyleBackColor = true;
+            this.HeroCompaniesRadioButton.CheckedChanged += new System.EventHandler(this.HeroCompaniesRadioButton_CheckedChanged);
+            // 
+            // SpaceHeroRadioButton
+            // 
+            this.SpaceHeroRadioButton.AutoSize = true;
+            this.SpaceHeroRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SpaceHeroRadioButton.Location = new System.Drawing.Point(6, 161);
+            this.SpaceHeroRadioButton.Name = "SpaceHeroRadioButton";
+            this.SpaceHeroRadioButton.Size = new System.Drawing.Size(121, 22);
+            this.SpaceHeroRadioButton.TabIndex = 57;
+            this.SpaceHeroRadioButton.Text = "Space Heroes";
+            this.SpaceHeroRadioButton.UseVisualStyleBackColor = true;
+            this.SpaceHeroRadioButton.CheckedChanged += new System.EventHandler(this.SpaceHeroRadioButton_CheckedChanged);
+            // 
+            // StructureRadioButton
+            // 
+            this.StructureRadioButton.AutoSize = true;
+            this.StructureRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.StructureRadioButton.Location = new System.Drawing.Point(6, 245);
+            this.StructureRadioButton.Name = "StructureRadioButton";
+            this.StructureRadioButton.Size = new System.Drawing.Size(132, 20);
+            this.StructureRadioButton.TabIndex = 56;
+            this.StructureRadioButton.Text = "Ground Structures";
+            this.StructureRadioButton.UseVisualStyleBackColor = true;
+            this.StructureRadioButton.CheckedChanged += new System.EventHandler(this.StructureRadioButton_CheckedChanged);
+            // 
+            // UnitFIlterTypeLabel
+            // 
+            this.UnitFIlterTypeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitFIlterTypeLabel.Location = new System.Drawing.Point(-3, 570);
+            this.UnitFIlterTypeLabel.Name = "UnitFIlterTypeLabel";
+            this.UnitFIlterTypeLabel.Size = new System.Drawing.Size(129, 214);
+            this.UnitFIlterTypeLabel.TabIndex = 55;
+            this.UnitFIlterTypeLabel.Text = "Any faction";
+            this.toolTip1.SetToolTip(this.UnitFIlterTypeLabel, "Buildable only checks that the tech level is in the valid range, which roughly co" +
+        "rresponds to it being possible to be enabled.\r\nIt may return several units that " +
+        "are not buildable in practice");
+            // 
+            // UnitFilterButton
+            // 
+            this.UnitFilterButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitFilterButton.Location = new System.Drawing.Point(8, 540);
+            this.UnitFilterButton.Name = "UnitFilterButton";
+            this.UnitFilterButton.Size = new System.Drawing.Size(97, 27);
+            this.UnitFilterButton.TabIndex = 54;
+            this.UnitFilterButton.Text = "Filter...";
+            this.UnitFilterButton.UseVisualStyleBackColor = true;
+            this.UnitFilterButton.Click += new System.EventHandler(this.UnitFilterButton_Click);
+            // 
+            // UnitSortTypeLabel
+            // 
+            this.UnitSortTypeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitSortTypeLabel.Location = new System.Drawing.Point(-3, 375);
+            this.UnitSortTypeLabel.Name = "UnitSortTypeLabel";
+            this.UnitSortTypeLabel.Size = new System.Drawing.Size(129, 93);
+            this.UnitSortTypeLabel.TabIndex = 33;
+            this.UnitSortTypeLabel.Text = "Name, Ascending";
+            // 
+            // UnitSortButton
+            // 
+            this.UnitSortButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitSortButton.Location = new System.Drawing.Point(8, 345);
+            this.UnitSortButton.Name = "UnitSortButton";
+            this.UnitSortButton.Size = new System.Drawing.Size(97, 27);
+            this.UnitSortButton.TabIndex = 53;
+            this.UnitSortButton.Text = "Sort...";
+            this.UnitSortButton.UseVisualStyleBackColor = true;
+            this.UnitSortButton.Click += new System.EventHandler(this.UnitSortButton_Click);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(21, 12);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(64, 20);
+            this.label5.TabIndex = 52;
+            this.label5.Text = "Search:";
+            // 
+            // UnitSearchTextBox
+            // 
+            this.UnitSearchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitSearchTextBox.Location = new System.Drawing.Point(91, 12);
+            this.UnitSearchTextBox.Name = "UnitSearchTextBox";
+            this.UnitSearchTextBox.Size = new System.Drawing.Size(299, 26);
+            this.UnitSearchTextBox.TabIndex = 51;
+            this.UnitSearchTextBox.TextChanged += new System.EventHandler(this.UnitSearchTextBox_TextChanged);
+            // 
+            // UnitRadioButton
+            // 
+            this.UnitRadioButton.AutoSize = true;
+            this.UnitRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitRadioButton.Location = new System.Drawing.Point(6, 105);
+            this.UnitRadioButton.Name = "UnitRadioButton";
+            this.UnitRadioButton.Size = new System.Drawing.Size(114, 22);
+            this.UnitRadioButton.TabIndex = 50;
+            this.UnitRadioButton.Text = "Ground Units";
+            this.UnitRadioButton.UseVisualStyleBackColor = true;
+            this.UnitRadioButton.CheckedChanged += new System.EventHandler(this.UnitRadioButton_CheckedChanged);
+            // 
+            // Unitpanel
+            // 
+            this.Unitpanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.Unitpanel.AutoScroll = true;
+            this.Unitpanel.Controls.Add(this.CollapseUnitAvailPanel);
+            this.Unitpanel.Controls.Add(this.UnitAvailPanel);
+            this.Unitpanel.Controls.Add(this.UnitAbilityPanel);
+            this.Unitpanel.Controls.Add(this.CollapseUnitSubunitPanel);
+            this.Unitpanel.Controls.Add(this.UnitSubunitPanel);
+            this.Unitpanel.Controls.Add(this.CollapseUnitAbilityPanel);
+            this.Unitpanel.Controls.Add(this.CollapseUnitStatPanel);
+            this.Unitpanel.Controls.Add(this.CollapseUnitTextPanel);
+            this.Unitpanel.Controls.Add(this.UnitStatPanel);
+            this.Unitpanel.Controls.Add(this.UnitBTSPanel);
+            this.Unitpanel.Controls.Add(this.UnitTextPanel);
+            this.Unitpanel.Location = new System.Drawing.Point(396, 3);
+            this.Unitpanel.Name = "Unitpanel";
+            this.Unitpanel.Size = new System.Drawing.Size(1091, 775);
+            this.Unitpanel.TabIndex = 2;
+            // 
+            // CollapseUnitAvailPanel
+            // 
+            this.CollapseUnitAvailPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CollapseUnitAvailPanel.Location = new System.Drawing.Point(5, 353);
+            this.CollapseUnitAvailPanel.Name = "CollapseUnitAvailPanel";
+            this.CollapseUnitAvailPanel.Size = new System.Drawing.Size(24, 19);
+            this.CollapseUnitAvailPanel.TabIndex = 10;
+            this.CollapseUnitAvailPanel.Tag = "";
+            this.CollapseUnitAvailPanel.Text = "/\\";
+            this.CollapseUnitAvailPanel.UseVisualStyleBackColor = true;
+            this.CollapseUnitAvailPanel.Click += new System.EventHandler(this.CollapseUnitAvailPanel_Click);
+            // 
+            // UnitAvailPanel
+            // 
+            this.UnitAvailPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.UnitAvailPanel.Controls.Add(this.label14);
+            this.UnitAvailPanel.Controls.Add(this.FactionAvailableListbox);
+            this.UnitAvailPanel.Controls.Add(this.AvailabilityLabel);
+            this.UnitAvailPanel.Controls.Add(this.InfluenceLabel);
+            this.UnitAvailPanel.Controls.Add(this.ShipyardLabel);
+            this.UnitAvailPanel.Controls.Add(this.BuildLimitLabel);
+            this.UnitAvailPanel.Controls.Add(this.ReqUnitLabel);
+            this.UnitAvailPanel.Controls.Add(this.GoToReqStructButton);
+            this.UnitAvailPanel.Controls.Add(this.label13);
+            this.UnitAvailPanel.Controls.Add(this.ReqStructuresListBox);
+            this.UnitAvailPanel.Controls.Add(this.SpawnSetLabel);
+            this.UnitAvailPanel.Controls.Add(this.SpawnSetListBox);
+            this.UnitAvailPanel.Location = new System.Drawing.Point(32, 353);
+            this.UnitAvailPanel.Name = "UnitAvailPanel";
+            this.UnitAvailPanel.Size = new System.Drawing.Size(1022, 221);
+            this.UnitAvailPanel.TabIndex = 9;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(3, 84);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(66, 20);
+            this.label14.TabIndex = 38;
+            this.label14.Text = "Faction:";
+            // 
+            // FactionAvailableListbox
+            // 
+            this.FactionAvailableListbox.FormattingEnabled = true;
+            this.FactionAvailableListbox.Location = new System.Drawing.Point(6, 107);
+            this.FactionAvailableListbox.Name = "FactionAvailableListbox";
+            this.FactionAvailableListbox.Size = new System.Drawing.Size(140, 108);
+            this.FactionAvailableListbox.TabIndex = 37;
+            this.FactionAvailableListbox.SelectedIndexChanged += new System.EventHandler(this.FactionAvailableListbox_SelectedIndexChanged);
+            // 
+            // AvailabilityLabel
+            // 
+            this.AvailabilityLabel.AutoSize = true;
+            this.AvailabilityLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AvailabilityLabel.Location = new System.Drawing.Point(3, 2);
+            this.AvailabilityLabel.Name = "AvailabilityLabel";
+            this.AvailabilityLabel.Size = new System.Drawing.Size(13, 20);
+            this.AvailabilityLabel.TabIndex = 36;
+            this.AvailabilityLabel.Text = ".";
+            // 
+            // InfluenceLabel
+            // 
+            this.InfluenceLabel.AutoSize = true;
+            this.InfluenceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.InfluenceLabel.Location = new System.Drawing.Point(364, 167);
+            this.InfluenceLabel.Name = "InfluenceLabel";
+            this.InfluenceLabel.Size = new System.Drawing.Size(120, 20);
+            this.InfluenceLabel.TabIndex = 35;
+            this.InfluenceLabel.Text = "Influence Level:";
+            // 
+            // ShipyardLabel
+            // 
+            this.ShipyardLabel.AutoSize = true;
+            this.ShipyardLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ShipyardLabel.Location = new System.Drawing.Point(364, 107);
+            this.ShipyardLabel.Name = "ShipyardLabel";
+            this.ShipyardLabel.Size = new System.Drawing.Size(114, 20);
+            this.ShipyardLabel.TabIndex = 34;
+            this.ShipyardLabel.Text = "Filter Shipyard:";
+            this.toolTip1.SetToolTip(this.ShipyardLabel, "Which shipyard the unit is considered for filter script purposes, which is consis" +
+        "tent even for nontraditional shipyard setups");
+            // 
+            // BuildLimitLabel
+            // 
+            this.BuildLimitLabel.AutoSize = true;
+            this.BuildLimitLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BuildLimitLabel.Location = new System.Drawing.Point(364, 136);
+            this.BuildLimitLabel.Name = "BuildLimitLabel";
+            this.BuildLimitLabel.Size = new System.Drawing.Size(85, 20);
+            this.BuildLimitLabel.TabIndex = 33;
+            this.BuildLimitLabel.Text = "Build Limit:";
+            // 
+            // ReqUnitLabel
+            // 
+            this.ReqUnitLabel.AutoSize = true;
+            this.ReqUnitLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ReqUnitLabel.Location = new System.Drawing.Point(364, 195);
+            this.ReqUnitLabel.Name = "ReqUnitLabel";
+            this.ReqUnitLabel.Size = new System.Drawing.Size(119, 20);
+            this.ReqUnitLabel.TabIndex = 32;
+            this.ReqUnitLabel.Text = "Required Units:";
+            // 
+            // GoToReqStructButton
+            // 
+            this.GoToReqStructButton.Location = new System.Drawing.Point(310, 81);
+            this.GoToReqStructButton.Name = "GoToReqStructButton";
+            this.GoToReqStructButton.Size = new System.Drawing.Size(48, 23);
+            this.GoToReqStructButton.TabIndex = 31;
+            this.GoToReqStructButton.Text = "Go to";
+            this.GoToReqStructButton.UseVisualStyleBackColor = true;
+            this.GoToReqStructButton.Click += new System.EventHandler(this.GoToReqStructButton_Click);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.Location = new System.Drawing.Point(148, 84);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(156, 20);
+            this.label13.TabIndex = 3;
+            this.label13.Text = "Required Structures:";
+            // 
+            // ReqStructuresListBox
+            // 
+            this.ReqStructuresListBox.FormattingEnabled = true;
+            this.ReqStructuresListBox.Location = new System.Drawing.Point(152, 107);
+            this.ReqStructuresListBox.Name = "ReqStructuresListBox";
+            this.ReqStructuresListBox.Size = new System.Drawing.Size(206, 108);
+            this.ReqStructuresListBox.TabIndex = 2;
+            // 
+            // SpawnSetLabel
+            // 
+            this.SpawnSetLabel.AutoSize = true;
+            this.SpawnSetLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SpawnSetLabel.Location = new System.Drawing.Point(740, 71);
+            this.SpawnSetLabel.Name = "SpawnSetLabel";
+            this.SpawnSetLabel.Size = new System.Drawing.Size(99, 20);
+            this.SpawnSetLabel.TabIndex = 1;
+            this.SpawnSetLabel.Text = "Spawn Sets:";
+            // 
+            // SpawnSetListBox
+            // 
+            this.SpawnSetListBox.FormattingEnabled = true;
+            this.SpawnSetListBox.Location = new System.Drawing.Point(744, 94);
+            this.SpawnSetListBox.Name = "SpawnSetListBox";
+            this.SpawnSetListBox.Size = new System.Drawing.Size(120, 121);
+            this.SpawnSetListBox.TabIndex = 0;
+            // 
+            // UnitAbilityPanel
+            // 
+            this.UnitAbilityPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.UnitAbilityPanel.Controls.Add(this.AbilityStackingLabel);
+            this.UnitAbilityPanel.Controls.Add(this.UARadiusLabel);
+            this.UnitAbilityPanel.Controls.Add(this.AbilityActivationRadiusLabel);
+            this.UnitAbilityPanel.Controls.Add(this.AbilityRadiusLabel);
+            this.UnitAbilityPanel.Controls.Add(this.AbilityLinkedLabel);
+            this.UnitAbilityPanel.Controls.Add(this.AbilityTimeLabel);
+            this.UnitAbilityPanel.Controls.Add(this.AbilityValueLabel);
+            this.UnitAbilityPanel.Controls.Add(this.AbilityTargetUnitLabel);
+            this.UnitAbilityPanel.Controls.Add(this.AbilityExcludedUnitLabel);
+            this.UnitAbilityPanel.Controls.Add(this.AbilityTargetTypeLabel);
+            this.UnitAbilityPanel.Controls.Add(this.AbilityActivationLabel);
+            this.UnitAbilityPanel.Controls.Add(this.AbilityTypeLabel);
+            this.UnitAbilityPanel.Controls.Add(this.UATimeLabel);
+            this.UnitAbilityPanel.Controls.Add(this.UAStimLabel);
+            this.UnitAbilityPanel.Controls.Add(this.ClearAbilityButton);
+            this.UnitAbilityPanel.Controls.Add(this.UASpeedLabel);
+            this.UnitAbilityPanel.Controls.Add(this.UADefenseLabel);
+            this.UnitAbilityPanel.Controls.Add(this.UAShieldLabel);
+            this.UnitAbilityPanel.Controls.Add(this.UAReloadLabel);
+            this.UnitAbilityPanel.Controls.Add(this.UADamageLabel);
+            this.UnitAbilityPanel.Controls.Add(this.UnitAbilityDescLabel);
+            this.UnitAbilityPanel.Controls.Add(this.UnitAbilityNameLabel);
+            this.UnitAbilityPanel.Controls.Add(this.AbilityPictureBox);
+            this.UnitAbilityPanel.Controls.Add(this.AbilityListBox);
+            this.UnitAbilityPanel.Controls.Add(this.UnitAbilityListBox);
+            this.UnitAbilityPanel.Location = new System.Drawing.Point(32, 1150);
+            this.UnitAbilityPanel.Name = "UnitAbilityPanel";
+            this.UnitAbilityPanel.Size = new System.Drawing.Size(1022, 180);
+            this.UnitAbilityPanel.TabIndex = 8;
+            // 
+            // AbilityStackingLabel
+            // 
+            this.AbilityStackingLabel.AutoSize = true;
+            this.AbilityStackingLabel.Location = new System.Drawing.Point(394, 161);
+            this.AbilityStackingLabel.Name = "AbilityStackingLabel";
+            this.AbilityStackingLabel.Size = new System.Drawing.Size(52, 13);
+            this.AbilityStackingLabel.TabIndex = 46;
+            this.AbilityStackingLabel.Text = "Stacking:";
+            // 
+            // UARadiusLabel
+            // 
+            this.UARadiusLabel.AutoSize = true;
+            this.UARadiusLabel.Location = new System.Drawing.Point(6, 161);
+            this.UARadiusLabel.Name = "UARadiusLabel";
+            this.UARadiusLabel.Size = new System.Drawing.Size(43, 13);
+            this.UARadiusLabel.TabIndex = 45;
+            this.UARadiusLabel.Text = "Radius:";
+            // 
+            // AbilityActivationRadiusLabel
+            // 
+            this.AbilityActivationRadiusLabel.AutoSize = true;
+            this.AbilityActivationRadiusLabel.Location = new System.Drawing.Point(394, 113);
+            this.AbilityActivationRadiusLabel.Name = "AbilityActivationRadiusLabel";
+            this.AbilityActivationRadiusLabel.Size = new System.Drawing.Size(93, 13);
+            this.AbilityActivationRadiusLabel.TabIndex = 44;
+            this.AbilityActivationRadiusLabel.Text = "Activation Radius:";
+            // 
+            // AbilityRadiusLabel
+            // 
+            this.AbilityRadiusLabel.AutoSize = true;
+            this.AbilityRadiusLabel.Location = new System.Drawing.Point(394, 129);
+            this.AbilityRadiusLabel.Name = "AbilityRadiusLabel";
+            this.AbilityRadiusLabel.Size = new System.Drawing.Size(43, 13);
+            this.AbilityRadiusLabel.TabIndex = 43;
+            this.AbilityRadiusLabel.Text = "Radius:";
+            // 
+            // AbilityLinkedLabel
+            // 
+            this.AbilityLinkedLabel.AutoSize = true;
+            this.AbilityLinkedLabel.Location = new System.Drawing.Point(394, 145);
+            this.AbilityLinkedLabel.Name = "AbilityLinkedLabel";
+            this.AbilityLinkedLabel.Size = new System.Drawing.Size(76, 13);
+            this.AbilityLinkedLabel.TabIndex = 42;
+            this.AbilityLinkedLabel.Text = "Linked Object:";
+            // 
+            // AbilityTimeLabel
+            // 
+            this.AbilityTimeLabel.AutoSize = true;
+            this.AbilityTimeLabel.Location = new System.Drawing.Point(394, 81);
+            this.AbilityTimeLabel.Name = "AbilityTimeLabel";
+            this.AbilityTimeLabel.Size = new System.Drawing.Size(103, 13);
+            this.AbilityTimeLabel.TabIndex = 41;
+            this.AbilityTimeLabel.Text = "Duration: Recharge:";
+            // 
+            // AbilityValueLabel
+            // 
+            this.AbilityValueLabel.AutoSize = true;
+            this.AbilityValueLabel.Location = new System.Drawing.Point(394, 97);
+            this.AbilityValueLabel.Name = "AbilityValueLabel";
+            this.AbilityValueLabel.Size = new System.Drawing.Size(37, 13);
+            this.AbilityValueLabel.TabIndex = 40;
+            this.AbilityValueLabel.Text = "Value:";
+            // 
+            // AbilityTargetUnitLabel
+            // 
+            this.AbilityTargetUnitLabel.AutoSize = true;
+            this.AbilityTargetUnitLabel.Location = new System.Drawing.Point(394, 65);
+            this.AbilityTargetUnitLabel.Name = "AbilityTargetUnitLabel";
+            this.AbilityTargetUnitLabel.Size = new System.Drawing.Size(68, 13);
+            this.AbilityTargetUnitLabel.TabIndex = 39;
+            this.AbilityTargetUnitLabel.Text = "Target Units:";
+            // 
+            // AbilityExcludedUnitLabel
+            // 
+            this.AbilityExcludedUnitLabel.AutoSize = true;
+            this.AbilityExcludedUnitLabel.Location = new System.Drawing.Point(923, 49);
+            this.AbilityExcludedUnitLabel.Name = "AbilityExcludedUnitLabel";
+            this.AbilityExcludedUnitLabel.Size = new System.Drawing.Size(93, 13);
+            this.AbilityExcludedUnitLabel.TabIndex = 38;
+            this.AbilityExcludedUnitLabel.Text = "Excluded Targets:";
+            // 
+            // AbilityTargetTypeLabel
+            // 
+            this.AbilityTargetTypeLabel.AutoSize = true;
+            this.AbilityTargetTypeLabel.Location = new System.Drawing.Point(713, 49);
+            this.AbilityTargetTypeLabel.Name = "AbilityTargetTypeLabel";
+            this.AbilityTargetTypeLabel.Size = new System.Drawing.Size(94, 13);
+            this.AbilityTargetTypeLabel.TabIndex = 37;
+            this.AbilityTargetTypeLabel.Text = "Target Categories:";
+            // 
+            // AbilityActivationLabel
+            // 
+            this.AbilityActivationLabel.AutoSize = true;
+            this.AbilityActivationLabel.Location = new System.Drawing.Point(561, 49);
+            this.AbilityActivationLabel.Name = "AbilityActivationLabel";
+            this.AbilityActivationLabel.Size = new System.Drawing.Size(57, 13);
+            this.AbilityActivationLabel.TabIndex = 36;
+            this.AbilityActivationLabel.Text = "Activation:";
+            // 
+            // AbilityTypeLabel
+            // 
+            this.AbilityTypeLabel.AutoSize = true;
+            this.AbilityTypeLabel.Location = new System.Drawing.Point(394, 49);
+            this.AbilityTypeLabel.Name = "AbilityTypeLabel";
+            this.AbilityTypeLabel.Size = new System.Drawing.Size(34, 13);
+            this.AbilityTypeLabel.TabIndex = 35;
+            this.AbilityTypeLabel.Text = "Type:";
+            // 
+            // UATimeLabel
+            // 
+            this.UATimeLabel.AutoSize = true;
+            this.UATimeLabel.Location = new System.Drawing.Point(6, 49);
+            this.UATimeLabel.Name = "UATimeLabel";
+            this.UATimeLabel.Size = new System.Drawing.Size(103, 13);
+            this.UATimeLabel.TabIndex = 34;
+            this.UATimeLabel.Text = "Duration: Recharge:";
+            // 
+            // UAStimLabel
+            // 
+            this.UAStimLabel.AutoSize = true;
+            this.UAStimLabel.Location = new System.Drawing.Point(6, 145);
+            this.UAStimLabel.Name = "UAStimLabel";
+            this.UAStimLabel.Size = new System.Drawing.Size(85, 13);
+            this.UAStimLabel.TabIndex = 33;
+            this.UAStimLabel.Text = "Damage on use:";
+            // 
+            // ClearAbilityButton
+            // 
+            this.ClearAbilityButton.Location = new System.Drawing.Point(264, 11);
+            this.ClearAbilityButton.Name = "ClearAbilityButton";
+            this.ClearAbilityButton.Size = new System.Drawing.Size(19, 30);
+            this.ClearAbilityButton.TabIndex = 32;
+            this.ClearAbilityButton.Text = "X";
+            this.toolTip1.SetToolTip(this.ClearAbilityButton, "Deselect abilities");
+            this.ClearAbilityButton.UseVisualStyleBackColor = true;
+            this.ClearAbilityButton.Click += new System.EventHandler(this.ClearAbilityButton_Click);
+            // 
+            // UASpeedLabel
+            // 
+            this.UASpeedLabel.AutoSize = true;
+            this.UASpeedLabel.Location = new System.Drawing.Point(6, 65);
+            this.UASpeedLabel.Name = "UASpeedLabel";
+            this.UASpeedLabel.Size = new System.Drawing.Size(81, 13);
+            this.UASpeedLabel.TabIndex = 27;
+            this.UASpeedLabel.Text = "Speed Modifier:";
+            // 
+            // UADefenseLabel
+            // 
+            this.UADefenseLabel.AutoSize = true;
+            this.UADefenseLabel.Location = new System.Drawing.Point(6, 97);
+            this.UADefenseLabel.Name = "UADefenseLabel";
+            this.UADefenseLabel.Size = new System.Drawing.Size(90, 13);
+            this.UADefenseLabel.TabIndex = 26;
+            this.UADefenseLabel.Text = "Defense Modifier:";
+            // 
+            // UAShieldLabel
+            // 
+            this.UAShieldLabel.AutoSize = true;
+            this.UAShieldLabel.Location = new System.Drawing.Point(6, 81);
+            this.UAShieldLabel.Name = "UAShieldLabel";
+            this.UAShieldLabel.Size = new System.Drawing.Size(79, 13);
+            this.UAShieldLabel.TabIndex = 25;
+            this.UAShieldLabel.Text = "Shield Modifier:";
+            // 
+            // UAReloadLabel
+            // 
+            this.UAReloadLabel.AutoSize = true;
+            this.UAReloadLabel.Location = new System.Drawing.Point(6, 113);
+            this.UAReloadLabel.Name = "UAReloadLabel";
+            this.UAReloadLabel.Size = new System.Drawing.Size(84, 13);
+            this.UAReloadLabel.TabIndex = 24;
+            this.UAReloadLabel.Text = "Reload Modifier:";
+            // 
+            // UADamageLabel
+            // 
+            this.UADamageLabel.AutoSize = true;
+            this.UADamageLabel.Location = new System.Drawing.Point(6, 129);
+            this.UADamageLabel.Name = "UADamageLabel";
+            this.UADamageLabel.Size = new System.Drawing.Size(90, 13);
+            this.UADamageLabel.TabIndex = 23;
+            this.UADamageLabel.Text = "Damage Modifier:";
+            // 
+            // UnitAbilityDescLabel
+            // 
+            this.UnitAbilityDescLabel.AutoSize = true;
+            this.UnitAbilityDescLabel.Location = new System.Drawing.Point(320, 28);
+            this.UnitAbilityDescLabel.Name = "UnitAbilityDescLabel";
+            this.UnitAbilityDescLabel.Size = new System.Drawing.Size(10, 13);
+            this.UnitAbilityDescLabel.TabIndex = 22;
+            this.UnitAbilityDescLabel.Text = ".";
+            // 
+            // UnitAbilityNameLabel
+            // 
+            this.UnitAbilityNameLabel.AutoSize = true;
+            this.UnitAbilityNameLabel.Location = new System.Drawing.Point(320, 11);
+            this.UnitAbilityNameLabel.Name = "UnitAbilityNameLabel";
+            this.UnitAbilityNameLabel.Size = new System.Drawing.Size(10, 13);
+            this.UnitAbilityNameLabel.TabIndex = 21;
+            this.UnitAbilityNameLabel.Text = ".";
+            // 
+            // AbilityPictureBox
+            // 
+            this.AbilityPictureBox.Location = new System.Drawing.Point(284, 11);
+            this.AbilityPictureBox.Name = "AbilityPictureBox";
+            this.AbilityPictureBox.Size = new System.Drawing.Size(35, 35);
+            this.AbilityPictureBox.TabIndex = 11;
+            this.AbilityPictureBox.TabStop = false;
+            // 
+            // AbilityListBox
+            // 
+            this.AbilityListBox.FormattingEnabled = true;
+            this.AbilityListBox.Location = new System.Drawing.Point(143, 47);
+            this.AbilityListBox.Name = "AbilityListBox";
+            this.AbilityListBox.Size = new System.Drawing.Size(245, 121);
+            this.AbilityListBox.TabIndex = 2;
+            this.AbilityListBox.SelectedIndexChanged += new System.EventHandler(this.AbilityListBox_SelectedIndexChanged);
+            // 
+            // UnitAbilityListBox
+            // 
+            this.UnitAbilityListBox.FormattingEnabled = true;
+            this.UnitAbilityListBox.Location = new System.Drawing.Point(5, 11);
+            this.UnitAbilityListBox.Name = "UnitAbilityListBox";
+            this.UnitAbilityListBox.Size = new System.Drawing.Size(259, 30);
+            this.UnitAbilityListBox.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.UnitAbilityListBox, "The activated abiltiies on teh unit. Selecting one that affects stats will change" +
+        " them accordingly");
+            this.UnitAbilityListBox.SelectedIndexChanged += new System.EventHandler(this.UnitAbilityListBox_SelectedIndexChanged);
+            // 
+            // CollapseUnitSubunitPanel
+            // 
+            this.CollapseUnitSubunitPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CollapseUnitSubunitPanel.Location = new System.Drawing.Point(5, 966);
+            this.CollapseUnitSubunitPanel.Name = "CollapseUnitSubunitPanel";
+            this.CollapseUnitSubunitPanel.Size = new System.Drawing.Size(24, 19);
+            this.CollapseUnitSubunitPanel.TabIndex = 7;
+            this.CollapseUnitSubunitPanel.Tag = "";
+            this.CollapseUnitSubunitPanel.Text = "/\\";
+            this.CollapseUnitSubunitPanel.UseVisualStyleBackColor = true;
+            this.CollapseUnitSubunitPanel.Click += new System.EventHandler(this.CollapseUnitSubunitPanel_Click);
+            // 
+            // UnitSubunitPanel
+            // 
+            this.UnitSubunitPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.UnitSubunitPanel.Controls.Add(this.UnitSubsquadGotoButton);
+            this.UnitSubunitPanel.Controls.Add(this.UnitSubunitGotoButton);
+            this.UnitSubunitPanel.Controls.Add(this.SubsquadLabel);
+            this.UnitSubunitPanel.Controls.Add(this.SubUnitLabel);
+            this.UnitSubunitPanel.Controls.Add(this.UnitSubSquadListbox);
+            this.UnitSubunitPanel.Controls.Add(this.UnitSubunitListbox);
+            this.UnitSubunitPanel.Location = new System.Drawing.Point(32, 966);
+            this.UnitSubunitPanel.Name = "UnitSubunitPanel";
+            this.UnitSubunitPanel.Size = new System.Drawing.Size(1022, 166);
+            this.UnitSubunitPanel.TabIndex = 6;
+            this.UnitSubunitPanel.Tag = "";
+            // 
+            // UnitSubsquadGotoButton
+            // 
+            this.UnitSubsquadGotoButton.Location = new System.Drawing.Point(639, 24);
+            this.UnitSubsquadGotoButton.Name = "UnitSubsquadGotoButton";
+            this.UnitSubsquadGotoButton.Size = new System.Drawing.Size(75, 23);
+            this.UnitSubsquadGotoButton.TabIndex = 31;
+            this.UnitSubsquadGotoButton.Text = "Go to squad";
+            this.UnitSubsquadGotoButton.UseVisualStyleBackColor = true;
+            this.UnitSubsquadGotoButton.Click += new System.EventHandler(this.UnitSubsquadGotoButton_Click);
+            // 
+            // UnitSubunitGotoButton
+            // 
+            this.UnitSubunitGotoButton.Location = new System.Drawing.Point(270, 24);
+            this.UnitSubunitGotoButton.Name = "UnitSubunitGotoButton";
+            this.UnitSubunitGotoButton.Size = new System.Drawing.Size(75, 23);
+            this.UnitSubunitGotoButton.TabIndex = 30;
+            this.UnitSubunitGotoButton.Text = "Go to unit";
+            this.UnitSubunitGotoButton.UseVisualStyleBackColor = true;
+            this.UnitSubunitGotoButton.Click += new System.EventHandler(this.UnitSubunitGotoButton_Click);
+            // 
+            // SubsquadLabel
+            // 
+            this.SubsquadLabel.AutoSize = true;
+            this.SubsquadLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SubsquadLabel.Location = new System.Drawing.Point(403, 3);
+            this.SubsquadLabel.Name = "SubsquadLabel";
+            this.SubsquadLabel.Size = new System.Drawing.Size(68, 20);
+            this.SubsquadLabel.TabIndex = 29;
+            this.SubsquadLabel.Text = "Squads:";
+            // 
+            // SubUnitLabel
+            // 
+            this.SubUnitLabel.AutoSize = true;
+            this.SubUnitLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SubUnitLabel.Location = new System.Drawing.Point(3, 3);
+            this.SubUnitLabel.Name = "SubUnitLabel";
+            this.SubUnitLabel.Size = new System.Drawing.Size(50, 20);
+            this.SubUnitLabel.TabIndex = 28;
+            this.SubUnitLabel.Text = "Units:";
+            // 
+            // UnitSubSquadListbox
+            // 
+            this.UnitSubSquadListbox.FormattingEnabled = true;
+            this.UnitSubSquadListbox.Location = new System.Drawing.Point(407, 24);
+            this.UnitSubSquadListbox.Name = "UnitSubSquadListbox";
+            this.UnitSubSquadListbox.Size = new System.Drawing.Size(226, 134);
+            this.UnitSubSquadListbox.TabIndex = 1;
+            // 
+            // UnitSubunitListbox
+            // 
+            this.UnitSubunitListbox.FormattingEnabled = true;
+            this.UnitSubunitListbox.Location = new System.Drawing.Point(5, 24);
+            this.UnitSubunitListbox.Name = "UnitSubunitListbox";
+            this.UnitSubunitListbox.Size = new System.Drawing.Size(259, 134);
+            this.UnitSubunitListbox.TabIndex = 0;
+            // 
+            // CollapseUnitAbilityPanel
+            // 
+            this.CollapseUnitAbilityPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CollapseUnitAbilityPanel.Location = new System.Drawing.Point(5, 1150);
+            this.CollapseUnitAbilityPanel.Name = "CollapseUnitAbilityPanel";
+            this.CollapseUnitAbilityPanel.Size = new System.Drawing.Size(24, 19);
+            this.CollapseUnitAbilityPanel.TabIndex = 5;
+            this.CollapseUnitAbilityPanel.Tag = "";
+            this.CollapseUnitAbilityPanel.Text = "/\\";
+            this.CollapseUnitAbilityPanel.UseVisualStyleBackColor = true;
+            this.CollapseUnitAbilityPanel.Click += new System.EventHandler(this.CollapseUnitAbilityPanel_Click);
+            // 
+            // CollapseUnitStatPanel
+            // 
+            this.CollapseUnitStatPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CollapseUnitStatPanel.Location = new System.Drawing.Point(5, 590);
+            this.CollapseUnitStatPanel.Name = "CollapseUnitStatPanel";
+            this.CollapseUnitStatPanel.Size = new System.Drawing.Size(24, 19);
+            this.CollapseUnitStatPanel.TabIndex = 4;
+            this.CollapseUnitStatPanel.Tag = "";
+            this.CollapseUnitStatPanel.Text = "/\\";
+            this.CollapseUnitStatPanel.UseVisualStyleBackColor = true;
+            this.CollapseUnitStatPanel.Click += new System.EventHandler(this.CollapseUnitStatPanel_Click);
+            // 
+            // CollapseUnitTextPanel
+            // 
+            this.CollapseUnitTextPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CollapseUnitTextPanel.Location = new System.Drawing.Point(3, 9);
+            this.CollapseUnitTextPanel.Name = "CollapseUnitTextPanel";
+            this.CollapseUnitTextPanel.Size = new System.Drawing.Size(24, 19);
+            this.CollapseUnitTextPanel.TabIndex = 3;
+            this.CollapseUnitTextPanel.Tag = "";
+            this.CollapseUnitTextPanel.Text = "/\\";
+            this.CollapseUnitTextPanel.UseVisualStyleBackColor = true;
+            this.CollapseUnitTextPanel.Click += new System.EventHandler(this.CollapseUnitTextPanel_Click);
+            // 
+            // UnitStatPanel
+            // 
+            this.UnitStatPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.UnitStatPanel.Controls.Add(this.AlphaCheckBox);
+            this.UnitStatPanel.Controls.Add(this.FlagLabel);
+            this.UnitStatPanel.Controls.Add(this.CategoryLabel);
+            this.UnitStatPanel.Controls.Add(this.LocomotorLabel);
+            this.UnitStatPanel.Controls.Add(this.GarrisonTypeLabel);
+            this.UnitStatPanel.Controls.Add(this.GarrisonValueLabel);
+            this.UnitStatPanel.Controls.Add(this.GarrisonSlotLabel);
+            this.UnitStatPanel.Controls.Add(this.IncomingDamageLabel);
+            this.UnitStatPanel.Controls.Add(this.label3);
+            this.UnitStatPanel.Controls.Add(this.IncomingDamageBox);
+            this.UnitStatPanel.Controls.Add(this.UnitShieldAvgLabel);
+            this.UnitStatPanel.Controls.Add(this.UnitHpAvgLabel);
+            this.UnitStatPanel.Controls.Add(this.HPAccuracyLabel);
+            this.UnitStatPanel.Controls.Add(this.TimeToRegenLabel);
+            this.UnitStatPanel.Controls.Add(this.UnitsPerLabel);
+            this.UnitStatPanel.Controls.Add(this.TargetAccuracyLabel);
+            this.UnitStatPanel.Controls.Add(this.TargetAvgLabel);
+            this.UnitStatPanel.Controls.Add(this.TargetShieldLabel);
+            this.UnitStatPanel.Controls.Add(this.TargetArmorLabel);
+            this.UnitStatPanel.Controls.Add(this.label9);
+            this.UnitStatPanel.Controls.Add(this.TargetRangeBox);
+            this.UnitStatPanel.Controls.Add(this.label8);
+            this.UnitStatPanel.Controls.Add(this.TargetCategoryBox);
+            this.UnitStatPanel.Controls.Add(this.label6);
+            this.UnitStatPanel.Controls.Add(this.TargetShieldBox);
+            this.UnitStatPanel.Controls.Add(this.label4);
+            this.UnitStatPanel.Controls.Add(this.TargetArmorBox);
+            this.UnitStatPanel.Controls.Add(this.RawDPSLabel);
+            this.UnitStatPanel.Controls.Add(this.HPDetailLabel);
+            this.UnitStatPanel.Controls.Add(this.UnitHPListbox);
+            this.UnitStatPanel.Controls.Add(this.StatDisclaimerLabel);
+            this.UnitStatPanel.Controls.Add(this.UnitSpeedLabel);
+            this.UnitStatPanel.Controls.Add(this.UnitShieldLabel);
+            this.UnitStatPanel.Controls.Add(this.UnitHpLabel);
+            this.UnitStatPanel.Location = new System.Drawing.Point(32, 594);
+            this.UnitStatPanel.Name = "UnitStatPanel";
+            this.UnitStatPanel.Size = new System.Drawing.Size(1022, 359);
+            this.UnitStatPanel.TabIndex = 2;
+            this.UnitStatPanel.Tag = "";
+            // 
+            // AlphaCheckBox
+            // 
+            this.AlphaCheckBox.AutoSize = true;
+            this.AlphaCheckBox.Location = new System.Drawing.Point(3, 224);
+            this.AlphaCheckBox.Name = "AlphaCheckBox";
+            this.AlphaCheckBox.Size = new System.Drawing.Size(113, 17);
+            this.AlphaCheckBox.TabIndex = 39;
+            this.AlphaCheckBox.Text = "Alpha Strike Mode";
+            this.toolTip1.SetToolTip(this.AlphaCheckBox, "Use the base 10 logarithm of reload time in damage per \"second\" calculations to w" +
+        "eight alpha strikes over sustained damage.\r\nUsed in fighter Combat Power calcula" +
+        "tions");
+            this.AlphaCheckBox.UseVisualStyleBackColor = true;
+            this.AlphaCheckBox.CheckedChanged += new System.EventHandler(this.AlphaCheckBox_CheckedChanged);
+            // 
+            // FlagLabel
+            // 
+            this.FlagLabel.AutoSize = true;
+            this.FlagLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FlagLabel.Location = new System.Drawing.Point(182, 331);
+            this.FlagLabel.Name = "FlagLabel";
+            this.FlagLabel.Size = new System.Drawing.Size(115, 20);
+            this.FlagLabel.TabIndex = 38;
+            this.FlagLabel.Text = "Property Flags:";
+            // 
+            // CategoryLabel
+            // 
+            this.CategoryLabel.AutoSize = true;
+            this.CategoryLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CategoryLabel.Location = new System.Drawing.Point(208, 303);
+            this.CategoryLabel.Name = "CategoryLabel";
+            this.CategoryLabel.Size = new System.Drawing.Size(90, 20);
+            this.CategoryLabel.TabIndex = 37;
+            this.CategoryLabel.Text = "Categories:";
+            // 
+            // LocomotorLabel
+            // 
+            this.LocomotorLabel.AutoSize = true;
+            this.LocomotorLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LocomotorLabel.Location = new System.Drawing.Point(718, 25);
+            this.LocomotorLabel.Name = "LocomotorLabel";
+            this.LocomotorLabel.Size = new System.Drawing.Size(89, 20);
+            this.LocomotorLabel.TabIndex = 36;
+            this.LocomotorLabel.Text = "Locomotor:";
+            // 
+            // GarrisonTypeLabel
+            // 
+            this.GarrisonTypeLabel.AutoSize = true;
+            this.GarrisonTypeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GarrisonTypeLabel.Location = new System.Drawing.Point(318, 86);
+            this.GarrisonTypeLabel.Name = "GarrisonTypeLabel";
+            this.GarrisonTypeLabel.Size = new System.Drawing.Size(112, 20);
+            this.GarrisonTypeLabel.TabIndex = 35;
+            this.GarrisonTypeLabel.Text = "Garrison Type:";
+            this.toolTip1.SetToolTip(this.GarrisonTypeLabel, "What unit types can garrison in the unit, or what type this counts as when garris" +
+        "oned");
+            // 
+            // GarrisonValueLabel
+            // 
+            this.GarrisonValueLabel.AutoSize = true;
+            this.GarrisonValueLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GarrisonValueLabel.Location = new System.Drawing.Point(148, 86);
+            this.GarrisonValueLabel.Name = "GarrisonValueLabel";
+            this.GarrisonValueLabel.Size = new System.Drawing.Size(119, 20);
+            this.GarrisonValueLabel.TabIndex = 34;
+            this.GarrisonValueLabel.Text = "Garrison Value:";
+            this.toolTip1.SetToolTip(this.GarrisonValueLabel, "The number of slots taken when this unit is garrisoned\r\nOr the number of slots ta" +
+        "ken for the entire company");
+            // 
+            // GarrisonSlotLabel
+            // 
+            this.GarrisonSlotLabel.AutoSize = true;
+            this.GarrisonSlotLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GarrisonSlotLabel.Location = new System.Drawing.Point(3, 86);
+            this.GarrisonSlotLabel.Name = "GarrisonSlotLabel";
+            this.GarrisonSlotLabel.Size = new System.Drawing.Size(114, 20);
+            this.GarrisonSlotLabel.TabIndex = 33;
+            this.GarrisonSlotLabel.Text = "Garrison Slots:";
+            this.toolTip1.SetToolTip(this.GarrisonSlotLabel, "Number of slots this unit can garrison into itself");
+            // 
+            // IncomingDamageLabel
+            // 
+            this.IncomingDamageLabel.AutoSize = true;
+            this.IncomingDamageLabel.Location = new System.Drawing.Point(753, 238);
+            this.IncomingDamageLabel.Name = "IncomingDamageLabel";
+            this.IncomingDamageLabel.Size = new System.Drawing.Size(10, 13);
+            this.IncomingDamageLabel.TabIndex = 32;
+            this.IncomingDamageLabel.Text = ".";
+            this.toolTip1.SetToolTip(this.IncomingDamageLabel, "Health/shield divived by the modifer of the incoming damage type:\r\nThe effective " +
+        "amount of raw damage that can be taken for the type.\r\nInfinite health represents" +
+        " 0 damage taken");
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(719, 195);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(120, 13);
+            this.label3.TabIndex = 31;
+            this.label3.Text = "Incoming Damage Type";
+            // 
+            // IncomingDamageBox
+            // 
+            this.IncomingDamageBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.IncomingDamageBox.FormattingEnabled = true;
+            this.IncomingDamageBox.Location = new System.Drawing.Point(755, 211);
+            this.IncomingDamageBox.Name = "IncomingDamageBox";
+            this.IncomingDamageBox.Size = new System.Drawing.Size(175, 21);
+            this.IncomingDamageBox.TabIndex = 30;
+            this.toolTip1.SetToolTip(this.IncomingDamageBox, "Set the category to use for accuracy calculations");
+            this.IncomingDamageBox.SelectedIndexChanged += new System.EventHandler(this.IncomingDamageBox_SelectedIndexChanged);
+            // 
+            // UnitShieldAvgLabel
+            // 
+            this.UnitShieldAvgLabel.AutoSize = true;
+            this.UnitShieldAvgLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitShieldAvgLabel.Location = new System.Drawing.Point(318, 45);
+            this.UnitShieldAvgLabel.Name = "UnitShieldAvgLabel";
+            this.UnitShieldAvgLabel.Size = new System.Drawing.Size(73, 20);
+            this.UnitShieldAvgLabel.TabIndex = 29;
+            this.UnitShieldAvgLabel.Text = "Modified:";
+            this.toolTip1.SetToolTip(this.UnitShieldAvgLabel, resources.GetString("UnitShieldAvgLabel.ToolTip"));
+            // 
+            // UnitHpAvgLabel
+            // 
+            this.UnitHpAvgLabel.AutoSize = true;
+            this.UnitHpAvgLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitHpAvgLabel.Location = new System.Drawing.Point(288, 25);
+            this.UnitHpAvgLabel.Name = "UnitHpAvgLabel";
+            this.UnitHpAvgLabel.Size = new System.Drawing.Size(103, 20);
+            this.UnitHpAvgLabel.TabIndex = 28;
+            this.UnitHpAvgLabel.Text = "Modified HP: ";
+            this.toolTip1.SetToolTip(this.UnitHpAvgLabel, resources.GetString("UnitHpAvgLabel.ToolTip"));
+            // 
+            // HPAccuracyLabel
+            // 
+            this.HPAccuracyLabel.AutoSize = true;
+            this.HPAccuracyLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HPAccuracyLabel.Location = new System.Drawing.Point(720, 51);
+            this.HPAccuracyLabel.Name = "HPAccuracyLabel";
+            this.HPAccuracyLabel.Size = new System.Drawing.Size(131, 12);
+            this.HPAccuracyLabel.TabIndex = 27;
+            this.HPAccuracyLabel.Text = "Hardpoint Accuracy Modifiers:";
+            this.toolTip1.SetToolTip(this.HPAccuracyLabel, "Chance to miss shots on the target types\r\nRestrictions against a category are rep" +
+        "resented as 100% miss");
+            // 
+            // TimeToRegenLabel
+            // 
+            this.TimeToRegenLabel.AutoSize = true;
+            this.TimeToRegenLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TimeToRegenLabel.Location = new System.Drawing.Point(451, 45);
+            this.TimeToRegenLabel.Name = "TimeToRegenLabel";
+            this.TimeToRegenLabel.Size = new System.Drawing.Size(117, 20);
+            this.TimeToRegenLabel.TabIndex = 26;
+            this.TimeToRegenLabel.Text = "Time to Regen:";
+            this.toolTip1.SetToolTip(this.TimeToRegenLabel, "Minutes:seconds to regenerate fully depleted shields");
+            // 
+            // UnitsPerLabel
+            // 
+            this.UnitsPerLabel.AutoSize = true;
+            this.UnitsPerLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitsPerLabel.Location = new System.Drawing.Point(451, 23);
+            this.UnitsPerLabel.Name = "UnitsPerLabel";
+            this.UnitsPerLabel.Size = new System.Drawing.Size(73, 20);
+            this.UnitsPerLabel.TabIndex = 25;
+            this.UnitsPerLabel.Text = "Units per";
+            // 
+            // TargetAccuracyLabel
+            // 
+            this.TargetAccuracyLabel.AutoSize = true;
+            this.TargetAccuracyLabel.Location = new System.Drawing.Point(585, 238);
+            this.TargetAccuracyLabel.Name = "TargetAccuracyLabel";
+            this.TargetAccuracyLabel.Size = new System.Drawing.Size(10, 13);
+            this.TargetAccuracyLabel.TabIndex = 24;
+            this.TargetAccuracyLabel.Text = ".";
+            this.toolTip1.SetToolTip(this.TargetAccuracyLabel, resources.GetString("TargetAccuracyLabel.ToolTip"));
+            // 
+            // TargetAvgLabel
+            // 
+            this.TargetAvgLabel.AutoSize = true;
+            this.TargetAvgLabel.Location = new System.Drawing.Point(431, 277);
+            this.TargetAvgLabel.Name = "TargetAvgLabel";
+            this.TargetAvgLabel.Size = new System.Drawing.Size(92, 13);
+            this.TargetAvgLabel.TabIndex = 23;
+            this.TargetAvgLabel.Text = "Average at range:";
+            this.toolTip1.SetToolTip(this.TargetAvgLabel, "Median armor modifiers on the hardpoints in range");
+            // 
+            // TargetShieldLabel
+            // 
+            this.TargetShieldLabel.AutoSize = true;
+            this.TargetShieldLabel.Location = new System.Drawing.Point(431, 250);
+            this.TargetShieldLabel.Name = "TargetShieldLabel";
+            this.TargetShieldLabel.Size = new System.Drawing.Size(81, 13);
+            this.TargetShieldLabel.TabIndex = 22;
+            this.TargetShieldLabel.Text = "DPS on Target:";
+            this.toolTip1.SetToolTip(this.TargetShieldLabel, "The damage applied by weapons in range against the specified shield type");
+            // 
+            // TargetArmorLabel
+            // 
+            this.TargetArmorLabel.AutoSize = true;
+            this.TargetArmorLabel.Location = new System.Drawing.Point(431, 223);
+            this.TargetArmorLabel.Name = "TargetArmorLabel";
+            this.TargetArmorLabel.Size = new System.Drawing.Size(81, 13);
+            this.TargetArmorLabel.TabIndex = 21;
+            this.TargetArmorLabel.Text = "DPS on Target:";
+            this.toolTip1.SetToolTip(this.TargetArmorLabel, "The damage applied by weapons in range against the specified armor type");
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(214, 277);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(84, 13);
+            this.label9.TabIndex = 20;
+            this.label9.Text = "Range less than";
+            // 
+            // TargetRangeBox
+            // 
+            this.TargetRangeBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.TargetRangeBox.FormattingEnabled = true;
+            this.TargetRangeBox.Location = new System.Drawing.Point(304, 274);
+            this.TargetRangeBox.Name = "TargetRangeBox";
+            this.TargetRangeBox.Size = new System.Drawing.Size(121, 21);
+            this.TargetRangeBox.TabIndex = 19;
+            this.toolTip1.SetToolTip(this.TargetRangeBox, "The range of the unit\'s hardpoints. Select higher ranges to exclude short range h" +
+        "ardpoints from the calculation");
+            this.TargetRangeBox.SelectedIndexChanged += new System.EventHandler(this.TargetRangeBox_SelectedIndexChanged);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(551, 195);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(110, 13);
+            this.label8.TabIndex = 18;
+            this.label8.Text = "Target Category Type";
+            // 
+            // TargetCategoryBox
+            // 
+            this.TargetCategoryBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.TargetCategoryBox.FormattingEnabled = true;
+            this.TargetCategoryBox.Location = new System.Drawing.Point(588, 211);
+            this.TargetCategoryBox.Name = "TargetCategoryBox";
+            this.TargetCategoryBox.Size = new System.Drawing.Size(121, 21);
+            this.TargetCategoryBox.TabIndex = 17;
+            this.toolTip1.SetToolTip(this.TargetCategoryBox, "Set the category to use for accuracy calculations");
+            this.TargetCategoryBox.SelectedIndexChanged += new System.EventHandler(this.TargetCategoryBox_SelectedIndexChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(230, 250);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(70, 13);
+            this.label6.TabIndex = 16;
+            this.label6.Text = "Target Shield";
+            // 
+            // TargetShieldBox
+            // 
+            this.TargetShieldBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.TargetShieldBox.FormattingEnabled = true;
+            this.TargetShieldBox.Location = new System.Drawing.Point(304, 247);
+            this.TargetShieldBox.Name = "TargetShieldBox";
+            this.TargetShieldBox.Size = new System.Drawing.Size(121, 21);
+            this.TargetShieldBox.TabIndex = 15;
+            this.toolTip1.SetToolTip(this.TargetShieldBox, "Set the shield type to use for specific damage modifers");
+            this.TargetShieldBox.SelectedIndexChanged += new System.EventHandler(this.TargetShieldBox_SelectedIndexChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(230, 223);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(68, 13);
+            this.label4.TabIndex = 14;
+            this.label4.Text = "Target Armor";
+            // 
+            // TargetArmorBox
+            // 
+            this.TargetArmorBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.TargetArmorBox.FormattingEnabled = true;
+            this.TargetArmorBox.Location = new System.Drawing.Point(304, 220);
+            this.TargetArmorBox.Name = "TargetArmorBox";
+            this.TargetArmorBox.Size = new System.Drawing.Size(121, 21);
+            this.TargetArmorBox.TabIndex = 13;
+            this.toolTip1.SetToolTip(this.TargetArmorBox, "Set the armor type to use for specific damage modifers");
+            this.TargetArmorBox.SelectedIndexChanged += new System.EventHandler(this.TargetArmorBox_SelectedIndexChanged);
+            // 
+            // RawDPSLabel
+            // 
+            this.RawDPSLabel.AutoSize = true;
+            this.RawDPSLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.RawDPSLabel.Location = new System.Drawing.Point(3, 244);
+            this.RawDPSLabel.Name = "RawDPSLabel";
+            this.RawDPSLabel.Size = new System.Drawing.Size(10, 13);
+            this.RawDPSLabel.TabIndex = 12;
+            this.RawDPSLabel.Text = ".";
+            this.toolTip1.SetToolTip(this.RawDPSLabel, "Raw DPS is the direct number, average applied is the median amount applied across" +
+        " shield and armor types after modifiers\r\nAverage total is the DPS value used for" +
+        " Combat Power calculations");
+            // 
+            // HPDetailLabel
+            // 
+            this.HPDetailLabel.AutoSize = true;
+            this.HPDetailLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HPDetailLabel.Location = new System.Drawing.Point(431, 122);
+            this.HPDetailLabel.Name = "HPDetailLabel";
+            this.HPDetailLabel.Size = new System.Drawing.Size(52, 13);
+            this.HPDetailLabel.TabIndex = 11;
+            this.HPDetailLabel.Text = "HP Type:";
+            this.toolTip1.SetToolTip(this.HPDetailLabel, "Raw DPS is the direct number, average applied is the median amount applied across" +
+        " shield and armor types after modifiers");
+            // 
+            // UnitHPListbox
+            // 
+            this.UnitHPListbox.FormattingEnabled = true;
+            this.UnitHPListbox.Location = new System.Drawing.Point(3, 122);
+            this.UnitHPListbox.Name = "UnitHPListbox";
+            this.UnitHPListbox.Size = new System.Drawing.Size(422, 95);
+            this.UnitHPListbox.TabIndex = 10;
+            this.toolTip1.SetToolTip(this.UnitHPListbox, "Select a hardpoint type for more detailed information");
+            this.UnitHPListbox.SelectedIndexChanged += new System.EventHandler(this.UnitHPListbox_SelectedIndexChanged);
+            // 
+            // StatDisclaimerLabel
+            // 
+            this.StatDisclaimerLabel.AutoSize = true;
+            this.StatDisclaimerLabel.Location = new System.Drawing.Point(78, 3);
+            this.StatDisclaimerLabel.Name = "StatDisclaimerLabel";
+            this.StatDisclaimerLabel.Size = new System.Drawing.Size(66, 13);
+            this.StatDisclaimerLabel.TabIndex = 9;
+            this.StatDisclaimerLabel.Text = "Stats parsed";
+            // 
+            // UnitSpeedLabel
+            // 
+            this.UnitSpeedLabel.AutoSize = true;
+            this.UnitSpeedLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitSpeedLabel.Location = new System.Drawing.Point(3, 65);
+            this.UnitSpeedLabel.Name = "UnitSpeedLabel";
+            this.UnitSpeedLabel.Size = new System.Drawing.Size(60, 20);
+            this.UnitSpeedLabel.TabIndex = 4;
+            this.UnitSpeedLabel.Text = "Speed:";
+            // 
+            // UnitShieldLabel
+            // 
+            this.UnitShieldLabel.AutoSize = true;
+            this.UnitShieldLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitShieldLabel.Location = new System.Drawing.Point(3, 45);
+            this.UnitShieldLabel.Name = "UnitShieldLabel";
+            this.UnitShieldLabel.Size = new System.Drawing.Size(65, 20);
+            this.UnitShieldLabel.TabIndex = 3;
+            this.UnitShieldLabel.Text = "Shields:";
+            // 
+            // UnitHpLabel
+            // 
+            this.UnitHpLabel.AutoSize = true;
+            this.UnitHpLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitHpLabel.Location = new System.Drawing.Point(3, 25);
+            this.UnitHpLabel.Name = "UnitHpLabel";
+            this.UnitHpLabel.Size = new System.Drawing.Size(40, 20);
+            this.UnitHpLabel.TabIndex = 2;
+            this.UnitHpLabel.Text = "Hull:";
+            // 
+            // UnitBTSPanel
+            // 
+            this.UnitBTSPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.UnitBTSPanel.Controls.Add(this.BTSRichTextBox);
+            this.UnitBTSPanel.Location = new System.Drawing.Point(32, 1341);
+            this.UnitBTSPanel.Name = "UnitBTSPanel";
+            this.UnitBTSPanel.Size = new System.Drawing.Size(1022, 150);
+            this.UnitBTSPanel.TabIndex = 1;
+            this.UnitBTSPanel.Tag = "";
+            // 
+            // BTSRichTextBox
+            // 
+            this.BTSRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.BTSRichTextBox.Location = new System.Drawing.Point(0, 6);
+            this.BTSRichTextBox.Name = "BTSRichTextBox";
+            this.BTSRichTextBox.Size = new System.Drawing.Size(1056, 139);
+            this.BTSRichTextBox.TabIndex = 6;
+            this.BTSRichTextBox.Text = "";
+            // 
+            // UnitTextPanel
+            // 
+            this.UnitTextPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.UnitTextPanel.Controls.Add(this.MaintenanceLabel);
+            this.UnitTextPanel.Controls.Add(this.ShipNameRichTextBox);
+            this.UnitTextPanel.Controls.Add(this.UnitSkirmTimeLabel);
+            this.UnitTextPanel.Controls.Add(this.UnitSkirmCostLabel);
+            this.UnitTextPanel.Controls.Add(this.MapsAndBombingRunLabel);
+            this.UnitTextPanel.Controls.Add(this.SortValueLabel);
+            this.UnitTextPanel.Controls.Add(this.IconPictureBox);
+            this.UnitTextPanel.Controls.Add(this.UnitTooltipLabelRichTextBox);
+            this.UnitTextPanel.Controls.Add(this.UnitTimeLabel);
+            this.UnitTextPanel.Controls.Add(this.UnitInternalLabel);
+            this.UnitTextPanel.Controls.Add(this.UnitCrewLabel);
+            this.UnitTextPanel.Controls.Add(this.UnitNameLabel);
+            this.UnitTextPanel.Controls.Add(this.UnitCostLabel);
+            this.UnitTextPanel.Controls.Add(this.UnitPopLabel);
+            this.UnitTextPanel.Location = new System.Drawing.Point(32, 9);
+            this.UnitTextPanel.Name = "UnitTextPanel";
+            this.UnitTextPanel.Size = new System.Drawing.Size(1022, 338);
+            this.UnitTextPanel.TabIndex = 0;
+            this.UnitTextPanel.Tag = "";
+            // 
+            // MaintenanceLabel
+            // 
+            this.MaintenanceLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.MaintenanceLabel.AutoSize = true;
+            this.MaintenanceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MaintenanceLabel.Location = new System.Drawing.Point(702, 315);
+            this.MaintenanceLabel.Name = "MaintenanceLabel";
+            this.MaintenanceLabel.Size = new System.Drawing.Size(72, 13);
+            this.MaintenanceLabel.TabIndex = 16;
+            this.MaintenanceLabel.Text = "Maintenance:";
+            this.toolTip1.SetToolTip(this.MaintenanceLabel, "Galactic Conquest build cost in credits");
+            // 
+            // ShipNameRichTextBox
+            // 
+            this.ShipNameRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ShipNameRichTextBox.Location = new System.Drawing.Point(892, -6);
+            this.ShipNameRichTextBox.Name = "ShipNameRichTextBox";
+            this.ShipNameRichTextBox.Size = new System.Drawing.Size(130, 335);
+            this.ShipNameRichTextBox.TabIndex = 15;
+            this.ShipNameRichTextBox.Text = "";
+            // 
+            // UnitSkirmTimeLabel
+            // 
+            this.UnitSkirmTimeLabel.AutoSize = true;
+            this.UnitSkirmTimeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitSkirmTimeLabel.Location = new System.Drawing.Point(614, 53);
+            this.UnitSkirmTimeLabel.Name = "UnitSkirmTimeLabel";
+            this.UnitSkirmTimeLabel.Size = new System.Drawing.Size(73, 20);
+            this.UnitSkirmTimeLabel.TabIndex = 14;
+            this.UnitSkirmTimeLabel.Text = "Skirmish:";
+            this.toolTip1.SetToolTip(this.UnitSkirmTimeLabel, "Sklirmish build time in seconds");
+            // 
+            // UnitSkirmCostLabel
+            // 
+            this.UnitSkirmCostLabel.AutoSize = true;
+            this.UnitSkirmCostLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitSkirmCostLabel.Location = new System.Drawing.Point(200, 53);
+            this.UnitSkirmCostLabel.Name = "UnitSkirmCostLabel";
+            this.UnitSkirmCostLabel.Size = new System.Drawing.Size(73, 20);
+            this.UnitSkirmCostLabel.TabIndex = 13;
+            this.UnitSkirmCostLabel.Text = "Skirmish:";
+            this.toolTip1.SetToolTip(this.UnitSkirmCostLabel, "Skirmish build cost in credits");
+            // 
+            // MapsAndBombingRunLabel
+            // 
+            this.MapsAndBombingRunLabel.AutoSize = true;
+            this.MapsAndBombingRunLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MapsAndBombingRunLabel.Location = new System.Drawing.Point(3, 316);
+            this.MapsAndBombingRunLabel.Name = "MapsAndBombingRunLabel";
+            this.MapsAndBombingRunLabel.Size = new System.Drawing.Size(13, 20);
+            this.MapsAndBombingRunLabel.TabIndex = 12;
+            this.MapsAndBombingRunLabel.Text = ".";
+            // 
+            // SortValueLabel
+            // 
+            this.SortValueLabel.AutoSize = true;
+            this.SortValueLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SortValueLabel.Location = new System.Drawing.Point(200, 28);
+            this.SortValueLabel.Name = "SortValueLabel";
+            this.SortValueLabel.Size = new System.Drawing.Size(13, 20);
+            this.SortValueLabel.TabIndex = 11;
+            this.SortValueLabel.Text = ".";
+            // 
+            // IconPictureBox
+            // 
+            this.IconPictureBox.Location = new System.Drawing.Point(0, 0);
+            this.IconPictureBox.Name = "IconPictureBox";
+            this.IconPictureBox.Size = new System.Drawing.Size(75, 75);
+            this.IconPictureBox.TabIndex = 10;
+            this.IconPictureBox.TabStop = false;
+            // 
+            // UnitTooltipLabelRichTextBox
+            // 
+            this.UnitTooltipLabelRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.UnitTooltipLabelRichTextBox.Location = new System.Drawing.Point(0, 81);
+            this.UnitTooltipLabelRichTextBox.Name = "UnitTooltipLabelRichTextBox";
+            this.UnitTooltipLabelRichTextBox.Size = new System.Drawing.Size(886, 234);
+            this.UnitTooltipLabelRichTextBox.TabIndex = 4;
+            this.UnitTooltipLabelRichTextBox.Text = "";
+            // 
+            // UnitTimeLabel
+            // 
+            this.UnitTimeLabel.AutoSize = true;
+            this.UnitTimeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitTimeLabel.Location = new System.Drawing.Point(462, 52);
+            this.UnitTimeLabel.Name = "UnitTimeLabel";
+            this.UnitTimeLabel.Size = new System.Drawing.Size(86, 20);
+            this.UnitTimeLabel.TabIndex = 8;
+            this.UnitTimeLabel.Text = "Build Time:";
+            this.toolTip1.SetToolTip(this.UnitTimeLabel, "Galactic Conquest build time in seconds");
+            // 
+            // UnitInternalLabel
+            // 
+            this.UnitInternalLabel.AutoSize = true;
+            this.UnitInternalLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitInternalLabel.Location = new System.Drawing.Point(463, 6);
+            this.UnitInternalLabel.Name = "UnitInternalLabel";
+            this.UnitInternalLabel.Size = new System.Drawing.Size(76, 13);
+            this.UnitInternalLabel.TabIndex = 2;
+            this.UnitInternalLabel.Text = "Internal Name:";
+            this.UnitInternalLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.toolTip1.SetToolTip(this.UnitInternalLabel, "The name of the XML object within data files");
+            // 
+            // UnitCrewLabel
+            // 
+            this.UnitCrewLabel.AutoSize = true;
+            this.UnitCrewLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitCrewLabel.Location = new System.Drawing.Point(462, 28);
+            this.UnitCrewLabel.Name = "UnitCrewLabel";
+            this.UnitCrewLabel.Size = new System.Drawing.Size(49, 20);
+            this.UnitCrewLabel.TabIndex = 7;
+            this.UnitCrewLabel.Text = "Crew:";
+            // 
+            // UnitNameLabel
+            // 
+            this.UnitNameLabel.AutoSize = true;
+            this.UnitNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitNameLabel.Location = new System.Drawing.Point(80, 2);
+            this.UnitNameLabel.Name = "UnitNameLabel";
+            this.UnitNameLabel.Size = new System.Drawing.Size(13, 20);
+            this.UnitNameLabel.TabIndex = 1;
+            this.UnitNameLabel.Text = ".";
+            // 
+            // UnitCostLabel
+            // 
+            this.UnitCostLabel.AutoSize = true;
+            this.UnitCostLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitCostLabel.Location = new System.Drawing.Point(80, 53);
+            this.UnitCostLabel.Name = "UnitCostLabel";
+            this.UnitCostLabel.Size = new System.Drawing.Size(46, 20);
+            this.UnitCostLabel.TabIndex = 6;
+            this.UnitCostLabel.Text = "Cost:";
+            this.toolTip1.SetToolTip(this.UnitCostLabel, "Galactic Conquest build cost in credits");
+            // 
+            // UnitPopLabel
+            // 
+            this.UnitPopLabel.AutoSize = true;
+            this.UnitPopLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitPopLabel.Location = new System.Drawing.Point(80, 28);
+            this.UnitPopLabel.Name = "UnitPopLabel";
+            this.UnitPopLabel.Size = new System.Drawing.Size(41, 20);
+            this.UnitPopLabel.TabIndex = 5;
+            this.UnitPopLabel.Text = "Pop:";
+            // 
+            // SpaceRadioButton
+            // 
+            this.SpaceRadioButton.AutoSize = true;
+            this.SpaceRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SpaceRadioButton.Location = new System.Drawing.Point(6, 44);
+            this.SpaceRadioButton.Name = "SpaceRadioButton";
+            this.SpaceRadioButton.Size = new System.Drawing.Size(106, 22);
+            this.SpaceRadioButton.TabIndex = 45;
+            this.SpaceRadioButton.Text = "Space Units";
+            this.SpaceRadioButton.UseVisualStyleBackColor = true;
+            this.SpaceRadioButton.CheckedChanged += new System.EventHandler(this.SpaceRadioButton_CheckedChanged);
+            // 
+            // GroundRadioButton
+            // 
+            this.GroundRadioButton.AutoSize = true;
+            this.GroundRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GroundRadioButton.Location = new System.Drawing.Point(6, 74);
+            this.GroundRadioButton.Name = "GroundRadioButton";
+            this.GroundRadioButton.Size = new System.Drawing.Size(126, 22);
+            this.GroundRadioButton.TabIndex = 46;
+            this.GroundRadioButton.Text = "Ground Teams";
+            this.GroundRadioButton.UseVisualStyleBackColor = true;
+            this.GroundRadioButton.CheckedChanged += new System.EventHandler(this.GroundRadioButton_CheckedChanged);
+            // 
+            // tabPlanets
+            // 
+            this.tabPlanets.Controls.Add(this.PlanetListBox);
+            this.tabPlanets.Controls.Add(this.PlanetPanel);
+            this.tabPlanets.Location = new System.Drawing.Point(4, 22);
+            this.tabPlanets.Name = "tabPlanets";
+            this.tabPlanets.Size = new System.Drawing.Size(1487, 781);
+            this.tabPlanets.TabIndex = 4;
+            this.tabPlanets.Text = "Planets";
+            this.tabPlanets.UseVisualStyleBackColor = true;
+            // 
+            // PlanetListBox
+            // 
+            this.PlanetListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.PlanetListBox.FormattingEnabled = true;
+            this.PlanetListBox.Location = new System.Drawing.Point(3, 3);
+            this.PlanetListBox.Name = "PlanetListBox";
+            this.PlanetListBox.Size = new System.Drawing.Size(187, 784);
+            this.PlanetListBox.TabIndex = 0;
+            this.PlanetListBox.SelectedIndexChanged += new System.EventHandler(this.PlanetListBox_SelectedIndexChanged);
+            // 
+            // PlanetPanel
+            // 
+            this.PlanetPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.PlanetPanel.AutoScroll = true;
+            this.PlanetPanel.Controls.Add(this.label25);
+            this.PlanetPanel.Controls.Add(this.MapSearchBox);
+            this.PlanetPanel.Controls.Add(this.PlanetCoordinateLabel);
+            this.PlanetPanel.Controls.Add(this.PlanetGroundSlotsLabel);
+            this.PlanetPanel.Controls.Add(this.PlanetStarbaseLabel);
+            this.PlanetPanel.Controls.Add(this.PlanetMatchesLabel);
+            this.PlanetPanel.Controls.Add(this.PlanetGroundMapRB);
+            this.PlanetPanel.Controls.Add(this.PlanetSpaceMapRB);
+            this.PlanetPanel.Controls.Add(this.PlanetGroundUnitsGoToButton);
+            this.PlanetPanel.Controls.Add(this.PlanetSpaceUnitsGoToButton);
+            this.PlanetPanel.Controls.Add(this.PlanetStructuresGoToButton);
+            this.PlanetPanel.Controls.Add(this.button1);
+            this.PlanetPanel.Controls.Add(this.label23);
+            this.PlanetPanel.Controls.Add(this.button2);
+            this.PlanetPanel.Controls.Add(this.label24);
+            this.PlanetPanel.Controls.Add(this.button3);
+            this.PlanetPanel.Controls.Add(this.PlanetGoToGCButton);
+            this.PlanetPanel.Controls.Add(this.label22);
+            this.PlanetPanel.Controls.Add(this.PlanetGCListBox);
+            this.PlanetPanel.Controls.Add(this.label21);
+            this.PlanetPanel.Controls.Add(this.MapsInPlanetsListbox);
+            this.PlanetPanel.Controls.Add(this.label20);
+            this.PlanetPanel.Controls.Add(this.SharedSpaceMapListBox);
+            this.PlanetPanel.Controls.Add(this.label19);
+            this.PlanetPanel.Controls.Add(this.PlanetGroundListBox);
+            this.PlanetPanel.Controls.Add(this.label18);
+            this.PlanetPanel.Controls.Add(this.PlanetSpaceListBox);
+            this.PlanetPanel.Controls.Add(this.label17);
+            this.PlanetPanel.Controls.Add(this.PlanetStructureListBox);
+            this.PlanetPanel.Controls.Add(this.label16);
+            this.PlanetPanel.Controls.Add(this.label15);
+            this.PlanetPanel.Controls.Add(this.PlanetSearchBox);
+            this.PlanetPanel.Controls.Add(this.SharedMapListBox);
+            this.PlanetPanel.Controls.Add(this.PlanetShipyardLabel);
+            this.PlanetPanel.Controls.Add(this.PlanetHistoryTextBox);
+            this.PlanetPanel.Controls.Add(this.TerrainTypeLabel);
+            this.PlanetPanel.Controls.Add(this.SpaceMapLabel);
+            this.PlanetPanel.Controls.Add(this.GroundMapLabel);
+            this.PlanetPanel.Controls.Add(this.PlanetCreditLabel);
+            this.PlanetPanel.Controls.Add(this.PlanetCodeLabel);
+            this.PlanetPanel.Controls.Add(this.PlanetNameLabel);
+            this.PlanetPanel.Controls.Add(this.PlanetPictureBox);
+            this.PlanetPanel.Controls.Add(this.PlanetBTSTextBox);
+            this.PlanetPanel.Location = new System.Drawing.Point(196, 3);
+            this.PlanetPanel.Name = "PlanetPanel";
+            this.PlanetPanel.Size = new System.Drawing.Size(1288, 775);
+            this.PlanetPanel.TabIndex = 63;
+            // 
+            // label25
+            // 
+            this.label25.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label25.AutoSize = true;
+            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label25.Location = new System.Drawing.Point(1048, 24);
+            this.label25.Name = "label25";
+            this.label25.Size = new System.Drawing.Size(54, 16);
+            this.label25.TabIndex = 107;
+            this.label25.Text = "Search:";
+            // 
+            // MapSearchBox
+            // 
+            this.MapSearchBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MapSearchBox.Location = new System.Drawing.Point(1068, 45);
+            this.MapSearchBox.Name = "MapSearchBox";
+            this.MapSearchBox.Size = new System.Drawing.Size(187, 22);
+            this.MapSearchBox.TabIndex = 106;
+            // 
+            // PlanetCoordinateLabel
+            // 
+            this.PlanetCoordinateLabel.AutoSize = true;
+            this.PlanetCoordinateLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PlanetCoordinateLabel.Location = new System.Drawing.Point(393, 525);
+            this.PlanetCoordinateLabel.Name = "PlanetCoordinateLabel";
+            this.PlanetCoordinateLabel.Size = new System.Drawing.Size(10, 15);
+            this.PlanetCoordinateLabel.TabIndex = 105;
+            this.PlanetCoordinateLabel.Text = ".";
+            // 
+            // PlanetGroundSlotsLabel
+            // 
+            this.PlanetGroundSlotsLabel.AutoSize = true;
+            this.PlanetGroundSlotsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PlanetGroundSlotsLabel.Location = new System.Drawing.Point(759, 77);
+            this.PlanetGroundSlotsLabel.Name = "PlanetGroundSlotsLabel";
+            this.PlanetGroundSlotsLabel.Size = new System.Drawing.Size(111, 20);
+            this.PlanetGroundSlotsLabel.TabIndex = 104;
+            this.PlanetGroundSlotsLabel.Text = "Ground Slots: ";
+            // 
+            // PlanetStarbaseLabel
+            // 
+            this.PlanetStarbaseLabel.AutoSize = true;
+            this.PlanetStarbaseLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PlanetStarbaseLabel.Location = new System.Drawing.Point(636, 77);
+            this.PlanetStarbaseLabel.Name = "PlanetStarbaseLabel";
+            this.PlanetStarbaseLabel.Size = new System.Drawing.Size(82, 20);
+            this.PlanetStarbaseLabel.TabIndex = 103;
+            this.PlanetStarbaseLabel.Text = "Starbase: ";
+            // 
+            // PlanetMatchesLabel
+            // 
+            this.PlanetMatchesLabel.AutoSize = true;
+            this.PlanetMatchesLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PlanetMatchesLabel.Location = new System.Drawing.Point(3, 586);
+            this.PlanetMatchesLabel.Name = "PlanetMatchesLabel";
+            this.PlanetMatchesLabel.Size = new System.Drawing.Size(74, 20);
+            this.PlanetMatchesLabel.TabIndex = 102;
+            this.PlanetMatchesLabel.Text = "Matches:";
+            // 
+            // PlanetGroundMapRB
+            // 
+            this.PlanetGroundMapRB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.PlanetGroundMapRB.AutoSize = true;
+            this.PlanetGroundMapRB.Location = new System.Drawing.Point(1178, 24);
+            this.PlanetGroundMapRB.Name = "PlanetGroundMapRB";
+            this.PlanetGroundMapRB.Size = new System.Drawing.Size(60, 17);
+            this.PlanetGroundMapRB.TabIndex = 101;
+            this.PlanetGroundMapRB.Text = "Ground";
+            this.PlanetGroundMapRB.UseVisualStyleBackColor = true;
+            this.PlanetGroundMapRB.CheckedChanged += new System.EventHandler(this.PlanetGroundMapRB_CheckedChanged);
+            // 
+            // PlanetSpaceMapRB
+            // 
+            this.PlanetSpaceMapRB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.PlanetSpaceMapRB.AutoSize = true;
+            this.PlanetSpaceMapRB.Checked = true;
+            this.PlanetSpaceMapRB.Location = new System.Drawing.Point(1116, 24);
+            this.PlanetSpaceMapRB.Name = "PlanetSpaceMapRB";
+            this.PlanetSpaceMapRB.Size = new System.Drawing.Size(56, 17);
+            this.PlanetSpaceMapRB.TabIndex = 100;
+            this.PlanetSpaceMapRB.TabStop = true;
+            this.PlanetSpaceMapRB.Text = "Space";
+            this.PlanetSpaceMapRB.UseVisualStyleBackColor = true;
+            this.PlanetSpaceMapRB.CheckedChanged += new System.EventHandler(this.PlanetSpaceMapRB_CheckedChanged);
+            // 
+            // PlanetGroundUnitsGoToButton
+            // 
+            this.PlanetGroundUnitsGoToButton.Location = new System.Drawing.Point(370, 857);
+            this.PlanetGroundUnitsGoToButton.Name = "PlanetGroundUnitsGoToButton";
+            this.PlanetGroundUnitsGoToButton.Size = new System.Drawing.Size(43, 23);
+            this.PlanetGroundUnitsGoToButton.TabIndex = 99;
+            this.PlanetGroundUnitsGoToButton.Text = "Go to";
+            this.PlanetGroundUnitsGoToButton.UseVisualStyleBackColor = true;
+            this.PlanetGroundUnitsGoToButton.Click += new System.EventHandler(this.PlanetGroundUnitsGoToButton_Click);
+            // 
+            // PlanetSpaceUnitsGoToButton
+            // 
+            this.PlanetSpaceUnitsGoToButton.Location = new System.Drawing.Point(194, 857);
+            this.PlanetSpaceUnitsGoToButton.Name = "PlanetSpaceUnitsGoToButton";
+            this.PlanetSpaceUnitsGoToButton.Size = new System.Drawing.Size(43, 23);
+            this.PlanetSpaceUnitsGoToButton.TabIndex = 98;
+            this.PlanetSpaceUnitsGoToButton.Text = "Go to";
+            this.PlanetSpaceUnitsGoToButton.UseVisualStyleBackColor = true;
+            this.PlanetSpaceUnitsGoToButton.Click += new System.EventHandler(this.PlanetSpaceUnitsGoToButton_Click);
+            // 
+            // PlanetStructuresGoToButton
+            // 
+            this.PlanetStructuresGoToButton.Location = new System.Drawing.Point(16, 857);
+            this.PlanetStructuresGoToButton.Name = "PlanetStructuresGoToButton";
+            this.PlanetStructuresGoToButton.Size = new System.Drawing.Size(43, 23);
+            this.PlanetStructuresGoToButton.TabIndex = 97;
+            this.PlanetStructuresGoToButton.Text = "Go to";
+            this.PlanetStructuresGoToButton.UseVisualStyleBackColor = true;
+            this.PlanetStructuresGoToButton.Click += new System.EventHandler(this.PlanetStructuresGoToButton_Click);
+            // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(15, 542);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(97, 27);
+            this.button1.TabIndex = 96;
+            this.button1.Text = "Export...";
+            this.toolTip1.SetToolTip(this.button1, "Save the sort values and names of the unit list to a text file");
+            this.button1.UseVisualStyleBackColor = true;
+            // 
+            // label23
+            // 
+            this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label23.Location = new System.Drawing.Point(253, 574);
+            this.label23.Name = "label23";
+            this.label23.Size = new System.Drawing.Size(132, 104);
+            this.label23.TabIndex = 95;
+            this.label23.Text = "Any faction";
+            this.toolTip1.SetToolTip(this.label23, "Buildable only checks that the tech level is in the valid range, which roughly co" +
+        "rresponds to it being possible to be enabled.\r\nIt may return several units that " +
+        "are not buildable in practice");
+            // 
+            // button2
+            // 
+            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button2.Location = new System.Drawing.Point(253, 544);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(97, 27);
+            this.button2.TabIndex = 94;
+            this.button2.Text = "Filter...";
+            this.button2.UseVisualStyleBackColor = true;
+            // 
+            // label24
+            // 
+            this.label24.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label24.Location = new System.Drawing.Point(125, 572);
+            this.label24.Name = "label24";
+            this.label24.Size = new System.Drawing.Size(119, 93);
+            this.label24.TabIndex = 92;
+            this.label24.Text = "Name, Ascending";
+            // 
+            // button3
+            // 
+            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button3.Location = new System.Drawing.Point(138, 542);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(97, 27);
+            this.button3.TabIndex = 93;
+            this.button3.Text = "Sort...";
+            this.button3.UseVisualStyleBackColor = true;
+            // 
+            // PlanetGoToGCButton
+            // 
+            this.PlanetGoToGCButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.PlanetGoToGCButton.Location = new System.Drawing.Point(1003, 3);
+            this.PlanetGoToGCButton.Name = "PlanetGoToGCButton";
+            this.PlanetGoToGCButton.Size = new System.Drawing.Size(43, 23);
+            this.PlanetGoToGCButton.TabIndex = 91;
+            this.PlanetGoToGCButton.Text = "Go to";
+            this.PlanetGoToGCButton.UseVisualStyleBackColor = true;
+            // 
+            // label22
+            // 
+            this.label22.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label22.AutoSize = true;
+            this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label22.Location = new System.Drawing.Point(821, 3);
+            this.label22.Name = "label22";
+            this.label22.Size = new System.Drawing.Size(184, 16);
+            this.label22.TabIndex = 90;
+            this.label22.Text = "Campaigns containing planet:";
+            // 
+            // PlanetGCListBox
+            // 
+            this.PlanetGCListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.PlanetGCListBox.FormattingEnabled = true;
+            this.PlanetGCListBox.Location = new System.Drawing.Point(897, 26);
+            this.PlanetGCListBox.Name = "PlanetGCListBox";
+            this.PlanetGCListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.PlanetGCListBox.Size = new System.Drawing.Size(148, 901);
+            this.PlanetGCListBox.TabIndex = 89;
+            // 
+            // label21
+            // 
+            this.label21.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label21.AutoSize = true;
+            this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label21.Location = new System.Drawing.Point(1048, 3);
+            this.label21.Name = "label21";
+            this.label21.Size = new System.Drawing.Size(154, 16);
+            this.label21.TabIndex = 88;
+            this.label21.Text = "Maps in Filtered Planets:";
+            // 
+            // MapsInPlanetsListbox
+            // 
+            this.MapsInPlanetsListbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.MapsInPlanetsListbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MapsInPlanetsListbox.FormattingEnabled = true;
+            this.MapsInPlanetsListbox.Location = new System.Drawing.Point(1051, 73);
+            this.MapsInPlanetsListbox.Name = "MapsInPlanetsListbox";
+            this.MapsInPlanetsListbox.Size = new System.Drawing.Size(187, 2799);
+            this.MapsInPlanetsListbox.TabIndex = 87;
+            this.MapsInPlanetsListbox.SelectedIndexChanged += new System.EventHandler(this.MapsInPlanetsListbox_SelectedIndexChanged);
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label20.Location = new System.Drawing.Point(542, 689);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(154, 20);
+            this.label20.TabIndex = 86;
+            this.label20.Text = "Shared Space Maps";
+            // 
+            // SharedSpaceMapListBox
+            // 
+            this.SharedSpaceMapListBox.FormattingEnabled = true;
+            this.SharedSpaceMapListBox.Location = new System.Drawing.Point(545, 717);
+            this.SharedSpaceMapListBox.Name = "SharedSpaceMapListBox";
+            this.SharedSpaceMapListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.SharedSpaceMapListBox.Size = new System.Drawing.Size(170, 134);
+            this.SharedSpaceMapListBox.TabIndex = 85;
+            this.SharedSpaceMapListBox.SelectedIndexChanged += new System.EventHandler(this.SharedSpaceMapListBox_SelectedIndexChanged);
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label19.Location = new System.Drawing.Point(366, 689);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(153, 20);
+            this.label19.TabIndex = 84;
+            this.label19.Text = "Planet Ground Units";
+            // 
+            // PlanetGroundListBox
+            // 
+            this.PlanetGroundListBox.FormattingEnabled = true;
+            this.PlanetGroundListBox.Location = new System.Drawing.Point(369, 717);
+            this.PlanetGroundListBox.Name = "PlanetGroundListBox";
+            this.PlanetGroundListBox.Size = new System.Drawing.Size(170, 134);
+            this.PlanetGroundListBox.TabIndex = 83;
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label18.Location = new System.Drawing.Point(190, 689);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(145, 20);
+            this.label18.TabIndex = 82;
+            this.label18.Text = "Planet Space Units";
+            // 
+            // PlanetSpaceListBox
+            // 
+            this.PlanetSpaceListBox.FormattingEnabled = true;
+            this.PlanetSpaceListBox.Location = new System.Drawing.Point(193, 717);
+            this.PlanetSpaceListBox.Name = "PlanetSpaceListBox";
+            this.PlanetSpaceListBox.Size = new System.Drawing.Size(170, 134);
+            this.PlanetSpaceListBox.TabIndex = 81;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label17.Location = new System.Drawing.Point(12, 689);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(132, 20);
+            this.label17.TabIndex = 80;
+            this.label17.Text = "Planet Structures";
+            // 
+            // PlanetStructureListBox
+            // 
+            this.PlanetStructureListBox.FormattingEnabled = true;
+            this.PlanetStructureListBox.Location = new System.Drawing.Point(15, 717);
+            this.PlanetStructureListBox.Name = "PlanetStructureListBox";
+            this.PlanetStructureListBox.Size = new System.Drawing.Size(170, 134);
+            this.PlanetStructureListBox.TabIndex = 79;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label16.Location = new System.Drawing.Point(718, 689);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(162, 20);
+            this.label16.TabIndex = 77;
+            this.label16.Text = "Shared Ground Maps";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.Location = new System.Drawing.Point(3, 510);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(64, 20);
+            this.label15.TabIndex = 76;
+            this.label15.Text = "Search:";
+            // 
+            // PlanetSearchBox
+            // 
+            this.PlanetSearchBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PlanetSearchBox.Location = new System.Drawing.Point(73, 510);
+            this.PlanetSearchBox.Name = "PlanetSearchBox";
+            this.PlanetSearchBox.Size = new System.Drawing.Size(299, 26);
+            this.PlanetSearchBox.TabIndex = 75;
+            this.PlanetSearchBox.TextChanged += new System.EventHandler(this.PlanetSearchBox_TextChanged);
+            // 
+            // SharedMapListBox
+            // 
+            this.SharedMapListBox.FormattingEnabled = true;
+            this.SharedMapListBox.Location = new System.Drawing.Point(721, 717);
+            this.SharedMapListBox.Name = "SharedMapListBox";
+            this.SharedMapListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.SharedMapListBox.Size = new System.Drawing.Size(170, 134);
+            this.SharedMapListBox.TabIndex = 74;
+            this.SharedMapListBox.SelectedIndexChanged += new System.EventHandler(this.SharedMapListBox_SelectedIndexChanged);
+            // 
+            // PlanetShipyardLabel
+            // 
+            this.PlanetShipyardLabel.AutoSize = true;
+            this.PlanetShipyardLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PlanetShipyardLabel.Location = new System.Drawing.Point(509, 77);
+            this.PlanetShipyardLabel.Name = "PlanetShipyardLabel";
+            this.PlanetShipyardLabel.Size = new System.Drawing.Size(79, 20);
+            this.PlanetShipyardLabel.TabIndex = 73;
+            this.PlanetShipyardLabel.Text = "Shipyard: ";
+            // 
+            // PlanetHistoryTextBox
+            // 
+            this.PlanetHistoryTextBox.Location = new System.Drawing.Point(513, 209);
+            this.PlanetHistoryTextBox.Name = "PlanetHistoryTextBox";
+            this.PlanetHistoryTextBox.Size = new System.Drawing.Size(378, 295);
+            this.PlanetHistoryTextBox.TabIndex = 72;
+            this.PlanetHistoryTextBox.Text = "";
+            // 
+            // TerrainTypeLabel
+            // 
+            this.TerrainTypeLabel.AutoSize = true;
+            this.TerrainTypeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TerrainTypeLabel.Location = new System.Drawing.Point(392, 580);
+            this.TerrainTypeLabel.Name = "TerrainTypeLabel";
+            this.TerrainTypeLabel.Size = new System.Drawing.Size(100, 20);
+            this.TerrainTypeLabel.TabIndex = 69;
+            this.TerrainTypeLabel.Text = "Terrain Type:";
+            this.toolTip1.SetToolTip(this.TerrainTypeLabel, "Determines the terrain specific model");
+            // 
+            // SpaceMapLabel
+            // 
+            this.SpaceMapLabel.AutoSize = true;
+            this.SpaceMapLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SpaceMapLabel.Location = new System.Drawing.Point(392, 506);
+            this.SpaceMapLabel.Name = "SpaceMapLabel";
+            this.SpaceMapLabel.Size = new System.Drawing.Size(81, 16);
+            this.SpaceMapLabel.TabIndex = 68;
+            this.SpaceMapLabel.Text = "Space Map:";
+            // 
+            // GroundMapLabel
+            // 
+            this.GroundMapLabel.AutoSize = true;
+            this.GroundMapLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GroundMapLabel.Location = new System.Drawing.Point(392, 542);
+            this.GroundMapLabel.Name = "GroundMapLabel";
+            this.GroundMapLabel.Size = new System.Drawing.Size(85, 16);
+            this.GroundMapLabel.TabIndex = 67;
+            this.GroundMapLabel.Text = "Ground Map:";
+            // 
+            // PlanetCreditLabel
+            // 
+            this.PlanetCreditLabel.AutoSize = true;
+            this.PlanetCreditLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PlanetCreditLabel.Location = new System.Drawing.Point(509, 45);
+            this.PlanetCreditLabel.Name = "PlanetCreditLabel";
+            this.PlanetCreditLabel.Size = new System.Drawing.Size(70, 20);
+            this.PlanetCreditLabel.TabIndex = 66;
+            this.PlanetCreditLabel.Text = "Income: ";
+            // 
+            // PlanetCodeLabel
+            // 
+            this.PlanetCodeLabel.AutoSize = true;
+            this.PlanetCodeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PlanetCodeLabel.Location = new System.Drawing.Point(744, 3);
+            this.PlanetCodeLabel.Name = "PlanetCodeLabel";
+            this.PlanetCodeLabel.Size = new System.Drawing.Size(94, 16);
+            this.PlanetCodeLabel.TabIndex = 65;
+            this.PlanetCodeLabel.Text = "Internal Name:";
+            // 
+            // PlanetNameLabel
+            // 
+            this.PlanetNameLabel.AutoSize = true;
+            this.PlanetNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PlanetNameLabel.Location = new System.Drawing.Point(509, 3);
+            this.PlanetNameLabel.Name = "PlanetNameLabel";
+            this.PlanetNameLabel.Size = new System.Drawing.Size(13, 20);
+            this.PlanetNameLabel.TabIndex = 64;
+            this.PlanetNameLabel.Text = ".";
+            // 
+            // PlanetPictureBox
+            // 
+            this.PlanetPictureBox.Location = new System.Drawing.Point(3, 3);
+            this.PlanetPictureBox.Name = "PlanetPictureBox";
+            this.PlanetPictureBox.Size = new System.Drawing.Size(501, 501);
+            this.PlanetPictureBox.TabIndex = 63;
+            this.PlanetPictureBox.TabStop = false;
+            // 
+            // PlanetBTSTextBox
+            // 
+            this.PlanetBTSTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.PlanetBTSTextBox.Location = new System.Drawing.Point(7, 934);
+            this.PlanetBTSTextBox.Name = "PlanetBTSTextBox";
+            this.PlanetBTSTextBox.Size = new System.Drawing.Size(1038, 148);
+            this.PlanetBTSTextBox.TabIndex = 78;
+            this.PlanetBTSTextBox.Text = "";
+            // 
+            // tabGCs
+            // 
+            this.tabGCs.Controls.Add(this.panel2);
+            this.tabGCs.Location = new System.Drawing.Point(4, 22);
+            this.tabGCs.Name = "tabGCs";
+            this.tabGCs.Padding = new System.Windows.Forms.Padding(3);
+            this.tabGCs.Size = new System.Drawing.Size(1487, 781);
+            this.tabGCs.TabIndex = 1;
+            this.tabGCs.Text = "Conquests";
+            this.tabGCs.UseVisualStyleBackColor = true;
+            // 
+            // panel2
+            // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel2.AutoScroll = true;
+            this.panel2.Location = new System.Drawing.Point(405, 133);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(224, 103);
+            this.panel2.TabIndex = 64;
+            // 
+            // tabFactions
+            // 
+            this.tabFactions.Controls.Add(this.FactionPanel);
+            this.tabFactions.Controls.Add(this.FactionListBox);
+            this.tabFactions.Location = new System.Drawing.Point(4, 22);
+            this.tabFactions.Name = "tabFactions";
+            this.tabFactions.Padding = new System.Windows.Forms.Padding(3);
+            this.tabFactions.Size = new System.Drawing.Size(1487, 781);
+            this.tabFactions.TabIndex = 0;
+            this.tabFactions.Text = "Factions";
+            this.tabFactions.UseVisualStyleBackColor = true;
+            // 
+            // FactionPanel
+            // 
+            this.FactionPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.FactionPanel.AutoScroll = true;
+            this.FactionPanel.Controls.Add(this.HeroListbox);
+            this.FactionPanel.Controls.Add(this.listBox1);
+            this.FactionPanel.Controls.Add(this.label2);
+            this.FactionPanel.Controls.Add(this.label1);
+            this.FactionPanel.Controls.Add(this.FactionGroundListbox);
+            this.FactionPanel.Controls.Add(this.FactionSpaceListBox);
+            this.FactionPanel.Controls.Add(this.FactionInternalLabel);
+            this.FactionPanel.Controls.Add(this.FactionNameLabel);
+            this.FactionPanel.Location = new System.Drawing.Point(278, 6);
+            this.FactionPanel.Name = "FactionPanel";
+            this.FactionPanel.Size = new System.Drawing.Size(1203, 775);
+            this.FactionPanel.TabIndex = 1;
+            // 
+            // HeroListbox
+            // 
+            this.HeroListbox.AutoSize = true;
+            this.HeroListbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HeroListbox.Location = new System.Drawing.Point(12, 417);
+            this.HeroListbox.Name = "HeroListbox";
+            this.HeroListbox.Size = new System.Drawing.Size(65, 20);
+            this.HeroListbox.TabIndex = 7;
+            this.HeroListbox.Text = "Heroes:";
+            // 
+            // listBox1
+            // 
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.Location = new System.Drawing.Point(16, 440);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.Size = new System.Drawing.Size(275, 121);
+            this.listBox1.TabIndex = 6;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(12, 261);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(108, 20);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Ground Units:";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(12, 109);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(100, 20);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Space Units:";
+            // 
+            // FactionGroundListbox
+            // 
+            this.FactionGroundListbox.FormattingEnabled = true;
+            this.FactionGroundListbox.Location = new System.Drawing.Point(16, 284);
+            this.FactionGroundListbox.Name = "FactionGroundListbox";
+            this.FactionGroundListbox.Size = new System.Drawing.Size(275, 121);
+            this.FactionGroundListbox.TabIndex = 3;
+            // 
+            // FactionSpaceListBox
+            // 
+            this.FactionSpaceListBox.FormattingEnabled = true;
+            this.FactionSpaceListBox.Location = new System.Drawing.Point(16, 132);
+            this.FactionSpaceListBox.Name = "FactionSpaceListBox";
+            this.FactionSpaceListBox.Size = new System.Drawing.Size(275, 121);
+            this.FactionSpaceListBox.TabIndex = 2;
+            // 
+            // FactionInternalLabel
+            // 
+            this.FactionInternalLabel.AutoSize = true;
+            this.FactionInternalLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FactionInternalLabel.Location = new System.Drawing.Point(578, 14);
+            this.FactionInternalLabel.Name = "FactionInternalLabel";
+            this.FactionInternalLabel.Size = new System.Drawing.Size(113, 20);
+            this.FactionInternalLabel.TabIndex = 1;
+            this.FactionInternalLabel.Text = "Internal Name:";
+            this.FactionInternalLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // FactionNameLabel
+            // 
+            this.FactionNameLabel.AutoSize = true;
+            this.FactionNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FactionNameLabel.Location = new System.Drawing.Point(12, 14);
+            this.FactionNameLabel.Name = "FactionNameLabel";
+            this.FactionNameLabel.Size = new System.Drawing.Size(55, 20);
+            this.FactionNameLabel.TabIndex = 0;
+            this.FactionNameLabel.Text = "Name:";
+            // 
+            // FactionListBox
+            // 
+            this.FactionListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.FactionListBox.FormattingEnabled = true;
+            this.FactionListBox.Location = new System.Drawing.Point(6, 6);
+            this.FactionListBox.Name = "FactionListBox";
+            this.FactionListBox.Size = new System.Drawing.Size(266, 771);
+            this.FactionListBox.TabIndex = 0;
+            this.FactionListBox.SelectedIndexChanged += new System.EventHandler(this.FactionListBox_SelectedIndexChanged);
+            // 
+            // MainTab
+            // 
+            this.MainTab.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.MainTab.Controls.Add(this.tabFactions);
+            this.MainTab.Controls.Add(this.tabGCs);
+            this.MainTab.Controls.Add(this.tabPlanets);
+            this.MainTab.Controls.Add(this.tabUnits);
+            this.MainTab.Controls.Add(this.tabGov);
+            this.MainTab.Controls.Add(this.tabLookups);
+            this.MainTab.Controls.Add(this.tabGalaxy);
+            this.MainTab.Location = new System.Drawing.Point(0, 27);
+            this.MainTab.Name = "MainTab";
+            this.MainTab.SelectedIndex = 0;
+            this.MainTab.Size = new System.Drawing.Size(1495, 807);
+            this.MainTab.TabIndex = 2;
+            this.MainTab.SelectedIndexChanged += new System.EventHandler(this.MainTab_SelectedIndexChanged);
+            // 
+            // tabGov
+            // 
+            this.tabGov.Location = new System.Drawing.Point(4, 22);
+            this.tabGov.Name = "tabGov";
+            this.tabGov.Size = new System.Drawing.Size(1487, 781);
+            this.tabGov.TabIndex = 6;
+            this.tabGov.Text = "Government";
+            this.tabGov.UseVisualStyleBackColor = true;
+            // 
+            // tabGalaxy
+            // 
+            this.tabGalaxy.Location = new System.Drawing.Point(4, 22);
+            this.tabGalaxy.Name = "tabGalaxy";
+            this.tabGalaxy.Size = new System.Drawing.Size(1487, 781);
+            this.tabGalaxy.TabIndex = 7;
+            this.tabGalaxy.Text = "Galaxy Map";
+            this.tabGalaxy.UseVisualStyleBackColor = true;
+            // 
+            // contextMenuStrip2
+            // 
+            this.contextMenuStrip2.Name = "contextMenuStrip2";
+            this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
+            // 
+            // toolTip1
+            // 
+            this.toolTip1.AutoPopDelay = 15000;
+            this.toolTip1.InitialDelay = 500;
+            this.toolTip1.ReshowDelay = 100;
+            // 
+            // Holocron
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScroll = true;
+            this.ClientSize = new System.Drawing.Size(1495, 843);
+            this.Controls.Add(this.MainTab);
+            this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MainMenuStrip = this.menuStrip1;
+            this.Name = "Holocron";
+            this.Text = "EaWX Holocron";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
+            this.Load += new System.EventHandler(this.Holocron_Load);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
+            this.tabLookups.ResumeLayout(false);
+            this.LookupTabControl.ResumeLayout(false);
+            this.MatrixTab.ResumeLayout(false);
+            this.MatrixTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.MatrixGrid)).EndInit();
+            this.NameTab.ResumeLayout(false);
+            this.NameTab.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            this.MissionTab.ResumeLayout(false);
+            this.SpawnTab.ResumeLayout(false);
+            this.StandardFTab.ResumeLayout(false);
+            this.RandomFTab.ResumeLayout(false);
+            this.tabUnits.ResumeLayout(false);
+            this.tabUnits.PerformLayout();
+            this.Unitpanel.ResumeLayout(false);
+            this.UnitAvailPanel.ResumeLayout(false);
+            this.UnitAvailPanel.PerformLayout();
+            this.UnitAbilityPanel.ResumeLayout(false);
+            this.UnitAbilityPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AbilityPictureBox)).EndInit();
+            this.UnitSubunitPanel.ResumeLayout(false);
+            this.UnitSubunitPanel.PerformLayout();
+            this.UnitStatPanel.ResumeLayout(false);
+            this.UnitStatPanel.PerformLayout();
+            this.UnitBTSPanel.ResumeLayout(false);
+            this.UnitTextPanel.ResumeLayout(false);
+            this.UnitTextPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.IconPictureBox)).EndInit();
+            this.tabPlanets.ResumeLayout(false);
+            this.PlanetPanel.ResumeLayout(false);
+            this.PlanetPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.PlanetPictureBox)).EndInit();
+            this.tabGCs.ResumeLayout(false);
+            this.tabFactions.ResumeLayout(false);
+            this.FactionPanel.ResumeLayout(false);
+            this.FactionPanel.PerformLayout();
+            this.MainTab.ResumeLayout(false);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem backToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem forwardToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem submodsToolStripMenuItem;
+        private System.Windows.Forms.TabPage tabLookups;
+        private System.Windows.Forms.TabPage tabUnits;
+        private System.Windows.Forms.RadioButton UnitRadioButton;
+        private System.Windows.Forms.Panel Unitpanel;
+        private System.Windows.Forms.ListBox UnitListBox;
+        private System.Windows.Forms.RadioButton SpaceRadioButton;
+        private System.Windows.Forms.RadioButton GroundRadioButton;
+        private System.Windows.Forms.TabPage tabPlanets;
+        private System.Windows.Forms.TabPage tabGCs;
+        private System.Windows.Forms.TabPage tabFactions;
+        private System.Windows.Forms.ListBox FactionListBox;
+        private System.Windows.Forms.TabControl MainTab;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox UnitSearchTextBox;
+        private System.Windows.Forms.Panel UnitTextPanel;
+        private System.Windows.Forms.Label UnitInternalLabel;
+        private System.Windows.Forms.Label UnitNameLabel;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.RichTextBox UnitTooltipLabelRichTextBox;
+        private System.Windows.Forms.Panel UnitStatPanel;
+        private System.Windows.Forms.Label UnitTimeLabel;
+        private System.Windows.Forms.Label UnitCrewLabel;
+        private System.Windows.Forms.Label UnitCostLabel;
+        private System.Windows.Forms.Label UnitPopLabel;
+        private System.Windows.Forms.Label UnitSpeedLabel;
+        private System.Windows.Forms.Label UnitShieldLabel;
+        private System.Windows.Forms.Label UnitHpLabel;
+        private System.Windows.Forms.Panel UnitBTSPanel;
+        private System.Windows.Forms.RichTextBox BTSRichTextBox;
+        private System.Windows.Forms.TabPage tabGov;
+        private System.Windows.Forms.Label StatDisclaimerLabel;
+        private System.Windows.Forms.ListBox UnitHPListbox;
+        private System.Windows.Forms.PictureBox IconPictureBox;
+        private System.Windows.Forms.Panel FactionPanel;
+        private System.Windows.Forms.Label HeroListbox;
+        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ListBox FactionGroundListbox;
+        private System.Windows.Forms.ListBox FactionSpaceListBox;
+        private System.Windows.Forms.Label FactionInternalLabel;
+        private System.Windows.Forms.Label FactionNameLabel;
+        private System.Windows.Forms.Label HPDetailLabel;
+        private System.Windows.Forms.Label SortValueLabel;
+        private System.Windows.Forms.Label RawDPSLabel;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.ComboBox TargetCategoryBox;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ComboBox TargetShieldBox;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ComboBox TargetArmorBox;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.ComboBox TargetRangeBox;
+        private System.Windows.Forms.Label TargetShieldLabel;
+        private System.Windows.Forms.Label TargetArmorLabel;
+        private System.Windows.Forms.Label TargetAvgLabel;
+        private System.Windows.Forms.Label TargetAccuracyLabel;
+        private System.Windows.Forms.Label UnitsPerLabel;
+        private System.Windows.Forms.Label TimeToRegenLabel;
+        private System.Windows.Forms.Label MapsAndBombingRunLabel;
+        private System.Windows.Forms.Label HPAccuracyLabel;
+        private System.Windows.Forms.Label UnitSkirmTimeLabel;
+        private System.Windows.Forms.Label UnitSkirmCostLabel;
+        private System.Windows.Forms.Button CollapseUnitTextPanel;
+        private System.Windows.Forms.Button CollapseUnitAbilityPanel;
+        private System.Windows.Forms.Button CollapseUnitStatPanel;
+        private System.Windows.Forms.Button CollapseUnitSubunitPanel;
+        private System.Windows.Forms.Panel UnitSubunitPanel;
+        private System.Windows.Forms.ListBox UnitSubSquadListbox;
+        private System.Windows.Forms.ListBox UnitSubunitListbox;
+        private System.Windows.Forms.Label SubsquadLabel;
+        private System.Windows.Forms.Label SubUnitLabel;
+        private System.Windows.Forms.Button UnitSubsquadGotoButton;
+        private System.Windows.Forms.Button UnitSubunitGotoButton;
+        private System.Windows.Forms.Label UnitShieldAvgLabel;
+        private System.Windows.Forms.Label UnitHpAvgLabel;
+        private System.Windows.Forms.Label IncomingDamageLabel;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox IncomingDamageBox;
+        private System.Windows.Forms.Label UnitSortTypeLabel;
+        private System.Windows.Forms.Button UnitSortButton;
+        private System.Windows.Forms.Label GarrisonTypeLabel;
+        private System.Windows.Forms.Label GarrisonValueLabel;
+        private System.Windows.Forms.Label GarrisonSlotLabel;
+        private System.Windows.Forms.Label LocomotorLabel;
+        private System.Windows.Forms.RichTextBox ShipNameRichTextBox;
+        private System.Windows.Forms.Button CollapseUnitAvailPanel;
+        private System.Windows.Forms.Panel UnitAvailPanel;
+        private System.Windows.Forms.Panel UnitAbilityPanel;
+        private System.Windows.Forms.Label FlagLabel;
+        private System.Windows.Forms.Label CategoryLabel;
+        private System.Windows.Forms.CheckBox AlphaCheckBox;
+        private System.Windows.Forms.Button UnitFilterButton;
+        private System.Windows.Forms.Label UnitFIlterTypeLabel;
+        private System.Windows.Forms.RadioButton StructureRadioButton;
+        private System.Windows.Forms.RadioButton GroundHeroRadioButton;
+        private System.Windows.Forms.RadioButton HeroCompaniesRadioButton;
+        private System.Windows.Forms.RadioButton SpaceHeroRadioButton;
+        private System.Windows.Forms.ToolStripMenuItem readErrorsToolStripMenuItem;
+        private System.Windows.Forms.TabControl LookupTabControl;
+        private System.Windows.Forms.TabPage MatrixTab;
+        private System.Windows.Forms.TabPage MissionTab;
+        private System.Windows.Forms.TabPage SpawnTab;
+        private System.Windows.Forms.TabPage CorporationTab;
+        private System.Windows.Forms.TabPage StandardFTab;
+        private System.Windows.Forms.TabPage RandomFTab;
+        private System.Windows.Forms.TabPage RegionalTab;
+        private System.Windows.Forms.DataGridView MatrixGrid;
+        private System.Windows.Forms.TabPage NameTab;
+        private System.Windows.Forms.RadioButton MatrixGroundRB;
+        private System.Windows.Forms.RadioButton MatrixSpaceRB;
+        private System.Windows.Forms.RichTextBox MissionText;
+        private System.Windows.Forms.ListBox MissionListBox;
+        private System.Windows.Forms.RichTextBox SpawnText;
+        private System.Windows.Forms.ListBox SpawnListBox;
+        private System.Windows.Forms.RichTextBox StandardFText;
+        private System.Windows.Forms.ListBox StandardFListBox;
+        private System.Windows.Forms.RichTextBox RandomFText;
+        private System.Windows.Forms.ListBox RandomFListBox;
+        private System.Windows.Forms.TabPage HeroFTab;
+        private System.Windows.Forms.Label ShipnameDetailLabel;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox ShipnameSearchTextBox;
+        private System.Windows.Forms.ListBox ShipnameListBox;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.RadioButton ShipnameSortAllRB;
+        private System.Windows.Forms.RadioButton ShipnameSortHeroRB;
+        private System.Windows.Forms.RadioButton ShipnameSortUnitRB;
+        private System.Windows.Forms.RadioButton ShipnameSortNameRB;
+        private System.Windows.Forms.CheckBox ShipnameFilterMinorCheckbox;
+        private System.Windows.Forms.CheckBox ShipnameFilterGroundCheckbox;
+        private System.Windows.Forms.CheckBox ShipnameFilterSpaceCheckbox;
+        private System.Windows.Forms.CheckBox ShipnameFilterHeroCheckbox;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label ShipnameCountLabel;
+        private System.Windows.Forms.CheckBox ShipnamesFilterDuplicatesCheckbox;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label SpawnSetLabel;
+        private System.Windows.Forms.ListBox SpawnSetListBox;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.ListBox ReqStructuresListBox;
+        private System.Windows.Forms.Button GoToReqStructButton;
+        private System.Windows.Forms.Label BuildLimitLabel;
+        private System.Windows.Forms.Label ReqUnitLabel;
+        private System.Windows.Forms.Label InfluenceLabel;
+        private System.Windows.Forms.Label ShipyardLabel;
+        private System.Windows.Forms.Label AvailabilityLabel;
+        private System.Windows.Forms.TabPage ProjectileTab;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.ListBox FactionAvailableListbox;
+        private System.Windows.Forms.Label MaintenanceLabel;
+        private System.Windows.Forms.Label UnitAbilityDescLabel;
+        private System.Windows.Forms.Label UnitAbilityNameLabel;
+        private System.Windows.Forms.PictureBox AbilityPictureBox;
+        private System.Windows.Forms.ListBox AbilityListBox;
+        private System.Windows.Forms.ListBox UnitAbilityListBox;
+        private System.Windows.Forms.Label UASpeedLabel;
+        private System.Windows.Forms.Label UADefenseLabel;
+        private System.Windows.Forms.Label UAShieldLabel;
+        private System.Windows.Forms.Label UAReloadLabel;
+        private System.Windows.Forms.Label UADamageLabel;
+        private System.Windows.Forms.Button ClearAbilityButton;
+        private System.Windows.Forms.Button ExportButton;
+        private System.Windows.Forms.ListBox PlanetListBox;
+        private System.Windows.Forms.Panel PlanetPanel;
+        private System.Windows.Forms.Label label19;
+        private System.Windows.Forms.ListBox PlanetGroundListBox;
+        private System.Windows.Forms.Label label18;
+        private System.Windows.Forms.ListBox PlanetSpaceListBox;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.ListBox PlanetStructureListBox;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.TextBox PlanetSearchBox;
+        private System.Windows.Forms.ListBox SharedMapListBox;
+        private System.Windows.Forms.Label PlanetShipyardLabel;
+        private System.Windows.Forms.RichTextBox PlanetHistoryTextBox;
+        private System.Windows.Forms.Label TerrainTypeLabel;
+        private System.Windows.Forms.Label SpaceMapLabel;
+        private System.Windows.Forms.Label GroundMapLabel;
+        private System.Windows.Forms.Label PlanetCreditLabel;
+        private System.Windows.Forms.Label PlanetCodeLabel;
+        private System.Windows.Forms.Label PlanetNameLabel;
+        private System.Windows.Forms.PictureBox PlanetPictureBox;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Button PlanetGroundUnitsGoToButton;
+        private System.Windows.Forms.Button PlanetSpaceUnitsGoToButton;
+        private System.Windows.Forms.Button PlanetStructuresGoToButton;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Label label24;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button PlanetGoToGCButton;
+        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.ListBox PlanetGCListBox;
+        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.ListBox MapsInPlanetsListbox;
+        private System.Windows.Forms.Label label20;
+        private System.Windows.Forms.ListBox SharedSpaceMapListBox;
+        private System.Windows.Forms.RichTextBox PlanetBTSTextBox;
+        private System.Windows.Forms.RadioButton PlanetGroundMapRB;
+        private System.Windows.Forms.RadioButton PlanetSpaceMapRB;
+        private System.Windows.Forms.Label PlanetMatchesLabel;
+        private System.Windows.Forms.Label PlanetGroundSlotsLabel;
+        private System.Windows.Forms.Label PlanetStarbaseLabel;
+        private System.Windows.Forms.Label PlanetCoordinateLabel;
+        private System.Windows.Forms.TabPage tabGalaxy;
+        private System.Windows.Forms.Label UATimeLabel;
+        private System.Windows.Forms.Label UAStimLabel;
+        private System.Windows.Forms.Label AbilityLinkedLabel;
+        private System.Windows.Forms.Label AbilityTimeLabel;
+        private System.Windows.Forms.Label AbilityValueLabel;
+        private System.Windows.Forms.Label AbilityTargetUnitLabel;
+        private System.Windows.Forms.Label AbilityExcludedUnitLabel;
+        private System.Windows.Forms.Label AbilityTargetTypeLabel;
+        private System.Windows.Forms.Label AbilityActivationLabel;
+        private System.Windows.Forms.Label AbilityTypeLabel;
+        private System.Windows.Forms.Label AbilityRadiusLabel;
+        private System.Windows.Forms.Label UARadiusLabel;
+        private System.Windows.Forms.Label AbilityActivationRadiusLabel;
+        private System.Windows.Forms.Label AbilityStackingLabel;
+        private System.Windows.Forms.RadioButton FighterRadioButton;
+        private System.Windows.Forms.RadioButton SpaceStructureRadioButton;
+        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.TextBox MapSearchBox;
+        private System.Windows.Forms.TabPage NameFileTab;
+    }
+}
+
