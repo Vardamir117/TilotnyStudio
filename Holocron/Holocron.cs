@@ -420,6 +420,8 @@ namespace Holocron
             unit,
             govs,
             lookups,
+            galaxy,
+            autoresolve,
         }
 
         private void insert_history(int main, int secondary, string entity, bool go_to = false)
@@ -575,6 +577,9 @@ namespace Holocron
                     break;
                 case (int)historymaintabs.lookups:
                     FillMatrixLookup();
+                    break;
+                case (int)historymaintabs.autoresolve:
+                    FillAutoResolveContrastTable();
                     break;
                 default:
                     // code block
@@ -797,6 +802,37 @@ namespace Holocron
         private void MatrixGroundRB_CheckedChanged(object sender, EventArgs e)
         {
             FillMatrixLookup();
+        }
+
+        private void FillAutoResolveContrastTable()
+        {
+            AutoResolveContrastGrid.Columns.Clear();
+            AutoResolveContrastGrid.Rows.Clear();
+
+            AutoResolveContrastGrid.Columns.Add("EnemyType", "Enemy Type");
+            AutoResolveContrastGrid.Columns.Add("FriendlyType", "Friendly Type");
+            AutoResolveContrastGrid.Columns.Add("Weight", "Weight");
+
+            if (globals.ContrastValues.enemyTypes == null || globals.ContrastValues.friendlyTypeLists == null) return;
+
+            int entries = Math.Min(globals.ContrastValues.enemyTypes.Count, globals.ContrastValues.friendlyTypeLists.Count);
+            for (int i = 0; i < entries; i++)
+            {
+                string enemy = globals.ContrastValues.enemyTypes[i];
+                weighted_type_list weighted = globals.ContrastValues.friendlyTypeLists[i];
+                if (weighted.typeNames == null || weighted.weights == null) continue;
+
+                int pairCount = Math.Min(weighted.typeNames.Count, weighted.weights.Count);
+                for (int j = 0; j < pairCount; j++)
+                {
+                    AutoResolveContrastGrid.Rows.Add(enemy, weighted.typeNames[j], weighted.weights[j].ToString("0.###", CultureInfo.InvariantCulture));
+                }
+            }
+
+            for (int i = 0; i < AutoResolveContrastGrid.Columns.Count; i++)
+            {
+                AutoResolveContrastGrid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
+            }
         }
 
         private void FillMatrixLookup()

@@ -263,6 +263,7 @@
             this.tabGov = new System.Windows.Forms.TabPage();
             this.tabGalaxy = new System.Windows.Forms.TabPage();
             this.tabAutoResolve = new System.Windows.Forms.TabPage();
+            this.AutoResolveContrastGrid = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.menuStrip1.SuspendLayout();
@@ -293,6 +294,7 @@
             this.tabFactions.SuspendLayout();
             this.FactionPanel.SuspendLayout();
             this.MainTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveContrastGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // contextMenuStrip1
@@ -2895,12 +2897,27 @@
             // 
             // tabAutoResolve
             // 
+            this.tabAutoResolve.Controls.Add(this.AutoResolveContrastGrid);
             this.tabAutoResolve.Location = new System.Drawing.Point(4, 22);
             this.tabAutoResolve.Name = "tabAutoResolve";
             this.tabAutoResolve.Size = new System.Drawing.Size(1487, 781);
             this.tabAutoResolve.TabIndex = 8;
             this.tabAutoResolve.Text = "Auto resolve";
             this.tabAutoResolve.UseVisualStyleBackColor = true;
+            // 
+            // AutoResolveContrastGrid
+            // 
+            this.AutoResolveContrastGrid.AllowUserToAddRows = false;
+            this.AutoResolveContrastGrid.AllowUserToDeleteRows = false;
+            this.AutoResolveContrastGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.AutoResolveContrastGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.AutoResolveContrastGrid.Location = new System.Drawing.Point(3, 3);
+            this.AutoResolveContrastGrid.Name = "AutoResolveContrastGrid";
+            this.AutoResolveContrastGrid.ReadOnly = true;
+            this.AutoResolveContrastGrid.Size = new System.Drawing.Size(1481, 775);
+            this.AutoResolveContrastGrid.TabIndex = 0;
             // 
             // contextMenuStrip2
             // 
@@ -2967,6 +2984,7 @@
             this.FactionPanel.ResumeLayout(false);
             this.FactionPanel.PerformLayout();
             this.MainTab.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveContrastGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -3209,6 +3227,7 @@
         private System.Windows.Forms.TextBox MapSearchBox;
         private System.Windows.Forms.TabPage NameFileTab;
         private System.Windows.Forms.TabPage tabAutoResolve;
+        private System.Windows.Forms.DataGridView AutoResolveContrastGrid;
     }
 }
 
