@@ -262,6 +262,7 @@
             this.MainTab = new System.Windows.Forms.TabControl();
             this.tabGov = new System.Windows.Forms.TabPage();
             this.tabGalaxy = new System.Windows.Forms.TabPage();
+            this.tabAutoResolve = new System.Windows.Forms.TabPage();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.menuStrip1.SuspendLayout();
@@ -2865,6 +2866,7 @@
             this.MainTab.Controls.Add(this.tabGov);
             this.MainTab.Controls.Add(this.tabLookups);
             this.MainTab.Controls.Add(this.tabGalaxy);
+            this.MainTab.Controls.Add(this.tabAutoResolve);
             this.MainTab.Location = new System.Drawing.Point(0, 27);
             this.MainTab.Name = "MainTab";
             this.MainTab.SelectedIndex = 0;
@@ -2889,6 +2891,15 @@
             this.tabGalaxy.TabIndex = 7;
             this.tabGalaxy.Text = "Galaxy Map";
             this.tabGalaxy.UseVisualStyleBackColor = true;
+            // 
+            // tabAutoResolve
+            // 
+            this.tabAutoResolve.Location = new System.Drawing.Point(4, 22);
+            this.tabAutoResolve.Name = "tabAutoResolve";
+            this.tabAutoResolve.Size = new System.Drawing.Size(1487, 781);
+            this.tabAutoResolve.TabIndex = 8;
+            this.tabAutoResolve.Text = "Auto resolve";
+            this.tabAutoResolve.UseVisualStyleBackColor = true;
             // 
             // contextMenuStrip2
             // 
@@ -3196,6 +3207,7 @@
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.TextBox MapSearchBox;
         private System.Windows.Forms.TabPage NameFileTab;
+        private System.Windows.Forms.TabPage tabAutoResolve;
     }
 }
 
