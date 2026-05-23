@@ -595,7 +595,6 @@ namespace Holocron
                     FillMatrixLookup();
                     break;
                 case (int)historymaintabs.autoresolve:
-                    FillAutoResolveContrastTable();
                     FillAutoResolveUnitSelection();
                     FillAutoResolveFactionSelection();
                     AutoResolveRefreshSideListboxes();
@@ -823,37 +822,6 @@ namespace Holocron
             FillMatrixLookup();
         }
 
-        private void FillAutoResolveContrastTable()
-        {
-            AutoResolveContrastGrid.Columns.Clear();
-            AutoResolveContrastGrid.Rows.Clear();
-
-            AutoResolveContrastGrid.Columns.Add("EnemyType", "Enemy Type");
-            AutoResolveContrastGrid.Columns.Add("FriendlyType", "Friendly Type");
-            AutoResolveContrastGrid.Columns.Add("Weight", "Weight");
-
-            if (globals.ContrastValues.enemyTypes == null || globals.ContrastValues.friendlyTypeLists == null) return;
-
-            int entries = Math.Min(globals.ContrastValues.enemyTypes.Count, globals.ContrastValues.friendlyTypeLists.Count);
-            for (int i = 0; i < entries; i++)
-            {
-                string enemy = globals.ContrastValues.enemyTypes[i];
-                weighted_type_list weighted = globals.ContrastValues.friendlyTypeLists[i];
-                if (weighted.typeNames == null || weighted.weights == null) continue;
-
-                int pairCount = Math.Min(weighted.typeNames.Count, weighted.weights.Count);
-                for (int j = 0; j < pairCount; j++)
-                {
-                    AutoResolveContrastGrid.Rows.Add(enemy, weighted.typeNames[j], weighted.weights[j].ToString("0.###", CultureInfo.InvariantCulture));
-                }
-            }
-
-            for (int i = 0; i < AutoResolveContrastGrid.Columns.Count; i++)
-            {
-                AutoResolveContrastGrid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
-            }
-        }
-
         private void FillAutoResolveUnitSelection()
         {
             if (AutoResolveUnitComboBox.Items.Count > 0) return;
@@ -883,6 +851,157 @@ namespace Holocron
 
             foreach (autoresolve_entry entry in autoResolveSideA) AutoResolveSideAListBox.Items.Add(entry);
             foreach (autoresolve_entry entry in autoResolveSideB) AutoResolveSideBListBox.Items.Add(entry);
+
+            AutoResolveUpdatePowerDisplay();
+        }
+
+        private float AutoResolveGetContrastWeight(string enemyType, string friendlyType)
+        {
+            if (globals.ContrastValues.enemyTypes == null || globals.ContrastValues.friendlyTypeLists == null) return 1f;
+
+            int entries = Math.Min(globals.ContrastValues.enemyTypes.Count, globals.ContrastValues.friendlyTypeLists.Count);
+            for (int i = 0; i < entries; i++)
+            {
+                if (!string.Equals(globals.ContrastValues.enemyTypes[i], enemyType, StringComparison.OrdinalIgnoreCase)) continue;
+
+                weighted_type_list weighted = globals.ContrastValues.friendlyTypeLists[i];
+                if (weighted.typeNames == null || weighted.weights == null) return 1f;
+
+                int pairCount = Math.Min(weighted.typeNames.Count, weighted.weights.Count);
+                for (int j = 0; j < pairCount; j++)
+                {
+                    if (string.Equals(weighted.typeNames[j], friendlyType, StringComparison.OrdinalIgnoreCase)) return weighted.weights[j];
+                }
+                return 1f;
+            }
+
+            return 1f;
+        }
+
+        private float AutoResolveGetContrastScale(string enemyType)
+        {
+            if (globals.ContrastValues.typeScale == null) return 1f;
+
+            float value;
+            if (globals.ContrastValues.typeScale.TryGetValue(enemyType, out value)) return value;
+
+            foreach (KeyValuePair<string, float> kv in globals.ContrastValues.typeScale)
+            {
+                if (string.Equals(kv.Key, enemyType, StringComparison.OrdinalIgnoreCase)) return kv.Value;
+            }
+
+            return 1f;
+        }
+
+        private Dictionary<string, float> AutoResolveBuildCategoryPowerMap(List<autoresolve_entry> side)
+        {
+            Dictionary<string, float> values = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (autoresolve_entry entry in side)
+            {
+                float power = Math.Max(0f, entry.source.cp) * Math.Max(1, entry.quantity);
+                if (power <= 0f || entry.source.categories == null) continue;
+
+                HashSet<string> unitCats = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                foreach (string category in entry.source.categories)
+                {
+                    if (string.IsNullOrWhiteSpace(category) || !unitCats.Add(category)) continue;
+
+                    float extant;
+                    if (values.TryGetValue(category, out extant)) values[category] = extant + power;
+                    else values[category] = power;
+                }
+            }
+
+            return values;
+        }
+
+        private float AutoResolveGetRawPower(List<autoresolve_entry> side)
+        {
+            float total = 0f;
+            foreach (autoresolve_entry entry in side)
+            {
+                total += Math.Max(0f, entry.source.cp) * Math.Max(1, entry.quantity);
+            }
+            return total;
+        }
+
+        private string AutoResolveBuildSidePowerDetails(string sideName, List<autoresolve_entry> ownEntries, List<autoresolve_entry> opposingEntries)
+        {
+            StringBuilder sb = new StringBuilder();
+            Dictionary<string, float> ownCategories = AutoResolveBuildCategoryPowerMap(ownEntries);
+            Dictionary<string, float> opposingCategories = AutoResolveBuildCategoryPowerMap(opposingEntries);
+
+            sb.AppendLine(sideName + " raw combat power: " + AutoResolveGetRawPower(ownEntries).ToString("0.###", CultureInfo.InvariantCulture));
+
+            if (ownCategories.Count == 0)
+            {
+                sb.AppendLine("  No contrast categories available for this side.");
+                return sb.ToString().TrimEnd();
+            }
+
+            sb.AppendLine("  Contrast categories present:");
+            foreach (KeyValuePair<string, float> own in ownCategories.OrderByDescending(x => x.Value))
+            {
+                sb.AppendLine("    " + own.Key + ": " + own.Value.ToString("0.###", CultureInfo.InvariantCulture));
+            }
+
+            if (opposingCategories.Count == 0)
+            {
+                sb.AppendLine("  No opposing categories available to evaluate multipliers.");
+                return sb.ToString().TrimEnd();
+            }
+
+            sb.AppendLine("  Effective power options (best multiplier per friendly category):");
+            float effectiveTotal = 0f;
+            foreach (KeyValuePair<string, float> own in ownCategories.OrderByDescending(x => x.Value))
+            {
+                float bestWeight = 1f;
+                float bestScale = 1f;
+                float bestMultiplier = 1f;
+                string bestEnemyType = "(default)";
+
+                foreach (KeyValuePair<string, float> enemy in opposingCategories)
+                {
+                    float weight = AutoResolveGetContrastWeight(enemy.Key, own.Key);
+                    float scale = AutoResolveGetContrastScale(enemy.Key);
+                    float multiplier = weight * scale;
+                    if (multiplier > bestMultiplier)
+                    {
+                        bestMultiplier = multiplier;
+                        bestWeight = weight;
+                        bestScale = scale;
+                        bestEnemyType = enemy.Key;
+                    }
+                }
+
+                float weightedPower = own.Value * bestMultiplier;
+                if (weightedPower > effectiveTotal) effectiveTotal = weightedPower;
+                sb.AppendLine("    " + own.Key + " base " + own.Value.ToString("0.###", CultureInfo.InvariantCulture) +
+                    " | best vs " + bestEnemyType +
+                    " (weight " + bestWeight.ToString("0.###", CultureInfo.InvariantCulture) +
+                    " x scale " + bestScale.ToString("0.###", CultureInfo.InvariantCulture) +
+                    " = " + bestMultiplier.ToString("0.###", CultureInfo.InvariantCulture) +
+                    ") => " + weightedPower.ToString("0.###", CultureInfo.InvariantCulture));
+            }
+
+            sb.AppendLine("  Effective combat power total (highest option): " + effectiveTotal.ToString("0.###", CultureInfo.InvariantCulture));
+            return sb.ToString().TrimEnd();
+        }
+
+        private string AutoResolveBuildPowerDisplay()
+        {
+            string battleType = AutoResolveBattleTypeComboBox.SelectedIndex == 0 ? "Space" : (AutoResolveBattleTypeComboBox.SelectedIndex == 1 ? "Land" : "(not selected)");
+            return "Combat Power Preview\r\n" +
+                "Battle Type: " + battleType + "\r\n\r\n" +
+                AutoResolveBuildSidePowerDetails("Attacker", autoResolveSideA, autoResolveSideB) +
+                "\r\n\r\n" +
+                AutoResolveBuildSidePowerDetails("Defender", autoResolveSideB, autoResolveSideA);
+        }
+
+        private void AutoResolveUpdatePowerDisplay()
+        {
+            AutoResolveResultTextBox.Text = AutoResolveBuildPowerDisplay();
         }
 
         private void FillAutoResolveFactionSelection()
@@ -903,6 +1022,7 @@ namespace Holocron
 
             AutoResolveSideAFactionComboBox.SelectedIndex = autoResolveSideAOwner;
             AutoResolveSideBFactionComboBox.SelectedIndex = autoResolveSideBOwner;
+            AutoResolveUpdatePowerDisplay();
         }
 
         private bool AutoResolveUnitHasSufficientInformation(unit candidate)
@@ -910,7 +1030,7 @@ namespace Holocron
             return candidate.cp > 0 && !candidate.unitname.Contains("Dummy") && !candidate.unitname.Contains("Death_Clone");
         }
 
-        private autoresolve_entry AutoResolveCreateEntryFromSelected(int owner, bool attacker)
+        private autoresolve_entry AutoResolveCreateEntryFromSelected()
         {
             autoresolve_entry entry = new autoresolve_entry();
             if (AutoResolveUnitComboBox.SelectedItem == null) return entry;
@@ -924,7 +1044,7 @@ namespace Holocron
         {
             if (AutoResolveUnitComboBox.SelectedItem == null) return;
             if (AutoResolveSideAFactionComboBox.SelectedIndex >= 0) autoResolveSideAOwner = AutoResolveSideAFactionComboBox.SelectedIndex;
-            autoresolve_entry entry = AutoResolveCreateEntryFromSelected(autoResolveSideAOwner, true);
+            autoresolve_entry entry = AutoResolveCreateEntryFromSelected();
 
             int extant = autoResolveSideA.FindIndex(x => x.source.unitname == entry.source.unitname);
             if (extant >= 0)
@@ -942,7 +1062,7 @@ namespace Holocron
         {
             if (AutoResolveUnitComboBox.SelectedItem == null) return;
             if (AutoResolveSideBFactionComboBox.SelectedIndex >= 0) autoResolveSideBOwner = AutoResolveSideBFactionComboBox.SelectedIndex;
-            autoresolve_entry entry = AutoResolveCreateEntryFromSelected(autoResolveSideBOwner, false);
+            autoresolve_entry entry = AutoResolveCreateEntryFromSelected();
 
             int extant = autoResolveSideB.FindIndex(x => x.source.unitname == entry.source.unitname);
             if (extant >= 0)
@@ -966,6 +1086,127 @@ namespace Holocron
         {
             autoResolveSideB.Clear();
             AutoResolveRefreshSideListboxes();
+        }
+
+        private void AutoResolveInputChanged(object sender, EventArgs e)
+        {
+            AutoResolveUpdatePowerDisplay();
+        }
+
+        private List<AutoResolveCombatant> AutoResolveBuildCombatants(List<autoresolve_entry> entries, int owner, bool space)
+        {
+            List<AutoResolveCombatant> corenne = new List<AutoResolveCombatant>();
+
+            foreach (autoresolve_entry entry in entries)
+            {
+                for (int i = 0; i < Math.Max(1, entry.quantity); i++)
+                {
+                    AutoResolveCombatant combatant = new AutoResolveCombatant();
+                    combatant.TypeName = entry.source.unitname;
+                    combatant.OwnerId = owner;
+                    combatant.Power = Math.Max(0.01f, entry.source.cp);
+                    combatant.Health = 1.0f;
+                    combatant.IsEscort = false;
+                    combatant.IsTransport = entry.source.behaviors != null && entry.source.behaviors.Contains("Transport");
+                    combatant.ContrastCategories = new List<string>();
+                    foreach (string category in entry.source.categories) combatant.ContrastCategories.Add(category);
+                    corenne.Add(combatant);
+                }
+            }
+
+            return corenne;
+        }
+
+        private string AutoResolveOwnerToName(int owner)
+        {
+            if (owner >= 0 && owner < globals.factions.Count) return globals.factions[owner].textname;
+            return "Owner " + owner.ToString();
+        }
+
+        private void AutoResolveRunButton_Click(object sender, EventArgs e)
+        {
+            string powerSummary = AutoResolveBuildPowerDisplay();
+
+            if (AutoResolveBattleTypeComboBox.SelectedIndex < 0)
+            {
+                AutoResolveResultTextBox.Text = powerSummary + "\r\n\r\nSelect a battle type (Space or Land) before running auto resolve.";
+                return;
+            }
+            if (AutoResolveSideAFactionComboBox.SelectedIndex < 0 || AutoResolveSideBFactionComboBox.SelectedIndex < 0)
+            {
+                AutoResolveResultTextBox.Text = powerSummary + "\r\n\r\nSelect attacker and defender factions before running auto resolve.";
+                return;
+            }
+            if (autoResolveSideA.Count == 0 || autoResolveSideB.Count == 0)
+            {
+                AutoResolveResultTextBox.Text = powerSummary + "\r\n\r\nAdd at least one unit to both attacker and defender before running auto resolve.";
+                return;
+            }
+
+            autoResolveSideAOwner = AutoResolveSideAFactionComboBox.SelectedIndex;
+            autoResolveSideBOwner = AutoResolveSideBFactionComboBox.SelectedIndex;
+
+            bool space = AutoResolveBattleTypeComboBox.SelectedIndex == 0;
+            List<AutoResolveCombatant> attacker = AutoResolveBuildCombatants(autoResolveSideA, autoResolveSideAOwner, space);
+            List<AutoResolveCombatant> defender = AutoResolveBuildCombatants(autoResolveSideB, autoResolveSideBOwner, space);
+
+            AutoResolveClass sim = new AutoResolveClass();
+            AutoResolveHResult prep = space ? sim.Prepare_For_Space() : sim.Prepare_For_Land();
+            if (prep != AutoResolveHResult.S_OK)
+            {
+                AutoResolveResultTextBox.Text = powerSummary + "\r\n\r\nFailed to prepare auto resolve simulation: " + prep.ToString();
+                return;
+            }
+
+            foreach (AutoResolveCombatant combatant in attacker)
+            {
+                AutoResolveHResult add = sim.Add_Combatant(combatant);
+                if (add != AutoResolveHResult.S_OK)
+                {
+                    AutoResolveResultTextBox.Text = powerSummary + "\r\n\r\nFailed to add attacker combatant: " + add.ToString();
+                    return;
+                }
+            }
+            foreach (AutoResolveCombatant combatant in defender)
+            {
+                AutoResolveHResult add = sim.Add_Combatant(combatant);
+                if (add != AutoResolveHResult.S_OK)
+                {
+                    AutoResolveResultTextBox.Text = powerSummary + "\r\n\r\nFailed to add defender combatant: " + add.ToString();
+                    return;
+                }
+            }
+
+            AutoResolveHResult start = sim.Initiate_Combat(autoResolveSideAOwner);
+            if (start != AutoResolveHResult.S_OK)
+            {
+                AutoResolveResultTextBox.Text = powerSummary + "\r\n\r\nFailed to start auto resolve simulation: " + start.ToString();
+                return;
+            }
+
+            int rounds = 0;
+            while (sim.Who_Won() < 0 && sim.Get_Visible_Queue_Size(0) > 0 && sim.Get_Visible_Queue_Size(1) > 0 && rounds < 500)
+            {
+                sim.Combat_Round(true);
+                rounds++;
+            }
+
+            int winner = sim.Who_Won();
+            string winnerName = winner < 0 ? "No winner" : AutoResolveOwnerToName(winner);
+            string attackerName = AutoResolveOwnerToName(autoResolveSideAOwner);
+            string defenderName = AutoResolveOwnerToName(autoResolveSideBOwner);
+
+            string outcome =
+                "Auto Resolve complete\r\n" +
+                "Battle Type: " + (space ? "Space" : "Land") + "\r\n" +
+                "Rounds: " + rounds.ToString() + "\r\n" +
+                "Attacker: " + attackerName + "\r\n" +
+                "Defender: " + defenderName + "\r\n" +
+                "Winner: " + winnerName + "\r\n" +
+                "Side A remaining: " + sim.Get_Visible_Queue_Size(0).ToString() + " (health ratio " + sim.Get_Health_Ratio(0).ToString("0.###", CultureInfo.InvariantCulture) + ")\r\n" +
+                "Side B remaining: " + sim.Get_Visible_Queue_Size(1).ToString() + " (health ratio " + sim.Get_Health_Ratio(1).ToString("0.###", CultureInfo.InvariantCulture) + ")";
+
+            AutoResolveResultTextBox.Text = powerSummary + "\r\n\r\n" + outcome;
         }
 
 

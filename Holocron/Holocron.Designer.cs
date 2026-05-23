@@ -279,7 +279,10 @@
             this.AutoResolveSideAFacLabel = new System.Windows.Forms.Label();
             this.AutoResolveUnitComboBox = new System.Windows.Forms.ComboBox();
             this.AutoResolveUnitLabel = new System.Windows.Forms.Label();
-            this.AutoResolveContrastGrid = new System.Windows.Forms.DataGridView();
+            this.AutoResolveRunButton = new System.Windows.Forms.Button();
+            this.AutoResolveResultTextBox = new System.Windows.Forms.TextBox();
+            this.AutoResolveBattleTypeComboBox = new System.Windows.Forms.ComboBox();
+            this.AutoResolveBattleTypeLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.menuStrip1.SuspendLayout();
@@ -312,7 +315,6 @@
             this.MainTab.SuspendLayout();
             this.tabAutoResolve.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveUnitCountNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveContrastGrid)).BeginInit();
             this.SuspendLayout();
             // 
             // contextMenuStrip1
@@ -1106,7 +1108,7 @@
             this.UnitAvailPanel.Controls.Add(this.SpawnSetListBox);
             this.UnitAvailPanel.Location = new System.Drawing.Point(32, 353);
             this.UnitAvailPanel.Name = "UnitAvailPanel";
-            this.UnitAvailPanel.Size = new System.Drawing.Size(988, 221);
+            this.UnitAvailPanel.Size = new System.Drawing.Size(971, 221);
             this.UnitAvailPanel.TabIndex = 9;
             // 
             // label14
@@ -1257,7 +1259,7 @@
             this.UnitAbilityPanel.Controls.Add(this.UnitAbilityListBox);
             this.UnitAbilityPanel.Location = new System.Drawing.Point(32, 1150);
             this.UnitAbilityPanel.Name = "UnitAbilityPanel";
-            this.UnitAbilityPanel.Size = new System.Drawing.Size(988, 180);
+            this.UnitAbilityPanel.Size = new System.Drawing.Size(971, 180);
             this.UnitAbilityPanel.TabIndex = 8;
             // 
             // AbilityStackingLabel
@@ -1512,7 +1514,7 @@
             this.UnitSubunitPanel.Controls.Add(this.UnitSubunitListbox);
             this.UnitSubunitPanel.Location = new System.Drawing.Point(32, 966);
             this.UnitSubunitPanel.Name = "UnitSubunitPanel";
-            this.UnitSubunitPanel.Size = new System.Drawing.Size(988, 166);
+            this.UnitSubunitPanel.Size = new System.Drawing.Size(971, 166);
             this.UnitSubunitPanel.TabIndex = 6;
             this.UnitSubunitPanel.Tag = "";
             // 
@@ -1648,7 +1650,7 @@
             this.UnitStatPanel.Controls.Add(this.UnitHpLabel);
             this.UnitStatPanel.Location = new System.Drawing.Point(32, 594);
             this.UnitStatPanel.Name = "UnitStatPanel";
-            this.UnitStatPanel.Size = new System.Drawing.Size(988, 359);
+            this.UnitStatPanel.Size = new System.Drawing.Size(971, 359);
             this.UnitStatPanel.TabIndex = 2;
             this.UnitStatPanel.Tag = "";
             // 
@@ -2020,7 +2022,7 @@
             this.UnitBTSPanel.Controls.Add(this.BTSRichTextBox);
             this.UnitBTSPanel.Location = new System.Drawing.Point(32, 1341);
             this.UnitBTSPanel.Name = "UnitBTSPanel";
-            this.UnitBTSPanel.Size = new System.Drawing.Size(988, 150);
+            this.UnitBTSPanel.Size = new System.Drawing.Size(971, 150);
             this.UnitBTSPanel.TabIndex = 1;
             this.UnitBTSPanel.Tag = "";
             // 
@@ -2030,7 +2032,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.BTSRichTextBox.Location = new System.Drawing.Point(0, 6);
             this.BTSRichTextBox.Name = "BTSRichTextBox";
-            this.BTSRichTextBox.Size = new System.Drawing.Size(1022, 139);
+            this.BTSRichTextBox.Size = new System.Drawing.Size(1005, 139);
             this.BTSRichTextBox.TabIndex = 6;
             this.BTSRichTextBox.Text = "";
             // 
@@ -2054,7 +2056,7 @@
             this.UnitTextPanel.Controls.Add(this.UnitPopLabel);
             this.UnitTextPanel.Location = new System.Drawing.Point(32, 9);
             this.UnitTextPanel.Name = "UnitTextPanel";
-            this.UnitTextPanel.Size = new System.Drawing.Size(988, 338);
+            this.UnitTextPanel.Size = new System.Drawing.Size(971, 338);
             this.UnitTextPanel.TabIndex = 0;
             this.UnitTextPanel.Tag = "";
             // 
@@ -2063,7 +2065,7 @@
             this.MaintenanceLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.MaintenanceLabel.AutoSize = true;
             this.MaintenanceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MaintenanceLabel.Location = new System.Drawing.Point(668, 315);
+            this.MaintenanceLabel.Location = new System.Drawing.Point(651, 315);
             this.MaintenanceLabel.Name = "MaintenanceLabel";
             this.MaintenanceLabel.Size = new System.Drawing.Size(72, 13);
             this.MaintenanceLabel.TabIndex = 16;
@@ -2073,7 +2075,7 @@
             // ShipNameRichTextBox
             // 
             this.ShipNameRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ShipNameRichTextBox.Location = new System.Drawing.Point(858, -6);
+            this.ShipNameRichTextBox.Location = new System.Drawing.Point(841, -6);
             this.ShipNameRichTextBox.Name = "ShipNameRichTextBox";
             this.ShipNameRichTextBox.Size = new System.Drawing.Size(130, 335);
             this.ShipNameRichTextBox.TabIndex = 15;
@@ -2135,7 +2137,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.UnitTooltipLabelRichTextBox.Location = new System.Drawing.Point(0, 81);
             this.UnitTooltipLabelRichTextBox.Name = "UnitTooltipLabelRichTextBox";
-            this.UnitTooltipLabelRichTextBox.Size = new System.Drawing.Size(852, 234);
+            this.UnitTooltipLabelRichTextBox.Size = new System.Drawing.Size(835, 234);
             this.UnitTooltipLabelRichTextBox.TabIndex = 4;
             this.UnitTooltipLabelRichTextBox.Text = "";
             // 
@@ -2308,7 +2310,7 @@
             this.label25.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label25.AutoSize = true;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label25.Location = new System.Drawing.Point(1014, 24);
+            this.label25.Location = new System.Drawing.Point(997, 24);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(53, 16);
             this.label25.TabIndex = 107;
@@ -2318,7 +2320,7 @@
             // 
             this.MapSearchBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.MapSearchBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MapSearchBox.Location = new System.Drawing.Point(1017, 45);
+            this.MapSearchBox.Location = new System.Drawing.Point(1000, 45);
             this.MapSearchBox.Name = "MapSearchBox";
             this.MapSearchBox.Size = new System.Drawing.Size(187, 22);
             this.MapSearchBox.TabIndex = 106;
@@ -2367,7 +2369,7 @@
             // 
             this.PlanetGroundMapRB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.PlanetGroundMapRB.AutoSize = true;
-            this.PlanetGroundMapRB.Location = new System.Drawing.Point(1144, 24);
+            this.PlanetGroundMapRB.Location = new System.Drawing.Point(1127, 24);
             this.PlanetGroundMapRB.Name = "PlanetGroundMapRB";
             this.PlanetGroundMapRB.Size = new System.Drawing.Size(60, 17);
             this.PlanetGroundMapRB.TabIndex = 101;
@@ -2380,7 +2382,7 @@
             this.PlanetSpaceMapRB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.PlanetSpaceMapRB.AutoSize = true;
             this.PlanetSpaceMapRB.Checked = true;
-            this.PlanetSpaceMapRB.Location = new System.Drawing.Point(1082, 24);
+            this.PlanetSpaceMapRB.Location = new System.Drawing.Point(1065, 24);
             this.PlanetSpaceMapRB.Name = "PlanetSpaceMapRB";
             this.PlanetSpaceMapRB.Size = new System.Drawing.Size(56, 17);
             this.PlanetSpaceMapRB.TabIndex = 100;
@@ -2474,7 +2476,7 @@
             // PlanetGoToGCButton
             // 
             this.PlanetGoToGCButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.PlanetGoToGCButton.Location = new System.Drawing.Point(969, 3);
+            this.PlanetGoToGCButton.Location = new System.Drawing.Point(952, 3);
             this.PlanetGoToGCButton.Name = "PlanetGoToGCButton";
             this.PlanetGoToGCButton.Size = new System.Drawing.Size(43, 23);
             this.PlanetGoToGCButton.TabIndex = 91;
@@ -2486,7 +2488,7 @@
             this.label22.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label22.AutoSize = true;
             this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label22.Location = new System.Drawing.Point(787, 3);
+            this.label22.Location = new System.Drawing.Point(770, 3);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(183, 16);
             this.label22.TabIndex = 90;
@@ -2500,7 +2502,7 @@
             this.PlanetGCListBox.Location = new System.Drawing.Point(897, 26);
             this.PlanetGCListBox.Name = "PlanetGCListBox";
             this.PlanetGCListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.PlanetGCListBox.Size = new System.Drawing.Size(114, 901);
+            this.PlanetGCListBox.Size = new System.Drawing.Size(97, 901);
             this.PlanetGCListBox.TabIndex = 89;
             // 
             // label21
@@ -2508,7 +2510,7 @@
             this.label21.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label21.AutoSize = true;
             this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label21.Location = new System.Drawing.Point(1014, 3);
+            this.label21.Location = new System.Drawing.Point(997, 3);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(153, 16);
             this.label21.TabIndex = 88;
@@ -2520,9 +2522,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.MapsInPlanetsListbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MapsInPlanetsListbox.FormattingEnabled = true;
-            this.MapsInPlanetsListbox.Location = new System.Drawing.Point(1017, 73);
+            this.MapsInPlanetsListbox.Location = new System.Drawing.Point(1000, 73);
             this.MapsInPlanetsListbox.Name = "MapsInPlanetsListbox";
-            this.MapsInPlanetsListbox.Size = new System.Drawing.Size(187, 3397);
+            this.MapsInPlanetsListbox.Size = new System.Drawing.Size(187, 3696);
             this.MapsInPlanetsListbox.TabIndex = 87;
             this.MapsInPlanetsListbox.SelectedIndexChanged += new System.EventHandler(this.MapsInPlanetsListbox_SelectedIndexChanged);
             // 
@@ -2732,7 +2734,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.PlanetBTSTextBox.Location = new System.Drawing.Point(7, 934);
             this.PlanetBTSTextBox.Name = "PlanetBTSTextBox";
-            this.PlanetBTSTextBox.Size = new System.Drawing.Size(1004, 148);
+            this.PlanetBTSTextBox.Size = new System.Drawing.Size(987, 148);
             this.PlanetBTSTextBox.TabIndex = 78;
             this.PlanetBTSTextBox.Text = "";
             // 
@@ -2931,7 +2933,10 @@
             this.tabAutoResolve.Controls.Add(this.AutoResolveSideAFacLabel);
             this.tabAutoResolve.Controls.Add(this.AutoResolveUnitComboBox);
             this.tabAutoResolve.Controls.Add(this.AutoResolveUnitLabel);
-            this.tabAutoResolve.Controls.Add(this.AutoResolveContrastGrid);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveRunButton);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveResultTextBox);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveBattleTypeComboBox);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveBattleTypeLabel);
             this.tabAutoResolve.Location = new System.Drawing.Point(4, 22);
             this.tabAutoResolve.Name = "tabAutoResolve";
             this.tabAutoResolve.Size = new System.Drawing.Size(1487, 781);
@@ -2941,7 +2946,7 @@
             // 
             // AutoResolveClearSideBButton
             // 
-            this.AutoResolveClearSideBButton.Location = new System.Drawing.Point(663, 120);
+            this.AutoResolveClearSideBButton.Location = new System.Drawing.Point(663, 204);
             this.AutoResolveClearSideBButton.Name = "AutoResolveClearSideBButton";
             this.AutoResolveClearSideBButton.Size = new System.Drawing.Size(80, 23);
             this.AutoResolveClearSideBButton.TabIndex = 13;
@@ -2951,7 +2956,7 @@
             // 
             // AutoResolveClearSideAButton
             // 
-            this.AutoResolveClearSideAButton.Location = new System.Drawing.Point(276, 120);
+            this.AutoResolveClearSideAButton.Location = new System.Drawing.Point(276, 204);
             this.AutoResolveClearSideAButton.Name = "AutoResolveClearSideAButton";
             this.AutoResolveClearSideAButton.Size = new System.Drawing.Size(80, 23);
             this.AutoResolveClearSideAButton.TabIndex = 12;
@@ -2982,7 +2987,7 @@
             this.AutoResolveSideBListBox.FormattingEnabled = true;
             this.AutoResolveSideBListBox.Location = new System.Drawing.Point(399, 47);
             this.AutoResolveSideBListBox.Name = "AutoResolveSideBListBox";
-            this.AutoResolveSideBListBox.Size = new System.Drawing.Size(344, 69);
+            this.AutoResolveSideBListBox.Size = new System.Drawing.Size(344, 147);
             this.AutoResolveSideBListBox.TabIndex = 8;
             // 
             // AutoResolveSideAListBox
@@ -2990,7 +2995,7 @@
             this.AutoResolveSideAListBox.FormattingEnabled = true;
             this.AutoResolveSideAListBox.Location = new System.Drawing.Point(12, 47);
             this.AutoResolveSideAListBox.Name = "AutoResolveSideAListBox";
-            this.AutoResolveSideAListBox.Size = new System.Drawing.Size(344, 69);
+            this.AutoResolveSideAListBox.Size = new System.Drawing.Size(344, 147);
             this.AutoResolveSideAListBox.TabIndex = 7;
             // 
             // AutoResolveUnitCountNumeric
@@ -3014,6 +3019,7 @@
             0,
             0,
             0});
+            this.AutoResolveUnitCountNumeric.ValueChanged += new System.EventHandler(this.AutoResolveInputChanged);
             // 
             // AutoResolveUnitCountLabel
             // 
@@ -3052,6 +3058,7 @@
             this.AutoResolveSideBFactionComboBox.Name = "AutoResolveSideBFactionComboBox";
             this.AutoResolveSideBFactionComboBox.Size = new System.Drawing.Size(158, 21);
             this.AutoResolveSideBFactionComboBox.TabIndex = 4;
+            this.AutoResolveSideBFactionComboBox.SelectedIndexChanged += new System.EventHandler(this.AutoResolveInputChanged);
             // 
             // AutoResolveSideBFacLabel
             // 
@@ -3070,6 +3077,7 @@
             this.AutoResolveSideAFactionComboBox.Name = "AutoResolveSideAFactionComboBox";
             this.AutoResolveSideAFactionComboBox.Size = new System.Drawing.Size(158, 21);
             this.AutoResolveSideAFactionComboBox.TabIndex = 2;
+            this.AutoResolveSideAFactionComboBox.SelectedIndexChanged += new System.EventHandler(this.AutoResolveInputChanged);
             // 
             // AutoResolveSideAFacLabel
             // 
@@ -3098,19 +3106,47 @@
             this.AutoResolveUnitLabel.TabIndex = 1;
             this.AutoResolveUnitLabel.Text = "Unit";
             // 
-            // AutoResolveContrastGrid
+            // AutoResolveRunButton
             // 
-            this.AutoResolveContrastGrid.AllowUserToAddRows = false;
-            this.AutoResolveContrastGrid.AllowUserToDeleteRows = false;
-            this.AutoResolveContrastGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.AutoResolveContrastGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.AutoResolveContrastGrid.Location = new System.Drawing.Point(3, 149);
-            this.AutoResolveContrastGrid.Name = "AutoResolveContrastGrid";
-            this.AutoResolveContrastGrid.ReadOnly = true;
-            this.AutoResolveContrastGrid.Size = new System.Drawing.Size(2768, 1310);
-            this.AutoResolveContrastGrid.TabIndex = 0;
+            this.AutoResolveRunButton.Location = new System.Drawing.Point(276, 245);
+            this.AutoResolveRunButton.Name = "AutoResolveRunButton";
+            this.AutoResolveRunButton.Size = new System.Drawing.Size(171, 37);
+            this.AutoResolveRunButton.TabIndex = 14;
+            this.AutoResolveRunButton.Text = "Run Auto Resolve";
+            this.AutoResolveRunButton.UseVisualStyleBackColor = true;
+            this.AutoResolveRunButton.Click += new System.EventHandler(this.AutoResolveRunButton_Click);
+            // 
+            // AutoResolveResultTextBox
+            // 
+            this.AutoResolveResultTextBox.Location = new System.Drawing.Point(12, 310);
+            this.AutoResolveResultTextBox.Multiline = true;
+            this.AutoResolveResultTextBox.Name = "AutoResolveResultTextBox";
+            this.AutoResolveResultTextBox.ReadOnly = true;
+            this.AutoResolveResultTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.AutoResolveResultTextBox.Size = new System.Drawing.Size(731, 468);
+            this.AutoResolveResultTextBox.TabIndex = 15;
+            // 
+            // AutoResolveBattleTypeComboBox
+            // 
+            this.AutoResolveBattleTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.AutoResolveBattleTypeComboBox.FormattingEnabled = true;
+            this.AutoResolveBattleTypeComboBox.Items.AddRange(new object[] {
+            "Space",
+            "Land"});
+            this.AutoResolveBattleTypeComboBox.Location = new System.Drawing.Point(1030, 5);
+            this.AutoResolveBattleTypeComboBox.Name = "AutoResolveBattleTypeComboBox";
+            this.AutoResolveBattleTypeComboBox.Size = new System.Drawing.Size(121, 21);
+            this.AutoResolveBattleTypeComboBox.TabIndex = 16;
+            this.AutoResolveBattleTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.AutoResolveInputChanged);
+            // 
+            // AutoResolveBattleTypeLabel
+            // 
+            this.AutoResolveBattleTypeLabel.AutoSize = true;
+            this.AutoResolveBattleTypeLabel.Location = new System.Drawing.Point(959, 8);
+            this.AutoResolveBattleTypeLabel.Name = "AutoResolveBattleTypeLabel";
+            this.AutoResolveBattleTypeLabel.Size = new System.Drawing.Size(61, 13);
+            this.AutoResolveBattleTypeLabel.TabIndex = 17;
+            this.AutoResolveBattleTypeLabel.Text = "Battle Type";
             // 
             // contextMenuStrip2
             // 
@@ -3180,7 +3216,6 @@
             this.tabAutoResolve.ResumeLayout(false);
             this.tabAutoResolve.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveUnitCountNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveContrastGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -3423,7 +3458,6 @@
         private System.Windows.Forms.TextBox MapSearchBox;
         private System.Windows.Forms.TabPage NameFileTab;
         private System.Windows.Forms.TabPage tabAutoResolve;
-        private System.Windows.Forms.DataGridView AutoResolveContrastGrid;
         private System.Windows.Forms.ComboBox AutoResolveUnitComboBox;
         private System.Windows.Forms.Label AutoResolveUnitLabel;
         private System.Windows.Forms.Button AutoResolveAddToSideAButton;
@@ -3440,6 +3474,10 @@
         private System.Windows.Forms.Button AutoResolveClearSideBButton;
         private System.Windows.Forms.Label AutoResolveUnitCountLabel;
         private System.Windows.Forms.NumericUpDown AutoResolveUnitCountNumeric;
+        private System.Windows.Forms.Button AutoResolveRunButton;
+        private System.Windows.Forms.TextBox AutoResolveResultTextBox;
+        private System.Windows.Forms.ComboBox AutoResolveBattleTypeComboBox;
+        private System.Windows.Forms.Label AutoResolveBattleTypeLabel;
     }
 }
 
