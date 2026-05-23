@@ -1086,7 +1086,7 @@
             this.UnitAvailPanel.Controls.Add(this.SpawnSetListBox);
             this.UnitAvailPanel.Location = new System.Drawing.Point(32, 353);
             this.UnitAvailPanel.Name = "UnitAvailPanel";
-            this.UnitAvailPanel.Size = new System.Drawing.Size(1022, 221);
+            this.UnitAvailPanel.Size = new System.Drawing.Size(1005, 221);
             this.UnitAvailPanel.TabIndex = 9;
             // 
             // label14
@@ -1237,7 +1237,7 @@
             this.UnitAbilityPanel.Controls.Add(this.UnitAbilityListBox);
             this.UnitAbilityPanel.Location = new System.Drawing.Point(32, 1150);
             this.UnitAbilityPanel.Name = "UnitAbilityPanel";
-            this.UnitAbilityPanel.Size = new System.Drawing.Size(1022, 180);
+            this.UnitAbilityPanel.Size = new System.Drawing.Size(1005, 180);
             this.UnitAbilityPanel.TabIndex = 8;
             // 
             // AbilityStackingLabel
@@ -1492,7 +1492,7 @@
             this.UnitSubunitPanel.Controls.Add(this.UnitSubunitListbox);
             this.UnitSubunitPanel.Location = new System.Drawing.Point(32, 966);
             this.UnitSubunitPanel.Name = "UnitSubunitPanel";
-            this.UnitSubunitPanel.Size = new System.Drawing.Size(1022, 166);
+            this.UnitSubunitPanel.Size = new System.Drawing.Size(1005, 166);
             this.UnitSubunitPanel.TabIndex = 6;
             this.UnitSubunitPanel.Tag = "";
             // 
@@ -1628,7 +1628,7 @@
             this.UnitStatPanel.Controls.Add(this.UnitHpLabel);
             this.UnitStatPanel.Location = new System.Drawing.Point(32, 594);
             this.UnitStatPanel.Name = "UnitStatPanel";
-            this.UnitStatPanel.Size = new System.Drawing.Size(1022, 359);
+            this.UnitStatPanel.Size = new System.Drawing.Size(1005, 359);
             this.UnitStatPanel.TabIndex = 2;
             this.UnitStatPanel.Tag = "";
             // 
@@ -2000,7 +2000,7 @@
             this.UnitBTSPanel.Controls.Add(this.BTSRichTextBox);
             this.UnitBTSPanel.Location = new System.Drawing.Point(32, 1341);
             this.UnitBTSPanel.Name = "UnitBTSPanel";
-            this.UnitBTSPanel.Size = new System.Drawing.Size(1022, 150);
+            this.UnitBTSPanel.Size = new System.Drawing.Size(1005, 150);
             this.UnitBTSPanel.TabIndex = 1;
             this.UnitBTSPanel.Tag = "";
             // 
@@ -2010,7 +2010,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.BTSRichTextBox.Location = new System.Drawing.Point(0, 6);
             this.BTSRichTextBox.Name = "BTSRichTextBox";
-            this.BTSRichTextBox.Size = new System.Drawing.Size(1056, 139);
+            this.BTSRichTextBox.Size = new System.Drawing.Size(1039, 139);
             this.BTSRichTextBox.TabIndex = 6;
             this.BTSRichTextBox.Text = "";
             // 
@@ -2034,7 +2034,7 @@
             this.UnitTextPanel.Controls.Add(this.UnitPopLabel);
             this.UnitTextPanel.Location = new System.Drawing.Point(32, 9);
             this.UnitTextPanel.Name = "UnitTextPanel";
-            this.UnitTextPanel.Size = new System.Drawing.Size(1022, 338);
+            this.UnitTextPanel.Size = new System.Drawing.Size(1005, 338);
             this.UnitTextPanel.TabIndex = 0;
             this.UnitTextPanel.Tag = "";
             // 
@@ -2043,7 +2043,7 @@
             this.MaintenanceLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.MaintenanceLabel.AutoSize = true;
             this.MaintenanceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MaintenanceLabel.Location = new System.Drawing.Point(702, 315);
+            this.MaintenanceLabel.Location = new System.Drawing.Point(685, 315);
             this.MaintenanceLabel.Name = "MaintenanceLabel";
             this.MaintenanceLabel.Size = new System.Drawing.Size(72, 13);
             this.MaintenanceLabel.TabIndex = 16;
@@ -2053,7 +2053,7 @@
             // ShipNameRichTextBox
             // 
             this.ShipNameRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ShipNameRichTextBox.Location = new System.Drawing.Point(892, -6);
+            this.ShipNameRichTextBox.Location = new System.Drawing.Point(875, -6);
             this.ShipNameRichTextBox.Name = "ShipNameRichTextBox";
             this.ShipNameRichTextBox.Size = new System.Drawing.Size(130, 335);
             this.ShipNameRichTextBox.TabIndex = 15;
@@ -2115,7 +2115,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.UnitTooltipLabelRichTextBox.Location = new System.Drawing.Point(0, 81);
             this.UnitTooltipLabelRichTextBox.Name = "UnitTooltipLabelRichTextBox";
-            this.UnitTooltipLabelRichTextBox.Size = new System.Drawing.Size(886, 234);
+            this.UnitTooltipLabelRichTextBox.Size = new System.Drawing.Size(869, 234);
             this.UnitTooltipLabelRichTextBox.TabIndex = 4;
             this.UnitTooltipLabelRichTextBox.Text = "";
             // 
@@ -2288,7 +2288,7 @@
             this.label25.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label25.AutoSize = true;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label25.Location = new System.Drawing.Point(1048, 24);
+            this.label25.Location = new System.Drawing.Point(1031, 24);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(54, 16);
             this.label25.TabIndex = 107;
@@ -2296,8 +2296,9 @@
             // 
             // MapSearchBox
             // 
+            this.MapSearchBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.MapSearchBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MapSearchBox.Location = new System.Drawing.Point(1068, 45);
+            this.MapSearchBox.Location = new System.Drawing.Point(1034, 45);
             this.MapSearchBox.Name = "MapSearchBox";
             this.MapSearchBox.Size = new System.Drawing.Size(187, 22);
             this.MapSearchBox.TabIndex = 106;
@@ -2346,7 +2347,7 @@
             // 
             this.PlanetGroundMapRB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.PlanetGroundMapRB.AutoSize = true;
-            this.PlanetGroundMapRB.Location = new System.Drawing.Point(1178, 24);
+            this.PlanetGroundMapRB.Location = new System.Drawing.Point(1161, 24);
             this.PlanetGroundMapRB.Name = "PlanetGroundMapRB";
             this.PlanetGroundMapRB.Size = new System.Drawing.Size(60, 17);
             this.PlanetGroundMapRB.TabIndex = 101;
@@ -2359,7 +2360,7 @@
             this.PlanetSpaceMapRB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.PlanetSpaceMapRB.AutoSize = true;
             this.PlanetSpaceMapRB.Checked = true;
-            this.PlanetSpaceMapRB.Location = new System.Drawing.Point(1116, 24);
+            this.PlanetSpaceMapRB.Location = new System.Drawing.Point(1099, 24);
             this.PlanetSpaceMapRB.Name = "PlanetSpaceMapRB";
             this.PlanetSpaceMapRB.Size = new System.Drawing.Size(56, 17);
             this.PlanetSpaceMapRB.TabIndex = 100;
@@ -2453,7 +2454,7 @@
             // PlanetGoToGCButton
             // 
             this.PlanetGoToGCButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.PlanetGoToGCButton.Location = new System.Drawing.Point(1003, 3);
+            this.PlanetGoToGCButton.Location = new System.Drawing.Point(986, 3);
             this.PlanetGoToGCButton.Name = "PlanetGoToGCButton";
             this.PlanetGoToGCButton.Size = new System.Drawing.Size(43, 23);
             this.PlanetGoToGCButton.TabIndex = 91;
@@ -2465,7 +2466,7 @@
             this.label22.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label22.AutoSize = true;
             this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label22.Location = new System.Drawing.Point(821, 3);
+            this.label22.Location = new System.Drawing.Point(804, 3);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(184, 16);
             this.label22.TabIndex = 90;
@@ -2479,7 +2480,7 @@
             this.PlanetGCListBox.Location = new System.Drawing.Point(897, 26);
             this.PlanetGCListBox.Name = "PlanetGCListBox";
             this.PlanetGCListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.PlanetGCListBox.Size = new System.Drawing.Size(148, 901);
+            this.PlanetGCListBox.Size = new System.Drawing.Size(131, 901);
             this.PlanetGCListBox.TabIndex = 89;
             // 
             // label21
@@ -2487,7 +2488,7 @@
             this.label21.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label21.AutoSize = true;
             this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label21.Location = new System.Drawing.Point(1048, 3);
+            this.label21.Location = new System.Drawing.Point(1031, 3);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(154, 16);
             this.label21.TabIndex = 88;
@@ -2499,9 +2500,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.MapsInPlanetsListbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MapsInPlanetsListbox.FormattingEnabled = true;
-            this.MapsInPlanetsListbox.Location = new System.Drawing.Point(1051, 73);
+            this.MapsInPlanetsListbox.Location = new System.Drawing.Point(1034, 73);
             this.MapsInPlanetsListbox.Name = "MapsInPlanetsListbox";
-            this.MapsInPlanetsListbox.Size = new System.Drawing.Size(187, 2799);
+            this.MapsInPlanetsListbox.Size = new System.Drawing.Size(187, 3098);
             this.MapsInPlanetsListbox.TabIndex = 87;
             this.MapsInPlanetsListbox.SelectedIndexChanged += new System.EventHandler(this.MapsInPlanetsListbox_SelectedIndexChanged);
             // 
@@ -2711,7 +2712,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.PlanetBTSTextBox.Location = new System.Drawing.Point(7, 934);
             this.PlanetBTSTextBox.Name = "PlanetBTSTextBox";
-            this.PlanetBTSTextBox.Size = new System.Drawing.Size(1038, 148);
+            this.PlanetBTSTextBox.Size = new System.Drawing.Size(1021, 148);
             this.PlanetBTSTextBox.TabIndex = 78;
             this.PlanetBTSTextBox.Text = "";
             // 
