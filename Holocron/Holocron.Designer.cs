@@ -263,6 +263,18 @@
             this.tabGov = new System.Windows.Forms.TabPage();
             this.tabGalaxy = new System.Windows.Forms.TabPage();
             this.tabAutoResolve = new System.Windows.Forms.TabPage();
+            this.AutoResolveClearSideBButton = new System.Windows.Forms.Button();
+            this.AutoResolveClearSideAButton = new System.Windows.Forms.Button();
+            this.AutoResolveSideBLabel = new System.Windows.Forms.Label();
+            this.AutoResolveSideALabel = new System.Windows.Forms.Label();
+            this.AutoResolveSideBListBox = new System.Windows.Forms.ListBox();
+            this.AutoResolveSideAListBox = new System.Windows.Forms.ListBox();
+            this.AutoResolveAddToSideBButton = new System.Windows.Forms.Button();
+            this.AutoResolveAddToSideAButton = new System.Windows.Forms.Button();
+            this.AutoResolveOwnerNumeric = new System.Windows.Forms.NumericUpDown();
+            this.AutoResolveOwnerLabel = new System.Windows.Forms.Label();
+            this.AutoResolveUnitComboBox = new System.Windows.Forms.ComboBox();
+            this.AutoResolveUnitLabel = new System.Windows.Forms.Label();
             this.AutoResolveContrastGrid = new System.Windows.Forms.DataGridView();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -294,6 +306,7 @@
             this.tabFactions.SuspendLayout();
             this.FactionPanel.SuspendLayout();
             this.MainTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveOwnerNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveContrastGrid)).BeginInit();
             this.SuspendLayout();
             // 
@@ -2897,6 +2910,18 @@
             // 
             // tabAutoResolve
             // 
+            this.tabAutoResolve.Controls.Add(this.AutoResolveClearSideBButton);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveClearSideAButton);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveSideBLabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveSideALabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveSideBListBox);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveSideAListBox);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveAddToSideBButton);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveAddToSideAButton);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveOwnerNumeric);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveOwnerLabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveUnitComboBox);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveUnitLabel);
             this.tabAutoResolve.Controls.Add(this.AutoResolveContrastGrid);
             this.tabAutoResolve.Location = new System.Drawing.Point(4, 22);
             this.tabAutoResolve.Name = "tabAutoResolve";
@@ -2904,6 +2929,119 @@
             this.tabAutoResolve.TabIndex = 8;
             this.tabAutoResolve.Text = "Auto resolve";
             this.tabAutoResolve.UseVisualStyleBackColor = true;
+            // 
+            // AutoResolveClearSideBButton
+            // 
+            this.AutoResolveClearSideBButton.Location = new System.Drawing.Point(663, 120);
+            this.AutoResolveClearSideBButton.Name = "AutoResolveClearSideBButton";
+            this.AutoResolveClearSideBButton.Size = new System.Drawing.Size(80, 23);
+            this.AutoResolveClearSideBButton.TabIndex = 13;
+            this.AutoResolveClearSideBButton.Text = "Clear Side B";
+            this.AutoResolveClearSideBButton.UseVisualStyleBackColor = true;
+            this.AutoResolveClearSideBButton.Click += new System.EventHandler(this.AutoResolveClearSideBButton_Click);
+            // 
+            // AutoResolveClearSideAButton
+            // 
+            this.AutoResolveClearSideAButton.Location = new System.Drawing.Point(362, 120);
+            this.AutoResolveClearSideAButton.Name = "AutoResolveClearSideAButton";
+            this.AutoResolveClearSideAButton.Size = new System.Drawing.Size(80, 23);
+            this.AutoResolveClearSideAButton.TabIndex = 12;
+            this.AutoResolveClearSideAButton.Text = "Clear Side A";
+            this.AutoResolveClearSideAButton.UseVisualStyleBackColor = true;
+            this.AutoResolveClearSideAButton.Click += new System.EventHandler(this.AutoResolveClearSideAButton_Click);
+            // 
+            // AutoResolveSideBLabel
+            // 
+            this.AutoResolveSideBLabel.AutoSize = true;
+            this.AutoResolveSideBLabel.Location = new System.Drawing.Point(396, 31);
+            this.AutoResolveSideBLabel.Name = "AutoResolveSideBLabel";
+            this.AutoResolveSideBLabel.Size = new System.Drawing.Size(41, 13);
+            this.AutoResolveSideBLabel.TabIndex = 10;
+            this.AutoResolveSideBLabel.Text = "Side B";
+            // 
+            // AutoResolveSideALabel
+            // 
+            this.AutoResolveSideALabel.AutoSize = true;
+            this.AutoResolveSideALabel.Location = new System.Drawing.Point(9, 31);
+            this.AutoResolveSideALabel.Name = "AutoResolveSideALabel";
+            this.AutoResolveSideALabel.Size = new System.Drawing.Size(41, 13);
+            this.AutoResolveSideALabel.TabIndex = 9;
+            this.AutoResolveSideALabel.Text = "Side A";
+            // 
+            // AutoResolveSideBListBox
+            // 
+            this.AutoResolveSideBListBox.FormattingEnabled = true;
+            this.AutoResolveSideBListBox.Location = new System.Drawing.Point(399, 47);
+            this.AutoResolveSideBListBox.Name = "AutoResolveSideBListBox";
+            this.AutoResolveSideBListBox.Size = new System.Drawing.Size(344, 69);
+            this.AutoResolveSideBListBox.TabIndex = 8;
+            // 
+            // AutoResolveSideAListBox
+            // 
+            this.AutoResolveSideAListBox.FormattingEnabled = true;
+            this.AutoResolveSideAListBox.Location = new System.Drawing.Point(12, 47);
+            this.AutoResolveSideAListBox.Name = "AutoResolveSideAListBox";
+            this.AutoResolveSideAListBox.Size = new System.Drawing.Size(344, 69);
+            this.AutoResolveSideAListBox.TabIndex = 7;
+            // 
+            // AutoResolveAddToSideBButton
+            // 
+            this.AutoResolveAddToSideBButton.Location = new System.Drawing.Point(663, 3);
+            this.AutoResolveAddToSideBButton.Name = "AutoResolveAddToSideBButton";
+            this.AutoResolveAddToSideBButton.Size = new System.Drawing.Size(80, 23);
+            this.AutoResolveAddToSideBButton.TabIndex = 6;
+            this.AutoResolveAddToSideBButton.Text = "Add Side B";
+            this.AutoResolveAddToSideBButton.UseVisualStyleBackColor = true;
+            this.AutoResolveAddToSideBButton.Click += new System.EventHandler(this.AutoResolveAddToSideBButton_Click);
+            // 
+            // AutoResolveAddToSideAButton
+            // 
+            this.AutoResolveAddToSideAButton.Location = new System.Drawing.Point(577, 3);
+            this.AutoResolveAddToSideAButton.Name = "AutoResolveAddToSideAButton";
+            this.AutoResolveAddToSideAButton.Size = new System.Drawing.Size(80, 23);
+            this.AutoResolveAddToSideAButton.TabIndex = 5;
+            this.AutoResolveAddToSideAButton.Text = "Add Side A";
+            this.AutoResolveAddToSideAButton.UseVisualStyleBackColor = true;
+            this.AutoResolveAddToSideAButton.Click += new System.EventHandler(this.AutoResolveAddToSideAButton_Click);
+            // 
+            // AutoResolveOwnerNumeric
+            // 
+            this.AutoResolveOwnerNumeric.Location = new System.Drawing.Point(513, 5);
+            this.AutoResolveOwnerNumeric.Maximum = new decimal(new int[] {
+            99,
+            0,
+            0,
+            0});
+            this.AutoResolveOwnerNumeric.Name = "AutoResolveOwnerNumeric";
+            this.AutoResolveOwnerNumeric.Size = new System.Drawing.Size(58, 20);
+            this.AutoResolveOwnerNumeric.TabIndex = 4;
+            // 
+            // AutoResolveOwnerLabel
+            // 
+            this.AutoResolveOwnerLabel.AutoSize = true;
+            this.AutoResolveOwnerLabel.Location = new System.Drawing.Point(472, 8);
+            this.AutoResolveOwnerLabel.Name = "AutoResolveOwnerLabel";
+            this.AutoResolveOwnerLabel.Size = new System.Drawing.Size(38, 13);
+            this.AutoResolveOwnerLabel.TabIndex = 3;
+            this.AutoResolveOwnerLabel.Text = "Owner";
+            // 
+            // AutoResolveUnitComboBox
+            // 
+            this.AutoResolveUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.AutoResolveUnitComboBox.FormattingEnabled = true;
+            this.AutoResolveUnitComboBox.Location = new System.Drawing.Point(38, 5);
+            this.AutoResolveUnitComboBox.Name = "AutoResolveUnitComboBox";
+            this.AutoResolveUnitComboBox.Size = new System.Drawing.Size(428, 21);
+            this.AutoResolveUnitComboBox.TabIndex = 2;
+            // 
+            // AutoResolveUnitLabel
+            // 
+            this.AutoResolveUnitLabel.AutoSize = true;
+            this.AutoResolveUnitLabel.Location = new System.Drawing.Point(9, 8);
+            this.AutoResolveUnitLabel.Name = "AutoResolveUnitLabel";
+            this.AutoResolveUnitLabel.Size = new System.Drawing.Size(26, 13);
+            this.AutoResolveUnitLabel.TabIndex = 1;
+            this.AutoResolveUnitLabel.Text = "Unit";
             // 
             // AutoResolveContrastGrid
             // 
@@ -2913,10 +3051,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AutoResolveContrastGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.AutoResolveContrastGrid.Location = new System.Drawing.Point(3, 3);
+            this.AutoResolveContrastGrid.Location = new System.Drawing.Point(3, 149);
             this.AutoResolveContrastGrid.Name = "AutoResolveContrastGrid";
             this.AutoResolveContrastGrid.ReadOnly = true;
-            this.AutoResolveContrastGrid.Size = new System.Drawing.Size(1481, 775);
+            this.AutoResolveContrastGrid.Size = new System.Drawing.Size(1481, 629);
             this.AutoResolveContrastGrid.TabIndex = 0;
             // 
             // contextMenuStrip2
@@ -2984,6 +3122,7 @@
             this.FactionPanel.ResumeLayout(false);
             this.FactionPanel.PerformLayout();
             this.MainTab.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveOwnerNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveContrastGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -3228,6 +3367,18 @@
         private System.Windows.Forms.TabPage NameFileTab;
         private System.Windows.Forms.TabPage tabAutoResolve;
         private System.Windows.Forms.DataGridView AutoResolveContrastGrid;
+        private System.Windows.Forms.ComboBox AutoResolveUnitComboBox;
+        private System.Windows.Forms.Label AutoResolveUnitLabel;
+        private System.Windows.Forms.NumericUpDown AutoResolveOwnerNumeric;
+        private System.Windows.Forms.Label AutoResolveOwnerLabel;
+        private System.Windows.Forms.Button AutoResolveAddToSideAButton;
+        private System.Windows.Forms.Button AutoResolveAddToSideBButton;
+        private System.Windows.Forms.ListBox AutoResolveSideAListBox;
+        private System.Windows.Forms.ListBox AutoResolveSideBListBox;
+        private System.Windows.Forms.Label AutoResolveSideALabel;
+        private System.Windows.Forms.Label AutoResolveSideBLabel;
+        private System.Windows.Forms.Button AutoResolveClearSideAButton;
+        private System.Windows.Forms.Button AutoResolveClearSideBButton;
     }
 }
 

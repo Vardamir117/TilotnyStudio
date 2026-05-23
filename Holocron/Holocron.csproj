@@ -67,6 +67,7 @@
     <Compile Include="..\TilotnyStudio\SharedFunctions.cs">
       <Link>SharedFunctions.cs</Link>
     </Compile>
+    <Compile Include="AutoResolvePort.cs" />
     <Compile Include="DevChoice.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -103,7 +103,21 @@ namespace Holocron
             public Dictionary<string, float> typeScale;
         }
 
+        public struct autoresolve_entry
+        {
+            public unit source;
+            public int owner;
+
+            public override string ToString()
+            {
+                return owner.ToString() + ": " + source.username + " [" + source.unitname + "]";
+            }
+        }
+
         public static entities entities = new entities();
+
+        private List<autoresolve_entry> autoResolveSideA = new List<autoresolve_entry>();
+        private List<autoresolve_entry> autoResolveSideB = new List<autoresolve_entry>();
 
         public Holocron()
         {
@@ -580,12 +594,14 @@ namespace Holocron
                     break;
                 case (int)historymaintabs.autoresolve:
                     FillAutoResolveContrastTable();
+                    FillAutoResolveUnitSelection();
+                    AutoResolveRefreshSideListboxes();
                     break;
                 default:
                     // code block
                     break;
             }
-            
+
         }
 
         private void LookupTabControl_SelectedIndexChanged(object sender, EventArgs e)
@@ -834,6 +850,81 @@ namespace Holocron
                 AutoResolveContrastGrid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
         }
+
+        private void FillAutoResolveUnitSelection()
+        {
+            if (AutoResolveUnitComboBox.Items.Count > 0) return;
+
+            AutoResolveUnitComboBox.Items.Clear();
+            List<unit> source = new List<unit>();
+            foreach (unit item in entities.spaceUnits) source.Add(item);
+            foreach (unit item in entities.groundCompanies) source.Add(item);
+            foreach (unit item in entities.groundUnits) source.Add(item);
+            foreach (unit item in entities.structures) source.Add(item);
+            foreach (unit item in entities.spaceHeroes) source.Add(item);
+            foreach (unit item in entities.heroCompanies) source.Add(item);
+            foreach (unit item in entities.groundHeroes) source.Add(item);
+
+            foreach (unit item in source.OrderBy(x => x.username))
+            {
+                if (AutoResolveUnitHasSufficientInformation(item)) AutoResolveUnitComboBox.Items.Add(item);
+            }
+
+            if (AutoResolveUnitComboBox.Items.Count > 0) AutoResolveUnitComboBox.SelectedIndex = 0;
+        }
+
+        private void AutoResolveRefreshSideListboxes()
+        {
+            AutoResolveSideAListBox.Items.Clear();
+            AutoResolveSideBListBox.Items.Clear();
+
+            foreach (autoresolve_entry entry in autoResolveSideA) AutoResolveSideAListBox.Items.Add(entry);
+            foreach (autoresolve_entry entry in autoResolveSideB) AutoResolveSideBListBox.Items.Add(entry);
+        }
+
+        private bool AutoResolveUnitHasSufficientInformation(unit candidate)
+        {
+            return candidate.hp > 0 || candidate.shield > 0 || candidate.cp > 0;
+        }
+
+        private autoresolve_entry AutoResolveCreateEntryFromSelected()
+        {
+            autoresolve_entry entry = new autoresolve_entry();
+            if (AutoResolveUnitComboBox.SelectedItem == null) return entry;
+
+            entry.source = (unit)AutoResolveUnitComboBox.SelectedItem;
+            entry.owner = (int)AutoResolveOwnerNumeric.Value;
+            return entry;
+        }
+
+        private void AutoResolveAddToSideAButton_Click(object sender, EventArgs e)
+        {
+            if (AutoResolveUnitComboBox.SelectedItem == null) return;
+            autoresolve_entry entry = AutoResolveCreateEntryFromSelected();
+            autoResolveSideA.Add(entry);
+            AutoResolveRefreshSideListboxes();
+        }
+
+        private void AutoResolveAddToSideBButton_Click(object sender, EventArgs e)
+        {
+            if (AutoResolveUnitComboBox.SelectedItem == null) return;
+            autoresolve_entry entry = AutoResolveCreateEntryFromSelected();
+            autoResolveSideB.Add(entry);
+            AutoResolveRefreshSideListboxes();
+        }
+
+        private void AutoResolveClearSideAButton_Click(object sender, EventArgs e)
+        {
+            autoResolveSideA.Clear();
+            AutoResolveRefreshSideListboxes();
+        }
+
+        private void AutoResolveClearSideBButton_Click(object sender, EventArgs e)
+        {
+            autoResolveSideB.Clear();
+            AutoResolveRefreshSideListboxes();
+        }
+
 
         private void FillMatrixLookup()
         {
