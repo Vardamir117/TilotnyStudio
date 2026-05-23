@@ -1222,6 +1222,21 @@ namespace Holocron
             return string.Join(", ", lines);
         }
 
+        private string AutoResolveAttritionReportToText(AutoResolveAttritionReport report)
+        {
+            if (report == null) return "";
+
+            string sideName = report.SideIndex == 0 ? "Attacker" : (report.SideIndex == 1 ? "Defender" : "Side " + report.SideIndex.ToString(CultureInfo.InvariantCulture));
+            string ownerName = AutoResolveOwnerToName(report.SideOwnerId);
+            string unitName = AutoResolveUnitNameForDisplay(report.UnitTypeName);
+
+            return sideName + " (" + ownerName + ") attrition: " + unitName +
+                " | force " + report.ForceBefore.ToString("0.###", CultureInfo.InvariantCulture) +
+                " -> " + report.ForceAfter.ToString("0.###", CultureInfo.InvariantCulture) +
+                " | decision=" + report.Decision +
+                (string.IsNullOrWhiteSpace(report.Notes) ? "" : " | " + report.Notes);
+        }
+
         private void AutoResolveApplyAttritionInputs(AutoResolveClass sim)
         {
             sim.LoserAttrition = (float)AutoResolveLoserAttritionNumeric.Value;
@@ -1305,6 +1320,7 @@ namespace Holocron
 
             int rounds = 0;
             List<string> engagementLines = new List<string>();
+            List<string> attritionLines = new List<string>();
 
             AutoResolveHResult roundResult = sim.Combat_Round(true);
             if (roundResult == AutoResolveHResult.E_AUTORESOLVE_NOT_READY)
@@ -1319,6 +1335,12 @@ namespace Holocron
                 for (int i = 0; i < engagements.Count; i++)
                 {
                     engagementLines.Add(AutoResolveEngagementReportToText(engagements[i]));
+                }
+
+                List<AutoResolveAttritionReport> attritionReports = sim.Get_Last_Attrition_Reports();
+                for (int i = 0; i < attritionReports.Count; i++)
+                {
+                    attritionLines.Add(AutoResolveAttritionReportToText(attritionReports[i]));
                 }
             }
 
@@ -1351,7 +1373,11 @@ namespace Holocron
                 ? "\r\n\r\nPer-unit engagements:\r\n" + string.Join("\r\n", engagementLines)
                 : "\r\n\r\nPer-unit engagements:\r\n(no engagements recorded)";
 
-            AutoResolveResultTextBox.Text = powerSummary + "\r\n\r\n" + outcome + roundDetail;
+            string attritionDetail = attritionLines.Count > 0
+                ? "\r\n\r\nAttrition application:\r\n" + string.Join("\r\n", attritionLines)
+                : "\r\n\r\nAttrition application:\r\n(no attrition logs recorded)";
+
+            AutoResolveResultTextBox.Text = powerSummary + "\r\n\r\n" + outcome + roundDetail + attritionDetail;
         }
 
 

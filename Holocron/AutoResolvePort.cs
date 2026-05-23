@@ -89,6 +89,19 @@ namespace Holocron
         public float TargetGlobalAfter;
     }
 
+    public class AutoResolveAttritionReport
+    {
+        public int SideOwnerId;
+        public int SideIndex;
+        public bool IsLoserSide;
+        public string UnitTypeName;
+        public float UnitPower;
+        public float ForceBefore;
+        public float ForceAfter;
+        public string Decision;
+        public string Notes;
+    }
+
     // C# port of AutoResolveClass from AutoResolve.h/.cpp.
     // This version preserves the main call flow and data shape used by the original system.
     public class AutoResolveClass
@@ -159,6 +172,7 @@ namespace Holocron
         private int mBattleID = -1;
         private int mRoundCounter;
         private readonly List<AutoResolveEngagementReport> mLastEngagements = new List<AutoResolveEngagementReport>();
+        private readonly List<AutoResolveAttritionReport> mLastAttritionReports = new List<AutoResolveAttritionReport>();
         private readonly Random mAttritionRandom = new Random(1);
         private bool mBattleFought;
 
@@ -309,6 +323,7 @@ namespace Holocron
             results[1] = mSides[1].TotalForce.Clone();
 
             mLastEngagements.Clear();
+            mLastAttritionReports.Clear();
             Side_Attack(mSides[0].Queue, mSides[1].TotalForce, results[1], mSides[0].OwnerId);
             Side_Attack(mSides[1].Queue, mSides[0].TotalForce, results[0], mSides[1].OwnerId);
 
@@ -389,6 +404,7 @@ namespace Holocron
             mWinningPlayer = -1;
             mRoundCounter = 0;
             mLastEngagements.Clear();
+            mLastAttritionReports.Clear();
             mBattleFought = false;
             mSides[0].Init();
             mSides[1].Init();
@@ -397,6 +413,7 @@ namespace Holocron
 
         public int Who_Won() { return mWinningPlayer; }
         public List<AutoResolveEngagementReport> Get_Last_Engagements() { return new List<AutoResolveEngagementReport>(mLastEngagements); }
+        public List<AutoResolveAttritionReport> Get_Last_Attrition_Reports() { return new List<AutoResolveAttritionReport>(mLastAttritionReports); }
         public int Side_Is_Retreating() { return mRetreatInProgress ? mRetreatingPlayer : -1; }
 
         public void Add_Tactical_Combatants() { }
@@ -426,6 +443,7 @@ namespace Holocron
             float attritionAllowanceFactor = Math.Max(0f, AttritionAllowanceFactor);
             bool anySurvivors = false;
             bool weakKilled = false;
+            int sideOwnerId = (index >= 0 && index < mSides.Length) ? mSides[index].OwnerId : -1;
 
             // MLL: Hack to make tactical auto resolve less efficient.
             if (MidTactical) current.MultiplyAll(Math.Max(0f, TacticalMultiplier));
@@ -462,19 +480,35 @@ namespace Holocron
                 bool killUnit = false;
                 bool killBase = false;
 
+                AutoResolveAttritionReport attritionReport = new AutoResolveAttritionReport();
+                attritionReport.SideOwnerId = sideOwnerId;
+                attritionReport.SideIndex = index;
+                attritionReport.IsLoserSide = isLoser;
+                attritionReport.UnitTypeName = unit.TypeName;
+                attritionReport.UnitPower = unit.Power;
+                attritionReport.ForceBefore = current.Total;
+                attritionReport.Decision = "Undecided";
+                attritionReport.Notes = "";
+
                 if (!mIsSpace || !unit.IsTransport)
                 {
                     if (isLoser && !unit.IsPlayableFaction && !unit.IsPlanet)
                     {
                         // Non-playable factions are wiped out when they lose.
                         killUnit = true;
+                        attritionReport.Decision = "KillUnit";
+                        attritionReport.Notes = "Non-playable losing faction unit is always destroyed.";
                     }
                     else if (unit.IsSuperWeapon)
                     {
                         killUnit = false;
+                        attritionReport.Decision = "KeepUnit";
+                        attritionReport.Notes = "Super weapon survives by default.";
                         if (isLoser && SideHasSuperWeaponKiller(index == 0 ? 1 : 0))
                         {
                             killUnit = true;
+                            attritionReport.Decision = "KillUnit";
+                            attritionReport.Notes = "Super weapon killed by opposing super-weapon killer.";
                             if (ReferenceEquals(weakestUnit, unit)) weakestUnit = null;
                         }
                     }
@@ -485,11 +519,15 @@ namespace Holocron
                         Update_Battle_History(unit);
                         killBase = true;
                         killUnit = false;
+                        attritionReport.Decision = "KillBase";
+                        attritionReport.Notes = "Losing planet/base branch destroys base state.";
                     }
                     else if (isLoser && isStructure)
                     {
                         // MLL: Kill all structures if the player is the loser.
                         killUnit = true;
+                        attritionReport.Decision = "KillUnit";
+                        attritionReport.Notes = "Losing structure is always destroyed.";
                     }
                     else
                     {
@@ -499,6 +537,7 @@ namespace Holocron
                         if (unit.IncludeGarrisonInAttrition && unit.GarrisonPower > 0f)
                         {
                             current.ReduceTotalBy(unit.GarrisonPower);
+                            attritionReport.Notes = "Applied garrison power reduction of " + unit.GarrisonPower.ToString("0.###") + ".";
                         }
 
                         if (unit.HasPlanetaryBehavior)
@@ -510,10 +549,14 @@ namespace Holocron
                                 if (unit.PlanetaryReplacementPower >= 0f)
                                 {
                                     current.ReduceTotalBy(unit.PlanetaryReplacementPower);
+                                    attritionReport.Decision = "KeepUnit";
+                                    attritionReport.Notes = "Planetary replacement base retained with replacement power " + unit.PlanetaryReplacementPower.ToString("0.###") + ".";
                                 }
                                 else
                                 {
                                     killBase = true;
+                                    attritionReport.Decision = "KillBase";
+                                    attritionReport.Notes = "No planetary replacement base available.";
                                 }
                             }
                             killUnit = false;
@@ -522,6 +565,16 @@ namespace Holocron
                         {
                             current.ReduceTotalBy(unit.Power);
                             killUnit = false;
+                            attritionReport.Decision = "KeepUnit";
+                            attritionReport.Notes = "Unit survives by attrition allowance check.";
+                        }
+                        else
+                        {
+                            attritionReport.Decision = "KillUnit";
+                            if (string.IsNullOrEmpty(attritionReport.Notes))
+                            {
+                                attritionReport.Notes = "Insufficient remaining force after attrition allowance check.";
+                            }
                         }
                     }
 
@@ -540,12 +593,16 @@ namespace Holocron
                     else
                     {
                         weakKilled = true;
+                        attritionReport.Notes += (string.IsNullOrEmpty(attritionReport.Notes) ? "" : " ") + "Weakest unit deferred for post-loop kill handling.";
                     }
                 }
                 else if (!killBase)
                 {
                     leftOvers.Add(unit);
                 }
+
+                attritionReport.ForceAfter = current.Total;
+                mLastAttritionReports.Add(attritionReport);
 
                 working.RemoveAt(unitIndex);
             }
@@ -559,6 +616,18 @@ namespace Holocron
                 // MLL: Don't allow survivors if auto resolving.
                 weakestUnit.IsAlive = false;
                 Update_Battle_History(weakestUnit);
+
+                AutoResolveAttritionReport weakestReport = new AutoResolveAttritionReport();
+                weakestReport.SideOwnerId = sideOwnerId;
+                weakestReport.SideIndex = index;
+                weakestReport.IsLoserSide = isLoser;
+                weakestReport.UnitTypeName = weakestUnit.TypeName;
+                weakestReport.UnitPower = weakestUnit.Power;
+                weakestReport.ForceBefore = current.Total;
+                weakestReport.ForceAfter = current.Total;
+                weakestReport.Decision = "KillUnit";
+                weakestReport.Notes = "Deferred weakest-unit kill applied after survivor pass.";
+                mLastAttritionReports.Add(weakestReport);
             }
 
             if (!anySurvivors && !isLoser && weakestUnit != null)
