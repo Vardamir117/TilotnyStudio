@@ -87,6 +87,21 @@ namespace Holocron
             public static bool suppresshistory = false;
         }
 
+        public struct weighted_type_list
+        {
+            public List<string> typeNames;
+            public List<float> weights;
+        }
+
+        public struct contrast_values
+        {
+            public List<string> enemyTypes;
+            public List<weighted_type_list> friendlyTypeLists;
+            public List<List<string>> friendlyTypeNames;
+            public List<List<float>> friendlyTypeWeights;
+            public Dictionary<string, float> typeScale;
+        }
+
         public static entities entities = new entities();
 
         public Holocron()
@@ -135,19 +150,19 @@ namespace Holocron
                     }
                     else
                     {//Run on real mod data from the debugger
-                        globals.localmodpath = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods";
-                        globals.steammodpath = "C:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470";
+                        globals.localmodpath = "G:\\SteamLibrary\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods";
+                        globals.steammodpath = "G:\\SteamLibrary\\steamapps\\workshop\\content\\32470";
                         //1125571106 1976399102 3417277973
                         //Workshop
                         // entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470\\3417277973\\Data");
 
                         //Dev build
                         
-                        entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\Rev\\Data");
+                        entities.modpaths.Add("G:\\SteamLibrary\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\EmpireAtWarExpanded\\Rev\\Data");
                         //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\TR\\Data");
                         //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\FotR\\Data");
                         //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\CoreSaga\\Data");
-                        entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\Data");
+                        entities.modpaths.Add("G:\\SteamLibrary\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\EmpireAtWarExpanded\\Data");
                         
 
                         //Vanillua
