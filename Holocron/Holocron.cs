@@ -67,6 +67,7 @@ namespace Holocron
 
             public static UnitSortClass UnitSortConfig = new UnitSortClass();
             public static UnitFilterClass UnitFilterConfig = new UnitFilterClass();
+            public static contrast_values ContrastValues = new contrast_values();
 
             public static List<shipname> shipnames = new List<shipname>();
 
@@ -301,6 +302,9 @@ namespace Holocron
             parsePlanets(entities, globals.allplanets);
             loadscreen.ChangeText("Parsing Galactic Conquests");
             parseGCs(entities);
+
+            loadscreen.ChangeText("Reading AI contrast values");
+            globals.ContrastValues = ReadContrastValues();
             //Assume picturebox is a square of odd pixel count
             globals.origin = (PlanetPictureBox.Width - 1) / 2;
             globals.scale = globals.origin/(entities.PlanetBounds + 25);
@@ -308,6 +312,77 @@ namespace Holocron
             entities.projectilehashes.Clear();
 
             loadscreen.CloseLoadScreen();
+        }
+
+        private contrast_values ReadContrastValues()
+        {
+            contrast_values contrastValues = new contrast_values();
+            contrastValues.enemyTypes = new List<string>();
+            contrastValues.friendlyTypeLists = new List<weighted_type_list>();
+            contrastValues.friendlyTypeNames = new List<List<string>>();
+            contrastValues.friendlyTypeWeights = new List<List<float>>();
+            contrastValues.typeScale = new Dictionary<string, float>();
+
+            string path = getModFile("Scripts\\Library\\PGAICommands.lua");
+            if (!File.Exists(path)) return contrastValues;
+
+            string[] lines = File.ReadAllLines(path);
+            bool in_contrast_function = false;
+            string current_enemy = "";
+            List<string> current_names = null;
+            List<float> current_weights = null;
+
+            foreach (string raw in lines)
+            {
+                string line = raw.Trim();
+                if (!in_contrast_function)
+                {
+                    if (line.StartsWith("function Set_Contrast_Values()")) in_contrast_function = true;
+                    continue;
+                }
+
+                if (line == "end") break;
+
+                if (line.StartsWith("EnemyContrastTypes[_e_cnt]"))
+                {
+                    current_enemy = LuaParser.ExtractLuaQuotedValue(line);
+                }
+                else if (line.StartsWith("FriendlyContrastTypeNames"))
+                {
+                    current_names = LuaParser.ParseLuaStringArray(line);
+                }
+                else if (line.StartsWith("FriendlyContrastWeights"))
+                {
+                    current_weights = LuaParser.ParseLuaFloatArray(line);
+                }
+                else if (line.StartsWith("ContrastTypeScale["))
+                {
+                    string scale_type = LuaParser.ExtractLuaBracketQuotedKey(line);
+                    float scale;
+                    if (scale_type != "" && float.TryParse(LuaParser.ExtractLuaAssignedValue(line), NumberStyles.Float, CultureInfo.InvariantCulture, out scale))
+                    {
+                        contrastValues.typeScale[scale_type] = scale;
+                    }
+                }
+
+                if (current_enemy != "" && current_names != null && current_weights != null)
+                {
+                    weighted_type_list list = new weighted_type_list();
+                    list.typeNames = current_names;
+                    list.weights = current_weights;
+
+                    contrastValues.enemyTypes.Add(current_enemy);
+                    contrastValues.friendlyTypeLists.Add(list);
+                    contrastValues.friendlyTypeNames.Add(new List<string>(current_names));
+                    contrastValues.friendlyTypeWeights.Add(new List<float>(current_weights));
+
+                    current_enemy = "";
+                    current_names = null;
+                    current_weights = null;
+                }
+            }
+
+            return contrastValues;
         }
 
         private void submodsToolStripMenuItem_Click(object sender, EventArgs e)
