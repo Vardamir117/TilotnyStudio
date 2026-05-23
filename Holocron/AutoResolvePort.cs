@@ -60,13 +60,17 @@ namespace Holocron
     {
         public int RoundNumber;
         public string SideAUnit;
+        public int SideAUnitIndex;
         public string SideBUnit;
+        public int SideBUnitIndex;
         public float SideAPower;
         public float SideBPower;
         public int WinnerSideIndex;
         public int WinnerOwnerId;
         public string WinningUnit;
+        public int WinningUnitIndex;
         public string LosingUnit;
+        public int LosingUnitIndex;
         public bool LosingUnitDestroyed;
     }
 
@@ -115,7 +119,7 @@ namespace Holocron
             {
                 Unit = Queue.FirstOrDefault(x => x.IsAlive && !x.IsEscort);
                 Escort = Queue.FirstOrDefault(x => x.IsAlive && x.IsEscort);
-                WeakestUnit = Queue.Where(x => x.IsAlive).OrderBy(x => x.Power * x.HealthRatio).FirstOrDefault();
+                WeakestUnit = Queue.Where(x => x.IsAlive).OrderBy(x => x.Power).FirstOrDefault();
             }
 
             public float HealthRatio()
@@ -141,6 +145,12 @@ namespace Holocron
         private int mBattleID = -1;
         private int mRoundCounter;
         private AutoResolveRoundReport mLastRoundReport = new AutoResolveRoundReport();
+
+        public float LoserAttrition { get; set; } = 0.35f;
+        public float WinnerAttrition { get; set; } = 0.15f;
+        public float RetreatLoserAttrition { get; set; } = 0.35f;
+        public float RetreatWinnerAttrition { get; set; } = 0.15f;
+        public float AttritionAllowanceFactor { get; set; } = 0.333333f;
 
         // The original implementation supports two participating sides.
         private readonly SideStruct[] mSides = new SideStruct[] { new SideStruct(), new SideStruct() };
@@ -221,7 +231,11 @@ namespace Holocron
                 Side_Attack(mSides[winner].Queue, resultA, resultB, mSides[winner].OwnerId);
                 Side_Attack(mSides[loser].Queue, resultB, resultA, mSides[loser].OwnerId);
 
-                destroyed = Apply_Attrition(mSides[loser].Queue, ref (loser == 0 ? ref resultA : ref resultB), mSides[loser].WeakestUnit, true, loser, mSides[winner].WeakestUnit);
+                if (loser == 0) destroyed = Apply_Attrition(mSides[0].Queue, ref resultA, mSides[0].WeakestUnit, true, 0, mSides[1].WeakestUnit);
+                else destroyed = Apply_Attrition(mSides[1].Queue, ref resultB, mSides[1].WeakestUnit, true, 1, mSides[0].WeakestUnit);
+
+                if (winner == 0) Apply_Attrition(mSides[0].Queue, ref resultA, mSides[0].WeakestUnit, false, 0, mSides[1].WeakestUnit);
+                else Apply_Attrition(mSides[1].Queue, ref resultB, mSides[1].WeakestUnit, false, 1, mSides[0].WeakestUnit);
             }
 
             mRoundCounter++;
@@ -229,13 +243,17 @@ namespace Holocron
             {
                 RoundNumber = mRoundCounter,
                 SideAUnit = Get_Lead_Unit_Name(0),
+                SideAUnitIndex = Get_Lead_Unit_Index(0),
                 SideBUnit = Get_Lead_Unit_Name(1),
+                SideBUnitIndex = Get_Lead_Unit_Index(1),
                 SideAPower = resultA.Total,
                 SideBPower = resultB.Total,
                 WinnerSideIndex = winner,
                 WinnerOwnerId = winner >= 0 ? mSides[winner].OwnerId : -1,
                 WinningUnit = winner >= 0 ? Get_Lead_Unit_Name(winner) : "(tie)",
+                WinningUnitIndex = winner >= 0 ? Get_Lead_Unit_Index(winner) : -1,
                 LosingUnit = targetedLoser != null ? targetedLoser.TypeName : "(none)",
+                LosingUnitIndex = loser >= 0 ? Get_Unit_Index(loser, targetedLoser) : -1,
                 LosingUnitDestroyed = destroyed
             };
 
@@ -299,12 +317,15 @@ namespace Holocron
 
         public bool Apply_Attrition(List<AutoResolveCombatant> units, ref TargetResult current, AutoResolveCombatant weakestUnit, bool isLoser, int index, AutoResolveCombatant killer)
         {
-            var alive = units.Where(x => x.IsAlive).OrderBy(x => x.Power * x.HealthRatio).ToList();
+            var alive = units.Where(x => x.IsAlive).OrderBy(x => x.Power).ToList();
             if (alive.Count == 0) return false;
 
             var victim = alive[0];
-            float loss = isLoser ? 0.35f : 0.15f;
-            victim.Health -= loss;
+            float loss = isLoser
+                ? (mRetreatInProgress ? RetreatLoserAttrition : LoserAttrition)
+                : (mRetreatInProgress ? RetreatWinnerAttrition : WinnerAttrition);
+            loss *= Math.Max(0f, AttritionAllowanceFactor);
+            victim.Health -= Math.Max(0f, loss);
             if (victim.Health <= 0f)
             {
                 victim.IsAlive = false;
@@ -364,7 +385,7 @@ namespace Holocron
         {
             foreach (var unit in units.Where(x => x.IsAlive))
             {
-                float remaining = unit.Power * unit.HealthRatio;
+                float remaining = unit.Power;
                 int bestCategory;
                 Find_Contrast_Index(remaining, unit, targetForce, out bestCategory);
                 Apply_Unit_Contrast(remaining, unit, result, bestCategory, null, mIsSpace ? MapEnvironmentType.Space : MapEnvironmentType.Ground);
@@ -378,14 +399,14 @@ namespace Holocron
 
             foreach (var unit in units.Where(x => x.IsAlive))
             {
-                float effectivePower = unit.Power * unit.HealthRatio;
+                float effectivePower = unit.Power;
                 foreach (var category in unit.ContrastCategories)
                 {
                     result.Add(category, effectivePower);
                 }
             }
 
-            weakestUnit = units.Where(x => x.IsAlive).OrderBy(x => x.Power * x.HealthRatio).FirstOrDefault();
+            weakestUnit = units.Where(x => x.IsAlive).OrderBy(x => x.Power).FirstOrDefault();
         }
 
         public void Find_Special_Heroes(int index) { }
@@ -416,6 +437,31 @@ namespace Holocron
             if (anyLead != null) return anyLead.TypeName;
 
             return "(none)";
+        }
+
+        private int Get_Lead_Unit_Index(int side)
+        {
+            if (side < 0 || side >= mSides.Length) return -1;
+
+            for (int i = 0; i < mSides[side].Queue.Count; i++)
+            {
+                AutoResolveCombatant unit = mSides[side].Queue[i];
+                if (unit.IsAlive && !string.IsNullOrEmpty(unit.TypeName)) return i;
+            }
+
+            for (int i = 0; i < mSides[side].Queue.Count; i++)
+            {
+                AutoResolveCombatant unit = mSides[side].Queue[i];
+                if (!string.IsNullOrEmpty(unit.TypeName)) return i;
+            }
+
+            return -1;
+        }
+
+        private int Get_Unit_Index(int side, AutoResolveCombatant combatant)
+        {
+            if (side < 0 || side >= mSides.Length || combatant == null) return -1;
+            return mSides[side].Queue.IndexOf(combatant);
         }
 
         private int Owner_Enters_Fray(int owner)

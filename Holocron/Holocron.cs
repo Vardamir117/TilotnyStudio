@@ -1155,7 +1155,7 @@ namespace Holocron
                     combatant.Power = Math.Max(0.01f, entry.source.cp);
                     combatant.Health = 1.0f;
                     combatant.IsEscort = false;
-                    combatant.IsTransport = entry.source.behaviors != null && entry.source.behaviors.Contains("Transport");
+                    combatant.IsTransport = entry.source.behaviors != null && entry.source.behaviors.Contains("TRANSPORT");
                     combatant.ContrastCategories = new List<string>();
                     foreach (string category in entry.source.categories) combatant.ContrastCategories.Add(category);
                     corenne.Add(combatant);
@@ -1192,13 +1192,39 @@ namespace Holocron
             else if (report.WinnerSideIndex == 0) winner = "Attacker";
             else winner = "Defender";
 
+            string attackerLead = AutoResolveUnitNameForDisplay(report.SideAUnit) + " [" + report.SideAUnitIndex.ToString() + "]";
+            string defenderLead = AutoResolveUnitNameForDisplay(report.SideBUnit) + " [" + report.SideBUnitIndex.ToString() + "]";
+            string winnerLead = report.WinnerSideIndex >= 0
+                ? AutoResolveUnitNameForDisplay(report.WinningUnit) + " [idx " + report.WinningUnitIndex.ToString() + "]"
+                : "";
+            string loserTarget = AutoResolveUnitNameForDisplay(report.LosingUnit) + " [" + report.LosingUnitIndex.ToString() + "]";
+
             return "Round " + report.RoundNumber.ToString() + ": " +
-                "Attacker unit " + AutoResolveUnitNameForDisplay(report.SideAUnit) + " (power " + report.SideAPower.ToString("0.###", CultureInfo.InvariantCulture) + ") vs " +
-                "Defender unit " + AutoResolveUnitNameForDisplay(report.SideBUnit) + " (power " + report.SideBPower.ToString("0.###", CultureInfo.InvariantCulture) + ") -> " +
-                winner + " wins exchange" +
-                (report.WinnerSideIndex >= 0 ? " with " + AutoResolveUnitNameForDisplay(report.WinningUnit) : "") +
-                "; target " + AutoResolveUnitNameForDisplay(report.LosingUnit) +
+                "Attacker lead " + attackerLead + " vs Defender lead " + defenderLead +
+                " | computed side force totals: attacker " + report.SideAPower.ToString("0.###", CultureInfo.InvariantCulture) +
+                ", defender " + report.SideBPower.ToString("0.###", CultureInfo.InvariantCulture) +
+                " -> " + winner + " wins exchange" +
+                (report.WinnerSideIndex >= 0 ? " with " + winnerLead : "") +
+                "; attrition target " + loserTarget +
                 (report.LosingUnitDestroyed ? " was destroyed." : " survived.");
+        }
+
+        private void AutoResolveApplyAttritionInputs(AutoResolveClass sim)
+        {
+            sim.LoserAttrition = (float)AutoResolveLoserAttritionNumeric.Value;
+            sim.WinnerAttrition = (float)AutoResolveWinnerAttritionNumeric.Value;
+            sim.RetreatLoserAttrition = (float)AutoResolveRetreatLoserAttritionNumeric.Value;
+            sim.RetreatWinnerAttrition = (float)AutoResolveRetreatWinnerAttritionNumeric.Value;
+            sim.AttritionAllowanceFactor = (float)AutoResolveAttritionAllowanceNumeric.Value;
+        }
+
+        private string AutoResolveAttritionInputsToText()
+        {
+            return "Attrition inputs: loser=" + AutoResolveLoserAttritionNumeric.Value.ToString(CultureInfo.InvariantCulture) +
+                ", winner=" + AutoResolveWinnerAttritionNumeric.Value.ToString(CultureInfo.InvariantCulture) +
+                ", retreat loser=" + AutoResolveRetreatLoserAttritionNumeric.Value.ToString(CultureInfo.InvariantCulture) +
+                ", retreat winner=" + AutoResolveRetreatWinnerAttritionNumeric.Value.ToString(CultureInfo.InvariantCulture) +
+                ", allowance factor=" + AutoResolveAttritionAllowanceNumeric.Value.ToString(CultureInfo.InvariantCulture);
         }
 
         private void AutoResolveRunButton_Click(object sender, EventArgs e)
@@ -1229,6 +1255,7 @@ namespace Holocron
             List<AutoResolveCombatant> defender = AutoResolveBuildCombatants(autoResolveSideB, autoResolveSideBOwner, space);
 
             AutoResolveClass sim = new AutoResolveClass();
+            AutoResolveApplyAttritionInputs(sim);
             AutoResolveHResult prep = space ? sim.Prepare_For_Space() : sim.Prepare_For_Land();
             if (prep != AutoResolveHResult.S_OK)
             {
@@ -1279,12 +1306,13 @@ namespace Holocron
             string outcome =
                 "Auto Resolve complete\r\n" +
                 "Battle Type: " + (space ? "Space" : "Land") + "\r\n" +
+                AutoResolveAttritionInputsToText() + "\r\n" +
                 "Rounds: " + rounds.ToString() + "\r\n" +
                 "Attacker: " + attackerName + "\r\n" +
                 "Defender: " + defenderName + "\r\n" +
                 "Winner: " + winnerName + "\r\n" +
-                "Side A remaining: " + sim.Get_Visible_Queue_Size(0).ToString() + " (health ratio " + sim.Get_Health_Ratio(0).ToString("0.###", CultureInfo.InvariantCulture) + ")\r\n" +
-                "Side B remaining: " + sim.Get_Visible_Queue_Size(1).ToString() + " (health ratio " + sim.Get_Health_Ratio(1).ToString("0.###", CultureInfo.InvariantCulture) + ")";
+                "Side A remaining: " + sim.Get_Visible_Queue_Size(0).ToString() + ")\r\n" +
+                "Side B remaining: " + sim.Get_Visible_Queue_Size(1).ToString()  + ")";
 
             string roundDetail = roundLines.Count > 0
                 ? "\r\n\r\nRound-by-round exchanges:\r\n" + string.Join("\r\n", roundLines)
@@ -3389,6 +3417,11 @@ namespace Holocron
         }
 
         private void AutoResolveUnitComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void AutoResolveLoserAttritionLabel_Click(object sender, EventArgs e)
         {
 
         }
