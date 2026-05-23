@@ -26,6 +26,13 @@ namespace Holocron
         Ground
     }
 
+    // Mirrors AutoResolveKilled from AutoResolve.h: object type + owning player.
+    public class AutoResolveKilled
+    {
+        public string ObjectType;
+        public int Owner;
+    }
+
     // Mirrors AutoResolveBattle from AutoResolve.h: battle location and kill log.
     public class AutoResolveBattle
     {
@@ -35,7 +42,7 @@ namespace Holocron
 
     // Simplified combatant abstraction used by the C# port.
     // Maps to behavior/type data consumed by AutoResolveClass in C++.
-        public class AutoResolveCombatant
+    public class AutoResolveCombatant
     {
         public string TypeName;
         public int OwnerId;
@@ -61,11 +68,12 @@ namespace Holocron
         public bool AddGarrison = true;
         public bool IsDummyStarBase;
 
-        // Placeholder for C++ hero special ability strength factors (category -> multiplier).
-        public bool HasSpecialAbility;
-        public Dictionary<string, float> SpecialAbilityUnitStrengthFactors = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
-
         public List<string> ContrastCategories = new List<string>();
+
+        public float HealthRatio
+        {
+            get { return Math.Max(0f, Math.Min(1f, Health)); }
+        }
     }
 
     public class AutoResolveBuiltObject
@@ -74,19 +82,22 @@ namespace Holocron
         public float Power;
     }
 
-    public class AutoResolveEngagementReport
+    public class AutoResolveRoundReport
     {
-        public int AttackerOwnerId;
-        public string SourceTypeName;
-        public int SourceUnitIndex;
-        public string SourceKind;
-        public float SourcePowerBefore;
-        public float SourcePowerAfter;
-        public string TargetCategory;
-        public float TargetCategoryBefore;
-        public float TargetCategoryAfter;
-        public float TargetGlobalBefore;
-        public float TargetGlobalAfter;
+        public int RoundNumber;
+        public string SideAUnit;
+        public int SideAUnitIndex;
+        public string SideBUnit;
+        public int SideBUnitIndex;
+        public float SideAPower;
+        public float SideBPower;
+        public int WinnerSideIndex;
+        public int WinnerOwnerId;
+        public string WinningUnit;
+        public int WinningUnitIndex;
+        public string LosingUnit;
+        public int LosingUnitIndex;
+        public bool LosingUnitDestroyed;
     }
 
     // C# port of AutoResolveClass from AutoResolve.h/.cpp.
@@ -158,7 +169,7 @@ namespace Holocron
         private bool mIsSpace;
         private int mBattleID = -1;
         private int mRoundCounter;
-        private readonly List<AutoResolveEngagementReport> mLastEngagements = new List<AutoResolveEngagementReport>();
+        private AutoResolveRoundReport mLastRoundReport = new AutoResolveRoundReport();
         private readonly Random mAttritionRandom = new Random(1);
         private bool mBattleFought;
 
@@ -308,7 +319,6 @@ namespace Holocron
             results[0] = mSides[0].TotalForce.Clone();
             results[1] = mSides[1].TotalForce.Clone();
 
-            mLastEngagements.Clear();
             Side_Attack(mSides[0].Queue, mSides[1].TotalForce, results[1], mSides[0].OwnerId);
             Side_Attack(mSides[1].Queue, mSides[0].TotalForce, results[0], mSides[1].OwnerId);
 
@@ -367,6 +377,23 @@ namespace Holocron
             }
 
             mRoundCounter++;
+            mLastRoundReport = new AutoResolveRoundReport
+            {
+                RoundNumber = mRoundCounter,
+                SideAUnit = Get_Lead_Unit_Name(0),
+                SideAUnitIndex = Get_Lead_Unit_Index(0),
+                SideBUnit = Get_Lead_Unit_Name(1),
+                SideBUnitIndex = Get_Lead_Unit_Index(1),
+                SideAPower = results[0].Total,
+                SideBPower = results[1].Total,
+                WinnerSideIndex = winner,
+                WinnerOwnerId = winner >= 0 ? mSides[winner].OwnerId : -1,
+                WinningUnit = winner >= 0 ? Get_Lead_Unit_Name(winner) : "(tie)",
+                WinningUnitIndex = winner >= 0 ? Get_Lead_Unit_Index(winner) : -1,
+                LosingUnit = targetedLoser != null ? targetedLoser.TypeName : "(none)",
+                LosingUnitIndex = loser >= 0 ? Get_Unit_Index(loser, targetedLoser) : -1,
+                LosingUnitDestroyed = destroyed
+            };
 
             mSides[0].UpdatePositions();
             mSides[1].UpdatePositions();
@@ -388,7 +415,7 @@ namespace Holocron
             mRetreatingPlayer = -1;
             mWinningPlayer = -1;
             mRoundCounter = 0;
-            mLastEngagements.Clear();
+            mLastRoundReport = new AutoResolveRoundReport();
             mBattleFought = false;
             mSides[0].Init();
             mSides[1].Init();
@@ -396,8 +423,25 @@ namespace Holocron
         }
 
         public int Who_Won() { return mWinningPlayer; }
-        public List<AutoResolveEngagementReport> Get_Last_Engagements() { return new List<AutoResolveEngagementReport>(mLastEngagements); }
+        public int Get_Battle_ID() { return mBattleID; }
+        public AutoResolveBattle Get_Battle(int id) { return mBattleHistory[id % MAX_HISTORY]; }
+        public AutoResolveRoundReport Get_Last_Round_Report() { return mLastRoundReport; }
+
+        public int Get_Side_A() { return mSides[0].OwnerId; }
+        public int Get_Side_B() { return mSides[1].OwnerId; }
+        public int Get_Side_Aggressor() { return mAggressor; }
+        public int Get_Side_Defender()
+        {
+            if (mSides[0].OwnerId == mAggressor) return mSides[1].OwnerId;
+            return mSides[0].OwnerId;
+        }
         public int Side_Is_Retreating() { return mRetreatInProgress ? mRetreatingPlayer : -1; }
+        public int Get_Visible_Queue_Size(int side)
+        {
+            // C++ currently returns a fixed 3 with a TODO for true visibility logic.
+            side = side;
+            return 3;
+        }
 
         public void Add_Tactical_Combatants() { }
 
@@ -656,184 +700,44 @@ namespace Holocron
             }
         }
 
-        public void Apply_Unit_Contrast(ref float remainingPower, AutoResolveCombatant unit, TargetResult current, string bestCategory, Dictionary<string, float> factorTable, MapEnvironmentType terrain, AutoResolveEngagementReport engagement)
+        public void Apply_Unit_Contrast(float remainingPower, AutoResolveCombatant unit, TargetResult current, string bestCategory, List<float> factorTable, MapEnvironmentType terrain)
         {
             if (unit == null) return;
 
-            float originalPower = remainingPower;
-            float factor = 0.0f;
+            float factor = 1f;
+            if (factorTable != null && factorTable.Count > 0) factor = factorTable[0];
 
-            if (factorTable != null && unit.ContrastCategories != null)
-            {
-                for (int i = 0; i < unit.ContrastCategories.Count; i++)
-                {
-                    string category = unit.ContrastCategories[i];
-                    float categoryFactor;
-                    if (!string.IsNullOrWhiteSpace(category) && factorTable.TryGetValue(category, out categoryFactor) && categoryFactor > factor)
-                    {
-                        factor = categoryFactor;
-                    }
-                }
-            }
-
-            if (factor != 0.0f)
-            {
-                remainingPower *= factor;
-            }
-
+            float appliedPower = Math.Max(0f, remainingPower * Math.Max(0f, factor));
             string globalKey = mIsSpace ? "__GLOBAL_SPACE__" : "__GLOBAL_GROUND__";
 
-            if (!string.IsNullOrWhiteSpace(bestCategory))
+            if (string.IsNullOrWhiteSpace(bestCategory))
             {
-                float contrastWeight = Get_Unit_Contrast_Weight(unit, bestCategory);
-                remainingPower *= Math.Max(0.0f, contrastWeight);
-
-                if (remainingPower <= 0.0f)
-                {
-                    if (engagement != null) engagement.SourcePowerAfter = 0.0f;
-                    return;
-                }
-
-                float modifiedForceApplied = Math.Min(current.Get(bestCategory), remainingPower);
-                remainingPower = (1.0f - modifiedForceApplied / remainingPower) * originalPower;
-
-                current.Reduce(bestCategory, modifiedForceApplied);
-                current.Reduce(globalKey, modifiedForceApplied + remainingPower);
-            }
-            else
-            {
-                current.Reduce(globalKey, remainingPower);
-                remainingPower = 0.0f;
+                current.Reduce(globalKey, appliedPower);
+                return;
             }
 
-            if (engagement != null)
+            float contrastWeight = Get_Unit_Contrast_Weight(unit, bestCategory);
+            appliedPower *= Math.Max(0f, contrastWeight);
+
+            float available = current.Get(bestCategory);
+            float categoryApplied = Math.Min(Math.Max(0f, available), appliedPower);
+            if (categoryApplied > 0f)
             {
-                engagement.SourcePowerAfter = remainingPower;
+                current.Reduce(bestCategory, categoryApplied);
             }
+
+            // Keep global force in sync with applied pressure.
+            current.Reduce(globalKey, appliedPower);
         }
 
         public void Side_Attack(List<AutoResolveCombatant> units, TargetResult targetForce, TargetResult result, int playerId)
         {
-            // C++ parity: start from target_force snapshot.
-            result.CopyFrom(targetForce);
-
-            // C++ cat_table equivalent: best hero strength bonus per category (stored as multiplier component).
-            Dictionary<string, float> catTable = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
-            foreach (AutoResolveCombatant heroCandidate in units.Where(x => x != null && x.IsAlive && x.HasSpecialAbility))
+            foreach (AutoResolveCombatant unit in units.Where(x => x.IsAlive))
             {
-                foreach (KeyValuePair<string, float> kv in heroCandidate.SpecialAbilityUnitStrengthFactors)
-                {
-                    if (string.IsNullOrWhiteSpace(kv.Key)) continue;
-                    float weight = kv.Value - 1.0f;
-                    float extant;
-                    if (!catTable.TryGetValue(kv.Key, out extant) || weight > extant)
-                    {
-                        catTable[kv.Key] = weight;
-                    }
-                }
-            }
-
-            // Placeholder: mBombingRun/mBomberType behavior requires explicit bomber source in the C# model.
-
-            foreach (AutoResolveCombatant unit in units.Where(x => x != null && x.IsAlive))
-            {
-                int unitIndex = units.IndexOf(unit);
-                string bestCategory = "__UNSET__";
-
-                if (!mIsSpace && unit.IsPlanet)
-                {
-                    if (unit.IncludePlanetTacticalBuiltObjects)
-                    {
-                        foreach (AutoResolveBuiltObject built in unit.PlanetBuiltObjects)
-                        {
-                            if (built == null || built.Power <= 0.0f) continue;
-
-                            float remainingPower = built.Power;
-                            while (remainingPower > 0.0f && bestCategory != null)
-                            {
-                                Find_Contrast_Index(remainingPower, unit, result, out bestCategory);
-
-                                AutoResolveEngagementReport engagement = new AutoResolveEngagementReport();
-                                engagement.AttackerOwnerId = playerId;
-                                engagement.SourceTypeName = unit.TypeName;
-                                engagement.SourceUnitIndex = unitIndex;
-                                engagement.SourceKind = "BuiltObject";
-                                engagement.SourcePowerBefore = remainingPower;
-                                engagement.TargetCategory = string.IsNullOrWhiteSpace(bestCategory) ? "(global)" : bestCategory;
-                                engagement.TargetCategoryBefore = string.IsNullOrWhiteSpace(bestCategory) ? 0.0f : result.Get(bestCategory);
-                                engagement.TargetGlobalBefore = result.Get(mIsSpace ? "__GLOBAL_SPACE__" : "__GLOBAL_GROUND__");
-
-                                Apply_Unit_Contrast(ref remainingPower, unit, result, bestCategory, catTable, mIsSpace ? MapEnvironmentType.Space : MapEnvironmentType.Ground, engagement);
-
-                                engagement.TargetCategoryAfter = string.IsNullOrWhiteSpace(bestCategory) ? 0.0f : result.Get(bestCategory);
-                                engagement.TargetGlobalAfter = result.Get(mIsSpace ? "__GLOBAL_SPACE__" : "__GLOBAL_GROUND__");
-                                mLastEngagements.Add(engagement);
-
-                                bestCategory = null;
-                            }
-                        }
-                    }
-                    continue;
-                }
-
-                bool addGarrison = unit.AddGarrison;
-                if (addGarrison && unit.IsDummyStarBase && MidTactical)
-                {
-                    addGarrison = false;
-                }
-
-                if (addGarrison && unit.GarrisonPower > 0.0f)
-                {
-                    float remainingPower = unit.GarrisonPower;
-                    while (remainingPower > 0.0f && bestCategory != null)
-                    {
-                        Find_Contrast_Index(remainingPower, unit, result, out bestCategory);
-
-                        AutoResolveEngagementReport engagement = new AutoResolveEngagementReport();
-                        engagement.AttackerOwnerId = playerId;
-                        engagement.SourceTypeName = unit.TypeName;
-                        engagement.SourceUnitIndex = unitIndex;
-                        engagement.SourceKind = "Garrison";
-                        engagement.SourcePowerBefore = remainingPower;
-                        engagement.TargetCategory = string.IsNullOrWhiteSpace(bestCategory) ? "(global)" : bestCategory;
-                        engagement.TargetCategoryBefore = string.IsNullOrWhiteSpace(bestCategory) ? 0.0f : result.Get(bestCategory);
-                        engagement.TargetGlobalBefore = result.Get(mIsSpace ? "__GLOBAL_SPACE__" : "__GLOBAL_GROUND__");
-
-                        Apply_Unit_Contrast(ref remainingPower, unit, result, bestCategory, catTable, mIsSpace ? MapEnvironmentType.Space : MapEnvironmentType.Ground, engagement);
-
-                        engagement.TargetCategoryAfter = string.IsNullOrWhiteSpace(bestCategory) ? 0.0f : result.Get(bestCategory);
-                        engagement.TargetGlobalAfter = result.Get(mIsSpace ? "__GLOBAL_SPACE__" : "__GLOBAL_GROUND__");
-                        mLastEngagements.Add(engagement);
-
-                        bestCategory = null;
-                    }
-                }
-
-                if (unit.IsTransport && mIsSpace) continue;
-
-                float unitRemainingPower = unit.Power;
-                while (unitRemainingPower > 0.0f && bestCategory != null)
-                {
-                    Find_Contrast_Index(unitRemainingPower, unit, result, out bestCategory);
-
-                    AutoResolveEngagementReport engagement = new AutoResolveEngagementReport();
-                    engagement.AttackerOwnerId = playerId;
-                    engagement.SourceTypeName = unit.TypeName;
-                    engagement.SourceUnitIndex = unitIndex;
-                    engagement.SourceKind = "Unit";
-                    engagement.SourcePowerBefore = unitRemainingPower;
-                    engagement.TargetCategory = string.IsNullOrWhiteSpace(bestCategory) ? "(global)" : bestCategory;
-                    engagement.TargetCategoryBefore = string.IsNullOrWhiteSpace(bestCategory) ? 0.0f : result.Get(bestCategory);
-                    engagement.TargetGlobalBefore = result.Get(mIsSpace ? "__GLOBAL_SPACE__" : "__GLOBAL_GROUND__");
-
-                    Apply_Unit_Contrast(ref unitRemainingPower, unit, result, bestCategory, catTable, mIsSpace ? MapEnvironmentType.Space : MapEnvironmentType.Ground, engagement);
-
-                    engagement.TargetCategoryAfter = string.IsNullOrWhiteSpace(bestCategory) ? 0.0f : result.Get(bestCategory);
-                    engagement.TargetGlobalAfter = result.Get(mIsSpace ? "__GLOBAL_SPACE__" : "__GLOBAL_GROUND__");
-                    mLastEngagements.Add(engagement);
-
-                    bestCategory = null;
-                }
+                float remaining = unit.Power;
+                string bestCategory;
+                Find_Contrast_Index(remaining, unit, targetForce, out bestCategory);
+                Apply_Unit_Contrast(remaining, unit, result, bestCategory, null, mIsSpace ? MapEnvironmentType.Space : MapEnvironmentType.Ground);
             }
         }
 
@@ -1018,14 +922,26 @@ namespace Holocron
 
         private float Get_Unit_Contrast_Weight(AutoResolveCombatant unit, string enemyCategory)
         {
-            if (unit == null) return 0.0f;
-            if (unit.ContrastCategories == null || unit.ContrastCategories.Count == 0) return 0.0f;
-            if (string.IsNullOrWhiteSpace(enemyCategory)) return 0.0f;
+            if (unit == null) return 1.0f;
+            if (unit.ContrastCategories == null || unit.ContrastCategories.Count == 0) return 1.0f;
+            if (string.IsNullOrWhiteSpace(enemyCategory)) return 1.0f;
 
-            return TargetContrastPort.Get_Average_Contrast_Factor(
-                unit.ContrastCategories,
-                enemyCategory,
-                ContrastWeightProvider);
+            float best = 0.0f;
+            for (int i = 0; i < unit.ContrastCategories.Count; i++)
+            {
+                string friendlyCategory = unit.ContrastCategories[i];
+                if (string.IsNullOrWhiteSpace(friendlyCategory)) continue;
+
+                float weight = 1.0f;
+                if (ContrastWeightProvider != null)
+                {
+                    weight = ContrastWeightProvider(enemyCategory, friendlyCategory);
+                }
+
+                if (weight > best) best = weight;
+            }
+
+            return best > 0.0f ? best : 1.0f;
         }
 
         private int Owner_Enters_Fray(int owner)
@@ -1064,7 +980,7 @@ namespace Holocron
             mSides[0].Init();
             mSides[1].Init();
             mRoundCounter = 0;
-            mLastEngagements.Clear();
+            mLastRoundReport = new AutoResolveRoundReport();
             mBattleFought = false;
 
             mBattleID = (mBattleID + 1) % MAX_HISTORY;
@@ -1119,16 +1035,6 @@ namespace Holocron
         public IEnumerable<KeyValuePair<string, float>> GetEntries()
         {
             return _values;
-        }
-
-        public void CopyFrom(TargetResult other)
-        {
-            _values.Clear();
-            if (other == null) return;
-            foreach (KeyValuePair<string, float> kv in other.GetEntries())
-            {
-                _values[kv.Key] = kv.Value;
-            }
         }
 
         public TargetResult Clone()

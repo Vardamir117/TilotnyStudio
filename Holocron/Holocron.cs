@@ -902,9 +902,9 @@ namespace Holocron
             AutoResolveUpdatePowerDisplay();
         }
 
-        private float AutoResolveGetContrastWeight(string enemyType, string friendlyType)
+        private float? AutoResolveTryGetContrastWeight(string enemyType, string friendlyType)
         {
-            if (globals.ContrastValues.enemyTypes == null || globals.ContrastValues.friendlyTypeLists == null) return 1f;
+            if (globals.ContrastValues.enemyTypes == null || globals.ContrastValues.friendlyTypeLists == null) return null;
 
             int entries = Math.Min(globals.ContrastValues.enemyTypes.Count, globals.ContrastValues.friendlyTypeLists.Count);
             for (int i = 0; i < entries; i++)
@@ -912,17 +912,23 @@ namespace Holocron
                 if (!string.Equals(globals.ContrastValues.enemyTypes[i], enemyType, StringComparison.OrdinalIgnoreCase)) continue;
 
                 weighted_type_list weighted = globals.ContrastValues.friendlyTypeLists[i];
-                if (weighted.typeNames == null || weighted.weights == null) return 1f;
+                if (weighted.typeNames == null || weighted.weights == null) return null;
 
                 int pairCount = Math.Min(weighted.typeNames.Count, weighted.weights.Count);
                 for (int j = 0; j < pairCount; j++)
                 {
                     if (string.Equals(weighted.typeNames[j], friendlyType, StringComparison.OrdinalIgnoreCase)) return weighted.weights[j];
                 }
-                return 1f;
+                return null;
             }
 
-            return 1f;
+            return null;
+        }
+
+        private float AutoResolveGetContrastWeight(string enemyType, string friendlyType)
+        {
+            float? weight = AutoResolveTryGetContrastWeight(enemyType, friendlyType);
+            return weight ?? 1f;
         }
 
         private float AutoResolveGetContrastScale(string enemyType)
@@ -1183,30 +1189,37 @@ namespace Holocron
             return unitTypeName;
         }
 
-        private string AutoResolveRoundReportToText(AutoResolveRoundReport report)
+        private string AutoResolveEngagementReportToText(AutoResolveEngagementReport report)
         {
             if (report == null) return "";
 
-            string winner;
-            if (report.WinnerSideIndex < 0) winner = "Tie";
-            else if (report.WinnerSideIndex == 0) winner = "Attacker";
-            else winner = "Defender";
+            string ownerName = AutoResolveOwnerToName(report.AttackerOwnerId);
+            string source = AutoResolveUnitNameForDisplay(report.SourceTypeName) + " [idx " + report.SourceUnitIndex.ToString() + "]";
 
-            string attackerLead = AutoResolveUnitNameForDisplay(report.SideAUnit) + " [" + report.SideAUnitIndex.ToString() + "]";
-            string defenderLead = AutoResolveUnitNameForDisplay(report.SideBUnit) + " [" + report.SideBUnitIndex.ToString() + "]";
-            string winnerLead = report.WinnerSideIndex >= 0
-                ? AutoResolveUnitNameForDisplay(report.WinningUnit) + " [idx " + report.WinningUnitIndex.ToString() + "]"
-                : "";
-            string loserTarget = AutoResolveUnitNameForDisplay(report.LosingUnit) + " [" + report.LosingUnitIndex.ToString() + "]";
+            return ownerName + " " + report.SourceKind + " engagement: " + source +
+                " | source power " + report.SourcePowerBefore.ToString("0.###", CultureInfo.InvariantCulture) +
+                " -> " + report.SourcePowerAfter.ToString("0.###", CultureInfo.InvariantCulture) +
+                " | target " + report.TargetCategory + " " + report.TargetCategoryBefore.ToString("0.###", CultureInfo.InvariantCulture) +
+                " -> " + report.TargetCategoryAfter.ToString("0.###", CultureInfo.InvariantCulture) +
+                " | target global " + report.TargetGlobalBefore.ToString("0.###", CultureInfo.InvariantCulture) +
+                " -> " + report.TargetGlobalAfter.ToString("0.###", CultureInfo.InvariantCulture);
+        }
 
-            return "Round " + report.RoundNumber.ToString() + ": " +
-                "Attacker lead " + attackerLead + " vs Defender lead " + defenderLead +
-                " | computed side force totals: attacker " + report.SideAPower.ToString("0.###", CultureInfo.InvariantCulture) +
-                ", defender " + report.SideBPower.ToString("0.###", CultureInfo.InvariantCulture) +
-                " -> " + winner + " wins exchange" +
-                (report.WinnerSideIndex >= 0 ? " with " + winnerLead : "") +
-                "; attrition target " + loserTarget +
-                (report.LosingUnitDestroyed ? " was destroyed." : " survived.");
+        private string AutoResolveBuildSurvivorListText(List<AutoResolveCombatant> units)
+        {
+            if (units == null) return "(none)";
+
+            List<AutoResolveCombatant> survivors = units.Where(x => x != null && x.IsAlive).ToList();
+            if (survivors.Count == 0) return "(none)";
+
+            List<string> lines = survivors
+                .GroupBy(x => x.TypeName ?? "(unknown)", StringComparer.OrdinalIgnoreCase)
+                .OrderByDescending(g => g.Count())
+                .ThenBy(g => g.Key)
+                .Select(g => g.Count().ToString(CultureInfo.InvariantCulture) + "x " + AutoResolveUnitNameForDisplay(g.First().TypeName))
+                .ToList();
+
+            return string.Join(", ", lines);
         }
 
         private void AutoResolveApplyAttritionInputs(AutoResolveClass sim)
@@ -1255,6 +1268,7 @@ namespace Holocron
             List<AutoResolveCombatant> defender = AutoResolveBuildCombatants(autoResolveSideB, autoResolveSideBOwner, space);
 
             AutoResolveClass sim = new AutoResolveClass();
+            sim.ContrastWeightProvider = AutoResolveGetContrastWeight;
             AutoResolveApplyAttritionInputs(sim);
             AutoResolveHResult prep = space ? sim.Prepare_For_Space() : sim.Prepare_For_Land();
             if (prep != AutoResolveHResult.S_OK)
@@ -1290,12 +1304,22 @@ namespace Holocron
             }
 
             int rounds = 0;
-            List<string> roundLines = new List<string>();
-            while (sim.Who_Won() < 0 && sim.Get_Visible_Queue_Size(0) > 0 && sim.Get_Visible_Queue_Size(1) > 0 && rounds < 500)
+            List<string> engagementLines = new List<string>();
+
+            AutoResolveHResult roundResult = sim.Combat_Round(true);
+            if (roundResult == AutoResolveHResult.E_AUTORESOLVE_NOT_READY)
             {
-                sim.Combat_Round(true);
-                rounds++;
-                roundLines.Add(AutoResolveRoundReportToText(sim.Get_Last_Round_Report()));
+                AutoResolveResultTextBox.Text = powerSummary + "\r\n\r\nAuto resolve combat was not ready when attempting to execute a round.";
+                return;
+            }
+
+            if (roundResult == AutoResolveHResult.S_AUTORESOLVE_COMBAT_RETREAT || roundResult == AutoResolveHResult.S_AUTORESOLVE_COMBAT_OVER)
+            {
+                List<AutoResolveEngagementReport> engagements = sim.Get_Last_Engagements();
+                for (int i = 0; i < engagements.Count; i++)
+                {
+                    engagementLines.Add(AutoResolveEngagementReportToText(engagements[i]));
+                }
             }
 
             int winner = sim.Who_Won();
@@ -1303,20 +1327,29 @@ namespace Holocron
             string attackerName = AutoResolveOwnerToName(autoResolveSideAOwner);
             string defenderName = AutoResolveOwnerToName(autoResolveSideBOwner);
 
+            string resolutionType = roundResult == AutoResolveHResult.S_AUTORESOLVE_COMBAT_RETREAT
+                ? "Retreat"
+                : (roundResult == AutoResolveHResult.S_AUTORESOLVE_COMBAT_OVER ? "Combat Over" : "Unknown");
+
+            int retreating = sim.Side_Is_Retreating();
+            string retreatingName = retreating >= 0 ? AutoResolveOwnerToName(retreating) : "None";
+
             string outcome =
                 "Auto Resolve complete\r\n" +
                 "Battle Type: " + (space ? "Space" : "Land") + "\r\n" +
                 AutoResolveAttritionInputsToText() + "\r\n" +
+                "Resolution: " + resolutionType + "\r\n" +
+                "Retreating Side: " + retreatingName + "\r\n" +
                 "Rounds: " + rounds.ToString() + "\r\n" +
                 "Attacker: " + attackerName + "\r\n" +
                 "Defender: " + defenderName + "\r\n" +
                 "Winner: " + winnerName + "\r\n" +
-                "Side A remaining: " + sim.Get_Visible_Queue_Size(0).ToString() + ")\r\n" +
-                "Side B remaining: " + sim.Get_Visible_Queue_Size(1).ToString()  + ")";
+                "Attacker survivors: " + AutoResolveBuildSurvivorListText(attacker) + "\r\n" +
+                "Defender survivors: " + AutoResolveBuildSurvivorListText(defender) + "\r\n";
 
-            string roundDetail = roundLines.Count > 0
-                ? "\r\n\r\nRound-by-round exchanges:\r\n" + string.Join("\r\n", roundLines)
-                : "\r\n\r\nRound-by-round exchanges:\r\n(no rounds executed)";
+            string roundDetail = engagementLines.Count > 0
+                ? "\r\n\r\nPer-unit engagements:\r\n" + string.Join("\r\n", engagementLines)
+                : "\r\n\r\nPer-unit engagements:\r\n(no engagements recorded)";
 
             AutoResolveResultTextBox.Text = powerSummary + "\r\n\r\n" + outcome + roundDetail;
         }

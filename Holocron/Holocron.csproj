@@ -100,6 +100,7 @@
     <Compile Include="SubmodSetup.Designer.cs">
       <DependentUpon>SubmodSetup.cs</DependentUpon>
     </Compile>
+    <Compile Include="TargetContrastPort.cs" />
     <Compile Include="UnitFilter.cs">
       <SubType>Form</SubType>
     </Compile>
