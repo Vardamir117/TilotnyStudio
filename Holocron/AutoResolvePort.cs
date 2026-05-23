@@ -56,6 +56,20 @@ namespace Holocron
         }
     }
 
+    public class AutoResolveRoundReport
+    {
+        public int RoundNumber;
+        public string SideAUnit;
+        public string SideBUnit;
+        public float SideAPower;
+        public float SideBPower;
+        public int WinnerSideIndex;
+        public int WinnerOwnerId;
+        public string WinningUnit;
+        public string LosingUnit;
+        public bool LosingUnitDestroyed;
+    }
+
     // C# port of AutoResolveClass from AutoResolve.h/.cpp.
     // This version preserves the main call flow and data shape used by the original system.
     public class AutoResolveClass
@@ -125,6 +139,8 @@ namespace Holocron
         // Space/land mode and circular battle-history index.
         private bool mIsSpace;
         private int mBattleID = -1;
+        private int mRoundCounter;
+        private AutoResolveRoundReport mLastRoundReport = new AutoResolveRoundReport();
 
         // The original implementation supports two participating sides.
         private readonly SideStruct[] mSides = new SideStruct[] { new SideStruct(), new SideStruct() };
@@ -197,13 +213,31 @@ namespace Holocron
             int winner = Determine_Winner_Index(resultA, resultB);
             int loser = winner == 0 ? 1 : 0;
 
+            AutoResolveCombatant targetedLoser = loser == 0 ? weakA : weakB;
+            bool destroyed = false;
+
             if (winner >= 0)
             {
                 Side_Attack(mSides[winner].Queue, resultA, resultB, mSides[winner].OwnerId);
                 Side_Attack(mSides[loser].Queue, resultB, resultA, mSides[loser].OwnerId);
 
-                Apply_Attrition(mSides[loser].Queue, ref (loser == 0 ? ref resultA : ref resultB), mSides[loser].WeakestUnit, true, loser, mSides[winner].WeakestUnit);
+                destroyed = Apply_Attrition(mSides[loser].Queue, ref (loser == 0 ? ref resultA : ref resultB), mSides[loser].WeakestUnit, true, loser, mSides[winner].WeakestUnit);
             }
+
+            mRoundCounter++;
+            mLastRoundReport = new AutoResolveRoundReport
+            {
+                RoundNumber = mRoundCounter,
+                SideAUnit = Get_Lead_Unit_Name(0),
+                SideBUnit = Get_Lead_Unit_Name(1),
+                SideAPower = resultA.Total,
+                SideBPower = resultB.Total,
+                WinnerSideIndex = winner,
+                WinnerOwnerId = winner >= 0 ? mSides[winner].OwnerId : -1,
+                WinningUnit = winner >= 0 ? Get_Lead_Unit_Name(winner) : "(tie)",
+                LosingUnit = targetedLoser != null ? targetedLoser.TypeName : "(none)",
+                LosingUnitDestroyed = destroyed
+            };
 
             if (mRetreatInProgress) Kill_Retreating_Units();
 
@@ -224,6 +258,8 @@ namespace Holocron
             mAggressor = -1;
             mRetreatingPlayer = -1;
             mWinningPlayer = -1;
+            mRoundCounter = 0;
+            mLastRoundReport = new AutoResolveRoundReport();
             mSides[0].Init();
             mSides[1].Init();
             return AutoResolveHResult.S_OK;
@@ -232,6 +268,7 @@ namespace Holocron
         public int Who_Won() { return mWinningPlayer; }
         public int Get_Battle_ID() { return mBattleID; }
         public AutoResolveBattle Get_Battle(int id) { return mBattleHistory[id % MAX_HISTORY]; }
+        public AutoResolveRoundReport Get_Last_Round_Report() { return mLastRoundReport; }
 
         public int Get_Side_A() { return mSides[0].OwnerId; }
         public int Get_Side_B() { return mSides[1].OwnerId; }
@@ -368,6 +405,19 @@ namespace Holocron
             return a > b ? 0 : 1;
         }
 
+        private string Get_Lead_Unit_Name(int side)
+        {
+            if (side < 0 || side >= mSides.Length) return "(none)";
+
+            AutoResolveCombatant liveLead = mSides[side].Queue.FirstOrDefault(x => x.IsAlive && !string.IsNullOrEmpty(x.TypeName));
+            if (liveLead != null) return liveLead.TypeName;
+
+            AutoResolveCombatant anyLead = mSides[side].Queue.FirstOrDefault(x => !string.IsNullOrEmpty(x.TypeName));
+            if (anyLead != null) return anyLead.TypeName;
+
+            return "(none)";
+        }
+
         private int Owner_Enters_Fray(int owner)
         {
             if (mSides[0].OwnerId == owner || mSides[0].OwnerId == -1)
@@ -404,6 +454,8 @@ namespace Holocron
 
             mSides[0].Init();
             mSides[1].Init();
+            mRoundCounter = 0;
+            mLastRoundReport = new AutoResolveRoundReport();
 
             mBattleID = (mBattleID + 1) % MAX_HISTORY;
             mBattleHistory[mBattleID] = new AutoResolveBattle();

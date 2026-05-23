@@ -822,11 +822,8 @@ namespace Holocron
             FillMatrixLookup();
         }
 
-        private void FillAutoResolveUnitSelection()
+        private List<unit> AutoResolveGetUnitSource()
         {
-            if (AutoResolveUnitComboBox.Items.Count > 0) return;
-
-            AutoResolveUnitComboBox.Items.Clear();
             List<unit> source = new List<unit>();
             foreach (unit item in entities.spaceUnits) source.Add(item);
             foreach (unit item in entities.groundCompanies) source.Add(item);
@@ -835,13 +832,63 @@ namespace Holocron
             foreach (unit item in entities.spaceHeroes) source.Add(item);
             foreach (unit item in entities.heroCompanies) source.Add(item);
             foreach (unit item in entities.groundHeroes) source.Add(item);
+            return source;
+        }
 
-            foreach (unit item in source.OrderBy(x => x.username))
+        private List<unit> AutoResolveGetBattleTypeUnitSource()
+        {
+            List<unit> source = new List<unit>();
+
+            if (AutoResolveBattleTypeComboBox.SelectedIndex == 0)
+            {
+                foreach (unit item in entities.spaceUnits) source.Add(item);
+                foreach (unit item in entities.spaceHeroes) source.Add(item);
+            }
+            else if (AutoResolveBattleTypeComboBox.SelectedIndex == 1)
+            {
+                foreach (unit item in entities.groundCompanies) source.Add(item);
+                foreach (unit item in entities.groundUnits) source.Add(item);
+                foreach (unit item in entities.structures) source.Add(item);
+                foreach (unit item in entities.heroCompanies) source.Add(item);
+                foreach (unit item in entities.groundHeroes) source.Add(item);
+            }
+            else
+            {
+                source = AutoResolveGetUnitSource();
+            }
+
+            return source;
+        }
+
+        private void FillAutoResolveUnitSelection()
+        {
+            unit priorSelection = new unit();
+            bool hadSelection = AutoResolveUnitComboBox.SelectedItem != null;
+            if (hadSelection) priorSelection = (unit)AutoResolveUnitComboBox.SelectedItem;
+
+            AutoResolveUnitComboBox.Items.Clear();
+            foreach (unit item in AutoResolveGetBattleTypeUnitSource().OrderBy(x => x.username))
             {
                 if (AutoResolveUnitHasSufficientInformation(item)) AutoResolveUnitComboBox.Items.Add(item);
             }
 
-            if (AutoResolveUnitComboBox.Items.Count > 0) AutoResolveUnitComboBox.SelectedIndex = 0;
+            if (AutoResolveUnitComboBox.Items.Count == 0) return;
+
+            if (hadSelection)
+            {
+                int match = -1;
+                for (int i = 0; i < AutoResolveUnitComboBox.Items.Count; i++)
+                {
+                    unit compare = (unit)AutoResolveUnitComboBox.Items[i];
+                    if (string.Equals(compare.unitname, priorSelection.unitname, StringComparison.OrdinalIgnoreCase))
+                    {
+                        match = i;
+                        break;
+                    }
+                }
+                AutoResolveUnitComboBox.SelectedIndex = match >= 0 ? match : 0;
+            }
+            else AutoResolveUnitComboBox.SelectedIndex = 0;
         }
 
         private void AutoResolveRefreshSideListboxes()
@@ -1090,6 +1137,7 @@ namespace Holocron
 
         private void AutoResolveInputChanged(object sender, EventArgs e)
         {
+            if (ReferenceEquals(sender, AutoResolveBattleTypeComboBox)) FillAutoResolveUnitSelection();
             AutoResolveUpdatePowerDisplay();
         }
 
@@ -1121,6 +1169,36 @@ namespace Holocron
         {
             if (owner >= 0 && owner < globals.factions.Count) return globals.factions[owner].textname;
             return "Owner " + owner.ToString();
+        }
+
+        private string AutoResolveUnitNameForDisplay(string unitTypeName)
+        {
+            if (string.IsNullOrWhiteSpace(unitTypeName) || unitTypeName == "(none)" || unitTypeName == "(tie)") return unitTypeName;
+
+            foreach (unit item in AutoResolveGetUnitSource())
+            {
+                if (string.Equals(item.unitname, unitTypeName, StringComparison.OrdinalIgnoreCase)) return item.username + " [" + item.unitname + "]";
+            }
+
+            return unitTypeName;
+        }
+
+        private string AutoResolveRoundReportToText(AutoResolveRoundReport report)
+        {
+            if (report == null) return "";
+
+            string winner;
+            if (report.WinnerSideIndex < 0) winner = "Tie";
+            else if (report.WinnerSideIndex == 0) winner = "Attacker";
+            else winner = "Defender";
+
+            return "Round " + report.RoundNumber.ToString() + ": " +
+                "Attacker unit " + AutoResolveUnitNameForDisplay(report.SideAUnit) + " (power " + report.SideAPower.ToString("0.###", CultureInfo.InvariantCulture) + ") vs " +
+                "Defender unit " + AutoResolveUnitNameForDisplay(report.SideBUnit) + " (power " + report.SideBPower.ToString("0.###", CultureInfo.InvariantCulture) + ") -> " +
+                winner + " wins exchange" +
+                (report.WinnerSideIndex >= 0 ? " with " + AutoResolveUnitNameForDisplay(report.WinningUnit) : "") +
+                "; target " + AutoResolveUnitNameForDisplay(report.LosingUnit) +
+                (report.LosingUnitDestroyed ? " was destroyed." : " survived.");
         }
 
         private void AutoResolveRunButton_Click(object sender, EventArgs e)
@@ -1185,10 +1263,12 @@ namespace Holocron
             }
 
             int rounds = 0;
+            List<string> roundLines = new List<string>();
             while (sim.Who_Won() < 0 && sim.Get_Visible_Queue_Size(0) > 0 && sim.Get_Visible_Queue_Size(1) > 0 && rounds < 500)
             {
                 sim.Combat_Round(true);
                 rounds++;
+                roundLines.Add(AutoResolveRoundReportToText(sim.Get_Last_Round_Report()));
             }
 
             int winner = sim.Who_Won();
@@ -1206,7 +1286,11 @@ namespace Holocron
                 "Side A remaining: " + sim.Get_Visible_Queue_Size(0).ToString() + " (health ratio " + sim.Get_Health_Ratio(0).ToString("0.###", CultureInfo.InvariantCulture) + ")\r\n" +
                 "Side B remaining: " + sim.Get_Visible_Queue_Size(1).ToString() + " (health ratio " + sim.Get_Health_Ratio(1).ToString("0.###", CultureInfo.InvariantCulture) + ")";
 
-            AutoResolveResultTextBox.Text = powerSummary + "\r\n\r\n" + outcome;
+            string roundDetail = roundLines.Count > 0
+                ? "\r\n\r\nRound-by-round exchanges:\r\n" + string.Join("\r\n", roundLines)
+                : "\r\n\r\nRound-by-round exchanges:\r\n(no rounds executed)";
+
+            AutoResolveResultTextBox.Text = powerSummary + "\r\n\r\n" + outcome + roundDetail;
         }
 
 
@@ -3302,6 +3386,11 @@ namespace Holocron
             {
                 insert_history((int)historymaintabs.unit, 1, ((unit)PlanetGroundListBox.SelectedItem).unitname, true);
             }
+        }
+
+        private void AutoResolveUnitComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
 
         //Don't put any functions below here if you want it to still compile

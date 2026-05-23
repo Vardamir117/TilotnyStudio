@@ -3032,9 +3032,9 @@
             // 
             // AutoResolveAddToSideBButton
             // 
-            this.AutoResolveAddToSideBButton.Location = new System.Drawing.Point(663, 3);
+            this.AutoResolveAddToSideBButton.Location = new System.Drawing.Point(651, 2);
             this.AutoResolveAddToSideBButton.Name = "AutoResolveAddToSideBButton";
-            this.AutoResolveAddToSideBButton.Size = new System.Drawing.Size(80, 23);
+            this.AutoResolveAddToSideBButton.Size = new System.Drawing.Size(92, 23);
             this.AutoResolveAddToSideBButton.TabIndex = 6;
             this.AutoResolveAddToSideBButton.Text = "Add Defender";
             this.AutoResolveAddToSideBButton.UseVisualStyleBackColor = true;
@@ -3042,9 +3042,9 @@
             // 
             // AutoResolveAddToSideAButton
             // 
-            this.AutoResolveAddToSideAButton.Location = new System.Drawing.Point(577, 3);
+            this.AutoResolveAddToSideAButton.Location = new System.Drawing.Point(545, 2);
             this.AutoResolveAddToSideAButton.Name = "AutoResolveAddToSideAButton";
-            this.AutoResolveAddToSideAButton.Size = new System.Drawing.Size(80, 23);
+            this.AutoResolveAddToSideAButton.Size = new System.Drawing.Size(100, 23);
             this.AutoResolveAddToSideAButton.TabIndex = 5;
             this.AutoResolveAddToSideAButton.Text = "Add Attacker";
             this.AutoResolveAddToSideAButton.UseVisualStyleBackColor = true;
@@ -3092,15 +3092,16 @@
             // 
             this.AutoResolveUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.AutoResolveUnitComboBox.FormattingEnabled = true;
-            this.AutoResolveUnitComboBox.Location = new System.Drawing.Point(38, 5);
+            this.AutoResolveUnitComboBox.Location = new System.Drawing.Point(250, 5);
             this.AutoResolveUnitComboBox.Name = "AutoResolveUnitComboBox";
-            this.AutoResolveUnitComboBox.Size = new System.Drawing.Size(533, 21);
+            this.AutoResolveUnitComboBox.Size = new System.Drawing.Size(288, 21);
             this.AutoResolveUnitComboBox.TabIndex = 0;
+            this.AutoResolveUnitComboBox.SelectedIndexChanged += new System.EventHandler(this.AutoResolveUnitComboBox_SelectedIndexChanged);
             // 
             // AutoResolveUnitLabel
             // 
             this.AutoResolveUnitLabel.AutoSize = true;
-            this.AutoResolveUnitLabel.Location = new System.Drawing.Point(9, 8);
+            this.AutoResolveUnitLabel.Location = new System.Drawing.Point(218, 8);
             this.AutoResolveUnitLabel.Name = "AutoResolveUnitLabel";
             this.AutoResolveUnitLabel.Size = new System.Drawing.Size(26, 13);
             this.AutoResolveUnitLabel.TabIndex = 1;
@@ -3133,7 +3134,7 @@
             this.AutoResolveBattleTypeComboBox.Items.AddRange(new object[] {
             "Space",
             "Land"});
-            this.AutoResolveBattleTypeComboBox.Location = new System.Drawing.Point(1030, 5);
+            this.AutoResolveBattleTypeComboBox.Location = new System.Drawing.Point(76, 5);
             this.AutoResolveBattleTypeComboBox.Name = "AutoResolveBattleTypeComboBox";
             this.AutoResolveBattleTypeComboBox.Size = new System.Drawing.Size(121, 21);
             this.AutoResolveBattleTypeComboBox.TabIndex = 16;
@@ -3142,7 +3143,7 @@
             // AutoResolveBattleTypeLabel
             // 
             this.AutoResolveBattleTypeLabel.AutoSize = true;
-            this.AutoResolveBattleTypeLabel.Location = new System.Drawing.Point(959, 8);
+            this.AutoResolveBattleTypeLabel.Location = new System.Drawing.Point(9, 8);
             this.AutoResolveBattleTypeLabel.Name = "AutoResolveBattleTypeLabel";
             this.AutoResolveBattleTypeLabel.Size = new System.Drawing.Size(61, 13);
             this.AutoResolveBattleTypeLabel.TabIndex = 17;
