@@ -1,0 +1,7 @@
+Place this file in the same folder as the executable to specify the paths to load if Holocron is not in the expected location of mod folder/data, primarily so it can run from a Visual Studio project folder
+
+The first line is the path to Your Eaw Folder\corruption\Mods
+The second line is to the 32470 (EaW) Steam Workshop folder
+
+Any number of additional lines can specify stacking mod paths to local mods, Steam workshop items, or the vanilla data files corruption\Data or GameData\\Data
+Earlier lines have a higher priority

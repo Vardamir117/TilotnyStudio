@@ -135,19 +135,27 @@ namespace Holocron
                     }
                     else
                     {//Run on real mod data from the debugger
-                        globals.localmodpath = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods";
-                        globals.steammodpath = "C:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470";
+                        if (File.Exists("debugpaths.cfg"))
+                        {
+                            string[] lines = File.ReadAllLines("debugpaths.cfg");
+                            globals.localmodpath = lines[0];
+                            globals.steammodpath = lines[1];
+
+                            for (int i = 2; i < lines.Length; i++) entities.modpaths.Add(lines[i]);
+                        }
+                        //globals.localmodpath = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods";
+                        //globals.steammodpath = "C:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470";
                         //1125571106 1976399102 3417277973
                         //Workshop
                         // entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470\\3417277973\\Data");
 
                         //Dev build
                         
-                        entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\Rev\\Data");
+                        //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\Rev\\Data");
                         //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\TR\\Data");
                         //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\FotR\\Data");
                         //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\CoreSaga\\Data");
-                        entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\Data");
+                        //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\Data");
                         
 
                         //Vanillua
@@ -161,6 +169,10 @@ namespace Holocron
             globals.UnitSortConfig.denomtype = "Absolute Value";
             UnitFilter INeedYourFunctions = new UnitFilter();
             globals.UnitFilterConfig = INeedYourFunctions.newFilter();
+
+            //todo stop right aligned? controls from resizing in stupid ways when the desn tab is reopened
+            MapsInPlanetsListbox.Size = new Size(336, 1005);
+            MapSearchBox.Size = new Size(336, 22);
         }
         
         private void load_mods()
@@ -2713,11 +2725,16 @@ namespace Holocron
             MapsInPlanetsListbox.Items.Clear();
             if (PlanetSpaceMapRB.Checked)
             {
-                foreach (quantizedObject q in (List<quantizedObject>)PlanetSpaceMapRB.Tag) MapsInPlanetsListbox.Items.Add(q);
+                foreach (quantizedObject q in (List<quantizedObject>)PlanetSpaceMapRB.Tag) {
+                    if(q.username.Contains(MapSearchBox.Text)) MapsInPlanetsListbox.Items.Add(q);
+                }
             }
             else
             {
-                foreach (quantizedObject q in (List<quantizedObject>)PlanetGroundMapRB.Tag) MapsInPlanetsListbox.Items.Add(q);
+                foreach (quantizedObject q in (List<quantizedObject>)PlanetGroundMapRB.Tag)
+                {
+                    if (q.username.Contains(MapSearchBox.Text)) MapsInPlanetsListbox.Items.Add(q);
+                }
             }
 
             PlanetMatchesLabel.Text = "Matches: " + PlanetListBox.Items.Count;
