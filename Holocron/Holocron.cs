@@ -106,11 +106,11 @@ namespace Holocron
         public struct autoresolve_entry
         {
             public unit source;
-            public int owner;
+            public int quantity;
 
             public override string ToString()
             {
-                return owner.ToString() + ": " + source.username + " [" + source.unitname + "]";
+                return quantity.ToString() + "x " + source.username + " [" + source.unitname + "]";
             }
         }
 
@@ -118,6 +118,8 @@ namespace Holocron
 
         private List<autoresolve_entry> autoResolveSideA = new List<autoresolve_entry>();
         private List<autoresolve_entry> autoResolveSideB = new List<autoresolve_entry>();
+        private int autoResolveSideAOwner = 0;
+        private int autoResolveSideBOwner = 1;
 
         public Holocron()
         {
@@ -595,6 +597,7 @@ namespace Holocron
                 case (int)historymaintabs.autoresolve:
                     FillAutoResolveContrastTable();
                     FillAutoResolveUnitSelection();
+                    FillAutoResolveFactionSelection();
                     AutoResolveRefreshSideListboxes();
                     break;
                 default:
@@ -882,34 +885,74 @@ namespace Holocron
             foreach (autoresolve_entry entry in autoResolveSideB) AutoResolveSideBListBox.Items.Add(entry);
         }
 
-        private bool AutoResolveUnitHasSufficientInformation(unit candidate)
+        private void FillAutoResolveFactionSelection()
         {
-            return candidate.hp > 0 || candidate.shield > 0 || candidate.cp > 0;
+            if (AutoResolveSideAFactionComboBox.Items.Count == 0)
+            {
+                foreach (holo_faction faction in globals.factions)
+                {
+                    AutoResolveSideAFactionComboBox.Items.Add(faction.textname);
+                    AutoResolveSideBFactionComboBox.Items.Add(faction.textname);
+                }
+            }
+
+            if (AutoResolveSideAFactionComboBox.Items.Count == 0) return;
+
+            if (autoResolveSideAOwner < 0 || autoResolveSideAOwner >= AutoResolveSideAFactionComboBox.Items.Count) autoResolveSideAOwner = 0;
+            if (autoResolveSideBOwner < 0 || autoResolveSideBOwner >= AutoResolveSideBFactionComboBox.Items.Count) autoResolveSideBOwner = Math.Min(1, AutoResolveSideBFactionComboBox.Items.Count - 1);
+
+            AutoResolveSideAFactionComboBox.SelectedIndex = autoResolveSideAOwner;
+            AutoResolveSideBFactionComboBox.SelectedIndex = autoResolveSideBOwner;
         }
 
-        private autoresolve_entry AutoResolveCreateEntryFromSelected()
+        private bool AutoResolveUnitHasSufficientInformation(unit candidate)
+        {
+            return candidate.cp > 0 && !candidate.unitname.Contains("Dummy") && !candidate.unitname.Contains("Death_Clone");
+        }
+
+        private autoresolve_entry AutoResolveCreateEntryFromSelected(int owner, bool attacker)
         {
             autoresolve_entry entry = new autoresolve_entry();
             if (AutoResolveUnitComboBox.SelectedItem == null) return entry;
 
             entry.source = (unit)AutoResolveUnitComboBox.SelectedItem;
-            entry.owner = (int)AutoResolveOwnerNumeric.Value;
+            entry.quantity = Math.Max(1, (int)AutoResolveUnitCountNumeric.Value);
             return entry;
         }
 
         private void AutoResolveAddToSideAButton_Click(object sender, EventArgs e)
         {
             if (AutoResolveUnitComboBox.SelectedItem == null) return;
-            autoresolve_entry entry = AutoResolveCreateEntryFromSelected();
-            autoResolveSideA.Add(entry);
+            if (AutoResolveSideAFactionComboBox.SelectedIndex >= 0) autoResolveSideAOwner = AutoResolveSideAFactionComboBox.SelectedIndex;
+            autoresolve_entry entry = AutoResolveCreateEntryFromSelected(autoResolveSideAOwner, true);
+
+            int extant = autoResolveSideA.FindIndex(x => x.source.unitname == entry.source.unitname);
+            if (extant >= 0)
+            {
+                autoresolve_entry edited = autoResolveSideA[extant];
+                edited.quantity += entry.quantity;
+                autoResolveSideA[extant] = edited;
+            }
+            else autoResolveSideA.Add(entry);
+
             AutoResolveRefreshSideListboxes();
         }
 
         private void AutoResolveAddToSideBButton_Click(object sender, EventArgs e)
         {
             if (AutoResolveUnitComboBox.SelectedItem == null) return;
-            autoresolve_entry entry = AutoResolveCreateEntryFromSelected();
-            autoResolveSideB.Add(entry);
+            if (AutoResolveSideBFactionComboBox.SelectedIndex >= 0) autoResolveSideBOwner = AutoResolveSideBFactionComboBox.SelectedIndex;
+            autoresolve_entry entry = AutoResolveCreateEntryFromSelected(autoResolveSideBOwner, false);
+
+            int extant = autoResolveSideB.FindIndex(x => x.source.unitname == entry.source.unitname);
+            if (extant >= 0)
+            {
+                autoresolve_entry edited = autoResolveSideB[extant];
+                edited.quantity += entry.quantity;
+                autoResolveSideB[extant] = edited;
+            }
+            else autoResolveSideB.Add(entry);
+
             AutoResolveRefreshSideListboxes();
         }
 

@@ -269,10 +269,14 @@
             this.AutoResolveSideALabel = new System.Windows.Forms.Label();
             this.AutoResolveSideBListBox = new System.Windows.Forms.ListBox();
             this.AutoResolveSideAListBox = new System.Windows.Forms.ListBox();
+            this.AutoResolveUnitCountNumeric = new System.Windows.Forms.NumericUpDown();
+            this.AutoResolveUnitCountLabel = new System.Windows.Forms.Label();
             this.AutoResolveAddToSideBButton = new System.Windows.Forms.Button();
             this.AutoResolveAddToSideAButton = new System.Windows.Forms.Button();
-            this.AutoResolveOwnerNumeric = new System.Windows.Forms.NumericUpDown();
-            this.AutoResolveOwnerLabel = new System.Windows.Forms.Label();
+            this.AutoResolveSideBFactionComboBox = new System.Windows.Forms.ComboBox();
+            this.AutoResolveSideBFacLabel = new System.Windows.Forms.Label();
+            this.AutoResolveSideAFactionComboBox = new System.Windows.Forms.ComboBox();
+            this.AutoResolveSideAFacLabel = new System.Windows.Forms.Label();
             this.AutoResolveUnitComboBox = new System.Windows.Forms.ComboBox();
             this.AutoResolveUnitLabel = new System.Windows.Forms.Label();
             this.AutoResolveContrastGrid = new System.Windows.Forms.DataGridView();
@@ -306,7 +310,8 @@
             this.tabFactions.SuspendLayout();
             this.FactionPanel.SuspendLayout();
             this.MainTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveOwnerNumeric)).BeginInit();
+            this.tabAutoResolve.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveUnitCountNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveContrastGrid)).BeginInit();
             this.SuspendLayout();
             // 
@@ -896,7 +901,7 @@
             this.SpaceStructureRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SpaceStructureRadioButton.Location = new System.Drawing.Point(6, 272);
             this.SpaceStructureRadioButton.Name = "SpaceStructureRadioButton";
-            this.SpaceStructureRadioButton.Size = new System.Drawing.Size(128, 20);
+            this.SpaceStructureRadioButton.Size = new System.Drawing.Size(127, 20);
             this.SpaceStructureRadioButton.TabIndex = 62;
             this.SpaceStructureRadioButton.Text = "Space Structures";
             this.SpaceStructureRadioButton.UseVisualStyleBackColor = true;
@@ -969,7 +974,7 @@
             this.StructureRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.StructureRadioButton.Location = new System.Drawing.Point(6, 245);
             this.StructureRadioButton.Name = "StructureRadioButton";
-            this.StructureRadioButton.Size = new System.Drawing.Size(132, 20);
+            this.StructureRadioButton.Size = new System.Drawing.Size(131, 20);
             this.StructureRadioButton.TabIndex = 56;
             this.StructureRadioButton.Text = "Ground Structures";
             this.StructureRadioButton.UseVisualStyleBackColor = true;
@@ -1101,7 +1106,7 @@
             this.UnitAvailPanel.Controls.Add(this.SpawnSetListBox);
             this.UnitAvailPanel.Location = new System.Drawing.Point(32, 353);
             this.UnitAvailPanel.Name = "UnitAvailPanel";
-            this.UnitAvailPanel.Size = new System.Drawing.Size(1005, 221);
+            this.UnitAvailPanel.Size = new System.Drawing.Size(988, 221);
             this.UnitAvailPanel.TabIndex = 9;
             // 
             // label14
@@ -1252,7 +1257,7 @@
             this.UnitAbilityPanel.Controls.Add(this.UnitAbilityListBox);
             this.UnitAbilityPanel.Location = new System.Drawing.Point(32, 1150);
             this.UnitAbilityPanel.Name = "UnitAbilityPanel";
-            this.UnitAbilityPanel.Size = new System.Drawing.Size(1005, 180);
+            this.UnitAbilityPanel.Size = new System.Drawing.Size(988, 180);
             this.UnitAbilityPanel.TabIndex = 8;
             // 
             // AbilityStackingLabel
@@ -1507,7 +1512,7 @@
             this.UnitSubunitPanel.Controls.Add(this.UnitSubunitListbox);
             this.UnitSubunitPanel.Location = new System.Drawing.Point(32, 966);
             this.UnitSubunitPanel.Name = "UnitSubunitPanel";
-            this.UnitSubunitPanel.Size = new System.Drawing.Size(1005, 166);
+            this.UnitSubunitPanel.Size = new System.Drawing.Size(988, 166);
             this.UnitSubunitPanel.TabIndex = 6;
             this.UnitSubunitPanel.Tag = "";
             // 
@@ -1643,7 +1648,7 @@
             this.UnitStatPanel.Controls.Add(this.UnitHpLabel);
             this.UnitStatPanel.Location = new System.Drawing.Point(32, 594);
             this.UnitStatPanel.Name = "UnitStatPanel";
-            this.UnitStatPanel.Size = new System.Drawing.Size(1005, 359);
+            this.UnitStatPanel.Size = new System.Drawing.Size(988, 359);
             this.UnitStatPanel.TabIndex = 2;
             this.UnitStatPanel.Tag = "";
             // 
@@ -2015,7 +2020,7 @@
             this.UnitBTSPanel.Controls.Add(this.BTSRichTextBox);
             this.UnitBTSPanel.Location = new System.Drawing.Point(32, 1341);
             this.UnitBTSPanel.Name = "UnitBTSPanel";
-            this.UnitBTSPanel.Size = new System.Drawing.Size(1005, 150);
+            this.UnitBTSPanel.Size = new System.Drawing.Size(988, 150);
             this.UnitBTSPanel.TabIndex = 1;
             this.UnitBTSPanel.Tag = "";
             // 
@@ -2025,7 +2030,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.BTSRichTextBox.Location = new System.Drawing.Point(0, 6);
             this.BTSRichTextBox.Name = "BTSRichTextBox";
-            this.BTSRichTextBox.Size = new System.Drawing.Size(1039, 139);
+            this.BTSRichTextBox.Size = new System.Drawing.Size(1022, 139);
             this.BTSRichTextBox.TabIndex = 6;
             this.BTSRichTextBox.Text = "";
             // 
@@ -2049,7 +2054,7 @@
             this.UnitTextPanel.Controls.Add(this.UnitPopLabel);
             this.UnitTextPanel.Location = new System.Drawing.Point(32, 9);
             this.UnitTextPanel.Name = "UnitTextPanel";
-            this.UnitTextPanel.Size = new System.Drawing.Size(1005, 338);
+            this.UnitTextPanel.Size = new System.Drawing.Size(988, 338);
             this.UnitTextPanel.TabIndex = 0;
             this.UnitTextPanel.Tag = "";
             // 
@@ -2058,7 +2063,7 @@
             this.MaintenanceLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.MaintenanceLabel.AutoSize = true;
             this.MaintenanceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MaintenanceLabel.Location = new System.Drawing.Point(685, 315);
+            this.MaintenanceLabel.Location = new System.Drawing.Point(668, 315);
             this.MaintenanceLabel.Name = "MaintenanceLabel";
             this.MaintenanceLabel.Size = new System.Drawing.Size(72, 13);
             this.MaintenanceLabel.TabIndex = 16;
@@ -2068,7 +2073,7 @@
             // ShipNameRichTextBox
             // 
             this.ShipNameRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ShipNameRichTextBox.Location = new System.Drawing.Point(875, -6);
+            this.ShipNameRichTextBox.Location = new System.Drawing.Point(858, -6);
             this.ShipNameRichTextBox.Name = "ShipNameRichTextBox";
             this.ShipNameRichTextBox.Size = new System.Drawing.Size(130, 335);
             this.ShipNameRichTextBox.TabIndex = 15;
@@ -2130,7 +2135,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.UnitTooltipLabelRichTextBox.Location = new System.Drawing.Point(0, 81);
             this.UnitTooltipLabelRichTextBox.Name = "UnitTooltipLabelRichTextBox";
-            this.UnitTooltipLabelRichTextBox.Size = new System.Drawing.Size(869, 234);
+            this.UnitTooltipLabelRichTextBox.Size = new System.Drawing.Size(852, 234);
             this.UnitTooltipLabelRichTextBox.TabIndex = 4;
             this.UnitTooltipLabelRichTextBox.Text = "";
             // 
@@ -2303,9 +2308,9 @@
             this.label25.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label25.AutoSize = true;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label25.Location = new System.Drawing.Point(1031, 24);
+            this.label25.Location = new System.Drawing.Point(1014, 24);
             this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(54, 16);
+            this.label25.Size = new System.Drawing.Size(53, 16);
             this.label25.TabIndex = 107;
             this.label25.Text = "Search:";
             // 
@@ -2313,7 +2318,7 @@
             // 
             this.MapSearchBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.MapSearchBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MapSearchBox.Location = new System.Drawing.Point(1034, 45);
+            this.MapSearchBox.Location = new System.Drawing.Point(1017, 45);
             this.MapSearchBox.Name = "MapSearchBox";
             this.MapSearchBox.Size = new System.Drawing.Size(187, 22);
             this.MapSearchBox.TabIndex = 106;
@@ -2362,7 +2367,7 @@
             // 
             this.PlanetGroundMapRB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.PlanetGroundMapRB.AutoSize = true;
-            this.PlanetGroundMapRB.Location = new System.Drawing.Point(1161, 24);
+            this.PlanetGroundMapRB.Location = new System.Drawing.Point(1144, 24);
             this.PlanetGroundMapRB.Name = "PlanetGroundMapRB";
             this.PlanetGroundMapRB.Size = new System.Drawing.Size(60, 17);
             this.PlanetGroundMapRB.TabIndex = 101;
@@ -2375,7 +2380,7 @@
             this.PlanetSpaceMapRB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.PlanetSpaceMapRB.AutoSize = true;
             this.PlanetSpaceMapRB.Checked = true;
-            this.PlanetSpaceMapRB.Location = new System.Drawing.Point(1099, 24);
+            this.PlanetSpaceMapRB.Location = new System.Drawing.Point(1082, 24);
             this.PlanetSpaceMapRB.Name = "PlanetSpaceMapRB";
             this.PlanetSpaceMapRB.Size = new System.Drawing.Size(56, 17);
             this.PlanetSpaceMapRB.TabIndex = 100;
@@ -2469,7 +2474,7 @@
             // PlanetGoToGCButton
             // 
             this.PlanetGoToGCButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.PlanetGoToGCButton.Location = new System.Drawing.Point(986, 3);
+            this.PlanetGoToGCButton.Location = new System.Drawing.Point(969, 3);
             this.PlanetGoToGCButton.Name = "PlanetGoToGCButton";
             this.PlanetGoToGCButton.Size = new System.Drawing.Size(43, 23);
             this.PlanetGoToGCButton.TabIndex = 91;
@@ -2481,9 +2486,9 @@
             this.label22.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label22.AutoSize = true;
             this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label22.Location = new System.Drawing.Point(804, 3);
+            this.label22.Location = new System.Drawing.Point(787, 3);
             this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(184, 16);
+            this.label22.Size = new System.Drawing.Size(183, 16);
             this.label22.TabIndex = 90;
             this.label22.Text = "Campaigns containing planet:";
             // 
@@ -2495,7 +2500,7 @@
             this.PlanetGCListBox.Location = new System.Drawing.Point(897, 26);
             this.PlanetGCListBox.Name = "PlanetGCListBox";
             this.PlanetGCListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.PlanetGCListBox.Size = new System.Drawing.Size(131, 901);
+            this.PlanetGCListBox.Size = new System.Drawing.Size(114, 901);
             this.PlanetGCListBox.TabIndex = 89;
             // 
             // label21
@@ -2503,9 +2508,9 @@
             this.label21.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label21.AutoSize = true;
             this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label21.Location = new System.Drawing.Point(1031, 3);
+            this.label21.Location = new System.Drawing.Point(1014, 3);
             this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(154, 16);
+            this.label21.Size = new System.Drawing.Size(153, 16);
             this.label21.TabIndex = 88;
             this.label21.Text = "Maps in Filtered Planets:";
             // 
@@ -2515,9 +2520,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.MapsInPlanetsListbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MapsInPlanetsListbox.FormattingEnabled = true;
-            this.MapsInPlanetsListbox.Location = new System.Drawing.Point(1034, 73);
+            this.MapsInPlanetsListbox.Location = new System.Drawing.Point(1017, 73);
             this.MapsInPlanetsListbox.Name = "MapsInPlanetsListbox";
-            this.MapsInPlanetsListbox.Size = new System.Drawing.Size(187, 3098);
+            this.MapsInPlanetsListbox.Size = new System.Drawing.Size(187, 3397);
             this.MapsInPlanetsListbox.TabIndex = 87;
             this.MapsInPlanetsListbox.SelectedIndexChanged += new System.EventHandler(this.MapsInPlanetsListbox_SelectedIndexChanged);
             // 
@@ -2669,7 +2674,7 @@
             this.SpaceMapLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SpaceMapLabel.Location = new System.Drawing.Point(392, 506);
             this.SpaceMapLabel.Name = "SpaceMapLabel";
-            this.SpaceMapLabel.Size = new System.Drawing.Size(81, 16);
+            this.SpaceMapLabel.Size = new System.Drawing.Size(80, 16);
             this.SpaceMapLabel.TabIndex = 68;
             this.SpaceMapLabel.Text = "Space Map:";
             // 
@@ -2679,7 +2684,7 @@
             this.GroundMapLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GroundMapLabel.Location = new System.Drawing.Point(392, 542);
             this.GroundMapLabel.Name = "GroundMapLabel";
-            this.GroundMapLabel.Size = new System.Drawing.Size(85, 16);
+            this.GroundMapLabel.Size = new System.Drawing.Size(84, 16);
             this.GroundMapLabel.TabIndex = 67;
             this.GroundMapLabel.Text = "Ground Map:";
             // 
@@ -2699,7 +2704,7 @@
             this.PlanetCodeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.PlanetCodeLabel.Location = new System.Drawing.Point(744, 3);
             this.PlanetCodeLabel.Name = "PlanetCodeLabel";
-            this.PlanetCodeLabel.Size = new System.Drawing.Size(94, 16);
+            this.PlanetCodeLabel.Size = new System.Drawing.Size(93, 16);
             this.PlanetCodeLabel.TabIndex = 65;
             this.PlanetCodeLabel.Text = "Internal Name:";
             // 
@@ -2727,7 +2732,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.PlanetBTSTextBox.Location = new System.Drawing.Point(7, 934);
             this.PlanetBTSTextBox.Name = "PlanetBTSTextBox";
-            this.PlanetBTSTextBox.Size = new System.Drawing.Size(1021, 148);
+            this.PlanetBTSTextBox.Size = new System.Drawing.Size(1004, 148);
             this.PlanetBTSTextBox.TabIndex = 78;
             this.PlanetBTSTextBox.Text = "";
             // 
@@ -2916,10 +2921,14 @@
             this.tabAutoResolve.Controls.Add(this.AutoResolveSideALabel);
             this.tabAutoResolve.Controls.Add(this.AutoResolveSideBListBox);
             this.tabAutoResolve.Controls.Add(this.AutoResolveSideAListBox);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveUnitCountNumeric);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveUnitCountLabel);
             this.tabAutoResolve.Controls.Add(this.AutoResolveAddToSideBButton);
             this.tabAutoResolve.Controls.Add(this.AutoResolveAddToSideAButton);
-            this.tabAutoResolve.Controls.Add(this.AutoResolveOwnerNumeric);
-            this.tabAutoResolve.Controls.Add(this.AutoResolveOwnerLabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveSideBFactionComboBox);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveSideBFacLabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveSideAFactionComboBox);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveSideAFacLabel);
             this.tabAutoResolve.Controls.Add(this.AutoResolveUnitComboBox);
             this.tabAutoResolve.Controls.Add(this.AutoResolveUnitLabel);
             this.tabAutoResolve.Controls.Add(this.AutoResolveContrastGrid);
@@ -2936,17 +2945,17 @@
             this.AutoResolveClearSideBButton.Name = "AutoResolveClearSideBButton";
             this.AutoResolveClearSideBButton.Size = new System.Drawing.Size(80, 23);
             this.AutoResolveClearSideBButton.TabIndex = 13;
-            this.AutoResolveClearSideBButton.Text = "Clear Side B";
+            this.AutoResolveClearSideBButton.Text = "Clear Defender";
             this.AutoResolveClearSideBButton.UseVisualStyleBackColor = true;
             this.AutoResolveClearSideBButton.Click += new System.EventHandler(this.AutoResolveClearSideBButton_Click);
             // 
             // AutoResolveClearSideAButton
             // 
-            this.AutoResolveClearSideAButton.Location = new System.Drawing.Point(362, 120);
+            this.AutoResolveClearSideAButton.Location = new System.Drawing.Point(276, 120);
             this.AutoResolveClearSideAButton.Name = "AutoResolveClearSideAButton";
             this.AutoResolveClearSideAButton.Size = new System.Drawing.Size(80, 23);
             this.AutoResolveClearSideAButton.TabIndex = 12;
-            this.AutoResolveClearSideAButton.Text = "Clear Side A";
+            this.AutoResolveClearSideAButton.Text = "Clear Attacker";
             this.AutoResolveClearSideAButton.UseVisualStyleBackColor = true;
             this.AutoResolveClearSideAButton.Click += new System.EventHandler(this.AutoResolveClearSideAButton_Click);
             // 
@@ -2955,18 +2964,18 @@
             this.AutoResolveSideBLabel.AutoSize = true;
             this.AutoResolveSideBLabel.Location = new System.Drawing.Point(396, 31);
             this.AutoResolveSideBLabel.Name = "AutoResolveSideBLabel";
-            this.AutoResolveSideBLabel.Size = new System.Drawing.Size(41, 13);
+            this.AutoResolveSideBLabel.Size = new System.Drawing.Size(51, 13);
             this.AutoResolveSideBLabel.TabIndex = 10;
-            this.AutoResolveSideBLabel.Text = "Side B";
+            this.AutoResolveSideBLabel.Text = "Defender";
             // 
             // AutoResolveSideALabel
             // 
             this.AutoResolveSideALabel.AutoSize = true;
             this.AutoResolveSideALabel.Location = new System.Drawing.Point(9, 31);
             this.AutoResolveSideALabel.Name = "AutoResolveSideALabel";
-            this.AutoResolveSideALabel.Size = new System.Drawing.Size(41, 13);
+            this.AutoResolveSideALabel.Size = new System.Drawing.Size(47, 13);
             this.AutoResolveSideALabel.TabIndex = 9;
-            this.AutoResolveSideALabel.Text = "Side A";
+            this.AutoResolveSideALabel.Text = "Attacker";
             // 
             // AutoResolveSideBListBox
             // 
@@ -2984,13 +2993,44 @@
             this.AutoResolveSideAListBox.Size = new System.Drawing.Size(344, 69);
             this.AutoResolveSideAListBox.TabIndex = 7;
             // 
+            // AutoResolveUnitCountNumeric
+            // 
+            this.AutoResolveUnitCountNumeric.Location = new System.Drawing.Point(801, 5);
+            this.AutoResolveUnitCountNumeric.Maximum = new decimal(new int[] {
+            999,
+            0,
+            0,
+            0});
+            this.AutoResolveUnitCountNumeric.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.AutoResolveUnitCountNumeric.Name = "AutoResolveUnitCountNumeric";
+            this.AutoResolveUnitCountNumeric.Size = new System.Drawing.Size(58, 20);
+            this.AutoResolveUnitCountNumeric.TabIndex = 8;
+            this.AutoResolveUnitCountNumeric.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // AutoResolveUnitCountLabel
+            // 
+            this.AutoResolveUnitCountLabel.AutoSize = true;
+            this.AutoResolveUnitCountLabel.Location = new System.Drawing.Point(749, 8);
+            this.AutoResolveUnitCountLabel.Name = "AutoResolveUnitCountLabel";
+            this.AutoResolveUnitCountLabel.Size = new System.Drawing.Size(46, 13);
+            this.AutoResolveUnitCountLabel.TabIndex = 7;
+            this.AutoResolveUnitCountLabel.Text = "Quantity";
+            // 
             // AutoResolveAddToSideBButton
             // 
             this.AutoResolveAddToSideBButton.Location = new System.Drawing.Point(663, 3);
             this.AutoResolveAddToSideBButton.Name = "AutoResolveAddToSideBButton";
             this.AutoResolveAddToSideBButton.Size = new System.Drawing.Size(80, 23);
             this.AutoResolveAddToSideBButton.TabIndex = 6;
-            this.AutoResolveAddToSideBButton.Text = "Add Side B";
+            this.AutoResolveAddToSideBButton.Text = "Add Defender";
             this.AutoResolveAddToSideBButton.UseVisualStyleBackColor = true;
             this.AutoResolveAddToSideBButton.Click += new System.EventHandler(this.AutoResolveAddToSideBButton_Click);
             // 
@@ -3000,30 +3040,45 @@
             this.AutoResolveAddToSideAButton.Name = "AutoResolveAddToSideAButton";
             this.AutoResolveAddToSideAButton.Size = new System.Drawing.Size(80, 23);
             this.AutoResolveAddToSideAButton.TabIndex = 5;
-            this.AutoResolveAddToSideAButton.Text = "Add Side A";
+            this.AutoResolveAddToSideAButton.Text = "Add Attacker";
             this.AutoResolveAddToSideAButton.UseVisualStyleBackColor = true;
             this.AutoResolveAddToSideAButton.Click += new System.EventHandler(this.AutoResolveAddToSideAButton_Click);
             // 
-            // AutoResolveOwnerNumeric
+            // AutoResolveSideBFactionComboBox
             // 
-            this.AutoResolveOwnerNumeric.Location = new System.Drawing.Point(513, 5);
-            this.AutoResolveOwnerNumeric.Maximum = new decimal(new int[] {
-            99,
-            0,
-            0,
-            0});
-            this.AutoResolveOwnerNumeric.Name = "AutoResolveOwnerNumeric";
-            this.AutoResolveOwnerNumeric.Size = new System.Drawing.Size(58, 20);
-            this.AutoResolveOwnerNumeric.TabIndex = 4;
+            this.AutoResolveSideBFactionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.AutoResolveSideBFactionComboBox.FormattingEnabled = true;
+            this.AutoResolveSideBFactionComboBox.Location = new System.Drawing.Point(585, 31);
+            this.AutoResolveSideBFactionComboBox.Name = "AutoResolveSideBFactionComboBox";
+            this.AutoResolveSideBFactionComboBox.Size = new System.Drawing.Size(158, 21);
+            this.AutoResolveSideBFactionComboBox.TabIndex = 4;
             // 
-            // AutoResolveOwnerLabel
+            // AutoResolveSideBFacLabel
             // 
-            this.AutoResolveOwnerLabel.AutoSize = true;
-            this.AutoResolveOwnerLabel.Location = new System.Drawing.Point(472, 8);
-            this.AutoResolveOwnerLabel.Name = "AutoResolveOwnerLabel";
-            this.AutoResolveOwnerLabel.Size = new System.Drawing.Size(38, 13);
-            this.AutoResolveOwnerLabel.TabIndex = 3;
-            this.AutoResolveOwnerLabel.Text = "Owner";
+            this.AutoResolveSideBFacLabel.AutoSize = true;
+            this.AutoResolveSideBFacLabel.Location = new System.Drawing.Point(542, 34);
+            this.AutoResolveSideBFacLabel.Name = "AutoResolveSideBFacLabel";
+            this.AutoResolveSideBFacLabel.Size = new System.Drawing.Size(42, 13);
+            this.AutoResolveSideBFacLabel.TabIndex = 3;
+            this.AutoResolveSideBFacLabel.Text = "Faction";
+            // 
+            // AutoResolveSideAFactionComboBox
+            // 
+            this.AutoResolveSideAFactionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.AutoResolveSideAFactionComboBox.FormattingEnabled = true;
+            this.AutoResolveSideAFactionComboBox.Location = new System.Drawing.Point(198, 31);
+            this.AutoResolveSideAFactionComboBox.Name = "AutoResolveSideAFactionComboBox";
+            this.AutoResolveSideAFactionComboBox.Size = new System.Drawing.Size(158, 21);
+            this.AutoResolveSideAFactionComboBox.TabIndex = 2;
+            // 
+            // AutoResolveSideAFacLabel
+            // 
+            this.AutoResolveSideAFacLabel.AutoSize = true;
+            this.AutoResolveSideAFacLabel.Location = new System.Drawing.Point(155, 34);
+            this.AutoResolveSideAFacLabel.Name = "AutoResolveSideAFacLabel";
+            this.AutoResolveSideAFacLabel.Size = new System.Drawing.Size(42, 13);
+            this.AutoResolveSideAFacLabel.TabIndex = 1;
+            this.AutoResolveSideAFacLabel.Text = "Faction";
             // 
             // AutoResolveUnitComboBox
             // 
@@ -3031,8 +3086,8 @@
             this.AutoResolveUnitComboBox.FormattingEnabled = true;
             this.AutoResolveUnitComboBox.Location = new System.Drawing.Point(38, 5);
             this.AutoResolveUnitComboBox.Name = "AutoResolveUnitComboBox";
-            this.AutoResolveUnitComboBox.Size = new System.Drawing.Size(428, 21);
-            this.AutoResolveUnitComboBox.TabIndex = 2;
+            this.AutoResolveUnitComboBox.Size = new System.Drawing.Size(533, 21);
+            this.AutoResolveUnitComboBox.TabIndex = 0;
             // 
             // AutoResolveUnitLabel
             // 
@@ -3054,7 +3109,7 @@
             this.AutoResolveContrastGrid.Location = new System.Drawing.Point(3, 149);
             this.AutoResolveContrastGrid.Name = "AutoResolveContrastGrid";
             this.AutoResolveContrastGrid.ReadOnly = true;
-            this.AutoResolveContrastGrid.Size = new System.Drawing.Size(1481, 629);
+            this.AutoResolveContrastGrid.Size = new System.Drawing.Size(2768, 1310);
             this.AutoResolveContrastGrid.TabIndex = 0;
             // 
             // contextMenuStrip2
@@ -3122,7 +3177,9 @@
             this.FactionPanel.ResumeLayout(false);
             this.FactionPanel.PerformLayout();
             this.MainTab.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveOwnerNumeric)).EndInit();
+            this.tabAutoResolve.ResumeLayout(false);
+            this.tabAutoResolve.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveUnitCountNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveContrastGrid)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -3369,9 +3426,11 @@
         private System.Windows.Forms.DataGridView AutoResolveContrastGrid;
         private System.Windows.Forms.ComboBox AutoResolveUnitComboBox;
         private System.Windows.Forms.Label AutoResolveUnitLabel;
-        private System.Windows.Forms.NumericUpDown AutoResolveOwnerNumeric;
-        private System.Windows.Forms.Label AutoResolveOwnerLabel;
         private System.Windows.Forms.Button AutoResolveAddToSideAButton;
+        private System.Windows.Forms.ComboBox AutoResolveSideBFactionComboBox;
+        private System.Windows.Forms.Label AutoResolveSideBFacLabel;
+        private System.Windows.Forms.ComboBox AutoResolveSideAFactionComboBox;
+        private System.Windows.Forms.Label AutoResolveSideAFacLabel;
         private System.Windows.Forms.Button AutoResolveAddToSideBButton;
         private System.Windows.Forms.ListBox AutoResolveSideAListBox;
         private System.Windows.Forms.ListBox AutoResolveSideBListBox;
@@ -3379,6 +3438,8 @@
         private System.Windows.Forms.Label AutoResolveSideBLabel;
         private System.Windows.Forms.Button AutoResolveClearSideAButton;
         private System.Windows.Forms.Button AutoResolveClearSideBButton;
+        private System.Windows.Forms.Label AutoResolveUnitCountLabel;
+        private System.Windows.Forms.NumericUpDown AutoResolveUnitCountNumeric;
     }
 }
 
