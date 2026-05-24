@@ -1570,6 +1570,7 @@ namespace Holocron
 
             int winner = sim.Who_Won();
             string winnerName = winner < 0 ? "No winner" : AutoResolveOwnerToName(winner);
+            string winnerDecision = sim.Get_Last_Winner_Decision();
             string attackerName = AutoResolveOwnerToName(autoResolveSideAOwner);
             string defenderName = AutoResolveOwnerToName(autoResolveSideBOwner);
 
@@ -1592,6 +1593,7 @@ namespace Holocron
                 "Attacker: " + attackerName + "\r\n" +
                 "Defender: " + defenderName + "\r\n" +
                 "Winner: " + winnerName + "\r\n" +
+                "Winner selection: " + winnerDecision + "\r\n" +
                 "Attacker losses: " + AutoResolveBuildKillListText(battleHistory, autoResolveSideAOwner) + "\r\n" +
                 "Defender losses: " + AutoResolveBuildKillListText(battleHistory, autoResolveSideBOwner) + "\r\n";
 

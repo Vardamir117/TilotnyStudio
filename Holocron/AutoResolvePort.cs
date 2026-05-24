@@ -181,6 +181,7 @@ namespace Holocron
         private readonly List<AutoResolveAttritionReport> mLastAttritionReports = new List<AutoResolveAttritionReport>();
         private readonly Random mAttritionRandom = new Random(1);
         private bool mBattleFought;
+        private string mLastWinnerDecision = "(not evaluated)";
 
         public bool MidTactical { get; set; }
         public float TacticalMultiplier { get; set; } = 1.0f;
@@ -415,12 +416,14 @@ namespace Holocron
             mLastEngagements.Clear();
             mLastAttritionReports.Clear();
             mBattleFought = false;
+            mLastWinnerDecision = "(not evaluated)";
             mSides[0].Init();
             mSides[1].Init();
             return AutoResolveHResult.S_OK;
         }
 
         public int Who_Won() { return mWinningPlayer; }
+        public string Get_Last_Winner_Decision() { return mLastWinnerDecision; }
         public List<AutoResolveEngagementReport> Get_Last_Engagements() { return new List<AutoResolveEngagementReport>(mLastEngagements); }
         public List<AutoResolveAttritionReport> Get_Last_Attrition_Reports() { return new List<AutoResolveAttritionReport>(mLastAttritionReports); }
         public int Side_Is_Retreating() { return mRetreatInProgress ? mRetreatingPlayer : -1; }
@@ -1141,15 +1144,19 @@ namespace Holocron
             if (mSides[0].SuperWeaponPresent && !mSides[1].SuperWeaponKillerPresent)
             {
                 Player_Retreats(mSides[1].OwnerId);
+                mLastWinnerDecision = "Super weapon rule: attacker has super weapon and defender lacks killer; defender is forced to retreat.";
             }
             else if (mSides[1].SuperWeaponPresent && !mSides[0].SuperWeaponKillerPresent)
             {
                 Player_Retreats(mSides[0].OwnerId);
+                mLastWinnerDecision = "Super weapon rule: defender has super weapon and attacker lacks killer; attacker is forced to retreat.";
             }
 
             if (mRetreatInProgress)
             {
-                return mRetreatingPlayer == mSides[0].OwnerId ? 1 : 0;
+                int retreatWinner = mRetreatingPlayer == mSides[0].OwnerId ? 1 : 0;
+                mLastWinnerDecision = mLastWinnerDecision + " Winner selected by retreat state: retreating owner=" + mRetreatingPlayer.ToString(System.Globalization.CultureInfo.InvariantCulture) + ".";
+                return retreatWinner;
             }
 
             float totalA = 0.0f;
@@ -1179,15 +1186,21 @@ namespace Holocron
             if (anyPositiveA && anyPositiveB)
             {
                 // Placeholder: human-vs-ai and playable-faction tie-breaks require full PlayerClass/Faction data.
-                return totalA > totalB ? 0 : 1;
+                int winner = totalA > totalB ? 0 : 1;
+                mLastWinnerDecision = "Both sides have positive force; compare totals A=" + totalA.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) + " vs B=" + totalB.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) + ".";
+                return winner;
             }
             else if ((anyPositiveA || anyPositiveB) && Math.Abs(totalA - totalB) > 0.0001f)
             {
-                return totalA > totalB ? 0 : 1;
+                int winner = totalA > totalB ? 0 : 1;
+                mLastWinnerDecision = "Only one side has effective remaining force; compare totals A=" + totalA.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) + " vs B=" + totalB.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) + ".";
+                return winner;
             }
             else
             {
-                return mAggressor == mSides[0].OwnerId ? 0 : 1;
+                int winner = mAggressor == mSides[0].OwnerId ? 0 : 1;
+                mLastWinnerDecision = "Totals are tied/zero; winner defaults to aggressor owner=" + mAggressor.ToString(System.Globalization.CultureInfo.InvariantCulture) + ".";
+                return winner;
             }
         }
 
