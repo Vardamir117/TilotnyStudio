@@ -122,7 +122,7 @@ namespace TilotnyStudio
             public static string LocalModName = "";
             public static bool unitsloaded = false;
 
-            public static List<faction> factions = new List<faction>(); //Playable factions only
+            public static List<playablefaction> playablefactions = new List<playablefaction>(); //Playable factions only
             public static List<string> allfactories = new List<string>();
 
             public static List<Text_Entry> Text = new List<Text_Entry>();
@@ -227,7 +227,7 @@ namespace TilotnyStudio
             System.Diagnostics.Process.Start("\"" + globals.LocalMod + "\\Text\\datassembler.exe\"", "/b \"" + globals.LocalMod + "\\Text\\MasterTextFile_ENGLISH.txt\" \"" + globals.LocalMod + "\\Text\\MasterTextFile_ENGLISH.dat\" -r:\"" + globals.LocalMod + "\\Text\\Submod_text.txt\"");
         }
 
-        public struct faction
+        public struct playablefaction
         {
             public string factionname;
             public string facingname;
@@ -278,7 +278,7 @@ namespace TilotnyStudio
                             {
                                 if (affil == "Independent_Forces" || affil == "Warlords") break; //Don't need to worry about these massive edge cases that can't build anyway
                                 string facname = affil;
-                                faction faction = new faction();
+                                playablefaction faction = new playablefaction();
                                 bool newf = true;
                                 bool newinfo = false;
                                 faction.factionname = facname;
@@ -288,7 +288,7 @@ namespace TilotnyStudio
                                 faction.parallelshipyards = false;
                                 faction.level42shipyard = "";
                                 faction.altshipyard = "";
-                                foreach (faction fac in globals.factions)
+                                foreach (playablefaction fac in globals.playablefactions)
                                 {
                                     if (fac.factionname == facname)
                                     {
@@ -317,20 +317,20 @@ namespace TilotnyStudio
                                     faction.offices.Add(name);
                                     newinfo = true;
                                 }
-                                if (newf && newinfo && facname != "WARLORDS") globals.factions.Add(faction);
+                                if (newf && newinfo && facname != "WARLORDS") globals.playablefactions.Add(faction);
                             }
                         }
                     }
                 }
             }
 
-            for (int i = globals.factions.Count-1; i >= 0; i--)
+            for (int i = globals.playablefactions.Count-1; i >= 0; i--)
             {
-                if (globals.factions[i].shipyards.Count == 0 || globals.factions[i].factories.Count == 0) globals.factions.RemoveAt(i);
+                if (globals.playablefactions[i].shipyards.Count == 0 || globals.playablefactions[i].factories.Count == 0) globals.playablefactions.RemoveAt(i);
             }
             if(HapanOffices.Count > 0)
             {
-                foreach (faction faction in globals.factions)
+                foreach (playablefaction faction in globals.playablefactions)
                 {
                     if (faction.factionname == "Hapes_Consortium")
                     {
@@ -357,19 +357,19 @@ namespace TilotnyStudio
             {
                 rank += 1;
                 string facname = faction.GetAttribute("Name");
-                for(int i=0;i< globals.factions.Count; i++)
+                for(int i=0;i< globals.playablefactions.Count; i++)
                 {
-                    faction facstruct = globals.factions[i];
+                    playablefaction facstruct = globals.playablefactions[i];
                     if (facname == facstruct.factionname)
                     {
                         facstruct.rank = rank;
-                        globals.factions[i] = facstruct;
+                        globals.playablefactions[i] = facstruct;
                         break;
                     }
                 }
                 FactionFilerListBox.Items.Add(facname);
             }
-            globals.factions.Sort((s1, s2) => s1.rank.CompareTo(s2.rank));
+            globals.playablefactions.Sort((s1, s2) => s1.rank.CompareTo(s2.rank));
 
             SetAffilMods();
 
@@ -381,10 +381,10 @@ namespace TilotnyStudio
                 }
             }
 
-            for (int i = 0; i < globals.factions.Count; i++)
+            for (int i = 0; i < globals.playablefactions.Count; i++)
             {
                 int basey = 120 * i;
-                faction faction = globals.factions[i];
+                playablefaction faction = globals.playablefactions[i];
                 string name = faction.factionname;
 
                 var check = new CheckBox();
@@ -559,7 +559,7 @@ namespace TilotnyStudio
                     }
                }
 
-                foreach (faction faction in globals.factions)
+                foreach (playablefaction faction in globals.playablefactions)
                 {
                     List<string> facstructs = faction.factories;
                     if (space)
@@ -647,7 +647,7 @@ namespace TilotnyStudio
             }
             else globals.unitsloaded = true;
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
-            globals.factions = new List<faction>();
+            globals.playablefactions = new List<playablefaction>();
             string[] files = Directory.GetFiles(globals.SourceMod + "XML\\Structures", "*.xml", SearchOption.AllDirectories);
             parseStructuresAndFactions(files);
             CorpLabel.Text = "";
@@ -766,8 +766,8 @@ namespace TilotnyStudio
             foreach (ListBox control in UnitAffilPanel.Controls.OfType<ListBox>())
             {
                 control.Items.Clear();
-                faction faction = globals.factions[0]; //placeholder so the compiler doesn't complain. The next loop will match
-                foreach (faction fac in globals.factions)
+                playablefaction faction = globals.playablefactions[0]; //placeholder so the compiler doesn't complain. The next loop will match
+                foreach (playablefaction fac in globals.playablefactions)
                 {
                     if (fac.factionname == control.Tag.ToString())
                     {
@@ -795,8 +795,8 @@ namespace TilotnyStudio
             foreach (ListBox control in UnitAffilPanel.Controls.OfType<ListBox>())
             {
                 control.Items.Clear();
-                faction faction = globals.factions[0]; //placeholder so the compiler doesn't complain. The next loop will match
-                foreach (faction fac in globals.factions)
+                playablefaction faction = globals.playablefactions[0]; //placeholder so the compiler doesn't complain. The next loop will match
+                foreach (playablefaction fac in globals.playablefactions)
                 {
                     if (fac.factionname == control.Tag.ToString())
                     {
@@ -1123,7 +1123,7 @@ namespace TilotnyStudio
                         first = false;
                     }
                 }
-                foreach (faction fac in globals.factions)
+                foreach (playablefaction fac in globals.playablefactions)
                 {
                     string faction = fac.factionname;
                     int foundfaction = 0;
@@ -1185,9 +1185,9 @@ namespace TilotnyStudio
                                     }
                                 }
                             }
-                            for (int index = 0; index < globals.factions.Count; index++)
+                            for (int index = 0; index < globals.playablefactions.Count; index++)
                             {
-                                string facname = (string)globals.factions[index].factionname;
+                                string facname = (string)globals.playablefactions[index].factionname;
                                 if (affilist.Contains(facname) && !unit.affiliations.Contains(facname))
                                 {
                                     //Adding new
@@ -1217,7 +1217,7 @@ namespace TilotnyStudio
                             }
                             if (AffilListBox.SelectedItems.Count > 1)
                             {
-                                foreach (faction faction in globals.factions)
+                                foreach (playablefaction faction in globals.playablefactions)
                                 {
                                     if (affilist.Contains(faction.factionname))
                                     {
@@ -1353,7 +1353,7 @@ namespace TilotnyStudio
                                     else structureSuffix += ",\r\n";
                                     structureSuffix += unit.office;
 
-                                    foreach (faction faction in globals.factions)
+                                    foreach (playablefaction faction in globals.playablefactions)
                                     {
                                         if (affilist.Contains(faction.factionname))
                                         {
@@ -2730,9 +2730,9 @@ namespace TilotnyStudio
         {
             if (VersionComboBox.SelectedItem.ToString().Contains("Thrawn's Revenge"))
             {
-                for (int i = 0; i < globals.factions.Count; i++)
+                for (int i = 0; i < globals.playablefactions.Count; i++)
                 {
-                    faction faction = globals.factions[i];
+                    playablefaction faction = globals.playablefactions[i];
                     if (faction.factionname == "Hapes_Consortium")
                     {
                         faction.parallelshipyards = true;
@@ -2759,14 +2759,14 @@ namespace TilotnyStudio
                         faction.altshipyard = "Pirate_Base";
                     }*/
 
-                    globals.factions[i] = faction;
+                    globals.playablefactions[i] = faction;
                 }
             }
             else if (VersionComboBox.SelectedItem.ToString().Contains("Fall of the Republic"))
             {
-                for (int i = 0; i < globals.factions.Count; i++)
+                for (int i = 0; i < globals.playablefactions.Count; i++)
                 {
-                    faction faction = globals.factions[i];
+                    playablefaction faction = globals.playablefactions[i];
                     if (faction.factionname == "Rebel")
                     {
                         faction.altshipyard = "Sabaoth_HQ";
@@ -2790,14 +2790,14 @@ namespace TilotnyStudio
                         faction.shipyards.Add("Pirate_Base");
                     }
 
-                    globals.factions[i] = faction;
+                    globals.playablefactions[i] = faction;
                 }
             }
             else if (VersionComboBox.SelectedItem.ToString().Contains("Revan's Revenge"))
             {
-                for (int i = 0; i < globals.factions.Count; i++)
+                for (int i = 0; i < globals.playablefactions.Count; i++)
                 {
-                    faction faction = globals.factions[i];
+                    playablefaction faction = globals.playablefactions[i];
                     if (faction.factionname == "Rebel")
                     {
                         faction.level42shipyard = "Star_Forge_Relay";
@@ -2812,12 +2812,12 @@ namespace TilotnyStudio
                         faction.altshipyard = "Pirate_Base";
                     }*/
 
-                    globals.factions[i] = faction;
+                    globals.playablefactions[i] = faction;
                 }
             }
 
             globals.allfactories = new List<string>();
-            foreach (faction faction in globals.factions)
+            foreach (playablefaction faction in globals.playablefactions)
             {
                 foreach (string factory in faction.factories)
                 {

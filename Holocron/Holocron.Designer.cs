@@ -203,7 +203,7 @@
             this.tabPlanets = new System.Windows.Forms.TabPage();
             this.PlanetListBox = new System.Windows.Forms.ListBox();
             this.PlanetPanel = new System.Windows.Forms.Panel();
-            this.label25 = new System.Windows.Forms.Label();
+            this.PlanetMapSearchLabel = new System.Windows.Forms.Label();
             this.MapSearchBox = new System.Windows.Forms.TextBox();
             this.PlanetCoordinateLabel = new System.Windows.Forms.Label();
             this.PlanetGroundSlotsLabel = new System.Windows.Forms.Label();
@@ -220,9 +220,9 @@
             this.label24 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
             this.PlanetGoToGCButton = new System.Windows.Forms.Button();
-            this.label22 = new System.Windows.Forms.Label();
+            this.PlanetCampaignLabel = new System.Windows.Forms.Label();
             this.PlanetGCListBox = new System.Windows.Forms.ListBox();
-            this.label21 = new System.Windows.Forms.Label();
+            this.PlanetMapLabel = new System.Windows.Forms.Label();
             this.MapsInPlanetsListbox = new System.Windows.Forms.ListBox();
             this.label20 = new System.Windows.Forms.Label();
             this.SharedSpaceMapListBox = new System.Windows.Forms.ListBox();
@@ -247,9 +247,37 @@
             this.PlanetPictureBox = new System.Windows.Forms.PictureBox();
             this.PlanetBTSTextBox = new System.Windows.Forms.RichTextBox();
             this.tabGCs = new System.Windows.Forms.TabPage();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this.GCListBox = new System.Windows.Forms.ListBox();
+            this.GCPanel = new System.Windows.Forms.Panel();
+            this.GCPlanetOwnerLabel = new System.Windows.Forms.Label();
+            this.GCPresentClearButton = new System.Windows.Forms.Button();
+            this.GCPlanetForceLabel = new System.Windows.Forms.Label();
+            this.GCPlanetPotentialLabel = new System.Windows.Forms.Label();
+            this.GCPlanetConnectionLabel = new System.Windows.Forms.Label();
+            this.GCPlanetShipyardLabel = new System.Windows.Forms.Label();
+            this.GCPlanetIncomeLabel = new System.Windows.Forms.Label();
+            this.GCPresentBorderLabel = new System.Windows.Forms.Label();
+            this.GCPresentShipyardsLabel = new System.Windows.Forms.Label();
+            this.GCPresentIncomeLabel = new System.Windows.Forms.Label();
+            this.GCPresentPlanetsLabel = new System.Windows.Forms.Label();
+            this.GCPlanetLabel = new System.Windows.Forms.Label();
+            this.GCPlanetListBox = new System.Windows.Forms.ListBox();
+            this.label27 = new System.Windows.Forms.Label();
+            this.GCPresentListbox = new System.Windows.Forms.ListBox();
+            this.label26 = new System.Windows.Forms.Label();
+            this.GCActiveListBox = new System.Windows.Forms.ListBox();
+            this.GCInternalNameLabel = new System.Windows.Forms.Label();
+            this.GCCampaignSetLabel = new System.Windows.Forms.Label();
+            this.GCNameLabel = new System.Windows.Forms.Label();
+            this.InfinityCheckBox = new System.Windows.Forms.CheckBox();
+            this.HistoricalCheckBox = new System.Windows.Forms.CheckBox();
+            this.RegionalCheckBox = new System.Windows.Forms.CheckBox();
+            this.ProgressiveCheckBox = new System.Windows.Forms.CheckBox();
+            this.GCPictureBox = new System.Windows.Forms.PictureBox();
             this.tabFactions = new System.Windows.Forms.TabPage();
             this.FactionPanel = new System.Windows.Forms.Panel();
+            this.label28 = new System.Windows.Forms.Label();
+            this.FactionGCListbox = new System.Windows.Forms.ListBox();
             this.HeroListbox = new System.Windows.Forms.Label();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -264,6 +292,7 @@
             this.tabGalaxy = new System.Windows.Forms.TabPage();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.GCGoToPlanetButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tabLookups.SuspendLayout();
             this.LookupTabControl.SuspendLayout();
@@ -289,6 +318,8 @@
             this.PlanetPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PlanetPictureBox)).BeginInit();
             this.tabGCs.SuspendLayout();
+            this.GCPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.GCPictureBox)).BeginInit();
             this.tabFactions.SuspendLayout();
             this.FactionPanel.SuspendLayout();
             this.MainTab.SuspendLayout();
@@ -1085,7 +1116,7 @@
             this.UnitAvailPanel.Controls.Add(this.SpawnSetListBox);
             this.UnitAvailPanel.Location = new System.Drawing.Point(32, 353);
             this.UnitAvailPanel.Name = "UnitAvailPanel";
-            this.UnitAvailPanel.Size = new System.Drawing.Size(1005, 221);
+            this.UnitAvailPanel.Size = new System.Drawing.Size(699, 221);
             this.UnitAvailPanel.TabIndex = 9;
             // 
             // label14
@@ -1236,7 +1267,7 @@
             this.UnitAbilityPanel.Controls.Add(this.UnitAbilityListBox);
             this.UnitAbilityPanel.Location = new System.Drawing.Point(32, 1150);
             this.UnitAbilityPanel.Name = "UnitAbilityPanel";
-            this.UnitAbilityPanel.Size = new System.Drawing.Size(1005, 180);
+            this.UnitAbilityPanel.Size = new System.Drawing.Size(699, 180);
             this.UnitAbilityPanel.TabIndex = 8;
             // 
             // AbilityStackingLabel
@@ -1314,7 +1345,7 @@
             // AbilityExcludedUnitLabel
             // 
             this.AbilityExcludedUnitLabel.AutoSize = true;
-            this.AbilityExcludedUnitLabel.Location = new System.Drawing.Point(923, 49);
+            this.AbilityExcludedUnitLabel.Location = new System.Drawing.Point(953, 49);
             this.AbilityExcludedUnitLabel.Name = "AbilityExcludedUnitLabel";
             this.AbilityExcludedUnitLabel.Size = new System.Drawing.Size(93, 13);
             this.AbilityExcludedUnitLabel.TabIndex = 38;
@@ -1323,7 +1354,7 @@
             // AbilityTargetTypeLabel
             // 
             this.AbilityTargetTypeLabel.AutoSize = true;
-            this.AbilityTargetTypeLabel.Location = new System.Drawing.Point(713, 49);
+            this.AbilityTargetTypeLabel.Location = new System.Drawing.Point(743, 49);
             this.AbilityTargetTypeLabel.Name = "AbilityTargetTypeLabel";
             this.AbilityTargetTypeLabel.Size = new System.Drawing.Size(94, 13);
             this.AbilityTargetTypeLabel.TabIndex = 37;
@@ -1332,7 +1363,7 @@
             // AbilityActivationLabel
             // 
             this.AbilityActivationLabel.AutoSize = true;
-            this.AbilityActivationLabel.Location = new System.Drawing.Point(561, 49);
+            this.AbilityActivationLabel.Location = new System.Drawing.Point(591, 49);
             this.AbilityActivationLabel.Name = "AbilityActivationLabel";
             this.AbilityActivationLabel.Size = new System.Drawing.Size(57, 13);
             this.AbilityActivationLabel.TabIndex = 36;
@@ -1491,7 +1522,7 @@
             this.UnitSubunitPanel.Controls.Add(this.UnitSubunitListbox);
             this.UnitSubunitPanel.Location = new System.Drawing.Point(32, 966);
             this.UnitSubunitPanel.Name = "UnitSubunitPanel";
-            this.UnitSubunitPanel.Size = new System.Drawing.Size(1005, 166);
+            this.UnitSubunitPanel.Size = new System.Drawing.Size(699, 166);
             this.UnitSubunitPanel.TabIndex = 6;
             this.UnitSubunitPanel.Tag = "";
             // 
@@ -1627,7 +1658,7 @@
             this.UnitStatPanel.Controls.Add(this.UnitHpLabel);
             this.UnitStatPanel.Location = new System.Drawing.Point(32, 594);
             this.UnitStatPanel.Name = "UnitStatPanel";
-            this.UnitStatPanel.Size = new System.Drawing.Size(1005, 359);
+            this.UnitStatPanel.Size = new System.Drawing.Size(699, 359);
             this.UnitStatPanel.TabIndex = 2;
             this.UnitStatPanel.Tag = "";
             // 
@@ -1725,7 +1756,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(719, 195);
+            this.label3.Location = new System.Drawing.Point(753, 195);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(120, 13);
             this.label3.TabIndex = 31;
@@ -1861,7 +1892,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(551, 195);
+            this.label8.Location = new System.Drawing.Point(585, 195);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(110, 13);
             this.label8.TabIndex = 18;
@@ -1999,7 +2030,7 @@
             this.UnitBTSPanel.Controls.Add(this.BTSRichTextBox);
             this.UnitBTSPanel.Location = new System.Drawing.Point(32, 1341);
             this.UnitBTSPanel.Name = "UnitBTSPanel";
-            this.UnitBTSPanel.Size = new System.Drawing.Size(1005, 150);
+            this.UnitBTSPanel.Size = new System.Drawing.Size(699, 150);
             this.UnitBTSPanel.TabIndex = 1;
             this.UnitBTSPanel.Tag = "";
             // 
@@ -2009,7 +2040,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.BTSRichTextBox.Location = new System.Drawing.Point(0, 6);
             this.BTSRichTextBox.Name = "BTSRichTextBox";
-            this.BTSRichTextBox.Size = new System.Drawing.Size(1039, 139);
+            this.BTSRichTextBox.Size = new System.Drawing.Size(733, 139);
             this.BTSRichTextBox.TabIndex = 6;
             this.BTSRichTextBox.Text = "";
             // 
@@ -2033,7 +2064,7 @@
             this.UnitTextPanel.Controls.Add(this.UnitPopLabel);
             this.UnitTextPanel.Location = new System.Drawing.Point(32, 9);
             this.UnitTextPanel.Name = "UnitTextPanel";
-            this.UnitTextPanel.Size = new System.Drawing.Size(1005, 338);
+            this.UnitTextPanel.Size = new System.Drawing.Size(699, 338);
             this.UnitTextPanel.TabIndex = 0;
             this.UnitTextPanel.Tag = "";
             // 
@@ -2042,7 +2073,7 @@
             this.MaintenanceLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.MaintenanceLabel.AutoSize = true;
             this.MaintenanceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MaintenanceLabel.Location = new System.Drawing.Point(685, 315);
+            this.MaintenanceLabel.Location = new System.Drawing.Point(379, 315);
             this.MaintenanceLabel.Name = "MaintenanceLabel";
             this.MaintenanceLabel.Size = new System.Drawing.Size(72, 13);
             this.MaintenanceLabel.TabIndex = 16;
@@ -2052,7 +2083,7 @@
             // ShipNameRichTextBox
             // 
             this.ShipNameRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ShipNameRichTextBox.Location = new System.Drawing.Point(875, -6);
+            this.ShipNameRichTextBox.Location = new System.Drawing.Point(569, -6);
             this.ShipNameRichTextBox.Name = "ShipNameRichTextBox";
             this.ShipNameRichTextBox.Size = new System.Drawing.Size(130, 335);
             this.ShipNameRichTextBox.TabIndex = 15;
@@ -2114,7 +2145,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.UnitTooltipLabelRichTextBox.Location = new System.Drawing.Point(0, 81);
             this.UnitTooltipLabelRichTextBox.Name = "UnitTooltipLabelRichTextBox";
-            this.UnitTooltipLabelRichTextBox.Size = new System.Drawing.Size(869, 234);
+            this.UnitTooltipLabelRichTextBox.Size = new System.Drawing.Size(563, 234);
             this.UnitTooltipLabelRichTextBox.TabIndex = 4;
             this.UnitTooltipLabelRichTextBox.Text = "";
             // 
@@ -2224,7 +2255,7 @@
             this.PlanetListBox.FormattingEnabled = true;
             this.PlanetListBox.Location = new System.Drawing.Point(3, 3);
             this.PlanetListBox.Name = "PlanetListBox";
-            this.PlanetListBox.Size = new System.Drawing.Size(187, 784);
+            this.PlanetListBox.Size = new System.Drawing.Size(187, 771);
             this.PlanetListBox.TabIndex = 0;
             this.PlanetListBox.SelectedIndexChanged += new System.EventHandler(this.PlanetListBox_SelectedIndexChanged);
             // 
@@ -2234,7 +2265,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.PlanetPanel.AutoScroll = true;
-            this.PlanetPanel.Controls.Add(this.label25);
+            this.PlanetPanel.Controls.Add(this.PlanetMapSearchLabel);
             this.PlanetPanel.Controls.Add(this.MapSearchBox);
             this.PlanetPanel.Controls.Add(this.PlanetCoordinateLabel);
             this.PlanetPanel.Controls.Add(this.PlanetGroundSlotsLabel);
@@ -2251,9 +2282,9 @@
             this.PlanetPanel.Controls.Add(this.label24);
             this.PlanetPanel.Controls.Add(this.button3);
             this.PlanetPanel.Controls.Add(this.PlanetGoToGCButton);
-            this.PlanetPanel.Controls.Add(this.label22);
+            this.PlanetPanel.Controls.Add(this.PlanetCampaignLabel);
             this.PlanetPanel.Controls.Add(this.PlanetGCListBox);
-            this.PlanetPanel.Controls.Add(this.label21);
+            this.PlanetPanel.Controls.Add(this.PlanetMapLabel);
             this.PlanetPanel.Controls.Add(this.MapsInPlanetsListbox);
             this.PlanetPanel.Controls.Add(this.label20);
             this.PlanetPanel.Controls.Add(this.SharedSpaceMapListBox);
@@ -2282,25 +2313,24 @@
             this.PlanetPanel.Size = new System.Drawing.Size(1288, 775);
             this.PlanetPanel.TabIndex = 63;
             // 
-            // label25
+            // PlanetMapSearchLabel
             // 
-            this.label25.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label25.AutoSize = true;
-            this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label25.Location = new System.Drawing.Point(1031, 24);
-            this.label25.Name = "label25";
-            this.label25.Size = new System.Drawing.Size(54, 16);
-            this.label25.TabIndex = 107;
-            this.label25.Text = "Search:";
+            this.PlanetMapSearchLabel.AutoSize = true;
+            this.PlanetMapSearchLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PlanetMapSearchLabel.Location = new System.Drawing.Point(944, 26);
+            this.PlanetMapSearchLabel.Name = "PlanetMapSearchLabel";
+            this.PlanetMapSearchLabel.Size = new System.Drawing.Size(54, 16);
+            this.PlanetMapSearchLabel.TabIndex = 107;
+            this.PlanetMapSearchLabel.Text = "Search:";
             // 
             // MapSearchBox
             // 
-            this.MapSearchBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.MapSearchBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MapSearchBox.Location = new System.Drawing.Point(1034, 45);
+            this.MapSearchBox.Location = new System.Drawing.Point(947, 45);
             this.MapSearchBox.Name = "MapSearchBox";
-            this.MapSearchBox.Size = new System.Drawing.Size(187, 22);
+            this.MapSearchBox.Size = new System.Drawing.Size(321, 22);
             this.MapSearchBox.TabIndex = 106;
+            this.MapSearchBox.TextChanged += new System.EventHandler(this.MapSearchBox_TextChanged);
             // 
             // PlanetCoordinateLabel
             // 
@@ -2344,9 +2374,8 @@
             // 
             // PlanetGroundMapRB
             // 
-            this.PlanetGroundMapRB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.PlanetGroundMapRB.AutoSize = true;
-            this.PlanetGroundMapRB.Location = new System.Drawing.Point(1161, 24);
+            this.PlanetGroundMapRB.Location = new System.Drawing.Point(1074, 26);
             this.PlanetGroundMapRB.Name = "PlanetGroundMapRB";
             this.PlanetGroundMapRB.Size = new System.Drawing.Size(60, 17);
             this.PlanetGroundMapRB.TabIndex = 101;
@@ -2356,10 +2385,9 @@
             // 
             // PlanetSpaceMapRB
             // 
-            this.PlanetSpaceMapRB.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.PlanetSpaceMapRB.AutoSize = true;
             this.PlanetSpaceMapRB.Checked = true;
-            this.PlanetSpaceMapRB.Location = new System.Drawing.Point(1099, 24);
+            this.PlanetSpaceMapRB.Location = new System.Drawing.Point(1012, 26);
             this.PlanetSpaceMapRB.Name = "PlanetSpaceMapRB";
             this.PlanetSpaceMapRB.Size = new System.Drawing.Size(56, 17);
             this.PlanetSpaceMapRB.TabIndex = 100;
@@ -2452,56 +2480,49 @@
             // 
             // PlanetGoToGCButton
             // 
-            this.PlanetGoToGCButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.PlanetGoToGCButton.Location = new System.Drawing.Point(986, 3);
+            this.PlanetGoToGCButton.Location = new System.Drawing.Point(895, 3);
             this.PlanetGoToGCButton.Name = "PlanetGoToGCButton";
             this.PlanetGoToGCButton.Size = new System.Drawing.Size(43, 23);
             this.PlanetGoToGCButton.TabIndex = 91;
             this.PlanetGoToGCButton.Text = "Go to";
             this.PlanetGoToGCButton.UseVisualStyleBackColor = true;
+            this.PlanetGoToGCButton.Click += new System.EventHandler(this.PlanetGoToGCButton_Click);
             // 
-            // label22
+            // PlanetCampaignLabel
             // 
-            this.label22.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label22.AutoSize = true;
-            this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label22.Location = new System.Drawing.Point(804, 3);
-            this.label22.Name = "label22";
-            this.label22.Size = new System.Drawing.Size(184, 16);
-            this.label22.TabIndex = 90;
-            this.label22.Text = "Campaigns containing planet:";
+            this.PlanetCampaignLabel.AutoSize = true;
+            this.PlanetCampaignLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PlanetCampaignLabel.Location = new System.Drawing.Point(713, 3);
+            this.PlanetCampaignLabel.Name = "PlanetCampaignLabel";
+            this.PlanetCampaignLabel.Size = new System.Drawing.Size(184, 16);
+            this.PlanetCampaignLabel.TabIndex = 90;
+            this.PlanetCampaignLabel.Text = "Campaigns containing planet:";
             // 
             // PlanetGCListBox
             // 
-            this.PlanetGCListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.PlanetGCListBox.FormattingEnabled = true;
-            this.PlanetGCListBox.Location = new System.Drawing.Point(897, 26);
+            this.PlanetGCListBox.Location = new System.Drawing.Point(897, 32);
             this.PlanetGCListBox.Name = "PlanetGCListBox";
-            this.PlanetGCListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.PlanetGCListBox.Size = new System.Drawing.Size(131, 901);
+            this.PlanetGCListBox.Size = new System.Drawing.Size(44, 901);
             this.PlanetGCListBox.TabIndex = 89;
             // 
-            // label21
+            // PlanetMapLabel
             // 
-            this.label21.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label21.AutoSize = true;
-            this.label21.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label21.Location = new System.Drawing.Point(1031, 3);
-            this.label21.Name = "label21";
-            this.label21.Size = new System.Drawing.Size(154, 16);
-            this.label21.TabIndex = 88;
-            this.label21.Text = "Maps in Filtered Planets:";
+            this.PlanetMapLabel.AutoSize = true;
+            this.PlanetMapLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PlanetMapLabel.Location = new System.Drawing.Point(944, 5);
+            this.PlanetMapLabel.Name = "PlanetMapLabel";
+            this.PlanetMapLabel.Size = new System.Drawing.Size(154, 16);
+            this.PlanetMapLabel.TabIndex = 88;
+            this.PlanetMapLabel.Text = "Maps in Filtered Planets:";
             // 
             // MapsInPlanetsListbox
             // 
-            this.MapsInPlanetsListbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.MapsInPlanetsListbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MapsInPlanetsListbox.FormattingEnabled = true;
-            this.MapsInPlanetsListbox.Location = new System.Drawing.Point(1034, 73);
+            this.MapsInPlanetsListbox.Location = new System.Drawing.Point(947, 73);
             this.MapsInPlanetsListbox.Name = "MapsInPlanetsListbox";
-            this.MapsInPlanetsListbox.Size = new System.Drawing.Size(187, 3098);
+            this.MapsInPlanetsListbox.Size = new System.Drawing.Size(321, 1005);
             this.MapsInPlanetsListbox.TabIndex = 87;
             this.MapsInPlanetsListbox.SelectedIndexChanged += new System.EventHandler(this.MapsInPlanetsListbox_SelectedIndexChanged);
             // 
@@ -2707,17 +2728,16 @@
             // 
             // PlanetBTSTextBox
             // 
-            this.PlanetBTSTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.PlanetBTSTextBox.Location = new System.Drawing.Point(7, 934);
             this.PlanetBTSTextBox.Name = "PlanetBTSTextBox";
-            this.PlanetBTSTextBox.Size = new System.Drawing.Size(1021, 148);
+            this.PlanetBTSTextBox.Size = new System.Drawing.Size(934, 148);
             this.PlanetBTSTextBox.TabIndex = 78;
             this.PlanetBTSTextBox.Text = "";
             // 
             // tabGCs
             // 
-            this.tabGCs.Controls.Add(this.panel2);
+            this.tabGCs.Controls.Add(this.GCListBox);
+            this.tabGCs.Controls.Add(this.GCPanel);
             this.tabGCs.Location = new System.Drawing.Point(4, 22);
             this.tabGCs.Name = "tabGCs";
             this.tabGCs.Padding = new System.Windows.Forms.Padding(3);
@@ -2726,16 +2746,324 @@
             this.tabGCs.Text = "Conquests";
             this.tabGCs.UseVisualStyleBackColor = true;
             // 
-            // panel2
+            // GCListBox
             // 
-            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.GCListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.GCListBox.FormattingEnabled = true;
+            this.GCListBox.Location = new System.Drawing.Point(6, 6);
+            this.GCListBox.Name = "GCListBox";
+            this.GCListBox.Size = new System.Drawing.Size(386, 771);
+            this.GCListBox.TabIndex = 65;
+            this.GCListBox.SelectedIndexChanged += new System.EventHandler(this.GCListBox_SelectedIndexChanged);
+            // 
+            // GCPanel
+            // 
+            this.GCPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel2.AutoScroll = true;
-            this.panel2.Location = new System.Drawing.Point(405, 133);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(224, 103);
-            this.panel2.TabIndex = 64;
+            this.GCPanel.AutoScroll = true;
+            this.GCPanel.Controls.Add(this.GCGoToPlanetButton);
+            this.GCPanel.Controls.Add(this.GCPlanetOwnerLabel);
+            this.GCPanel.Controls.Add(this.GCPresentClearButton);
+            this.GCPanel.Controls.Add(this.GCPlanetForceLabel);
+            this.GCPanel.Controls.Add(this.GCPlanetPotentialLabel);
+            this.GCPanel.Controls.Add(this.GCPlanetConnectionLabel);
+            this.GCPanel.Controls.Add(this.GCPlanetShipyardLabel);
+            this.GCPanel.Controls.Add(this.GCPlanetIncomeLabel);
+            this.GCPanel.Controls.Add(this.GCPresentBorderLabel);
+            this.GCPanel.Controls.Add(this.GCPresentShipyardsLabel);
+            this.GCPanel.Controls.Add(this.GCPresentIncomeLabel);
+            this.GCPanel.Controls.Add(this.GCPresentPlanetsLabel);
+            this.GCPanel.Controls.Add(this.GCPlanetLabel);
+            this.GCPanel.Controls.Add(this.GCPlanetListBox);
+            this.GCPanel.Controls.Add(this.label27);
+            this.GCPanel.Controls.Add(this.GCPresentListbox);
+            this.GCPanel.Controls.Add(this.label26);
+            this.GCPanel.Controls.Add(this.GCActiveListBox);
+            this.GCPanel.Controls.Add(this.GCInternalNameLabel);
+            this.GCPanel.Controls.Add(this.GCCampaignSetLabel);
+            this.GCPanel.Controls.Add(this.GCNameLabel);
+            this.GCPanel.Controls.Add(this.InfinityCheckBox);
+            this.GCPanel.Controls.Add(this.HistoricalCheckBox);
+            this.GCPanel.Controls.Add(this.RegionalCheckBox);
+            this.GCPanel.Controls.Add(this.ProgressiveCheckBox);
+            this.GCPanel.Controls.Add(this.GCPictureBox);
+            this.GCPanel.Location = new System.Drawing.Point(398, 6);
+            this.GCPanel.Name = "GCPanel";
+            this.GCPanel.Size = new System.Drawing.Size(1081, 769);
+            this.GCPanel.TabIndex = 64;
+            // 
+            // GCPlanetOwnerLabel
+            // 
+            this.GCPlanetOwnerLabel.AutoSize = true;
+            this.GCPlanetOwnerLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCPlanetOwnerLabel.Location = new System.Drawing.Point(857, 77);
+            this.GCPlanetOwnerLabel.Name = "GCPlanetOwnerLabel";
+            this.GCPlanetOwnerLabel.Size = new System.Drawing.Size(59, 20);
+            this.GCPlanetOwnerLabel.TabIndex = 88;
+            this.GCPlanetOwnerLabel.Text = "Owner:";
+            // 
+            // GCPresentClearButton
+            // 
+            this.GCPresentClearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCPresentClearButton.Location = new System.Drawing.Point(142, 512);
+            this.GCPresentClearButton.Name = "GCPresentClearButton";
+            this.GCPresentClearButton.Size = new System.Drawing.Size(75, 32);
+            this.GCPresentClearButton.TabIndex = 87;
+            this.GCPresentClearButton.Text = "Clear";
+            this.GCPresentClearButton.UseVisualStyleBackColor = true;
+            this.GCPresentClearButton.Click += new System.EventHandler(this.GCPresentClearButton_Click);
+            // 
+            // GCPlanetForceLabel
+            // 
+            this.GCPlanetForceLabel.AutoSize = true;
+            this.GCPlanetForceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCPlanetForceLabel.Location = new System.Drawing.Point(857, 196);
+            this.GCPlanetForceLabel.Name = "GCPlanetForceLabel";
+            this.GCPlanetForceLabel.Size = new System.Drawing.Size(62, 20);
+            this.GCPlanetForceLabel.TabIndex = 86;
+            this.GCPlanetForceLabel.Text = "Forces:";
+            // 
+            // GCPlanetPotentialLabel
+            // 
+            this.GCPlanetPotentialLabel.AutoSize = true;
+            this.GCPlanetPotentialLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCPlanetPotentialLabel.Location = new System.Drawing.Point(857, 158);
+            this.GCPlanetPotentialLabel.Name = "GCPlanetPotentialLabel";
+            this.GCPlanetPotentialLabel.Size = new System.Drawing.Size(132, 20);
+            this.GCPlanetPotentialLabel.TabIndex = 85;
+            this.GCPlanetPotentialLabel.Text = "Potential Income:";
+            this.toolTip1.SetToolTip(this.GCPlanetPotentialLabel, "Income after a planet is fully built up with normal build options.  Excludes spec" +
+        "ial cases like heroes with income bonuses or capitals");
+            // 
+            // GCPlanetConnectionLabel
+            // 
+            this.GCPlanetConnectionLabel.AutoSize = true;
+            this.GCPlanetConnectionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCPlanetConnectionLabel.Location = new System.Drawing.Point(857, 138);
+            this.GCPlanetConnectionLabel.Name = "GCPlanetConnectionLabel";
+            this.GCPlanetConnectionLabel.Size = new System.Drawing.Size(102, 20);
+            this.GCPlanetConnectionLabel.TabIndex = 84;
+            this.GCPlanetConnectionLabel.Text = "Connections:";
+            // 
+            // GCPlanetShipyardLabel
+            // 
+            this.GCPlanetShipyardLabel.AutoSize = true;
+            this.GCPlanetShipyardLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCPlanetShipyardLabel.Location = new System.Drawing.Point(857, 117);
+            this.GCPlanetShipyardLabel.Name = "GCPlanetShipyardLabel";
+            this.GCPlanetShipyardLabel.Size = new System.Drawing.Size(75, 20);
+            this.GCPlanetShipyardLabel.TabIndex = 83;
+            this.GCPlanetShipyardLabel.Text = "Shipyard:";
+            // 
+            // GCPlanetIncomeLabel
+            // 
+            this.GCPlanetIncomeLabel.AutoSize = true;
+            this.GCPlanetIncomeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCPlanetIncomeLabel.Location = new System.Drawing.Point(857, 97);
+            this.GCPlanetIncomeLabel.Name = "GCPlanetIncomeLabel";
+            this.GCPlanetIncomeLabel.Size = new System.Drawing.Size(66, 20);
+            this.GCPlanetIncomeLabel.TabIndex = 82;
+            this.GCPlanetIncomeLabel.Text = "Income:";
+            // 
+            // GCPresentBorderLabel
+            // 
+            this.GCPresentBorderLabel.AutoSize = true;
+            this.GCPresentBorderLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCPresentBorderLabel.Location = new System.Drawing.Point(138, 667);
+            this.GCPresentBorderLabel.Name = "GCPresentBorderLabel";
+            this.GCPresentBorderLabel.Size = new System.Drawing.Size(118, 20);
+            this.GCPresentBorderLabel.TabIndex = 81;
+            this.GCPresentBorderLabel.Text = "Border Planets:";
+            // 
+            // GCPresentShipyardsLabel
+            // 
+            this.GCPresentShipyardsLabel.AutoSize = true;
+            this.GCPresentShipyardsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCPresentShipyardsLabel.Location = new System.Drawing.Point(138, 587);
+            this.GCPresentShipyardsLabel.Name = "GCPresentShipyardsLabel";
+            this.GCPresentShipyardsLabel.Size = new System.Drawing.Size(137, 80);
+            this.GCPresentShipyardsLabel.TabIndex = 80;
+            this.GCPresentShipyardsLabel.Text = "Level 4 Shipyards:\r\nLevel 3 Shipyards:\r\nLevel 2 Shipyards:\r\nLevel 1 Shipyards:";
+            // 
+            // GCPresentIncomeLabel
+            // 
+            this.GCPresentIncomeLabel.AutoSize = true;
+            this.GCPresentIncomeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCPresentIncomeLabel.Location = new System.Drawing.Point(138, 567);
+            this.GCPresentIncomeLabel.Name = "GCPresentIncomeLabel";
+            this.GCPresentIncomeLabel.Size = new System.Drawing.Size(66, 20);
+            this.GCPresentIncomeLabel.TabIndex = 79;
+            this.GCPresentIncomeLabel.Text = "Income:";
+            // 
+            // GCPresentPlanetsLabel
+            // 
+            this.GCPresentPlanetsLabel.AutoSize = true;
+            this.GCPresentPlanetsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCPresentPlanetsLabel.Location = new System.Drawing.Point(138, 547);
+            this.GCPresentPlanetsLabel.Name = "GCPresentPlanetsLabel";
+            this.GCPresentPlanetsLabel.Size = new System.Drawing.Size(66, 20);
+            this.GCPresentPlanetsLabel.TabIndex = 78;
+            this.GCPresentPlanetsLabel.Text = "Planets:";
+            // 
+            // GCPlanetLabel
+            // 
+            this.GCPlanetLabel.AutoSize = true;
+            this.GCPlanetLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCPlanetLabel.Location = new System.Drawing.Point(626, 56);
+            this.GCPlanetLabel.Name = "GCPlanetLabel";
+            this.GCPlanetLabel.Size = new System.Drawing.Size(70, 20);
+            this.GCPlanetLabel.TabIndex = 77;
+            this.GCPlanetLabel.Text = "Planets: ";
+            // 
+            // GCPlanetListBox
+            // 
+            this.GCPlanetListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.GCPlanetListBox.FormattingEnabled = true;
+            this.GCPlanetListBox.Location = new System.Drawing.Point(630, 79);
+            this.GCPlanetListBox.Name = "GCPlanetListBox";
+            this.GCPlanetListBox.Size = new System.Drawing.Size(221, 680);
+            this.GCPlanetListBox.TabIndex = 76;
+            this.GCPlanetListBox.SelectedIndexChanged += new System.EventHandler(this.GCPlanetListBox_SelectedIndexChanged);
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label27.Location = new System.Drawing.Point(3, 512);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(133, 20);
+            this.label27.TabIndex = 75;
+            this.label27.Text = "Present Factions:";
+            // 
+            // GCPresentListbox
+            // 
+            this.GCPresentListbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.GCPresentListbox.FormattingEnabled = true;
+            this.GCPresentListbox.Location = new System.Drawing.Point(7, 535);
+            this.GCPresentListbox.Name = "GCPresentListbox";
+            this.GCPresentListbox.Size = new System.Drawing.Size(110, 225);
+            this.GCPresentListbox.TabIndex = 74;
+            this.toolTip1.SetToolTip(this.GCPresentListbox, "The factions that start with planets in this Galactic Conquest");
+            this.GCPresentListbox.SelectedIndexChanged += new System.EventHandler(this.GCPresentListbox_SelectedIndexChanged);
+            // 
+            // label26
+            // 
+            this.label26.AutoSize = true;
+            this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label26.Location = new System.Drawing.Point(3, 120);
+            this.label26.Name = "label26";
+            this.label26.Size = new System.Drawing.Size(113, 20);
+            this.label26.TabIndex = 73;
+            this.label26.Text = "Active Faction:";
+            // 
+            // GCActiveListBox
+            // 
+            this.GCActiveListBox.FormattingEnabled = true;
+            this.GCActiveListBox.Location = new System.Drawing.Point(3, 146);
+            this.GCActiveListBox.Name = "GCActiveListBox";
+            this.GCActiveListBox.Size = new System.Drawing.Size(110, 355);
+            this.GCActiveListBox.TabIndex = 72;
+            this.toolTip1.SetToolTip(this.GCActiveListBox, "Nominally playable factions with a separate GC copy. The versions for different f" +
+        "actions may have differences in planet ownership");
+            this.GCActiveListBox.SelectedIndexChanged += new System.EventHandler(this.GCActiveListBox_SelectedIndexChanged);
+            // 
+            // GCInternalNameLabel
+            // 
+            this.GCInternalNameLabel.AutoSize = true;
+            this.GCInternalNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCInternalNameLabel.Location = new System.Drawing.Point(959, 27);
+            this.GCInternalNameLabel.Name = "GCInternalNameLabel";
+            this.GCInternalNameLabel.Size = new System.Drawing.Size(76, 13);
+            this.GCInternalNameLabel.TabIndex = 71;
+            this.GCInternalNameLabel.Text = "Internal Name:";
+            // 
+            // GCCampaignSetLabel
+            // 
+            this.GCCampaignSetLabel.AutoSize = true;
+            this.GCCampaignSetLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCCampaignSetLabel.Location = new System.Drawing.Point(627, 27);
+            this.GCCampaignSetLabel.Name = "GCCampaignSetLabel";
+            this.GCCampaignSetLabel.Size = new System.Drawing.Size(76, 13);
+            this.GCCampaignSetLabel.TabIndex = 70;
+            this.GCCampaignSetLabel.Text = "Campaign Set:";
+            // 
+            // GCNameLabel
+            // 
+            this.GCNameLabel.AutoSize = true;
+            this.GCNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCNameLabel.Location = new System.Drawing.Point(626, 7);
+            this.GCNameLabel.Name = "GCNameLabel";
+            this.GCNameLabel.Size = new System.Drawing.Size(59, 20);
+            this.GCNameLabel.TabIndex = 69;
+            this.GCNameLabel.Text = "Name: ";
+            // 
+            // InfinityCheckBox
+            // 
+            this.InfinityCheckBox.AutoSize = true;
+            this.InfinityCheckBox.Checked = true;
+            this.InfinityCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.InfinityCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.InfinityCheckBox.Location = new System.Drawing.Point(3, 93);
+            this.InfinityCheckBox.Name = "InfinityCheckBox";
+            this.InfinityCheckBox.Size = new System.Drawing.Size(74, 24);
+            this.InfinityCheckBox.TabIndex = 68;
+            this.InfinityCheckBox.Text = "Infinity";
+            this.InfinityCheckBox.UseVisualStyleBackColor = true;
+            this.InfinityCheckBox.CheckedChanged += new System.EventHandler(this.InfinityCheckBox_CheckedChanged);
+            // 
+            // HistoricalCheckBox
+            // 
+            this.HistoricalCheckBox.AutoSize = true;
+            this.HistoricalCheckBox.Checked = true;
+            this.HistoricalCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.HistoricalCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HistoricalCheckBox.Location = new System.Drawing.Point(3, 63);
+            this.HistoricalCheckBox.Name = "HistoricalCheckBox";
+            this.HistoricalCheckBox.Size = new System.Drawing.Size(93, 24);
+            this.HistoricalCheckBox.TabIndex = 67;
+            this.HistoricalCheckBox.Text = "Historical";
+            this.HistoricalCheckBox.UseVisualStyleBackColor = true;
+            this.HistoricalCheckBox.CheckedChanged += new System.EventHandler(this.HistoricalCheckBox_CheckedChanged);
+            // 
+            // RegionalCheckBox
+            // 
+            this.RegionalCheckBox.AutoSize = true;
+            this.RegionalCheckBox.Checked = true;
+            this.RegionalCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.RegionalCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.RegionalCheckBox.Location = new System.Drawing.Point(3, 33);
+            this.RegionalCheckBox.Name = "RegionalCheckBox";
+            this.RegionalCheckBox.Size = new System.Drawing.Size(91, 24);
+            this.RegionalCheckBox.TabIndex = 66;
+            this.RegionalCheckBox.Text = "Regional";
+            this.RegionalCheckBox.UseVisualStyleBackColor = true;
+            this.RegionalCheckBox.CheckedChanged += new System.EventHandler(this.RegionalCheckBox_CheckedChanged);
+            // 
+            // ProgressiveCheckBox
+            // 
+            this.ProgressiveCheckBox.AutoSize = true;
+            this.ProgressiveCheckBox.Checked = true;
+            this.ProgressiveCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ProgressiveCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ProgressiveCheckBox.Location = new System.Drawing.Point(3, 3);
+            this.ProgressiveCheckBox.Name = "ProgressiveCheckBox";
+            this.ProgressiveCheckBox.Size = new System.Drawing.Size(110, 24);
+            this.ProgressiveCheckBox.TabIndex = 65;
+            this.ProgressiveCheckBox.Text = "Progressive";
+            this.ProgressiveCheckBox.UseVisualStyleBackColor = true;
+            this.ProgressiveCheckBox.CheckedChanged += new System.EventHandler(this.ProgressiveCheckBox_CheckedChanged);
+            // 
+            // GCPictureBox
+            // 
+            this.GCPictureBox.Location = new System.Drawing.Point(119, 0);
+            this.GCPictureBox.Name = "GCPictureBox";
+            this.GCPictureBox.Size = new System.Drawing.Size(501, 501);
+            this.GCPictureBox.TabIndex = 64;
+            this.GCPictureBox.TabStop = false;
             // 
             // tabFactions
             // 
@@ -2755,6 +3083,8 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.FactionPanel.AutoScroll = true;
+            this.FactionPanel.Controls.Add(this.label28);
+            this.FactionPanel.Controls.Add(this.FactionGCListbox);
             this.FactionPanel.Controls.Add(this.HeroListbox);
             this.FactionPanel.Controls.Add(this.listBox1);
             this.FactionPanel.Controls.Add(this.label2);
@@ -2768,11 +3098,29 @@
             this.FactionPanel.Size = new System.Drawing.Size(1203, 775);
             this.FactionPanel.TabIndex = 1;
             // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label28.Location = new System.Drawing.Point(12, 143);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(152, 20);
+            this.label28.TabIndex = 9;
+            this.label28.Text = "Galactic Conquests:";
+            // 
+            // FactionGCListbox
+            // 
+            this.FactionGCListbox.FormattingEnabled = true;
+            this.FactionGCListbox.Location = new System.Drawing.Point(16, 166);
+            this.FactionGCListbox.Name = "FactionGCListbox";
+            this.FactionGCListbox.Size = new System.Drawing.Size(275, 121);
+            this.FactionGCListbox.TabIndex = 8;
+            // 
             // HeroListbox
             // 
             this.HeroListbox.AutoSize = true;
             this.HeroListbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HeroListbox.Location = new System.Drawing.Point(12, 417);
+            this.HeroListbox.Location = new System.Drawing.Point(12, 602);
             this.HeroListbox.Name = "HeroListbox";
             this.HeroListbox.Size = new System.Drawing.Size(65, 20);
             this.HeroListbox.TabIndex = 7;
@@ -2781,7 +3129,7 @@
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(16, 440);
+            this.listBox1.Location = new System.Drawing.Point(16, 625);
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(275, 121);
             this.listBox1.TabIndex = 6;
@@ -2790,7 +3138,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(12, 261);
+            this.label2.Location = new System.Drawing.Point(12, 446);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(108, 20);
             this.label2.TabIndex = 5;
@@ -2800,7 +3148,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(12, 109);
+            this.label1.Location = new System.Drawing.Point(12, 294);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(100, 20);
             this.label1.TabIndex = 4;
@@ -2809,7 +3157,7 @@
             // FactionGroundListbox
             // 
             this.FactionGroundListbox.FormattingEnabled = true;
-            this.FactionGroundListbox.Location = new System.Drawing.Point(16, 284);
+            this.FactionGroundListbox.Location = new System.Drawing.Point(16, 469);
             this.FactionGroundListbox.Name = "FactionGroundListbox";
             this.FactionGroundListbox.Size = new System.Drawing.Size(275, 121);
             this.FactionGroundListbox.TabIndex = 3;
@@ -2817,7 +3165,7 @@
             // FactionSpaceListBox
             // 
             this.FactionSpaceListBox.FormattingEnabled = true;
-            this.FactionSpaceListBox.Location = new System.Drawing.Point(16, 132);
+            this.FactionSpaceListBox.Location = new System.Drawing.Point(16, 317);
             this.FactionSpaceListBox.Name = "FactionSpaceListBox";
             this.FactionSpaceListBox.Size = new System.Drawing.Size(275, 121);
             this.FactionSpaceListBox.TabIndex = 2;
@@ -2902,6 +3250,16 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
+            // GCGoToPlanetButton
+            // 
+            this.GCGoToPlanetButton.Location = new System.Drawing.Point(808, 53);
+            this.GCGoToPlanetButton.Name = "GCGoToPlanetButton";
+            this.GCGoToPlanetButton.Size = new System.Drawing.Size(43, 23);
+            this.GCGoToPlanetButton.TabIndex = 92;
+            this.GCGoToPlanetButton.Text = "Go to";
+            this.GCGoToPlanetButton.UseVisualStyleBackColor = true;
+            this.GCGoToPlanetButton.Click += new System.EventHandler(this.GCGoToPlanetButton_Click);
+            // 
             // Holocron
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2914,7 +3272,6 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Holocron";
             this.Text = "EaWX Holocron";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Holocron_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -2952,6 +3309,9 @@
             this.PlanetPanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PlanetPictureBox)).EndInit();
             this.tabGCs.ResumeLayout(false);
+            this.GCPanel.ResumeLayout(false);
+            this.GCPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.GCPictureBox)).EndInit();
             this.tabFactions.ResumeLayout(false);
             this.FactionPanel.ResumeLayout(false);
             this.FactionPanel.PerformLayout();
@@ -3154,7 +3514,7 @@
         private System.Windows.Forms.Label PlanetCodeLabel;
         private System.Windows.Forms.Label PlanetNameLabel;
         private System.Windows.Forms.PictureBox PlanetPictureBox;
-        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel GCPanel;
         private System.Windows.Forms.Button PlanetGroundUnitsGoToButton;
         private System.Windows.Forms.Button PlanetSpaceUnitsGoToButton;
         private System.Windows.Forms.Button PlanetStructuresGoToButton;
@@ -3164,9 +3524,9 @@
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button PlanetGoToGCButton;
-        private System.Windows.Forms.Label label22;
+        private System.Windows.Forms.Label PlanetCampaignLabel;
         private System.Windows.Forms.ListBox PlanetGCListBox;
-        private System.Windows.Forms.Label label21;
+        private System.Windows.Forms.Label PlanetMapLabel;
         private System.Windows.Forms.ListBox MapsInPlanetsListbox;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.ListBox SharedSpaceMapListBox;
@@ -3194,9 +3554,38 @@
         private System.Windows.Forms.Label AbilityStackingLabel;
         private System.Windows.Forms.RadioButton FighterRadioButton;
         private System.Windows.Forms.RadioButton SpaceStructureRadioButton;
-        private System.Windows.Forms.Label label25;
+        private System.Windows.Forms.Label PlanetMapSearchLabel;
         private System.Windows.Forms.TextBox MapSearchBox;
         private System.Windows.Forms.TabPage NameFileTab;
+        private System.Windows.Forms.ListBox GCListBox;
+        private System.Windows.Forms.PictureBox GCPictureBox;
+        private System.Windows.Forms.CheckBox InfinityCheckBox;
+        private System.Windows.Forms.CheckBox HistoricalCheckBox;
+        private System.Windows.Forms.CheckBox RegionalCheckBox;
+        private System.Windows.Forms.CheckBox ProgressiveCheckBox;
+        private System.Windows.Forms.Label GCCampaignSetLabel;
+        private System.Windows.Forms.Label GCNameLabel;
+        private System.Windows.Forms.Label GCInternalNameLabel;
+        private System.Windows.Forms.Label label26;
+        private System.Windows.Forms.ListBox GCActiveListBox;
+        private System.Windows.Forms.Label GCPlanetLabel;
+        private System.Windows.Forms.ListBox GCPlanetListBox;
+        private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.ListBox GCPresentListbox;
+        private System.Windows.Forms.Label GCPlanetForceLabel;
+        private System.Windows.Forms.Label GCPlanetPotentialLabel;
+        private System.Windows.Forms.Label GCPlanetConnectionLabel;
+        private System.Windows.Forms.Label GCPlanetShipyardLabel;
+        private System.Windows.Forms.Label GCPlanetIncomeLabel;
+        private System.Windows.Forms.Label GCPresentBorderLabel;
+        private System.Windows.Forms.Label GCPresentShipyardsLabel;
+        private System.Windows.Forms.Label GCPresentIncomeLabel;
+        private System.Windows.Forms.Label GCPresentPlanetsLabel;
+        private System.Windows.Forms.Button GCPresentClearButton;
+        private System.Windows.Forms.Label GCPlanetOwnerLabel;
+        private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.ListBox FactionGCListbox;
+        private System.Windows.Forms.Button GCGoToPlanetButton;
     }
 }
 
