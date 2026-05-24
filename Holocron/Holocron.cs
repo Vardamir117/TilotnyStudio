@@ -344,6 +344,7 @@ namespace Holocron
             parseCategories(entities);
             parseFlags(entities);
             parseGameConstants(entities);
+            AutoResolveApplySettingsDefaults();
 
             loadscreen.ChangeText("Parsing object data");
             parseObjects(entities);
@@ -904,6 +905,7 @@ namespace Holocron
         {
             List<unit> source = new List<unit>();
             foreach (unit item in entities.spaceUnits) source.Add(item);
+            foreach (unit item in entities.fighters) source.Add(item);
             foreach (unit item in entities.groundCompanies) source.Add(item);
             foreach (unit item in entities.groundUnits) source.Add(item);
             foreach (unit item in entities.structures) source.Add(item);
@@ -921,6 +923,7 @@ namespace Holocron
             {
                 foreach (unit item in entities.spaceUnits) source.Add(item);
                 foreach (unit item in entities.spaceHeroes) source.Add(item);
+                foreach (unit item in entities.fighters) source.Add(item);
             }
             else if (AutoResolveBattleTypeComboBox.SelectedIndex == 1)
             {
@@ -1435,6 +1438,26 @@ namespace Holocron
                 " -> " + report.ForceAfter.ToString("0.###", CultureInfo.InvariantCulture) +
                 " | decision=" + report.Decision +
                 (string.IsNullOrWhiteSpace(report.Notes) ? "" : " | " + report.Notes);
+        }
+
+        private void AutoResolveSetNumericValue(NumericUpDown control, float value)
+        {
+            if (control == null) return;
+
+            decimal configured = (decimal)value;
+            if (configured < control.Minimum) configured = control.Minimum;
+            if (configured > control.Maximum) configured = control.Maximum;
+            control.Value = configured;
+        }
+
+        private void AutoResolveApplySettingsDefaults()
+        {
+            AutoResolveSetNumericValue(AutoResolveAttritionAllowanceNumeric, entities.AutoResolveSettings.AttritionAllowanceFactor);
+            AutoResolveSetNumericValue(AutoResolveTransportLossesNumeric, entities.AutoResolveSettings.TransportLosses);
+            AutoResolveSetNumericValue(AutoResolveRetreatLoserAttritionNumeric, entities.AutoResolveSettings.RetreatLoserAttrition);
+            AutoResolveSetNumericValue(AutoResolveRetreatWinnerAttritionNumeric, entities.AutoResolveSettings.RetreatWinnerAttrition);
+            AutoResolveSetNumericValue(AutoResolveLoserAttritionNumeric, entities.AutoResolveSettings.LoserAttrition);
+            AutoResolveSetNumericValue(AutoResolveWinnerAttritionNumeric, entities.AutoResolveSettings.WinnerAttrition);
         }
 
         private void AutoResolveApplyAttritionInputs(AutoResolveClass sim)

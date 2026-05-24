@@ -1833,6 +1833,20 @@ public static class SharedFunctions
         entities.GroundArmors.Clear();
         entities.GroundShields.Clear();
         XmlDocument consts = readModXmlOrMeg("XML\\GameConstants.xml", entities);
+
+        float ParseFloat(string xpath)
+        {
+            XmlNode node = consts.DocumentElement.SelectSingleNode("descendant::" + xpath);
+            return float.Parse(fullTrim(node.InnerText), System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        entities.AutoResolveSettings.AttritionAllowanceFactor = ParseFloat("AutoResolveAttritionAllowanceFactor");
+        entities.AutoResolveSettings.TransportLosses = ParseFloat("AutoResolveTransportLosses");
+        entities.AutoResolveSettings.RetreatLoserAttrition = ParseFloat("RetreatAutoResolveLoserAttrition");
+        entities.AutoResolveSettings.RetreatWinnerAttrition = ParseFloat("RetreatAutoResolveWinnerAttrition");
+        entities.AutoResolveSettings.LoserAttrition = ParseFloat("AutoResolveLoserAttrition");
+        entities.AutoResolveSettings.WinnerAttrition = ParseFloat("AutoResolveWinnerAttrition");
+
         XmlNode typedef = consts.DocumentElement.SelectSingleNode("descendant::Armor_Types");
         string[] types = fullTrim(typedef.InnerText).Split(',');
         foreach (string type in types)
@@ -4678,6 +4692,16 @@ public struct galacticConquest
     }
 }
 
+public class AutoResolveSettings
+{
+    public float AttritionAllowanceFactor = 0.333333f;
+    public float TransportLosses = 0.333333f;
+    public float RetreatLoserAttrition = 0.65f;
+    public float RetreatWinnerAttrition = 0.50f;
+    public float LoserAttrition = 0.80f;
+    public float WinnerAttrition = 0.75f;
+}
+
 public struct entities {
     public static List<string> modpaths = new List<string>();
     public static List<Text_Entry> Text = new List<Text_Entry>();
@@ -4747,6 +4771,7 @@ public struct entities {
 
     public static Bitmap MTmaster;
     public static List<IconData> IconData = new List<IconData>();
+    public static AutoResolveSettings AutoResolveSettings = new AutoResolveSettings();
 
     public static string modid; //Should be deprecated in Rev 1.0, but keep around for compatibility
     public static string readerrors = "";

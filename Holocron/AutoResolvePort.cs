@@ -59,7 +59,7 @@ namespace Holocron
         public float PlanetaryReplacementPower = -1f;
         public bool IncludePlanetTacticalBuiltObjects;
         public List<AutoResolveBuiltObject> PlanetBuiltObjects = new List<AutoResolveBuiltObject>();
-        public bool AddGarrison = true;
+        public bool AddGarrison = false; // (object->Get_Parent_Mode_ID() == INVALID_OBJECT_ID) is the C code
         public bool IsDummyStarBase;
 
         // Placeholder for C++ hero special ability strength factors (category -> multiplier).
