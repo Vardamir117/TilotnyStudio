@@ -249,6 +249,7 @@
             this.tabGCs = new System.Windows.Forms.TabPage();
             this.GCListBox = new System.Windows.Forms.ListBox();
             this.GCPanel = new System.Windows.Forms.Panel();
+            this.GCGoToPlanetButton = new System.Windows.Forms.Button();
             this.GCPlanetOwnerLabel = new System.Windows.Forms.Label();
             this.GCPresentClearButton = new System.Windows.Forms.Button();
             this.GCPlanetForceLabel = new System.Windows.Forms.Label();
@@ -292,7 +293,9 @@
             this.tabGalaxy = new System.Windows.Forms.TabPage();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.GCGoToPlanetButton = new System.Windows.Forms.Button();
+            this.NameText = new System.Windows.Forms.RichTextBox();
+            this.NameListBox = new System.Windows.Forms.ListBox();
+            this.ConquestBTSTextBox = new System.Windows.Forms.RichTextBox();
             this.menuStrip1.SuspendLayout();
             this.tabLookups.SuspendLayout();
             this.LookupTabControl.SuspendLayout();
@@ -300,6 +303,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.MatrixGrid)).BeginInit();
             this.NameTab.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.NameFileTab.SuspendLayout();
             this.MissionTab.SuspendLayout();
             this.SpawnTab.SuspendLayout();
             this.StandardFTab.SuspendLayout();
@@ -383,9 +387,6 @@
             // 
             // LookupTabControl
             // 
-            this.LookupTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.LookupTabControl.Controls.Add(this.MatrixTab);
             this.LookupTabControl.Controls.Add(this.ProjectileTab);
             this.LookupTabControl.Controls.Add(this.NameTab);
@@ -400,7 +401,7 @@
             this.LookupTabControl.Location = new System.Drawing.Point(3, 3);
             this.LookupTabControl.Name = "LookupTabControl";
             this.LookupTabControl.SelectedIndex = 0;
-            this.LookupTabControl.Size = new System.Drawing.Size(1519, 775);
+            this.LookupTabControl.Size = new System.Drawing.Size(1484, 775);
             this.LookupTabControl.TabIndex = 0;
             this.LookupTabControl.SelectedIndexChanged += new System.EventHandler(this.LookupTabControl_SelectedIndexChanged);
             // 
@@ -412,7 +413,7 @@
             this.MatrixTab.Location = new System.Drawing.Point(4, 22);
             this.MatrixTab.Name = "MatrixTab";
             this.MatrixTab.Padding = new System.Windows.Forms.Padding(3);
-            this.MatrixTab.Size = new System.Drawing.Size(1511, 749);
+            this.MatrixTab.Size = new System.Drawing.Size(1476, 749);
             this.MatrixTab.TabIndex = 0;
             this.MatrixTab.Text = "Armor Matrix";
             this.MatrixTab.UseVisualStyleBackColor = true;
@@ -453,14 +454,14 @@
             this.MatrixGrid.Location = new System.Drawing.Point(3, 24);
             this.MatrixGrid.Name = "MatrixGrid";
             this.MatrixGrid.ReadOnly = true;
-            this.MatrixGrid.Size = new System.Drawing.Size(1505, 722);
+            this.MatrixGrid.Size = new System.Drawing.Size(1470, 722);
             this.MatrixGrid.TabIndex = 1;
             // 
             // ProjectileTab
             // 
             this.ProjectileTab.Location = new System.Drawing.Point(4, 22);
             this.ProjectileTab.Name = "ProjectileTab";
-            this.ProjectileTab.Size = new System.Drawing.Size(1511, 749);
+            this.ProjectileTab.Size = new System.Drawing.Size(1476, 749);
             this.ProjectileTab.TabIndex = 9;
             this.ProjectileTab.Text = "Projectiles";
             this.ProjectileTab.UseVisualStyleBackColor = true;
@@ -483,7 +484,7 @@
             this.NameTab.Controls.Add(this.ShipnameListBox);
             this.NameTab.Location = new System.Drawing.Point(4, 22);
             this.NameTab.Name = "NameTab";
-            this.NameTab.Size = new System.Drawing.Size(1511, 749);
+            this.NameTab.Size = new System.Drawing.Size(1476, 749);
             this.NameTab.TabIndex = 2;
             this.NameTab.Text = "Unit Names";
             this.NameTab.UseVisualStyleBackColor = true;
@@ -515,7 +516,7 @@
             this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(1172, 725);
+            this.label11.Location = new System.Drawing.Point(1137, 725);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(325, 13);
             this.label11.TabIndex = 11;
@@ -700,9 +701,11 @@
             // 
             // NameFileTab
             // 
+            this.NameFileTab.Controls.Add(this.NameText);
+            this.NameFileTab.Controls.Add(this.NameListBox);
             this.NameFileTab.Location = new System.Drawing.Point(4, 22);
             this.NameFileTab.Name = "NameFileTab";
-            this.NameFileTab.Size = new System.Drawing.Size(1511, 749);
+            this.NameFileTab.Size = new System.Drawing.Size(1476, 749);
             this.NameFileTab.TabIndex = 10;
             this.NameFileTab.Text = "Name Files";
             this.NameFileTab.UseVisualStyleBackColor = true;
@@ -714,7 +717,7 @@
             this.MissionTab.Location = new System.Drawing.Point(4, 22);
             this.MissionTab.Name = "MissionTab";
             this.MissionTab.Padding = new System.Windows.Forms.Padding(3);
-            this.MissionTab.Size = new System.Drawing.Size(1511, 749);
+            this.MissionTab.Size = new System.Drawing.Size(1476, 749);
             this.MissionTab.TabIndex = 1;
             this.MissionTab.Text = "Rewards";
             this.MissionTab.UseVisualStyleBackColor = true;
@@ -726,7 +729,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.MissionText.Location = new System.Drawing.Point(302, 6);
             this.MissionText.Name = "MissionText";
-            this.MissionText.Size = new System.Drawing.Size(1203, 735);
+            this.MissionText.Size = new System.Drawing.Size(1168, 735);
             this.MissionText.TabIndex = 1;
             this.MissionText.Text = "";
             // 
@@ -1100,8 +1103,6 @@
             // 
             // UnitAvailPanel
             // 
-            this.UnitAvailPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.UnitAvailPanel.Controls.Add(this.label14);
             this.UnitAvailPanel.Controls.Add(this.FactionAvailableListbox);
             this.UnitAvailPanel.Controls.Add(this.AvailabilityLabel);
@@ -1116,7 +1117,7 @@
             this.UnitAvailPanel.Controls.Add(this.SpawnSetListBox);
             this.UnitAvailPanel.Location = new System.Drawing.Point(32, 353);
             this.UnitAvailPanel.Name = "UnitAvailPanel";
-            this.UnitAvailPanel.Size = new System.Drawing.Size(699, 221);
+            this.UnitAvailPanel.Size = new System.Drawing.Size(1039, 221);
             this.UnitAvailPanel.TabIndex = 9;
             // 
             // label14
@@ -1238,8 +1239,6 @@
             // 
             // UnitAbilityPanel
             // 
-            this.UnitAbilityPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.UnitAbilityPanel.Controls.Add(this.AbilityStackingLabel);
             this.UnitAbilityPanel.Controls.Add(this.UARadiusLabel);
             this.UnitAbilityPanel.Controls.Add(this.AbilityActivationRadiusLabel);
@@ -1267,7 +1266,7 @@
             this.UnitAbilityPanel.Controls.Add(this.UnitAbilityListBox);
             this.UnitAbilityPanel.Location = new System.Drawing.Point(32, 1150);
             this.UnitAbilityPanel.Name = "UnitAbilityPanel";
-            this.UnitAbilityPanel.Size = new System.Drawing.Size(699, 180);
+            this.UnitAbilityPanel.Size = new System.Drawing.Size(1039, 180);
             this.UnitAbilityPanel.TabIndex = 8;
             // 
             // AbilityStackingLabel
@@ -1512,8 +1511,6 @@
             // 
             // UnitSubunitPanel
             // 
-            this.UnitSubunitPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.UnitSubunitPanel.Controls.Add(this.UnitSubsquadGotoButton);
             this.UnitSubunitPanel.Controls.Add(this.UnitSubunitGotoButton);
             this.UnitSubunitPanel.Controls.Add(this.SubsquadLabel);
@@ -1522,7 +1519,7 @@
             this.UnitSubunitPanel.Controls.Add(this.UnitSubunitListbox);
             this.UnitSubunitPanel.Location = new System.Drawing.Point(32, 966);
             this.UnitSubunitPanel.Name = "UnitSubunitPanel";
-            this.UnitSubunitPanel.Size = new System.Drawing.Size(699, 166);
+            this.UnitSubunitPanel.Size = new System.Drawing.Size(1039, 166);
             this.UnitSubunitPanel.TabIndex = 6;
             this.UnitSubunitPanel.Tag = "";
             // 
@@ -1620,8 +1617,6 @@
             // 
             // UnitStatPanel
             // 
-            this.UnitStatPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.UnitStatPanel.Controls.Add(this.AlphaCheckBox);
             this.UnitStatPanel.Controls.Add(this.FlagLabel);
             this.UnitStatPanel.Controls.Add(this.CategoryLabel);
@@ -1658,7 +1653,7 @@
             this.UnitStatPanel.Controls.Add(this.UnitHpLabel);
             this.UnitStatPanel.Location = new System.Drawing.Point(32, 594);
             this.UnitStatPanel.Name = "UnitStatPanel";
-            this.UnitStatPanel.Size = new System.Drawing.Size(699, 359);
+            this.UnitStatPanel.Size = new System.Drawing.Size(1039, 359);
             this.UnitStatPanel.TabIndex = 2;
             this.UnitStatPanel.Tag = "";
             // 
@@ -2025,29 +2020,23 @@
             // 
             // UnitBTSPanel
             // 
-            this.UnitBTSPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.UnitBTSPanel.Controls.Add(this.BTSRichTextBox);
             this.UnitBTSPanel.Location = new System.Drawing.Point(32, 1341);
             this.UnitBTSPanel.Name = "UnitBTSPanel";
-            this.UnitBTSPanel.Size = new System.Drawing.Size(699, 150);
+            this.UnitBTSPanel.Size = new System.Drawing.Size(1039, 150);
             this.UnitBTSPanel.TabIndex = 1;
             this.UnitBTSPanel.Tag = "";
             // 
             // BTSRichTextBox
             // 
-            this.BTSRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.BTSRichTextBox.Location = new System.Drawing.Point(0, 6);
             this.BTSRichTextBox.Name = "BTSRichTextBox";
-            this.BTSRichTextBox.Size = new System.Drawing.Size(733, 139);
+            this.BTSRichTextBox.Size = new System.Drawing.Size(1036, 139);
             this.BTSRichTextBox.TabIndex = 6;
             this.BTSRichTextBox.Text = "";
             // 
             // UnitTextPanel
             // 
-            this.UnitTextPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.UnitTextPanel.Controls.Add(this.MaintenanceLabel);
             this.UnitTextPanel.Controls.Add(this.ShipNameRichTextBox);
             this.UnitTextPanel.Controls.Add(this.UnitSkirmTimeLabel);
@@ -2064,7 +2053,7 @@
             this.UnitTextPanel.Controls.Add(this.UnitPopLabel);
             this.UnitTextPanel.Location = new System.Drawing.Point(32, 9);
             this.UnitTextPanel.Name = "UnitTextPanel";
-            this.UnitTextPanel.Size = new System.Drawing.Size(699, 338);
+            this.UnitTextPanel.Size = new System.Drawing.Size(1039, 338);
             this.UnitTextPanel.TabIndex = 0;
             this.UnitTextPanel.Tag = "";
             // 
@@ -2073,7 +2062,7 @@
             this.MaintenanceLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.MaintenanceLabel.AutoSize = true;
             this.MaintenanceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MaintenanceLabel.Location = new System.Drawing.Point(379, 315);
+            this.MaintenanceLabel.Location = new System.Drawing.Point(719, 315);
             this.MaintenanceLabel.Name = "MaintenanceLabel";
             this.MaintenanceLabel.Size = new System.Drawing.Size(72, 13);
             this.MaintenanceLabel.TabIndex = 16;
@@ -2082,10 +2071,9 @@
             // 
             // ShipNameRichTextBox
             // 
-            this.ShipNameRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.ShipNameRichTextBox.Location = new System.Drawing.Point(569, -6);
+            this.ShipNameRichTextBox.Location = new System.Drawing.Point(909, 6);
             this.ShipNameRichTextBox.Name = "ShipNameRichTextBox";
-            this.ShipNameRichTextBox.Size = new System.Drawing.Size(130, 335);
+            this.ShipNameRichTextBox.Size = new System.Drawing.Size(127, 323);
             this.ShipNameRichTextBox.TabIndex = 15;
             this.ShipNameRichTextBox.Text = "";
             // 
@@ -2145,7 +2133,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.UnitTooltipLabelRichTextBox.Location = new System.Drawing.Point(0, 81);
             this.UnitTooltipLabelRichTextBox.Name = "UnitTooltipLabelRichTextBox";
-            this.UnitTooltipLabelRichTextBox.Size = new System.Drawing.Size(563, 234);
+            this.UnitTooltipLabelRichTextBox.Size = new System.Drawing.Size(903, 234);
             this.UnitTooltipLabelRichTextBox.TabIndex = 4;
             this.UnitTooltipLabelRichTextBox.Text = "";
             // 
@@ -2763,6 +2751,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.GCPanel.AutoScroll = true;
+            this.GCPanel.Controls.Add(this.ConquestBTSTextBox);
             this.GCPanel.Controls.Add(this.GCGoToPlanetButton);
             this.GCPanel.Controls.Add(this.GCPlanetOwnerLabel);
             this.GCPanel.Controls.Add(this.GCPresentClearButton);
@@ -2793,6 +2782,16 @@
             this.GCPanel.Name = "GCPanel";
             this.GCPanel.Size = new System.Drawing.Size(1081, 769);
             this.GCPanel.TabIndex = 64;
+            // 
+            // GCGoToPlanetButton
+            // 
+            this.GCGoToPlanetButton.Location = new System.Drawing.Point(808, 53);
+            this.GCGoToPlanetButton.Name = "GCGoToPlanetButton";
+            this.GCGoToPlanetButton.Size = new System.Drawing.Size(43, 23);
+            this.GCGoToPlanetButton.TabIndex = 92;
+            this.GCGoToPlanetButton.Text = "Go to";
+            this.GCGoToPlanetButton.UseVisualStyleBackColor = true;
+            this.GCGoToPlanetButton.Click += new System.EventHandler(this.GCGoToPlanetButton_Click);
             // 
             // GCPlanetOwnerLabel
             // 
@@ -2924,7 +2923,7 @@
             this.GCPlanetListBox.FormattingEnabled = true;
             this.GCPlanetListBox.Location = new System.Drawing.Point(630, 79);
             this.GCPlanetListBox.Name = "GCPlanetListBox";
-            this.GCPlanetListBox.Size = new System.Drawing.Size(221, 680);
+            this.GCPlanetListBox.Size = new System.Drawing.Size(221, 771);
             this.GCPlanetListBox.TabIndex = 76;
             this.GCPlanetListBox.SelectedIndexChanged += new System.EventHandler(this.GCPlanetListBox_SelectedIndexChanged);
             // 
@@ -2943,9 +2942,9 @@
             this.GCPresentListbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.GCPresentListbox.FormattingEnabled = true;
-            this.GCPresentListbox.Location = new System.Drawing.Point(7, 535);
+            this.GCPresentListbox.Location = new System.Drawing.Point(0, 535);
             this.GCPresentListbox.Name = "GCPresentListbox";
-            this.GCPresentListbox.Size = new System.Drawing.Size(110, 225);
+            this.GCPresentListbox.Size = new System.Drawing.Size(117, 316);
             this.GCPresentListbox.TabIndex = 74;
             this.toolTip1.SetToolTip(this.GCPresentListbox, "The factions that start with planets in this Galactic Conquest");
             this.GCPresentListbox.SelectedIndexChanged += new System.EventHandler(this.GCPresentListbox_SelectedIndexChanged);
@@ -2963,9 +2962,9 @@
             // GCActiveListBox
             // 
             this.GCActiveListBox.FormattingEnabled = true;
-            this.GCActiveListBox.Location = new System.Drawing.Point(3, 146);
+            this.GCActiveListBox.Location = new System.Drawing.Point(0, 146);
             this.GCActiveListBox.Name = "GCActiveListBox";
-            this.GCActiveListBox.Size = new System.Drawing.Size(110, 355);
+            this.GCActiveListBox.Size = new System.Drawing.Size(113, 355);
             this.GCActiveListBox.TabIndex = 72;
             this.toolTip1.SetToolTip(this.GCActiveListBox, "Nominally playable factions with a separate GC copy. The versions for different f" +
         "actions may have differences in planet ownership");
@@ -3250,15 +3249,35 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
-            // GCGoToPlanetButton
+            // NameText
             // 
-            this.GCGoToPlanetButton.Location = new System.Drawing.Point(808, 53);
-            this.GCGoToPlanetButton.Name = "GCGoToPlanetButton";
-            this.GCGoToPlanetButton.Size = new System.Drawing.Size(43, 23);
-            this.GCGoToPlanetButton.TabIndex = 92;
-            this.GCGoToPlanetButton.Text = "Go to";
-            this.GCGoToPlanetButton.UseVisualStyleBackColor = true;
-            this.GCGoToPlanetButton.Click += new System.EventHandler(this.GCGoToPlanetButton_Click);
+            this.NameText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.NameText.Location = new System.Drawing.Point(302, 7);
+            this.NameText.Name = "NameText";
+            this.NameText.Size = new System.Drawing.Size(1168, 735);
+            this.NameText.TabIndex = 3;
+            this.NameText.Text = "";
+            // 
+            // NameListBox
+            // 
+            this.NameListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.NameListBox.FormattingEnabled = true;
+            this.NameListBox.Location = new System.Drawing.Point(6, 7);
+            this.NameListBox.Name = "NameListBox";
+            this.NameListBox.Size = new System.Drawing.Size(290, 732);
+            this.NameListBox.TabIndex = 2;
+            this.NameListBox.SelectedIndexChanged += new System.EventHandler(this.NameListBox_SelectedIndexChanged);
+            // 
+            // ConquestBTSTextBox
+            // 
+            this.ConquestBTSTextBox.Location = new System.Drawing.Point(0, 852);
+            this.ConquestBTSTextBox.Name = "ConquestBTSTextBox";
+            this.ConquestBTSTextBox.Size = new System.Drawing.Size(1061, 148);
+            this.ConquestBTSTextBox.TabIndex = 93;
+            this.ConquestBTSTextBox.Text = "";
             // 
             // Holocron
             // 
@@ -3284,6 +3303,7 @@
             this.NameTab.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.NameFileTab.ResumeLayout(false);
             this.MissionTab.ResumeLayout(false);
             this.SpawnTab.ResumeLayout(false);
             this.StandardFTab.ResumeLayout(false);
@@ -3586,6 +3606,9 @@
         private System.Windows.Forms.Label label28;
         private System.Windows.Forms.ListBox FactionGCListbox;
         private System.Windows.Forms.Button GCGoToPlanetButton;
+        private System.Windows.Forms.RichTextBox NameText;
+        private System.Windows.Forms.ListBox NameListBox;
+        private System.Windows.Forms.RichTextBox ConquestBTSTextBox;
     }
 }
 

@@ -73,6 +73,8 @@
             this.ComplementCheckBox = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
             this.ClearButton = new System.Windows.Forms.Button();
+            this.NameCountRB = new System.Windows.Forms.RadioButton();
+            this.radioButton1 = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // NameRB
@@ -532,7 +534,7 @@
             // CrewRB
             // 
             this.CrewRB.AutoSize = true;
-            this.CrewRB.Location = new System.Drawing.Point(15, 231);
+            this.CrewRB.Location = new System.Drawing.Point(15, 251);
             this.CrewRB.Name = "CrewRB";
             this.CrewRB.Size = new System.Drawing.Size(49, 17);
             this.CrewRB.TabIndex = 13;
@@ -571,11 +573,37 @@
             this.ClearButton.UseVisualStyleBackColor = true;
             this.ClearButton.Click += new System.EventHandler(this.ClearButton_Click);
             // 
+            // NameCountRB
+            // 
+            this.NameCountRB.AutoSize = true;
+            this.NameCountRB.Location = new System.Drawing.Point(15, 230);
+            this.NameCountRB.Name = "NameCountRB";
+            this.NameCountRB.Size = new System.Drawing.Size(118, 17);
+            this.NameCountRB.TabIndex = 52;
+            this.NameCountRB.TabStop = true;
+            this.NameCountRB.Text = "Name Count TODO";
+            this.NameCountRB.UseVisualStyleBackColor = true;
+            this.NameCountRB.Visible = false;
+            // 
+            // radioButton1
+            // 
+            this.radioButton1.AutoSize = true;
+            this.radioButton1.Location = new System.Drawing.Point(57, 251);
+            this.radioButton1.Name = "radioButton1";
+            this.radioButton1.Size = new System.Drawing.Size(153, 17);
+            this.radioButton1.TabIndex = 53;
+            this.radioButton1.TabStop = true;
+            this.radioButton1.Text = "Variant (Chain Start) TODO";
+            this.radioButton1.UseVisualStyleBackColor = true;
+            this.radioButton1.Visible = false;
+            // 
             // UnitSort
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(767, 408);
+            this.Controls.Add(this.radioButton1);
+            this.Controls.Add(this.NameCountRB);
             this.Controls.Add(this.ClearButton);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.ComplementCheckBox);
@@ -675,5 +703,7 @@
         private System.Windows.Forms.CheckBox ComplementCheckBox;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button ClearButton;
+        private System.Windows.Forms.RadioButton NameCountRB;
+        private System.Windows.Forms.RadioButton radioButton1;
     }
 }
