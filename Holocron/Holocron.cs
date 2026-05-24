@@ -23,15 +23,21 @@ using static SharedFunctions;
  * 
  * todo - hash setup for projectiles and hardpoints? It did help a lot in untemplating
  * 
+ * filter units by skirmish/_MP
+ * 
+ * sort/filter by abilities: has admin, PD range...
  * 
  * armor matrix is broken in vanilla
  * 
+ * Why is Empires at War 2 Empire not being grouped with the other faction's era 2 version? Not CCoGM, that's to be expected
  * 
  * use user facing faction names on structure listboxes - probably do need to pull holo_faction into entities
  * 
+ * read and display multimedia texts for a campaign in the campaign page. Perhaps just the dialog txt in a chapter sorting panel
  * 
+ * parse regional spawn sets (e.g. Generic UR) make accessible on planet and spawn set lookup?
  * 
- * 
+ * parse skirmish prereqs and tactical build lists. Especially for MDU alikes
  * 
  * todo - log mode might need to add pulse interval depending on how sheets do it
  * log mode should ideally adjust reload nonproportionally
@@ -231,6 +237,17 @@ namespace Holocron
             PlanetSpaceMapRB.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             PlanetGroundMapRB.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 
+            UnitTextPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
+            ShipNameRichTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            UnitAvailPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
+            UnitStatPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
+            UnitSubunitPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
+            UnitAbilityPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
+            UnitBTSPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
+            BTSRichTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
+
+            LookupTabControl.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
+
             this.WindowState = FormWindowState.Maximized;
         }
         
@@ -332,6 +349,8 @@ namespace Holocron
             parseObjects(entities);
             loadscreen.ChangeText("Resolving object dependencies");
             untemplate(entities);
+            loadscreen.ChangeText("Assembing company unit lists");
+            unitToCompanyData(entities);
             loadscreen.ChangeText("Categorizing object types");
             categorizeObjects(entities);
             /*listfiles = getModFiles("XML\\Units", "*.xml");
@@ -349,19 +368,19 @@ namespace Holocron
             untemplate(entities.heroCompanies, entities.groundCompanies, entities.Text);
             untemplate(entities.spaceHeroes, entities.spaceUnits, entities.Text);
             untemplate(entities.groundHeroes, entities.groundUnits, entities.Text);*/
-            loadscreen.ChangeText("Assembing company unit lists");
+            /*loadscreen.ChangeText("Assembing company unit lists");
             entities.groundCompanies = unitToCompanyData(entities.groundCompanies, entities.groundUnits, entities.containers);
             entities.fighters = unitToCompanyData(entities.fighters, entities.fighters, entities.containers);
             entities.spaceUnits = unitToCompanyData(entities.spaceUnits, entities.spaceUnits, entities.containers); //Gunships
             loadscreen.ChangeText("Assembing hero companies");
-            entities.heroCompanies = unitToCompanyData(entities.heroCompanies, entities.groundHeroes, entities.containers);
+            entities.heroCompanies = unitToCompanyData(entities.heroCompanies, entities.groundHeroes, entities.containers);*/
             //entities.spaceHeroes = unitToCompanyData(entities.spaceHeroes, entities.spaceUnits, entities.containers); //Todo: fix for the rare gunship hero
             //entities.spaceHeroes = unitToCompanyData(entities.spaceHeroes, entities.spaceUnits, entities.containers, true);
             loadscreen.ChangeText("Parsing planet data");
             parsePlanets(entities, globals.allplanets);
             loadscreen.ChangeText("Parsing trade routes");
             parseTradeRoutes(entities);
-            loadscreen.ChangeText("Parsing Galactic Conquests");
+            loadscreen.ChangeText("Parsing galactic conquests");
             parseGCs(entities);
 
             loadscreen.ChangeText("Reading AI contrast values");
@@ -670,7 +689,7 @@ namespace Holocron
             {
                 //case 0: The matrix doesn't need filling from here, actually
                     //break;
-                case 1:
+                case 2:
                     //todo - more sorting and filtering? filter by unit and hero names only? Filter out dropship and/or cadet?
                     //How are there two acclamator_I instances for Acclamator? Because it's in the list twice. Probably leave that in
                     //Do ground heroes? There are so few with names...
@@ -700,19 +719,14 @@ namespace Holocron
                                             {
                                                 if(moniker != "")
                                                 {
-                                                    bool notfound = true;
-                                                    for (int j = 0; j < globals.shipnames.Count; j++)
+                                                    int index = globals.shipnames.FindIndex(s => s.name == moniker);
+                                                    if (index >= 0)
                                                     {
-                                                        shipname name = globals.shipnames[j];
-                                                        if (name.name == moniker)
-                                                        {
-                                                            name.units.Add(file);
-                                                            globals.shipnames[j] = name;
-                                                            notfound = false;
-                                                            break;
-                                                        }
+                                                        shipname name = globals.shipnames[index];
+                                                        name.units.Add(file);
+                                                        globals.shipnames[index] = name;
                                                     }
-                                                    if (notfound)
+                                                    else
                                                     {
                                                         shipname nuevo = new shipname();
                                                         nuevo.name = moniker;
@@ -730,7 +744,6 @@ namespace Holocron
                             }
                         }
 
-                        Checked = new List<string>();
                         foreach (unit hero in entities.spaceHeroes)
                         {
                             if (hero.tooltip.Contains("TEXT_TOOLTIP_COMMAND_")) //Not sure if this is in fact an efficiency gain
@@ -745,36 +758,36 @@ namespace Holocron
                                         {//This pattern should be consistent among commands. Close enough, probably
                                             string heroname = Find_Text_Entry(hero.username) + " (" + namestring.Substring(0, namestring.LastIndexOf(",")) + ")";
                                             namestring = namestring.Substring(namestring.LastIndexOf(",") + 2, namestring.Length - namestring.LastIndexOf(",") - 2);
-                                            if (!Checked.Contains(heroname))
+                                            int index = globals.shipnames.FindIndex(s => s.name == namestring);
+                                            if (index >= 0)
                                             {
-                                                Checked.Add(heroname);
-
-                                                bool notfound = true;
-                                                for (int j = 0; j < globals.shipnames.Count; j++)
-                                                {
-                                                    shipname name = globals.shipnames[j];
-                                                    if (name.name == namestring)
-                                                    {
-                                                        name.heroes.Add(heroname);
-                                                        globals.shipnames[j] = name;
-                                                        notfound = false;
-                                                        break;
-                                                    }
-                                                }
-                                                if (notfound)
-                                                {
-                                                    shipname nuevo = new shipname();
-                                                    nuevo.name = namestring;
-                                                    nuevo.units = new List<string>();
-                                                    nuevo.heroes = new List<string>();
-                                                    nuevo.heroes.Add(heroname);
-                                                    nuevo.unused = new List<string>();
-                                                    globals.shipnames.Add(nuevo);
-                                                }
+                                                shipname name = globals.shipnames[index];
+                                                name.heroes.Add(heroname);
+                                                globals.shipnames[index] = name;
+                                            }
+                                            else
+                                            {
+                                                shipname nuevo = new shipname();
+                                                nuevo.name = namestring;
+                                                nuevo.units = new List<string>();
+                                                nuevo.heroes = new List<string>();
+                                                nuevo.heroes.Add(heroname);
+                                                nuevo.unused = new List<string>();
+                                                globals.shipnames.Add(nuevo);
                                             }
                                         }
                                     }
                                 }
+                            }
+                        }
+                        foreach (unit hero in entities.spaceHeroes)
+                        {//todo: think of a way to capture cases like Lucid Voice, where the name is not also used as a hero flagship. Doesn't have COMMAND and isn't a fighter?
+                            int index = globals.shipnames.FindIndex(s => s.name == hero.username);
+                            if(index >= 0 && !hero.tooltip.Contains("TEXT_TOOLTIP_COMMAND_")) //If it's the name of a standalone named ship it shouldn't have this, whereas a major hero name and ship name can also happen to coexost (e.g. Rooks)
+                            {
+                                shipname name = globals.shipnames[index];
+                                name.heroes.Add(hero.username + " (Standalone)");
+                                globals.shipnames[index] = name;
                             }
                         }
 
@@ -793,19 +806,14 @@ namespace Holocron
                                 {
                                     if(moniker != "")
                                     {
-                                        bool notfound = true;
-                                        for (int j = 0; j < globals.shipnames.Count; j++)
+                                        int index = globals.shipnames.FindIndex(s => s.name == moniker);
+                                        if (index >= 0)
                                         {
-                                            shipname name = globals.shipnames[j];
-                                            if (name.name == moniker)
-                                            {
-                                                name.unused.Add(file);
-                                                globals.shipnames[j] = name;
-                                                notfound = false;
-                                                break;
-                                            }
+                                            shipname name = globals.shipnames[index];
+                                            name.unused.Add(file);
+                                            globals.shipnames[index] = name;
                                         }
-                                        if (notfound)
+                                        else
                                         {
                                             shipname nuevo = new shipname();
                                             nuevo.name = moniker;
@@ -823,8 +831,20 @@ namespace Holocron
                     }
                     FillShipnameListbox();
                     break;
-                case 2:
-                    if (MissionListBox.Items.Count == 0) //todo ensure other histories have such conditions cleared by load_mods
+                case 3:
+                    if (NameListBox.Items.Count == 0) //todo ensure other histories have such conditions cleared by load_mods
+                    {
+                        List<string> namefiles = getModFiles("ShipNames", "*.txt");
+                        foreach (string file in namefiles)
+                        {
+                            string shortfile = LastFolderOrFile(file);
+                            shortfile = shortfile.Substring(0, shortfile.LastIndexOf("."));
+                            NameListBox.Items.Add(shortfile);
+                        }
+                    }
+                    break;
+                case 4:
+                    if (MissionListBox.Items.Count == 0)
                     {
                         List<string> missionfiles = getModFiles("Scripts\\Library\\eawx-plugins\\intervention-missions\\rewards", "*.lua");
                         foreach (string file in missionfiles)
@@ -833,7 +853,7 @@ namespace Holocron
                         }
                     }
                     break;
-                case 3:
+                case 5:
                     if (SpawnListBox.Items.Count == 0) //todo may have to check a new location after modcontent loader dies
                     {
                         List<string> missionfiles = getModFiles("Scripts\\Library\\spawn-sets", "*.lua");
@@ -843,7 +863,7 @@ namespace Holocron
                         }
                     }
                     break;
-                case 6:
+                case 8:
                     if (StandardFListBox.Items.Count == 0)
                     {
                         List<string> missionfiles = getModFiles("Scripts\\Library\\standard-fighters", "*.lua");
@@ -853,7 +873,7 @@ namespace Holocron
                         }
                     }
                     break;
-                case 7:
+                case 9:
                     if (RandomFListBox.Items.Count == 0)
                     {
                         List<string> missionfiles = getModFiles("Scripts\\Library\\random-fighters", "*.lua");
@@ -1743,6 +1763,11 @@ namespace Holocron
             MissionText.Text = File.ReadAllText(getModFile("Scripts\\Library\\eawx-plugins\\intervention-missions\\rewards\\RewardTables_" + MissionListBox.SelectedItem + ".lua"));
         }
 
+        private void NameListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            NameText.Text = File.ReadAllText(getModFile("Shipnames\\" + NameListBox.SelectedItem + ".txt"));
+        }
+
         public struct shipname
         {
             public string name;
@@ -1896,8 +1921,8 @@ namespace Holocron
             else
             {
                 int abilityshield = (int)(selectedUnit.shield / (float)UADefenseLabel.Tag);
-                float abilityregen = (int)(selectedUnit.regen * (float)UAShieldLabel.Tag);
-                UnitShieldLabel.Text = "Shields: " + abilityshield + " / [" + abilityregen + "/R]" + ArmorTypeString(selectedUnit.shield_type);
+                float abilityregen = (selectedUnit.regen * (float)UAShieldLabel.Tag);
+                UnitShieldLabel.Text = "Shields: " + abilityshield + " / [" + abilityregen.ToString("0.##") + "/R]" + ArmorTypeString(selectedUnit.shield_type);
                 if (!(selectedUnit.behaviors.Contains("SHIELDED") || selectedUnit.modebehaviors.Contains("SHIELDED"))) UnitShieldLabel.Text = "NO BEHAVIOR (" + selectedUnit.shield + "/" + selectedUnit.regen + " " + ArmorTypeString(selectedUnit.shield_type) + ")";
                 float regenSeconds = selectedUnit.shield * 3 / abilityregen;
                 if (regenSeconds >= 0) TimeToRegenLabel.Text = "Time to Regen: ";
@@ -1906,7 +1931,7 @@ namespace Holocron
                     TimeToRegenLabel.Text = "Time to Drain: ";
                     regenSeconds *= -1;
                 }
-                if (float.IsInfinity(regenSeconds)) TimeToRegenLabel.Text += regenSeconds.ToString();
+                if (float.IsInfinity(regenSeconds)) TimeToRegenLabel.Text += regenSeconds.ToString("0.##");
                 else TimeToRegenLabel.Text += (Math.Floor(regenSeconds / 60)).ToString() + ":" + ((int)regenSeconds % 60).ToString("00");
                 ArmorMods mods = GetArmorMods(selectedUnit.shield_type);
                 UnitShieldAvgLabel.Text = "Modified: " + (abilityshield / (1 - mods.average)).ToString("0");
@@ -3717,6 +3742,7 @@ namespace Holocron
             if(GCListBox.SelectedItems.Count > 0)
             {
                 galacticConquest Campaign = (galacticConquest)GCListBox.SelectedItem;
+                insert_history((int)historymaintabs.conquest, 0, Campaign.codename);
                 GCNameLabel.Text = Campaign.username;
                 GCCampaignSetLabel.Text = "Campaign Set: " + Campaign.campaign_set;
                 GCInternalNameLabel.Text = "Internal Name: " + Campaign.codename;
@@ -3741,6 +3767,15 @@ namespace Holocron
                 }
 
                 GCPlanetLabel.Text = "Planets: " + Campaign.planetObjects.Count;
+
+                ConquestBTSTextBox.Text = "";
+                string BTS = "";
+                string path = getModFile("Text\\BTSConquest.txt");
+                string id = Campaign.campaign_set.Replace("_CCoGM", "");
+                if (id.Contains("_Era_")) id = id.Remove(id.IndexOf("_Era_"));
+
+                if (path != "") BTS = readBTS(path, id);
+                if (BTS != "") ConquestBTSTextBox.Text = "Behind the scenes\n\n" + BTS;
             }
         }
 

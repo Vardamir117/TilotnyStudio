@@ -3069,7 +3069,7 @@ public static class SharedFunctions
                                                 }
                                             }
                                         }
-                                        else break;
+                                        //else break; //This can be restored if CCoGM handling changes, or it can be guaranteed that CCoGM versions are not in the middle of the normal versions
                                     }
                                     if (match && addCampaign)
                                     {
@@ -3288,7 +3288,7 @@ public static class SharedFunctions
 
     public static void untemplate(entities entities)
     {
-        List<List<int>> lookuptable = setUnitHashes(entities.objects);
+        entities.objecthashes = setUnitHashes(entities.objects);
         bool needs_templates = true;
         while (needs_templates)
         {
@@ -3303,9 +3303,9 @@ public static class SharedFunctions
                 if (unidad.variantof != "")
                 {
                     int index = LookupUntemplateID(entities.objects[i].variantof);
-                    if(index < lookuptable.Count)
+                    if(index < entities.objecthashes.Count)
                     {
-                        foreach (int cachedindex in lookuptable[index]) //(unit unidad2 in entities.objects)
+                        foreach (int cachedindex in entities.objecthashes[index]) //(unit unidad2 in entities.objects)
                         {
                             unit unidad2 = entities.objects[cachedindex];
                             if (unidad2.unitname == unidad.variantof)
@@ -3829,7 +3829,244 @@ public static class SharedFunctions
         return corenne;
     }
 
-    public static List<unit> unitToCompanyData(List<unit> companies, List<unit> units, List<unit> containers, bool skip_step2 = false)
+    public static void unitToCompanyData(entities entities)
+    {//todo hash units, companies, and containers. But even in TR this is ~2 seconds and a minor gain
+        string limpath = getModFile("Scripts\\Library\\BuildLimitLibrary.lua");
+        string[] luabuild = new string[0];
+        if (limpath != "") luabuild = File.ReadAllLines(limpath);
+        for (int i = 0; i < entities.objects.Count; i++)
+        {
+            unit company = entities.objects[i];
+            if (company.percompany > 0) //Only companies, squadrons, and suchlike need to be considered
+            {
+                string caps = "\"" + company.unitname.ToUpper() + "\"";
+                //Check for Lua build limits
+                for (int j = 0; j < luabuild.Length; j++)
+                {
+                    if (luabuild[j].Contains(caps))
+                    {
+                        bool unclosed = true;
+                        int k = j;
+                        while (unclosed && k < luabuild.Length) //Shouldn't need the fallback if there are no syntax errors, but...
+                        {
+                            if (luabuild[k].Contains("}")) unclosed = false;
+                            if (luabuild[k].Contains("current_limit"))
+                            {
+                                string trimmed = fullTrim(luabuild[k]);
+                                int start = trimmed.LastIndexOf("=") + 1;
+                                int end = trimmed.LastIndexOf(",");
+                                if (trimmed.Contains("}")) end = trimmed.LastIndexOf("}");
+                                if (end < 0) end = trimmed.Length;
+                                string value = trimmed.Substring(start, end - start);
+                                company.limit_concurrent = Int32.Parse(value);
+                            }
+                            if (luabuild[k].Contains("lifetime_limit"))
+                            {
+                                string trimmed = fullTrim(luabuild[k]);
+                                int start = trimmed.LastIndexOf("=") + 1;
+                                int end = trimmed.LastIndexOf(",");
+                                if (trimmed.Contains("}")) end = trimmed.LastIndexOf("}"); //Not used when written in 2026-05-02, but let's be thorough! For that matter the next two lines never mattered as of now
+                                if (end < 0) end = trimmed.Length;
+                                string value = trimmed.Substring(start, end - start);
+                                company.limit_lifetime = Int32.Parse(value);
+                            }
+                            k++;
+                        }
+                    }
+                }
+
+                //Init company data
+                if (company.consolidatedhps.Count == 0) company.consolidatedhps = new List<hardpoint>();
+                if (company.subcompanies is null || company.subcompanies.Count == 0) company.subcompanies = new List<quantizedObject>();
+                if (company.consolidatedUnits is null || company.consolidatedUnits.Count == 0) company.consolidatedUnits = new List<quantizedObject>();
+                //If spawner setup, get the list of spawned objects from the spawner's lua file and replace the original list with it
+                List<string> newcompanyunits = new List<string>();
+                company.spawner_dummies = new List<string>();
+                foreach (string target in company.companyunits)
+                {
+                    if (target.Contains("_Dummy"))
+                    {
+                        List<string> returned = getGroundUnitLibrary(target);
+                        foreach (string unit in returned) newcompanyunits.Add(unit);
+                    }
+                    //else newcompanyunits.Add(target); //Will need this if spawners are ever mixed with regular units
+                    company.spawner_dummies.Add(target);
+                }
+                if (newcompanyunits.Count > 0) company.companyunits = newcompanyunits;
+
+                //Convert identical units in company (you know, most of them) into a multiplier instead of another pass through the loop
+                foreach (string unidad in company.companyunits)
+                {
+                    quantizedObject q = new quantizedObject
+                    {
+                        quantity = 1,
+                        codename = unidad,
+                        username = "", //We don't know it yet, get it the same time as stats
+                    };
+                    company.consolidatedUnits = quantizedAdd(company.consolidatedUnits, q);
+                }
+                company.hp = 0;
+                company.shield = 0;
+                company.regen = 0;
+                company.garrison_slots = 0;
+                company.garrison_value = 0;
+                company.cp = 0;
+                bool use_unit_garrison = true;
+                if (company.container != "")
+                {
+                    int index = LookupUntemplateID(company.container);
+                    if (index < entities.objecthashes.Count)
+                    {
+                        for (int j = 0; j < entities.objecthashes[index].Count; j++)
+                        {
+                            unit contain = entities.objects[entities.objecthashes[index][j]];
+                            if (contain.unitname == company.container)
+                            {
+                                use_unit_garrison = false;
+                                company.garrison_value = contain.garrison_value;
+                                company.garrison_type = contain.garrison_type; //The container probably should win even if the company has one defined
+                                break;
+                            }
+                        }
+                    }
+                }
+                for (int j = 0; j < company.consolidatedUnits.Count; j++)
+                {
+                    quantizedObject q = company.consolidatedUnits[j];
+                    int index = LookupUntemplateID(q.codename);
+                    if (index < entities.objecthashes.Count)
+                    {
+                        for (int k = 0; k < entities.objecthashes[index].Count; k++)
+                        {
+                            unit unit = entities.objects[entities.objecthashes[index][k]];
+                            if (unit.unitname.ToUpper() == q.codename.ToUpper())
+                            {
+                                if (unit.percompany <= 0)
+                                {
+                                    q.codename = unit.unitname; //Check upper for Lua spawns that use units that are probably capitalized
+                                    q.username = unit.username;
+                                    company.consolidatedUnits[j] = q;
+                                    if (company.BTS == "") company.BTS = unit.BTS;
+                                    foreach (string terrain in unit.terrainMaps)
+                                    {
+                                        if (!company.terrainMaps.Contains(terrain)) company.terrainMaps.Add(terrain);
+                                    }
+                                    company.hp += unit.hp * q.quantity;
+                                    company.shield += unit.shield * q.quantity;
+                                    if (company.armor_type == "") company.armor_type = unit.armor_type; //There can't be many situations where armor types are mixed within a company
+                                    if (company.shield_type == "") company.shield_type = unit.shield_type; //And even if there are, that is going to confuse everything about any calcs using it
+                                    company.regen += unit.regen * q.quantity;
+                                    company.garrison_slots += unit.garrison_slots * q.quantity;
+                                    company.cp += unit.cp * q.quantity;
+                                    if (use_unit_garrison) company.garrison_value += unit.garrison_value * q.quantity;
+                                    if (company.locomotor_type == "") company.locomotor_type = unit.locomotor_type;
+                                    if (company.speed < 0) company.speed = unit.speed;
+                                    if (company.accel < 0) company.accel = unit.accel;
+                                    if (company.turn < 0) company.turn = unit.turn;
+                                    if (company.garrison_type == "") company.garrison_type = unit.garrison_type;
+                                    if (company.categories.Count == 0) company.categories = unit.categories;
+                                    if (company.flags.Count == 0) company.flags = unit.flags;
+                                    if (company.bombingRunUnit == "") company.bombingRunUnit = unit.bombingRunUnit;
+                                    foreach (string behavior in unit.behaviors)
+                                    {
+                                        if (!company.behaviors.Contains(behavior)) company.behaviors.Add(behavior);
+                                    }
+                                    foreach (string behavior in unit.modebehaviors)
+                                    {
+                                        if (!company.modebehaviors.Contains(behavior)) company.modebehaviors.Add(behavior);
+                                    }
+                                    for (int l = 0; l < q.quantity; l++) company.consolidatedhps = consolidateHardpoints(unit, company.consolidatedhps);
+                                    //company.categories = unit.categories;
+                                }
+                                else
+                                {
+                                    quantizedObject q2 = new quantizedObject
+                                    {
+                                        quantity = q.quantity,
+                                        codename = unit.unitname,
+                                        username = unit.username
+                                    };
+                                    company.subcompanies = quantizedAdd(company.subcompanies, q2);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            entities.objects[i] = company;
+        }
+        //A second pass to apply unit data from subcompanies to the main company after all subs are collected
+        for (int i = 0; i < entities.objects.Count; i++)
+        {
+            unit company = entities.objects[i];
+            if (!(company.subcompanies is null) && company.subcompanies.Count > 0)
+            {
+                company.consolidatedUnits.Clear();
+                company.hp = 0;
+                company.shield = 0;
+                company.percompany = 0;
+                company.regen = 0;
+                company.garrison_slots = 0;
+                company.garrison_value = 0;
+                foreach (quantizedObject subcomp in company.subcompanies)
+                {
+                    int index = LookupUntemplateID(subcomp.codename);
+                    if (index < entities.objecthashes.Count)
+                    {
+                        for (int j = 0; j < entities.objecthashes[index].Count; j++)
+                        {
+                            unit subcompany = entities.objects[entities.objecthashes[index][j]];
+                            if (subcompany.unitname == subcomp.codename)
+                            {
+                                company.percompany += subcompany.percompany * subcomp.quantity;
+                                if (company.BTS == "") company.BTS = subcompany.BTS;
+                                foreach (string terrain in subcompany.terrainMaps)
+                                {
+                                    if (!company.terrainMaps.Contains(terrain)) company.terrainMaps.Add(terrain);
+                                }
+                                company.hp += subcompany.hp * subcomp.quantity;
+                                company.shield += subcompany.shield * subcomp.quantity;
+                                if (company.armor_type == "") company.armor_type = subcompany.armor_type; //There can't be many situations where armor types are mixed within a company
+                                if (company.shield_type == "") company.shield_type = subcompany.shield_type; //And even if there are, that is going to confuse everything about any calcs using it
+                                company.regen += subcompany.regen * subcomp.quantity;
+                                company.garrison_slots += subcompany.garrison_slots * subcomp.quantity;
+                                company.garrison_value += subcompany.garrison_value * subcomp.quantity;
+                                company.cp += subcompany.cp * subcomp.quantity;
+                                if (company.locomotor_type == "") company.locomotor_type = subcompany.locomotor_type;
+                                if (company.speed < 0) company.speed = subcompany.speed;
+                                if (company.accel < 0) company.accel = subcompany.accel;
+                                if (company.turn < 0) company.turn = subcompany.turn;
+                                if (company.garrison_type == "") company.garrison_type = subcompany.garrison_type;
+                                if (company.categories.Count == 0) company.categories = subcompany.categories;
+                                if (company.flags.Count == 0) company.flags = subcompany.flags;
+                                if (company.bombingRunUnit == "") company.bombingRunUnit = subcompany.bombingRunUnit;
+                                foreach (string behavior in subcompany.behaviors)
+                                {
+                                    if (!company.behaviors.Contains(behavior)) company.behaviors.Add(behavior);
+                                }
+                                foreach (string behavior in subcompany.modebehaviors)
+                                {
+                                    if (!company.modebehaviors.Contains(behavior)) company.modebehaviors.Add(behavior);
+                                }
+                                for (int k = 0; k < subcomp.quantity; k++)
+                                {
+                                    company.consolidatedhps = consolidateSubcompanyHardpoints(subcompany, company.consolidatedhps);
+                                    foreach (quantizedObject unit in subcompany.consolidatedUnits) company.consolidatedUnits = quantizedAdd(company.consolidatedUnits, unit);
+                                }
+                                //company.categories = unit.categories;
+                                //else company.subcompanies.Add(unit.unitname); I don't believe there are any or ever will be any reason for triply nested companies
+                                break;
+                            }
+                        }
+                    }
+                }
+                entities.objects[i] = company;
+            }
+        }
+    }
+
+    public static List<unit> unitToCompanyDataForSorted(List<unit> companies, List<unit> units, List<unit> containers, bool skip_step2 = false)
     {//todo hash units, companies, and containers. But even in TR this is ~2 seconds and a minor gain
         string limpath = getModFile("Scripts\\Library\\BuildLimitLibrary.lua");
         string[] luabuild = new string[0];
@@ -3879,6 +4116,7 @@ public static class SharedFunctions
                 if (company.consolidatedUnits is null || company.consolidatedUnits.Count == 0) company.consolidatedUnits = new List<quantizedObject>();
                 //If spawner setup, get the list of spawned objects from the spawner's lua file and replace the original list with it
                 List<string> newcompanyunits = new List<string>();
+                company.spawner_dummies = new List<string>();
                 foreach (string target in company.companyunits)
                 {
                     if (target.Contains("_Dummy"))
@@ -3887,6 +4125,7 @@ public static class SharedFunctions
                         foreach (string unit in returned) newcompanyunits.Add(unit);
                     }
                     //else newcompanyunits.Add(target); //Will need this if spawners are ever mixed with regular units
+                    company.spawner_dummies.Add(target);
                 }
                 if (newcompanyunits.Count > 0) company.companyunits = newcompanyunits;
 
@@ -4248,6 +4487,7 @@ public struct unit
     public List<string> companyunits;
     public List<quantizedObject> consolidatedUnits;
     public List<quantizedObject> subcompanies;
+    public List<string> spawner_dummies;
     public string office;
     public string corporations; //filters in space
     public List<string> UsedStrucutures;
@@ -4455,6 +4695,7 @@ public struct entities {
     public static List<List<int>> hardpointhashes = new List<List<int>>(); //Lookups are much better than looping through the list. This setup significantly beat FirstOrDefault(s => s.name == hardpoint); when benchmarked
 
     public static List<unit> objects = new List<unit>(); //Universal list for initial parsing
+    public static List<List<int>> objecthashes = new List<List<int>>();
 
     public static List<unit> spaceUnits = new List<unit>();
     public static List<unit> groundCompanies = new List<unit>();
@@ -4479,7 +4720,7 @@ public struct entities {
 
     public static List<unit> containers = new List<unit>();
 
-    public static List<List<int>> containerhashes = new List<List<int>>();
+    //public static List<List<int>> containerhashes = new List<List<int>>();
 
     public static List<string> SpaceArmors = new List<string>();
     public static List<string> SpaceShields = new List<string>();
