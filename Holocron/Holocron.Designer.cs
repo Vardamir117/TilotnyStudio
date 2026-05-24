@@ -263,22 +263,14 @@
             this.tabGov = new System.Windows.Forms.TabPage();
             this.tabGalaxy = new System.Windows.Forms.TabPage();
             this.tabAutoResolve = new System.Windows.Forms.TabPage();
-            this.AutoResolveClearSideBButton = new System.Windows.Forms.Button();
-            this.AutoResolveClearSideAButton = new System.Windows.Forms.Button();
+            this.AutoResolveTransportLossesNumeric = new System.Windows.Forms.NumericUpDown();
+            this.TransportLossesLabel = new System.Windows.Forms.Label();
             this.AutoResolveSideBLabel = new System.Windows.Forms.Label();
             this.AutoResolveSideALabel = new System.Windows.Forms.Label();
-            this.AutoResolveSideBListBox = new System.Windows.Forms.ListBox();
-            this.AutoResolveSideAListBox = new System.Windows.Forms.ListBox();
-            this.AutoResolveUnitCountNumeric = new System.Windows.Forms.NumericUpDown();
-            this.AutoResolveUnitCountLabel = new System.Windows.Forms.Label();
-            this.AutoResolveAddToSideBButton = new System.Windows.Forms.Button();
-            this.AutoResolveAddToSideAButton = new System.Windows.Forms.Button();
             this.AutoResolveSideBFactionComboBox = new System.Windows.Forms.ComboBox();
             this.AutoResolveSideBFacLabel = new System.Windows.Forms.Label();
             this.AutoResolveSideAFactionComboBox = new System.Windows.Forms.ComboBox();
             this.AutoResolveSideAFacLabel = new System.Windows.Forms.Label();
-            this.AutoResolveUnitComboBox = new System.Windows.Forms.ComboBox();
-            this.AutoResolveUnitLabel = new System.Windows.Forms.Label();
             this.AutoResolveRunButton = new System.Windows.Forms.Button();
             this.AutoResolveResultTextBox = new System.Windows.Forms.TextBox();
             this.AutoResolveRetreatWinnerAttritionNumeric = new System.Windows.Forms.NumericUpDown();
@@ -324,7 +316,7 @@
             this.FactionPanel.SuspendLayout();
             this.MainTab.SuspendLayout();
             this.tabAutoResolve.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveUnitCountNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveTransportLossesNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveRetreatWinnerAttritionNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveRetreatLoserAttritionNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveWinnerAttritionNumeric)).BeginInit();
@@ -2932,22 +2924,14 @@
             // 
             // tabAutoResolve
             // 
-            this.tabAutoResolve.Controls.Add(this.AutoResolveClearSideBButton);
-            this.tabAutoResolve.Controls.Add(this.AutoResolveClearSideAButton);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveTransportLossesNumeric);
+            this.tabAutoResolve.Controls.Add(this.TransportLossesLabel);
             this.tabAutoResolve.Controls.Add(this.AutoResolveSideBLabel);
             this.tabAutoResolve.Controls.Add(this.AutoResolveSideALabel);
-            this.tabAutoResolve.Controls.Add(this.AutoResolveSideBListBox);
-            this.tabAutoResolve.Controls.Add(this.AutoResolveSideAListBox);
-            this.tabAutoResolve.Controls.Add(this.AutoResolveUnitCountNumeric);
-            this.tabAutoResolve.Controls.Add(this.AutoResolveUnitCountLabel);
-            this.tabAutoResolve.Controls.Add(this.AutoResolveAddToSideBButton);
-            this.tabAutoResolve.Controls.Add(this.AutoResolveAddToSideAButton);
             this.tabAutoResolve.Controls.Add(this.AutoResolveSideBFactionComboBox);
             this.tabAutoResolve.Controls.Add(this.AutoResolveSideBFacLabel);
             this.tabAutoResolve.Controls.Add(this.AutoResolveSideAFactionComboBox);
             this.tabAutoResolve.Controls.Add(this.AutoResolveSideAFacLabel);
-            this.tabAutoResolve.Controls.Add(this.AutoResolveUnitComboBox);
-            this.tabAutoResolve.Controls.Add(this.AutoResolveUnitLabel);
             this.tabAutoResolve.Controls.Add(this.AutoResolveRunButton);
             this.tabAutoResolve.Controls.Add(this.AutoResolveResultTextBox);
             this.tabAutoResolve.Controls.Add(this.AutoResolveRetreatWinnerAttritionNumeric);
@@ -2969,30 +2953,42 @@
             this.tabAutoResolve.Text = "Auto resolve";
             this.tabAutoResolve.UseVisualStyleBackColor = true;
             // 
-            // AutoResolveClearSideBButton
+            // AutoResolveTransportLossesNumeric
             // 
-            this.AutoResolveClearSideBButton.Location = new System.Drawing.Point(663, 204);
-            this.AutoResolveClearSideBButton.Name = "AutoResolveClearSideBButton";
-            this.AutoResolveClearSideBButton.Size = new System.Drawing.Size(80, 23);
-            this.AutoResolveClearSideBButton.TabIndex = 13;
-            this.AutoResolveClearSideBButton.Text = "Clear Defender";
-            this.AutoResolveClearSideBButton.UseVisualStyleBackColor = true;
-            this.AutoResolveClearSideBButton.Click += new System.EventHandler(this.AutoResolveClearSideBButton_Click);
+            this.AutoResolveTransportLossesNumeric.DecimalPlaces = 3;
+            this.AutoResolveTransportLossesNumeric.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.AutoResolveTransportLossesNumeric.Location = new System.Drawing.Point(161, 235);
+            this.AutoResolveTransportLossesNumeric.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.AutoResolveTransportLossesNumeric.Name = "AutoResolveTransportLossesNumeric";
+            this.AutoResolveTransportLossesNumeric.Size = new System.Drawing.Size(121, 20);
+            this.AutoResolveTransportLossesNumeric.TabIndex = 29;
+            this.AutoResolveTransportLossesNumeric.Value = new decimal(new int[] {
+            333333,
+            0,
+            0,
+            393216});
             // 
-            // AutoResolveClearSideAButton
+            // TransportLossesLabel
             // 
-            this.AutoResolveClearSideAButton.Location = new System.Drawing.Point(276, 204);
-            this.AutoResolveClearSideAButton.Name = "AutoResolveClearSideAButton";
-            this.AutoResolveClearSideAButton.Size = new System.Drawing.Size(80, 23);
-            this.AutoResolveClearSideAButton.TabIndex = 12;
-            this.AutoResolveClearSideAButton.Text = "Clear Attacker";
-            this.AutoResolveClearSideAButton.UseVisualStyleBackColor = true;
-            this.AutoResolveClearSideAButton.Click += new System.EventHandler(this.AutoResolveClearSideAButton_Click);
+            this.TransportLossesLabel.AutoSize = true;
+            this.TransportLossesLabel.Location = new System.Drawing.Point(67, 239);
+            this.TransportLossesLabel.Name = "TransportLossesLabel";
+            this.TransportLossesLabel.Size = new System.Drawing.Size(88, 13);
+            this.TransportLossesLabel.TabIndex = 28;
+            this.TransportLossesLabel.Text = "Transport Losses";
             // 
             // AutoResolveSideBLabel
             // 
             this.AutoResolveSideBLabel.AutoSize = true;
-            this.AutoResolveSideBLabel.Location = new System.Drawing.Point(396, 31);
+            this.AutoResolveSideBLabel.Location = new System.Drawing.Point(398, 35);
             this.AutoResolveSideBLabel.Name = "AutoResolveSideBLabel";
             this.AutoResolveSideBLabel.Size = new System.Drawing.Size(51, 13);
             this.AutoResolveSideBLabel.TabIndex = 10;
@@ -3001,85 +2997,17 @@
             // AutoResolveSideALabel
             // 
             this.AutoResolveSideALabel.AutoSize = true;
-            this.AutoResolveSideALabel.Location = new System.Drawing.Point(9, 31);
+            this.AutoResolveSideALabel.Location = new System.Drawing.Point(9, 35);
             this.AutoResolveSideALabel.Name = "AutoResolveSideALabel";
             this.AutoResolveSideALabel.Size = new System.Drawing.Size(47, 13);
             this.AutoResolveSideALabel.TabIndex = 9;
             this.AutoResolveSideALabel.Text = "Attacker";
             // 
-            // AutoResolveSideBListBox
-            // 
-            this.AutoResolveSideBListBox.FormattingEnabled = true;
-            this.AutoResolveSideBListBox.Location = new System.Drawing.Point(399, 47);
-            this.AutoResolveSideBListBox.Name = "AutoResolveSideBListBox";
-            this.AutoResolveSideBListBox.Size = new System.Drawing.Size(344, 147);
-            this.AutoResolveSideBListBox.TabIndex = 8;
-            // 
-            // AutoResolveSideAListBox
-            // 
-            this.AutoResolveSideAListBox.FormattingEnabled = true;
-            this.AutoResolveSideAListBox.Location = new System.Drawing.Point(12, 47);
-            this.AutoResolveSideAListBox.Name = "AutoResolveSideAListBox";
-            this.AutoResolveSideAListBox.Size = new System.Drawing.Size(344, 147);
-            this.AutoResolveSideAListBox.TabIndex = 7;
-            // 
-            // AutoResolveUnitCountNumeric
-            // 
-            this.AutoResolveUnitCountNumeric.Location = new System.Drawing.Point(801, 5);
-            this.AutoResolveUnitCountNumeric.Maximum = new decimal(new int[] {
-            999,
-            0,
-            0,
-            0});
-            this.AutoResolveUnitCountNumeric.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.AutoResolveUnitCountNumeric.Name = "AutoResolveUnitCountNumeric";
-            this.AutoResolveUnitCountNumeric.Size = new System.Drawing.Size(58, 20);
-            this.AutoResolveUnitCountNumeric.TabIndex = 8;
-            this.AutoResolveUnitCountNumeric.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.AutoResolveUnitCountNumeric.ValueChanged += new System.EventHandler(this.AutoResolveInputChanged);
-            // 
-            // AutoResolveUnitCountLabel
-            // 
-            this.AutoResolveUnitCountLabel.AutoSize = true;
-            this.AutoResolveUnitCountLabel.Location = new System.Drawing.Point(749, 8);
-            this.AutoResolveUnitCountLabel.Name = "AutoResolveUnitCountLabel";
-            this.AutoResolveUnitCountLabel.Size = new System.Drawing.Size(46, 13);
-            this.AutoResolveUnitCountLabel.TabIndex = 7;
-            this.AutoResolveUnitCountLabel.Text = "Quantity";
-            // 
-            // AutoResolveAddToSideBButton
-            // 
-            this.AutoResolveAddToSideBButton.Location = new System.Drawing.Point(651, 2);
-            this.AutoResolveAddToSideBButton.Name = "AutoResolveAddToSideBButton";
-            this.AutoResolveAddToSideBButton.Size = new System.Drawing.Size(92, 23);
-            this.AutoResolveAddToSideBButton.TabIndex = 6;
-            this.AutoResolveAddToSideBButton.Text = "Add Defender";
-            this.AutoResolveAddToSideBButton.UseVisualStyleBackColor = true;
-            this.AutoResolveAddToSideBButton.Click += new System.EventHandler(this.AutoResolveAddToSideBButton_Click);
-            // 
-            // AutoResolveAddToSideAButton
-            // 
-            this.AutoResolveAddToSideAButton.Location = new System.Drawing.Point(545, 2);
-            this.AutoResolveAddToSideAButton.Name = "AutoResolveAddToSideAButton";
-            this.AutoResolveAddToSideAButton.Size = new System.Drawing.Size(100, 23);
-            this.AutoResolveAddToSideAButton.TabIndex = 5;
-            this.AutoResolveAddToSideAButton.Text = "Add Attacker";
-            this.AutoResolveAddToSideAButton.UseVisualStyleBackColor = true;
-            this.AutoResolveAddToSideAButton.Click += new System.EventHandler(this.AutoResolveAddToSideAButton_Click);
-            // 
             // AutoResolveSideBFactionComboBox
             // 
             this.AutoResolveSideBFactionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.AutoResolveSideBFactionComboBox.FormattingEnabled = true;
-            this.AutoResolveSideBFactionComboBox.Location = new System.Drawing.Point(585, 31);
+            this.AutoResolveSideBFactionComboBox.Location = new System.Drawing.Point(585, 32);
             this.AutoResolveSideBFactionComboBox.Name = "AutoResolveSideBFactionComboBox";
             this.AutoResolveSideBFactionComboBox.Size = new System.Drawing.Size(158, 21);
             this.AutoResolveSideBFactionComboBox.TabIndex = 4;
@@ -3088,7 +3016,7 @@
             // AutoResolveSideBFacLabel
             // 
             this.AutoResolveSideBFacLabel.AutoSize = true;
-            this.AutoResolveSideBFacLabel.Location = new System.Drawing.Point(542, 34);
+            this.AutoResolveSideBFacLabel.Location = new System.Drawing.Point(537, 35);
             this.AutoResolveSideBFacLabel.Name = "AutoResolveSideBFacLabel";
             this.AutoResolveSideBFacLabel.Size = new System.Drawing.Size(42, 13);
             this.AutoResolveSideBFacLabel.TabIndex = 3;
@@ -3098,7 +3026,7 @@
             // 
             this.AutoResolveSideAFactionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.AutoResolveSideAFactionComboBox.FormattingEnabled = true;
-            this.AutoResolveSideAFactionComboBox.Location = new System.Drawing.Point(198, 31);
+            this.AutoResolveSideAFactionComboBox.Location = new System.Drawing.Point(194, 32);
             this.AutoResolveSideAFactionComboBox.Name = "AutoResolveSideAFactionComboBox";
             this.AutoResolveSideAFactionComboBox.Size = new System.Drawing.Size(158, 21);
             this.AutoResolveSideAFactionComboBox.TabIndex = 2;
@@ -3107,30 +3035,11 @@
             // AutoResolveSideAFacLabel
             // 
             this.AutoResolveSideAFacLabel.AutoSize = true;
-            this.AutoResolveSideAFacLabel.Location = new System.Drawing.Point(155, 34);
+            this.AutoResolveSideAFacLabel.Location = new System.Drawing.Point(146, 35);
             this.AutoResolveSideAFacLabel.Name = "AutoResolveSideAFacLabel";
             this.AutoResolveSideAFacLabel.Size = new System.Drawing.Size(42, 13);
             this.AutoResolveSideAFacLabel.TabIndex = 1;
             this.AutoResolveSideAFacLabel.Text = "Faction";
-            // 
-            // AutoResolveUnitComboBox
-            // 
-            this.AutoResolveUnitComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.AutoResolveUnitComboBox.FormattingEnabled = true;
-            this.AutoResolveUnitComboBox.Location = new System.Drawing.Point(250, 5);
-            this.AutoResolveUnitComboBox.Name = "AutoResolveUnitComboBox";
-            this.AutoResolveUnitComboBox.Size = new System.Drawing.Size(288, 21);
-            this.AutoResolveUnitComboBox.TabIndex = 0;
-            this.AutoResolveUnitComboBox.SelectedIndexChanged += new System.EventHandler(this.AutoResolveUnitComboBox_SelectedIndexChanged);
-            // 
-            // AutoResolveUnitLabel
-            // 
-            this.AutoResolveUnitLabel.AutoSize = true;
-            this.AutoResolveUnitLabel.Location = new System.Drawing.Point(218, 8);
-            this.AutoResolveUnitLabel.Name = "AutoResolveUnitLabel";
-            this.AutoResolveUnitLabel.Size = new System.Drawing.Size(26, 13);
-            this.AutoResolveUnitLabel.TabIndex = 1;
-            this.AutoResolveUnitLabel.Text = "Unit";
             // 
             // AutoResolveRunButton
             // 
@@ -3407,7 +3316,7 @@
             this.MainTab.ResumeLayout(false);
             this.tabAutoResolve.ResumeLayout(false);
             this.tabAutoResolve.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveUnitCountNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveTransportLossesNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveRetreatWinnerAttritionNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveRetreatLoserAttritionNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveWinnerAttritionNumeric)).EndInit();
@@ -3655,22 +3564,12 @@
         private System.Windows.Forms.TextBox MapSearchBox;
         private System.Windows.Forms.TabPage NameFileTab;
         private System.Windows.Forms.TabPage tabAutoResolve;
-        private System.Windows.Forms.ComboBox AutoResolveUnitComboBox;
-        private System.Windows.Forms.Label AutoResolveUnitLabel;
-        private System.Windows.Forms.Button AutoResolveAddToSideAButton;
         private System.Windows.Forms.ComboBox AutoResolveSideBFactionComboBox;
         private System.Windows.Forms.Label AutoResolveSideBFacLabel;
         private System.Windows.Forms.ComboBox AutoResolveSideAFactionComboBox;
         private System.Windows.Forms.Label AutoResolveSideAFacLabel;
-        private System.Windows.Forms.Button AutoResolveAddToSideBButton;
-        private System.Windows.Forms.ListBox AutoResolveSideAListBox;
-        private System.Windows.Forms.ListBox AutoResolveSideBListBox;
         private System.Windows.Forms.Label AutoResolveSideALabel;
         private System.Windows.Forms.Label AutoResolveSideBLabel;
-        private System.Windows.Forms.Button AutoResolveClearSideAButton;
-        private System.Windows.Forms.Button AutoResolveClearSideBButton;
-        private System.Windows.Forms.Label AutoResolveUnitCountLabel;
-        private System.Windows.Forms.NumericUpDown AutoResolveUnitCountNumeric;
         private System.Windows.Forms.Button AutoResolveRunButton;
         private System.Windows.Forms.TextBox AutoResolveResultTextBox;
         private System.Windows.Forms.ComboBox AutoResolveBattleTypeComboBox;
@@ -3684,7 +3583,9 @@
         private System.Windows.Forms.Label AutoResolveRetreatWinnerAttritionLabel;
         private System.Windows.Forms.NumericUpDown AutoResolveRetreatWinnerAttritionNumeric;
         private System.Windows.Forms.NumericUpDown AutoResolveAttritionAllowanceNumeric;
+        private System.Windows.Forms.NumericUpDown AutoResolveTransportLossesNumeric;
         private System.Windows.Forms.Label AutoResolveAttritionAllowanceLabel;
+        private System.Windows.Forms.Label TransportLossesLabel;
     }
 }
 

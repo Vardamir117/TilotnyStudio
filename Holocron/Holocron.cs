@@ -120,6 +120,15 @@ namespace Holocron
         private List<autoresolve_entry> autoResolveSideB = new List<autoresolve_entry>();
         private int autoResolveSideAOwner = 0;
         private int autoResolveSideBOwner = 1;
+        private DataGridView autoResolveSideAGrid;
+        private DataGridView autoResolveSideBGrid;
+        private bool autoResolveTablesInitialized = false;
+
+        private sealed class AutoResolveUnitChoice
+        {
+            public string DisplayName { get; set; }
+            public unit Value { get; set; }
+        }
 
         public Holocron()
         {
@@ -351,21 +360,20 @@ namespace Holocron
             contrastValues.friendlyTypeWeights = new List<List<float>>();
             contrastValues.typeScale = new Dictionary<string, float>();
 
-            string path = getModFile("Scripts\\Library\\PGAICommands.lua");
-            if (!File.Exists(path)) return contrastValues;
+            string[] lines = File.ReadAllLines(getModFile("Scripts\\Library\\PGAICommands.lua"));
+            bool inContrastFunction = false;
 
-            string[] lines = File.ReadAllLines(path);
-            bool in_contrast_function = false;
-            string current_enemy = "";
-            List<string> current_names = null;
-            List<float> current_weights = null;
+            string currentEnemy = "";
+            List<string> currentNames = null;
+            List<float> currentWeights = null;
 
             foreach (string raw in lines)
             {
                 string line = raw.Trim();
-                if (!in_contrast_function)
+
+                if (!inContrastFunction)
                 {
-                    if (line.StartsWith("function Set_Contrast_Values()")) in_contrast_function = true;
+                    if (line.StartsWith("function Set_Contrast_Values()")) inContrastFunction = true;
                     continue;
                 }
 
@@ -373,40 +381,36 @@ namespace Holocron
 
                 if (line.StartsWith("EnemyContrastTypes[_e_cnt]"))
                 {
-                    current_enemy = LuaParser.ExtractLuaQuotedValue(line);
-                }
-                else if (line.StartsWith("FriendlyContrastTypeNames"))
-                {
-                    current_names = LuaParser.ParseLuaStringArray(line);
-                }
-                else if (line.StartsWith("FriendlyContrastWeights"))
-                {
-                    current_weights = LuaParser.ParseLuaFloatArray(line);
-                }
-                else if (line.StartsWith("ContrastTypeScale["))
-                {
-                    string scale_type = LuaParser.ExtractLuaBracketQuotedKey(line);
-                    float scale;
-                    if (scale_type != "" && float.TryParse(LuaParser.ExtractLuaAssignedValue(line), NumberStyles.Float, CultureInfo.InvariantCulture, out scale))
-                    {
-                        contrastValues.typeScale[scale_type] = scale;
-                    }
+                    currentEnemy = LuaParser.ExtractLuaQuotedValue(line);
+                    continue;
                 }
 
-                if (current_enemy != "" && current_names != null && current_weights != null)
+                if (line.StartsWith("FriendlyContrastTypeNames"))
                 {
+                    currentNames = LuaParser.ParseLuaStringArray(line);
+                    continue;
+                }
+
+                if (line.StartsWith("FriendlyContrastWeights"))
+                {
+                    currentWeights = LuaParser.ParseLuaFloatArray(line);
+
                     weighted_type_list list = new weighted_type_list();
-                    list.typeNames = current_names;
-                    list.weights = current_weights;
+                    list.typeNames = currentNames;
+                    list.weights = currentWeights;
 
-                    contrastValues.enemyTypes.Add(current_enemy);
+                    contrastValues.enemyTypes.Add(currentEnemy);
                     contrastValues.friendlyTypeLists.Add(list);
-                    contrastValues.friendlyTypeNames.Add(new List<string>(current_names));
-                    contrastValues.friendlyTypeWeights.Add(new List<float>(current_weights));
+                    contrastValues.friendlyTypeNames.Add(new List<string>(currentNames));
+                    contrastValues.friendlyTypeWeights.Add(new List<float>(currentWeights));
+                    continue;
+                }
 
-                    current_enemy = "";
-                    current_names = null;
-                    current_weights = null;
+                if (line.StartsWith("ContrastTypeScale["))
+                {
+                    string scaleType = LuaParser.ExtractLuaBracketQuotedKey(line);
+                    float scale = float.Parse(LuaParser.ExtractLuaAssignedValue(line), CultureInfo.InvariantCulture);
+                    contrastValues.typeScale[scaleType] = scale;
                 }
             }
 
@@ -595,6 +599,7 @@ namespace Holocron
                     FillMatrixLookup();
                     break;
                 case (int)historymaintabs.autoresolve:
+                    AutoResolveCreateEditableTables();
                     FillAutoResolveUnitSelection();
                     FillAutoResolveFactionSelection();
                     AutoResolveRefreshSideListboxes();
@@ -862,43 +867,137 @@ namespace Holocron
 
         private void FillAutoResolveUnitSelection()
         {
-            unit priorSelection = new unit();
-            bool hadSelection = AutoResolveUnitComboBox.SelectedItem != null;
-            if (hadSelection) priorSelection = (unit)AutoResolveUnitComboBox.SelectedItem;
+            List<unit> availableUnits = AutoResolveGetBattleTypeUnitSource()
+                .Where(AutoResolveUnitHasSufficientInformation)
+                .OrderBy(x => x.username)
+                .ToList();
 
-            AutoResolveUnitComboBox.Items.Clear();
-            foreach (unit item in AutoResolveGetBattleTypeUnitSource().OrderBy(x => x.username))
+            AutoResolveApplyGridUnitChoices(availableUnits);
+        }
+
+        private void AutoResolveCreateEditableTables()
+        {
+            if (autoResolveTablesInitialized) return;
+
+            autoResolveSideAGrid = AutoResolveCreateSideGrid(new Point(12, 47));
+            autoResolveSideBGrid = AutoResolveCreateSideGrid(new Point(399, 47));
+
+            tabAutoResolve.Controls.Add(autoResolveSideAGrid);
+            tabAutoResolve.Controls.Add(autoResolveSideBGrid);
+
+            autoResolveTablesInitialized = true;
+        }
+
+        private DataGridView AutoResolveCreateSideGrid(Point location)
+        {
+            DataGridView grid = new DataGridView();
+            grid.Location = location;
+            grid.Size = new Size(344, 180);
+            grid.AllowUserToAddRows = true;
+            grid.AllowUserToDeleteRows = true;
+            grid.RowHeadersVisible = false;
+            grid.AutoGenerateColumns = false;
+            grid.SelectionMode = DataGridViewSelectionMode.CellSelect;
+
+            DataGridViewComboBoxColumn unitColumn = new DataGridViewComboBoxColumn();
+            unitColumn.Name = "Unit";
+            unitColumn.HeaderText = "Unit";
+            unitColumn.DisplayMember = "DisplayName";
+            unitColumn.ValueMember = "Value";
+            unitColumn.ValueType = typeof(unit);
+            unitColumn.Width = 250;
+
+            DataGridViewTextBoxColumn countColumn = new DataGridViewTextBoxColumn();
+            countColumn.Name = "Count";
+            countColumn.HeaderText = "Count";
+            countColumn.ValueType = typeof(int);
+            countColumn.Width = 70;
+
+            grid.Columns.Add(unitColumn);
+            grid.Columns.Add(countColumn);
+            grid.CellValueChanged += AutoResolveGrid_CellValueChanged;
+            grid.CurrentCellDirtyStateChanged += AutoResolveGrid_CurrentCellDirtyStateChanged;
+            grid.UserDeletedRow += AutoResolveGrid_UserDeletedRow;
+
+            return grid;
+        }
+
+        private void AutoResolveApplyGridUnitChoices(List<unit> availableUnits)
+        {
+            if (!autoResolveTablesInitialized) return;
+
+            List<AutoResolveUnitChoice> choices = availableUnits
+                .Select(x => new AutoResolveUnitChoice { DisplayName = x.username + " [" + x.unitname + "]", Value = x })
+                .ToList();
+
+            DataGridViewComboBoxColumn aCol = autoResolveSideAGrid.Columns[0] as DataGridViewComboBoxColumn;
+            DataGridViewComboBoxColumn bCol = autoResolveSideBGrid.Columns[0] as DataGridViewComboBoxColumn;
+            if (aCol != null) aCol.DataSource = choices;
+            if (bCol != null) bCol.DataSource = choices;
+        }
+
+        private List<autoresolve_entry> AutoResolveBuildEntriesFromGrid(DataGridView grid)
+        {
+            List<autoresolve_entry> entries = new List<autoresolve_entry>();
+            if (grid == null) return entries;
+
+            foreach (DataGridViewRow row in grid.Rows)
             {
-                if (AutoResolveUnitHasSufficientInformation(item)) AutoResolveUnitComboBox.Items.Add(item);
-            }
+                if (row.IsNewRow) continue;
 
-            if (AutoResolveUnitComboBox.Items.Count == 0) return;
+                object rawUnit = row.Cells[0].Value;
+                if (rawUnit == null) continue;
 
-            if (hadSelection)
-            {
-                int match = -1;
-                for (int i = 0; i < AutoResolveUnitComboBox.Items.Count; i++)
+                unit selectedUnit;
+                if (rawUnit is unit)
                 {
-                    unit compare = (unit)AutoResolveUnitComboBox.Items[i];
-                    if (string.Equals(compare.unitname, priorSelection.unitname, StringComparison.OrdinalIgnoreCase))
-                    {
-                        match = i;
-                        break;
-                    }
+                    selectedUnit = (unit)rawUnit;
                 }
-                AutoResolveUnitComboBox.SelectedIndex = match >= 0 ? match : 0;
+                else
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(selectedUnit.unitname)) continue;
+
+                int count;
+                if (!int.TryParse(Convert.ToString(row.Cells[1].Value), out count)) count = 1;
+                count = Math.Max(1, count);
+
+                entries.Add(new autoresolve_entry { source = selectedUnit, quantity = count });
             }
-            else AutoResolveUnitComboBox.SelectedIndex = 0;
+
+            return entries;
+        }
+
+        private void AutoResolveRebuildSideListsFromTables()
+        {
+            if (!autoResolveTablesInitialized) return;
+            autoResolveSideA = AutoResolveBuildEntriesFromGrid(autoResolveSideAGrid);
+            autoResolveSideB = AutoResolveBuildEntriesFromGrid(autoResolveSideBGrid);
+        }
+
+        private void AutoResolveGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e)
+        {
+            DataGridView grid = sender as DataGridView;
+            if (grid != null && grid.IsCurrentCellDirty) grid.CommitEdit(DataGridViewDataErrorContexts.Commit);
+        }
+
+        private void AutoResolveGrid_CellValueChanged(object sender, DataGridViewCellEventArgs e)
+        {
+            AutoResolveRebuildSideListsFromTables();
+            AutoResolveUpdatePowerDisplay();
+        }
+
+        private void AutoResolveGrid_UserDeletedRow(object sender, DataGridViewRowEventArgs e)
+        {
+            AutoResolveRebuildSideListsFromTables();
+            AutoResolveUpdatePowerDisplay();
         }
 
         private void AutoResolveRefreshSideListboxes()
         {
-            AutoResolveSideAListBox.Items.Clear();
-            AutoResolveSideBListBox.Items.Clear();
-
-            foreach (autoresolve_entry entry in autoResolveSideA) AutoResolveSideAListBox.Items.Add(entry);
-            foreach (autoresolve_entry entry in autoResolveSideB) AutoResolveSideBListBox.Items.Add(entry);
-
+            AutoResolveRebuildSideListsFromTables();
             AutoResolveUpdatePowerDisplay();
         }
 
@@ -1083,67 +1182,13 @@ namespace Holocron
             return candidate.cp > 0 && !candidate.unitname.Contains("Dummy") && !candidate.unitname.Contains("Death_Clone");
         }
 
-        private autoresolve_entry AutoResolveCreateEntryFromSelected()
-        {
-            autoresolve_entry entry = new autoresolve_entry();
-            if (AutoResolveUnitComboBox.SelectedItem == null) return entry;
-
-            entry.source = (unit)AutoResolveUnitComboBox.SelectedItem;
-            entry.quantity = Math.Max(1, (int)AutoResolveUnitCountNumeric.Value);
-            return entry;
-        }
-
-        private void AutoResolveAddToSideAButton_Click(object sender, EventArgs e)
-        {
-            if (AutoResolveUnitComboBox.SelectedItem == null) return;
-            if (AutoResolveSideAFactionComboBox.SelectedIndex >= 0) autoResolveSideAOwner = AutoResolveSideAFactionComboBox.SelectedIndex;
-            autoresolve_entry entry = AutoResolveCreateEntryFromSelected();
-
-            int extant = autoResolveSideA.FindIndex(x => x.source.unitname == entry.source.unitname);
-            if (extant >= 0)
-            {
-                autoresolve_entry edited = autoResolveSideA[extant];
-                edited.quantity += entry.quantity;
-                autoResolveSideA[extant] = edited;
-            }
-            else autoResolveSideA.Add(entry);
-
-            AutoResolveRefreshSideListboxes();
-        }
-
-        private void AutoResolveAddToSideBButton_Click(object sender, EventArgs e)
-        {
-            if (AutoResolveUnitComboBox.SelectedItem == null) return;
-            if (AutoResolveSideBFactionComboBox.SelectedIndex >= 0) autoResolveSideBOwner = AutoResolveSideBFactionComboBox.SelectedIndex;
-            autoresolve_entry entry = AutoResolveCreateEntryFromSelected();
-
-            int extant = autoResolveSideB.FindIndex(x => x.source.unitname == entry.source.unitname);
-            if (extant >= 0)
-            {
-                autoresolve_entry edited = autoResolveSideB[extant];
-                edited.quantity += entry.quantity;
-                autoResolveSideB[extant] = edited;
-            }
-            else autoResolveSideB.Add(entry);
-
-            AutoResolveRefreshSideListboxes();
-        }
-
-        private void AutoResolveClearSideAButton_Click(object sender, EventArgs e)
-        {
-            autoResolveSideA.Clear();
-            AutoResolveRefreshSideListboxes();
-        }
-
-        private void AutoResolveClearSideBButton_Click(object sender, EventArgs e)
-        {
-            autoResolveSideB.Clear();
-            AutoResolveRefreshSideListboxes();
-        }
-
         private void AutoResolveInputChanged(object sender, EventArgs e)
         {
-            if (ReferenceEquals(sender, AutoResolveBattleTypeComboBox)) FillAutoResolveUnitSelection();
+            if (ReferenceEquals(sender, AutoResolveBattleTypeComboBox))
+            {
+                FillAutoResolveUnitSelection();
+                AutoResolveRebuildSideListsFromTables();
+            }
             AutoResolveUpdatePowerDisplay();
         }
 
@@ -1205,18 +1250,21 @@ namespace Holocron
                 " -> " + report.TargetGlobalAfter.ToString("0.###", CultureInfo.InvariantCulture);
         }
 
-        private string AutoResolveBuildSurvivorListText(List<AutoResolveCombatant> units)
+        private string AutoResolveBuildKillListText(AutoResolveBattle battleHistory, int ownerId)
         {
-            if (units == null) return "(none)";
+            if (battleHistory == null) return "(none)";
 
-            List<AutoResolveCombatant> survivors = units.Where(x => x != null && x.IsAlive).ToList();
-            if (survivors.Count == 0) return "(none)";
-
-            List<string> lines = survivors
-                .GroupBy(x => x.TypeName ?? "(unknown)", StringComparer.OrdinalIgnoreCase)
+            List<IGrouping<string, KeyValuePair<string, int>>> killed = battleHistory.Killed
+                .Where(x => x.Value == ownerId)
+                .GroupBy(x => x.Key ?? "(unknown)", StringComparer.OrdinalIgnoreCase)
                 .OrderByDescending(g => g.Count())
                 .ThenBy(g => g.Key)
-                .Select(g => g.Count().ToString(CultureInfo.InvariantCulture) + "x " + AutoResolveUnitNameForDisplay(g.First().TypeName))
+                .ToList();
+
+            if (killed.Count == 0) return "(none)";
+
+            List<string> lines = killed
+                .Select(g => g.Count().ToString(CultureInfo.InvariantCulture) + "x " + AutoResolveUnitNameForDisplay(g.Key))
                 .ToList();
 
             return string.Join(", ", lines);
@@ -1244,6 +1292,7 @@ namespace Holocron
             sim.RetreatLoserAttrition = (float)AutoResolveRetreatLoserAttritionNumeric.Value;
             sim.RetreatWinnerAttrition = (float)AutoResolveRetreatWinnerAttritionNumeric.Value;
             sim.AttritionAllowanceFactor = (float)AutoResolveAttritionAllowanceNumeric.Value;
+            sim.TransportLosses = (float)AutoResolveTransportLossesNumeric.Value;
         }
 
         private string AutoResolveAttritionInputsToText()
@@ -1356,6 +1405,8 @@ namespace Holocron
             int retreating = sim.Side_Is_Retreating();
             string retreatingName = retreating >= 0 ? AutoResolveOwnerToName(retreating) : "None";
 
+            AutoResolveBattle battleHistory = sim.Get_Current_Battle_History();
+
             string outcome =
                 "Auto Resolve complete\r\n" +
                 "Battle Type: " + (space ? "Space" : "Land") + "\r\n" +
@@ -1366,8 +1417,8 @@ namespace Holocron
                 "Attacker: " + attackerName + "\r\n" +
                 "Defender: " + defenderName + "\r\n" +
                 "Winner: " + winnerName + "\r\n" +
-                "Attacker survivors: " + AutoResolveBuildSurvivorListText(attacker) + "\r\n" +
-                "Defender survivors: " + AutoResolveBuildSurvivorListText(defender) + "\r\n";
+                "Attacker losses: " + AutoResolveBuildKillListText(battleHistory, autoResolveSideAOwner) + "\r\n" +
+                "Defender losses: " + AutoResolveBuildKillListText(battleHistory, autoResolveSideBOwner) + "\r\n";
 
             string roundDetail = engagementLines.Count > 0
                 ? "\r\n\r\nPer-unit engagements:\r\n" + string.Join("\r\n", engagementLines)
