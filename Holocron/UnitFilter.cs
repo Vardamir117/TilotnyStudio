@@ -16,27 +16,11 @@ namespace Holocron
         public int UnitRBtype;
         public string filterDocumentation;
         public bool cancel;
-        public List<holo_faction> factions;
+        public List<faction> factions;
         public List<string> categories;
         public List<string> flags;
         public List<string> atypes;
         public List<string> stypes;
-
-        public struct holo_faction
-        {
-            public string codename;
-            public string textname;
-            public bool playable;
-
-            public int[] color;
-            public int[] tcolor;
-
-            public override string ToString()
-            {
-                return textname;
-            }
-        }
-
 
         private void hideavailpanels()
         {
@@ -48,7 +32,7 @@ namespace Holocron
 
         public struct UnitFilterClass
         {
-            public List<holo_faction> factions; //need user facing and code name, the rest of the fields are quite excessive
+            public List<faction> factions; //need user facing and code name, the rest of the fields are quite excessive
             public List<string> categories;
             public List<string> flags;
             public List<string> atypes;
@@ -77,7 +61,7 @@ namespace Holocron
             UnitFilterClass filter = new UnitFilterClass();
             filter.shipyardComparison = 0;
             filter.shipyardLevel = 0;
-            filter.factions = new List<holo_faction>();
+            filter.factions = new List<faction>();
             filter.categories = new List<string>();
             filter.flags = new List<string>();
             filter.atypes = new List<string>();
@@ -90,7 +74,7 @@ namespace Holocron
         private void UnitFilter_Load(object sender, EventArgs e)
         {
             if (filterConfig.factions is null) filterConfig = newFilter();
-            foreach (holo_faction faction in factions) FactionListBox.Items.Add(faction);
+            foreach (faction faction in factions) FactionListBox.Items.Add(faction);
             foreach (string category in categories) CategoryListBox.Items.Add(category);
             foreach (string flag in flags) FlagListBox.Items.Add(flag);
             foreach (string at in atypes) ArmorListBox.Items.Add(at);
@@ -142,7 +126,7 @@ namespace Holocron
             else if (filterConfig.complementMode == 2) ComplementFalseRB.Checked = true;
             else ComplementAnyRB.Checked = true;
 
-            foreach (holo_faction faction in filterConfig.factions) FactionListBox.SelectedItems.Add(faction);
+            foreach (faction faction in filterConfig.factions) FactionListBox.SelectedItems.Add(faction);
             foreach (string category in filterConfig.categories) CategoryListBox.SelectedItems.Add(category);
             foreach (string flag in filterConfig.flags) FlagListBox.SelectedItems.Add(flag);
             foreach (string at in filterConfig.atypes) ArmorListBox.SelectedItems.Add(at);
@@ -162,7 +146,7 @@ namespace Holocron
             filterConfig.invST = ShieldCheckBox.Checked;
 
             filterConfig.factions.Clear();
-            foreach (holo_faction faction in FactionListBox.SelectedItems) filterConfig.factions.Add(faction);
+            foreach (faction faction in FactionListBox.SelectedItems) filterConfig.factions.Add(faction);
             if(filterConfig.factions.Count > 0) filterDocumentation += "Faction";
             else filterDocumentation += "Any Faction";
 
