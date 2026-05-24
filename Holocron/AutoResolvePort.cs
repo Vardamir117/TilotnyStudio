@@ -55,6 +55,7 @@ namespace Holocron
         public bool IsPlayableFaction = true;
         public bool IncludeGarrisonInAttrition;
         public float GarrisonPower;
+        public List<AutoResolveBuiltObject> GarrisonEntries = new List<AutoResolveBuiltObject>();
         public float PlanetaryReplacementPower = -1f;
         public bool IncludePlanetTacticalBuiltObjects;
         public List<AutoResolveBuiltObject> PlanetBuiltObjects = new List<AutoResolveBuiltObject>();
@@ -565,30 +566,11 @@ namespace Holocron
                     {
                         killUnit = true;
 
-                        // Apply garrison units (placeholder-backed by precomputed GarrisonPower).
+                        // Apply garrison units.
                         if (unit.IncludeGarrisonInAttrition && unit.GarrisonPower > 0f)
                         {
-                            float garrisonRemaining = unit.GarrisonPower;
-                            while (garrisonRemaining > 0f)
-                            {
-                                int selectedIndex = -1;
-                                float selectedForce = 0f;
-                                for (int r = 0; r < current.Count; r++)
-                                {
-                                    float force = current[r].Force;
-                                    if (force > selectedForce)
-                                    {
-                                        selectedForce = force;
-                                        selectedIndex = r;
-                                    }
-                                }
-
-                                if (selectedIndex < 0 || selectedForce <= 0f) break;
-
-                                float delta = Math.Min(current[selectedIndex].Force, garrisonRemaining);
-                                current[selectedIndex].Force -= delta;
-                                garrisonRemaining -= delta;
-                            }
+                            current[global_index].Force -= unit.GarrisonPower;
+                            current[global_index].Force = Math.Max(current[global_index].Force, 0.0f);
                             // logging info
                             attritionReport.Notes = "Applied garrison power reduction of " + unit.GarrisonPower.ToString("0.###") + ".";
                         }
@@ -601,27 +583,7 @@ namespace Holocron
                             {
                                 if (unit.PlanetaryReplacementPower >= 0f)
                                 {
-                                    float replacementRemaining = unit.PlanetaryReplacementPower;
-                                    while (replacementRemaining > 0f)
-                                    {
-                                        int selectedIndex = -1;
-                                        float selectedForce = 0f;
-                                        for (int r = 0; r < current.Count; r++)
-                                        {
-                                            float force = current[r].Force;
-                                            if (force > selectedForce)
-                                            {
-                                                selectedForce = force;
-                                                selectedIndex = r;
-                                            }
-                                        }
-
-                                        if (selectedIndex < 0 || selectedForce <= 0f) break;
-
-                                        float delta = Math.Min(current[selectedIndex].Force, replacementRemaining);
-                                        current[selectedIndex].Force -= delta;
-                                        replacementRemaining -= delta;
-                                    }
+                                    current[global_index].Force -= unit.PlanetaryReplacementPower;
                                     //logging info
                                     attritionReport.Decision = "KeepUnit";
                                     attritionReport.Notes = "Planetary replacement base retained with replacement power " + unit.PlanetaryReplacementPower.ToString("0.###") + ".";
@@ -638,31 +600,10 @@ namespace Holocron
                         }
                         else
                         {
-                            float allowanceTotal = 0f;
-                            for (int t = 0; t < current.Count; t++) allowanceTotal += current[t].Force;
-                            if (allowanceTotal - (unit.Power * attritionAllowanceFactor) > 0.0f)
+                            if (current[global_index].Force - (unit.Power * attritionAllowanceFactor) > 0.0f)
                             {
-                                float unitRemainingReduction = unit.Power;
-                                while (unitRemainingReduction > 0f)
-                                {
-                                    int selectedIndex = -1;
-                                    float selectedForce = 0f;
-                                    for (int r = 0; r < current.Count; r++)
-                                    {
-                                        float force = current[r].Force;
-                                        if (force > selectedForce)
-                                        {
-                                            selectedForce = force;
-                                            selectedIndex = r;
-                                        }
-                                    }
-
-                                    if (selectedIndex < 0 || selectedForce <= 0f) break;
-
-                                    float delta = Math.Min(current[selectedIndex].Force, unitRemainingReduction);
-                                    current[selectedIndex].Force -= delta;
-                                    unitRemainingReduction -= delta;
-                                }
+                                current[global_index].Force -= unit.Power;
+                                current[global_index].Force = Math.Max(current[global_index].Force, 0.0f);
                                 killUnit = false;
 
                                 // logging info
@@ -874,7 +815,10 @@ namespace Holocron
                 // logging info
                 contrastMultiplier = contrastWeight;
                 engagement.ScaledPower = remainingPower;
-                engagement.SourceCategory = Get_Best_Source_Category_For_Target(unit, bestCategory);
+                if (string.IsNullOrWhiteSpace(engagement.SourceCategory))
+                {
+                    engagement.SourceCategory = Get_Best_Source_Category_For_Target(unit, bestCategory);
+                }
 
                 int targetIndex = mContrastCategoryToIndex[bestCategory];
 
@@ -1010,34 +954,44 @@ namespace Holocron
                     addGarrison = false;
                 }
 
-                if (addGarrison && unit.GarrisonPower > 0.0f)
+                if (addGarrison && unit.GarrisonEntries != null && unit.GarrisonEntries.Count > 0)
                 {
-                    float remainingPower = unit.GarrisonPower;
-                    while (remainingPower > 0.0f && bestCategory != null)
+                    for (int g = 0; g < unit.GarrisonEntries.Count; g++)
                     {
-                        Find_Contrast_Index(remainingPower, unit, result, out bestCategory);
+                        AutoResolveBuiltObject garrisonEntry = unit.GarrisonEntries[g];
+                        if (garrisonEntry == null || garrisonEntry.Power <= 0.0f || string.IsNullOrWhiteSpace(garrisonEntry.ContrastCategory)) continue;
 
-                        //logging info
-                        AutoResolveEngagementReport engagement = new AutoResolveEngagementReport();
-                        engagement.AttackerOwnerId = playerId;
-                        engagement.SourceTypeName = unit.TypeName;
-                        engagement.SourceUnitIndex = unitIndex;
-                        engagement.SourceKind = "Garrison";
-                        engagement.SourcePowerBefore = remainingPower;
-                        engagement.TargetCategory = string.IsNullOrWhiteSpace(bestCategory) ? "(global)" : bestCategory;
-                        int targetIndex = string.IsNullOrWhiteSpace(bestCategory) ? 0 : mContrastCategoryToIndex[bestCategory];
-                        int globalIndex = mContrastCategoryToIndex[mIsSpace ? "__GLOBAL_SPACE__" : "__GLOBAL_GROUND__"];
-                        engagement.TargetCategoryBefore = string.IsNullOrWhiteSpace(bestCategory) ? 0.0f : result[targetIndex].Force;
-                        engagement.TargetGlobalBefore = result[globalIndex].Force;
+                        AutoResolveCombatant garrisonCombatant = new AutoResolveCombatant();
+                        garrisonCombatant.TypeName = unit.TypeName;
+                        garrisonCombatant.OwnerId = unit.OwnerId;
+                        garrisonCombatant.ContrastCategories = new List<string> { garrisonEntry.ContrastCategory };
 
-                        Apply_Unit_Contrast(ref remainingPower, unit, ref result, bestCategory, catTable, mIsSpace ? MapEnvironmentType.Space : MapEnvironmentType.Ground, engagement);
+                        float remainingPower = garrisonEntry.Power;
+                        while (remainingPower > 0.0f && bestCategory != null)
+                        {
+                            Find_Contrast_Index(remainingPower, garrisonCombatant, result, out bestCategory);
 
-                        //logging info
-                        engagement.TargetCategoryAfter = string.IsNullOrWhiteSpace(bestCategory) ? 0.0f : result[targetIndex].Force;
-                        engagement.TargetGlobalAfter = result[globalIndex].Force;
-                        mLastEngagements.Add(engagement);
+                            AutoResolveEngagementReport engagement = new AutoResolveEngagementReport();
+                            engagement.AttackerOwnerId = playerId;
+                            engagement.SourceTypeName = unit.TypeName;
+                            engagement.SourceUnitIndex = unitIndex;
+                            engagement.SourceKind = "Garrison";
+                            engagement.SourcePowerBefore = remainingPower;
+                            engagement.SourceCategory = garrisonEntry.ContrastCategory;
+                            engagement.TargetCategory = string.IsNullOrWhiteSpace(bestCategory) ? "(global)" : bestCategory;
+                            int targetIndex = string.IsNullOrWhiteSpace(bestCategory) ? 0 : mContrastCategoryToIndex[bestCategory];
+                            int globalIndex = mContrastCategoryToIndex[mIsSpace ? "__GLOBAL_SPACE__" : "__GLOBAL_GROUND__"];
+                            engagement.TargetCategoryBefore = string.IsNullOrWhiteSpace(bestCategory) ? 0.0f : result[targetIndex].Force;
+                            engagement.TargetGlobalBefore = result[globalIndex].Force;
 
-                        bestCategory = null;
+                            Apply_Unit_Contrast(ref remainingPower, garrisonCombatant, ref result, bestCategory, catTable, mIsSpace ? MapEnvironmentType.Space : MapEnvironmentType.Ground, engagement);
+
+                            engagement.TargetCategoryAfter = string.IsNullOrWhiteSpace(bestCategory) ? 0.0f : result[targetIndex].Force;
+                            engagement.TargetGlobalAfter = result[globalIndex].Force;
+                            mLastEngagements.Add(engagement);
+
+                            bestCategory = null;
+                        }
                     }
                 }
 
@@ -1109,23 +1063,27 @@ namespace Holocron
                 }
 
                 // C++: Apply garrison units unless in suppressed dummy-starbase mid-tactical path.
-                // Placeholder: GarrisonPower is pre-aggregated (type count * starting count * AI power metric).
                 bool addGarrison = unit.AddGarrison;
                 if (addGarrison && unit.IsDummyStarBase && MidTactical) addGarrison = false;
-                if (addGarrison && unit.GarrisonPower > 0f)
+                if (addGarrison && unit.GarrisonEntries != null)
                 {
-                    string garrisonCategory = unit.ContrastCategories.FirstOrDefault();
-                    if (!string.IsNullOrWhiteSpace(garrisonCategory))
-                    {
-                        int garrisonIndex = mContrastCategoryToIndex[garrisonCategory];
-                        result[garrisonIndex].Force += unit.GarrisonPower;
-                        result[garrisonIndex].Ground = false;
-                    }
-
                     string globalKey = mIsSpace ? "__GLOBAL_SPACE__" : "__GLOBAL_GROUND__";
                     int globalIndex = mContrastCategoryToIndex[globalKey];
-                    result[globalIndex].Force += unit.GarrisonPower;
-                    result[globalIndex].Ground = !mIsSpace;
+
+                    for (int g = 0; g < unit.GarrisonEntries.Count; g++)
+                    {
+                        AutoResolveBuiltObject garrisonEntry = unit.GarrisonEntries[g];
+                        if (garrisonEntry == null || garrisonEntry.Power <= 0f || string.IsNullOrWhiteSpace(garrisonEntry.ContrastCategory)) continue;
+                        if (!mContrastCategoryToIndex.ContainsKey(garrisonEntry.ContrastCategory)) continue;
+
+                        float totalForce = garrisonEntry.Power;
+                        int garrisonIndex = mContrastCategoryToIndex[garrisonEntry.ContrastCategory];
+                        result[garrisonIndex].Force += totalForce;
+                        result[garrisonIndex].Ground = !mIsSpace;
+
+                        result[globalIndex].Force += totalForce;
+                        result[globalIndex].Ground = !mIsSpace;
+                    }
                 }
 
                 // C++: transports do not contribute to direct side force in space mode.
@@ -1302,6 +1260,16 @@ namespace Holocron
                         AutoResolveBuiltObject built = combatant.PlanetBuiltObjects[j];
                         if (built == null || string.IsNullOrWhiteSpace(built.ContrastCategory)) continue;
                         Add_Contrast_Index(built.ContrastCategory, true);
+                    }
+                }
+
+                if (combatant.GarrisonEntries != null)
+                {
+                    for (int j = 0; j < combatant.GarrisonEntries.Count; j++)
+                    {
+                        AutoResolveBuiltObject garrison = combatant.GarrisonEntries[j];
+                        if (garrison == null || string.IsNullOrWhiteSpace(garrison.ContrastCategory)) continue;
+                        Add_Contrast_Index(garrison.ContrastCategory, !mIsSpace);
                     }
                 }
             }

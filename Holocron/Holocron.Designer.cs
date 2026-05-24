@@ -293,6 +293,8 @@
             this.tabAutoResolve = new System.Windows.Forms.TabPage();
             this.AutoResolveTransportLossesNumeric = new System.Windows.Forms.NumericUpDown();
             this.TransportLossesLabel = new System.Windows.Forms.Label();
+            this.AutoResolveTechLevelNumeric = new System.Windows.Forms.NumericUpDown();
+            this.AutoResolveTechLevelLabel = new System.Windows.Forms.Label();
             this.AutoResolveSideBLabel = new System.Windows.Forms.Label();
             this.AutoResolveSideALabel = new System.Windows.Forms.Label();
             this.AutoResolveSideBFactionComboBox = new System.Windows.Forms.ComboBox();
@@ -3274,6 +3276,8 @@
             // 
             this.tabAutoResolve.Controls.Add(this.AutoResolveTransportLossesNumeric);
             this.tabAutoResolve.Controls.Add(this.TransportLossesLabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveTechLevelNumeric);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveTechLevelLabel);
             this.tabAutoResolve.Controls.Add(this.AutoResolveSideBLabel);
             this.tabAutoResolve.Controls.Add(this.AutoResolveSideALabel);
             this.tabAutoResolve.Controls.Add(this.AutoResolveSideBFactionComboBox);
@@ -3332,6 +3336,28 @@
             this.TransportLossesLabel.Size = new System.Drawing.Size(88, 13);
             this.TransportLossesLabel.TabIndex = 28;
             this.TransportLossesLabel.Text = "Transport Losses";
+            // 
+            // AutoResolveTechLevelNumeric
+            // 
+            this.AutoResolveTechLevelNumeric.Location = new System.Drawing.Point(150, 230);
+            this.AutoResolveTechLevelNumeric.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.AutoResolveTechLevelNumeric.Name = "AutoResolveTechLevelNumeric";
+            this.AutoResolveTechLevelNumeric.Size = new System.Drawing.Size(121, 20);
+            this.AutoResolveTechLevelNumeric.TabIndex = 31;
+            this.AutoResolveTechLevelNumeric.ValueChanged += new System.EventHandler(this.AutoResolveInputChanged);
+            // 
+            // AutoResolveTechLevelLabel
+            // 
+            this.AutoResolveTechLevelLabel.AutoSize = true;
+            this.AutoResolveTechLevelLabel.Location = new System.Drawing.Point(89, 232);
+            this.AutoResolveTechLevelLabel.Name = "AutoResolveTechLevelLabel";
+            this.AutoResolveTechLevelLabel.Size = new System.Drawing.Size(55, 13);
+            this.AutoResolveTechLevelLabel.TabIndex = 30;
+            this.AutoResolveTechLevelLabel.Text = "Tech level";
             // 
             // AutoResolveSideBLabel
             // 
@@ -3678,6 +3704,7 @@
             this.tabAutoResolve.ResumeLayout(false);
             this.tabAutoResolve.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveTransportLossesNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveTechLevelNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveRetreatWinnerAttritionNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveRetreatLoserAttritionNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveWinnerAttritionNumeric)).EndInit();
@@ -3945,6 +3972,8 @@
         private System.Windows.Forms.NumericUpDown AutoResolveRetreatWinnerAttritionNumeric;
         private System.Windows.Forms.NumericUpDown AutoResolveAttritionAllowanceNumeric;
         private System.Windows.Forms.NumericUpDown AutoResolveTransportLossesNumeric;
+        private System.Windows.Forms.NumericUpDown AutoResolveTechLevelNumeric;
+        private System.Windows.Forms.Label AutoResolveTechLevelLabel;
         private System.Windows.Forms.Label AutoResolveAttritionAllowanceLabel;
         private System.Windows.Forms.Label TransportLossesLabel;
         private System.Windows.Forms.ListBox GCListBox;

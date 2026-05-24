@@ -1116,6 +1116,72 @@ namespace Holocron
             return values;
         }
 
+        private int AutoResolveGetSelectedTechLevel()
+        {
+            int techIndex = (int)AutoResolveTechLevelNumeric.Value;
+            if (techIndex < 0 || techIndex > 5) techIndex = 0;
+            return techIndex;
+        }
+
+        private List<AutoResolveBuiltObject> AutoResolveBuildGarrisonEntries(unit sourceUnit, Dictionary<string, unit> unitLookup, int techIndex)
+        {
+            List<AutoResolveBuiltObject> entries = new List<AutoResolveBuiltObject>();
+            if (sourceUnit.garrison == null) return entries;
+
+            for (int g = 0; g < sourceUnit.garrison.Count; g++)
+            {
+                garrison_entry spawn = sourceUnit.garrison[g];
+                int count = 0;
+                if (spawn.upfront != null && spawn.upfront.Length > techIndex) count = spawn.upfront[techIndex];
+                if (count <= 0 || string.IsNullOrWhiteSpace(spawn.unitname)) continue;
+
+                unit garrisonUnit;
+                if (!unitLookup.TryGetValue(spawn.unitname, out garrisonUnit)) continue;
+
+                float garrisonPower = Math.Max(0f, garrisonUnit.cp) * count;
+                if (garrisonPower <= 0f) continue;
+
+                string garrisonCategory = (garrisonUnit.categories != null && garrisonUnit.categories.Count > 0)
+                    ? garrisonUnit.categories[0]
+                    : null;
+
+                entries.Add(new AutoResolveBuiltObject { ContrastCategory = garrisonCategory, Power = garrisonPower });
+            }
+
+            return entries;
+        }
+
+        private Dictionary<string, float> AutoResolveBuildGarrisonCategoryPowerMap(List<autoresolve_entry> side)
+        {
+            Dictionary<string, float> values = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
+            Dictionary<string, unit> unitLookup = AutoResolveGetUnitSource()
+                .GroupBy(x => x.unitname, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(x => x.Key, x => x.First(), StringComparer.OrdinalIgnoreCase);
+
+            int techIndex = AutoResolveGetSelectedTechLevel();
+
+            foreach (autoresolve_entry entry in side)
+            {
+                int entryCount = Math.Max(1, entry.quantity);
+                List<AutoResolveBuiltObject> garrisonEntries = AutoResolveBuildGarrisonEntries(entry.source, unitLookup, techIndex);
+
+                for (int g = 0; g < garrisonEntries.Count; g++)
+                {
+                    AutoResolveBuiltObject garrisonEntry = garrisonEntries[g];
+                    if (garrisonEntry == null || string.IsNullOrWhiteSpace(garrisonEntry.ContrastCategory)) continue;
+
+                    float power = garrisonEntry.Power * entryCount;
+                    if (power <= 0f) continue;
+
+                    float extant;
+                    if (values.TryGetValue(garrisonEntry.ContrastCategory, out extant)) values[garrisonEntry.ContrastCategory] = extant + power;
+                    else values[garrisonEntry.ContrastCategory] = power;
+                }
+            }
+
+            return values;
+        }
+
         private float AutoResolveGetRawPower(List<autoresolve_entry> side)
         {
             float total = 0f;
@@ -1131,16 +1197,30 @@ namespace Holocron
             StringBuilder sb = new StringBuilder();
             bool space = AutoResolveBattleTypeComboBox.SelectedIndex == 0;
             Dictionary<string, float> ownCategories = AutoResolveBuildCategoryPowerMap(ownEntries, space);
+            Dictionary<string, float> garrisonCategories = AutoResolveBuildGarrisonCategoryPowerMap(ownEntries);
+
+            foreach (KeyValuePair<string, float> garrison in garrisonCategories)
+            {
+                float extant;
+                if (ownCategories.TryGetValue(garrison.Key, out extant)) ownCategories[garrison.Key] = extant + garrison.Value;
+                else ownCategories[garrison.Key] = garrison.Value;
+            }
 
             float rawPower = AutoResolveGetRawPower(ownEntries);
+            float garrisonPower = garrisonCategories.Values.Sum();
+            float rawPowerWithGarrison = rawPower + garrisonPower;
             float appliedPower = ownCategories.Values.Sum();
 
-            sb.AppendLine(sideName + " listed combat power: " + rawPower.ToString("0.###", CultureInfo.InvariantCulture));
+            sb.AppendLine(sideName + " listed combat power: " + rawPowerWithGarrison.ToString("0.###", CultureInfo.InvariantCulture));
+            if (garrisonPower > 0f)
+            {
+                sb.AppendLine("  Includes garrison combat power: " + garrisonPower.ToString("0.###", CultureInfo.InvariantCulture));
+            }
             sb.AppendLine(sideName + " autoresolve-applied power: " + appliedPower.ToString("0.###", CultureInfo.InvariantCulture));
 
             if (space)
             {
-                float excludedTransports = rawPower - appliedPower;
+                float excludedTransports = rawPowerWithGarrison - appliedPower;
                 if (excludedTransports > 0f)
                 {
                     sb.AppendLine("  Space mode excludes transport contribution from side-force totals: " + excludedTransports.ToString("0.###", CultureInfo.InvariantCulture));
@@ -1223,6 +1303,9 @@ namespace Holocron
         private List<AutoResolveCombatant> AutoResolveBuildCombatants(List<autoresolve_entry> entries, int owner, bool space)
         {
             List<AutoResolveCombatant> corenne = new List<AutoResolveCombatant>();
+            Dictionary<string, unit> unitLookup = AutoResolveGetUnitSource()
+                .GroupBy(x => x.unitname, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(x => x.Key, x => x.First(), StringComparer.OrdinalIgnoreCase);
 
             foreach (autoresolve_entry entry in entries)
             {
@@ -1237,6 +1320,19 @@ namespace Holocron
                     combatant.IsTransport = entry.source.behaviors != null && entry.source.behaviors.Contains("TRANSPORT");
                     combatant.ContrastCategories = new List<string>();
                     foreach (string category in entry.source.categories) combatant.ContrastCategories.Add(category);
+
+                    int techIndex = AutoResolveGetSelectedTechLevel();
+                    List<AutoResolveBuiltObject> garrisonEntries = AutoResolveBuildGarrisonEntries(entry.source, unitLookup, techIndex);
+                    for (int g = 0; g < garrisonEntries.Count; g++)
+                    {
+                        AutoResolveBuiltObject garrisonEntry = garrisonEntries[g];
+                        if (garrisonEntry == null || garrisonEntry.Power <= 0f) continue;
+
+                        combatant.GarrisonPower += garrisonEntry.Power;
+                        combatant.GarrisonEntries.Add(new AutoResolveBuiltObject { ContrastCategory = garrisonEntry.ContrastCategory, Power = garrisonEntry.Power });
+                    }
+
+                    combatant.IncludeGarrisonInAttrition = combatant.GarrisonPower > 0f;
                     corenne.Add(combatant);
                 }
             }
