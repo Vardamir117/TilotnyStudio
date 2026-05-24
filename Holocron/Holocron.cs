@@ -123,6 +123,7 @@ namespace Holocron
         private DataGridView autoResolveSideAGrid;
         private DataGridView autoResolveSideBGrid;
         private bool autoResolveTablesInitialized = false;
+        private int autoResolveLastBattleType = -1;
 
         private sealed class AutoResolveUnitChoice
         {
@@ -879,8 +880,8 @@ namespace Holocron
         {
             if (autoResolveTablesInitialized) return;
 
-            autoResolveSideAGrid = AutoResolveCreateSideGrid(new Point(12, 47));
-            autoResolveSideBGrid = AutoResolveCreateSideGrid(new Point(399, 47));
+            autoResolveSideAGrid = AutoResolveCreateSideGrid(new Point(12, 55));
+            autoResolveSideBGrid = AutoResolveCreateSideGrid(new Point(399, 55));
 
             tabAutoResolve.Controls.Add(autoResolveSideAGrid);
             tabAutoResolve.Controls.Add(autoResolveSideBGrid);
@@ -977,6 +978,16 @@ namespace Holocron
             autoResolveSideB = AutoResolveBuildEntriesFromGrid(autoResolveSideBGrid);
         }
 
+        private void AutoResolveClearUnitTables()
+        {
+            if (!autoResolveTablesInitialized) return;
+
+            autoResolveSideAGrid.Rows.Clear();
+            autoResolveSideBGrid.Rows.Clear();
+            autoResolveSideA.Clear();
+            autoResolveSideB.Clear();
+        }
+
         private void AutoResolveGrid_CurrentCellDirtyStateChanged(object sender, EventArgs e)
         {
             DataGridView grid = sender as DataGridView;
@@ -1030,39 +1041,24 @@ namespace Holocron
             return weight ?? 1f;
         }
 
-        private float AutoResolveGetContrastScale(string enemyType)
-        {
-            if (globals.ContrastValues.typeScale == null) return 1f;
-
-            float value;
-            if (globals.ContrastValues.typeScale.TryGetValue(enemyType, out value)) return value;
-
-            foreach (KeyValuePair<string, float> kv in globals.ContrastValues.typeScale)
-            {
-                if (string.Equals(kv.Key, enemyType, StringComparison.OrdinalIgnoreCase)) return kv.Value;
-            }
-
-            return 1f;
-        }
-
-        private Dictionary<string, float> AutoResolveBuildCategoryPowerMap(List<autoresolve_entry> side)
+        private Dictionary<string, float> AutoResolveBuildCategoryPowerMap(List<autoresolve_entry> side, bool space)
         {
             Dictionary<string, float> values = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
 
             foreach (autoresolve_entry entry in side)
             {
+                bool isTransport = entry.source.behaviors != null && entry.source.behaviors.Contains("TRANSPORT");
+                if (space && isTransport) continue;
+
                 float power = Math.Max(0f, entry.source.cp) * Math.Max(1, entry.quantity);
-                if (power <= 0f || entry.source.categories == null) continue;
+                if (power <= 0f || entry.source.categories == null || entry.source.categories.Count == 0) continue;
 
-                HashSet<string> unitCats = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                foreach (string category in entry.source.categories)
-                {
-                    if (string.IsNullOrWhiteSpace(category) || !unitCats.Add(category)) continue;
+                string category = entry.source.categories[0];
+                if (string.IsNullOrWhiteSpace(category)) continue;
 
-                    float extant;
-                    if (values.TryGetValue(category, out extant)) values[category] = extant + power;
-                    else values[category] = power;
-                }
+                float extant;
+                if (values.TryGetValue(category, out extant)) values[category] = extant + power;
+                else values[category] = power;
             }
 
             return values;
@@ -1078,77 +1074,50 @@ namespace Holocron
             return total;
         }
 
-        private string AutoResolveBuildSidePowerDetails(string sideName, List<autoresolve_entry> ownEntries, List<autoresolve_entry> opposingEntries)
+        private string AutoResolveBuildSidePowerDetails(string sideName, List<autoresolve_entry> ownEntries)
         {
             StringBuilder sb = new StringBuilder();
-            Dictionary<string, float> ownCategories = AutoResolveBuildCategoryPowerMap(ownEntries);
-            Dictionary<string, float> opposingCategories = AutoResolveBuildCategoryPowerMap(opposingEntries);
+            bool space = AutoResolveBattleTypeComboBox.SelectedIndex == 0;
+            Dictionary<string, float> ownCategories = AutoResolveBuildCategoryPowerMap(ownEntries, space);
 
-            sb.AppendLine(sideName + " raw combat power: " + AutoResolveGetRawPower(ownEntries).ToString("0.###", CultureInfo.InvariantCulture));
+            float rawPower = AutoResolveGetRawPower(ownEntries);
+            float appliedPower = ownCategories.Values.Sum();
+
+            sb.AppendLine(sideName + " listed combat power: " + rawPower.ToString("0.###", CultureInfo.InvariantCulture));
+            sb.AppendLine(sideName + " autoresolve-applied power: " + appliedPower.ToString("0.###", CultureInfo.InvariantCulture));
+
+            if (space)
+            {
+                float excludedTransports = rawPower - appliedPower;
+                if (excludedTransports > 0f)
+                {
+                    sb.AppendLine("  Space mode excludes transport contribution from side-force totals: " + excludedTransports.ToString("0.###", CultureInfo.InvariantCulture));
+                }
+            }
 
             if (ownCategories.Count == 0)
             {
-                sb.AppendLine("  No contrast categories available for this side.");
+                sb.AppendLine("  No autoresolve category force entries for this side.");
                 return sb.ToString().TrimEnd();
             }
 
-            sb.AppendLine("  Contrast categories present:");
+            sb.AppendLine("  Side-force category totals (as used by Calculate_Side_Force):");
             foreach (KeyValuePair<string, float> own in ownCategories.OrderByDescending(x => x.Value))
             {
                 sb.AppendLine("    " + own.Key + ": " + own.Value.ToString("0.###", CultureInfo.InvariantCulture));
             }
 
-            if (opposingCategories.Count == 0)
-            {
-                sb.AppendLine("  No opposing categories available to evaluate multipliers.");
-                return sb.ToString().TrimEnd();
-            }
-
-            sb.AppendLine("  Effective power options (best multiplier per friendly category):");
-            float effectiveTotal = 0f;
-            foreach (KeyValuePair<string, float> own in ownCategories.OrderByDescending(x => x.Value))
-            {
-                float bestWeight = 1f;
-                float bestScale = 1f;
-                float bestMultiplier = 1f;
-                string bestEnemyType = "(default)";
-
-                foreach (KeyValuePair<string, float> enemy in opposingCategories)
-                {
-                    float weight = AutoResolveGetContrastWeight(enemy.Key, own.Key);
-                    float scale = AutoResolveGetContrastScale(enemy.Key);
-                    float multiplier = weight * scale;
-                    if (multiplier > bestMultiplier)
-                    {
-                        bestMultiplier = multiplier;
-                        bestWeight = weight;
-                        bestScale = scale;
-                        bestEnemyType = enemy.Key;
-                    }
-                }
-
-                float weightedPower = own.Value * bestMultiplier;
-                if (weightedPower > effectiveTotal) effectiveTotal = weightedPower;
-                sb.AppendLine("    " + own.Key + " base " + own.Value.ToString("0.###", CultureInfo.InvariantCulture) +
-                    " | best vs " + bestEnemyType +
-                    " (weight " + bestWeight.ToString("0.###", CultureInfo.InvariantCulture) +
-                    " x scale " + bestScale.ToString("0.###", CultureInfo.InvariantCulture) +
-                    " = " + bestMultiplier.ToString("0.###", CultureInfo.InvariantCulture) +
-                    ") => " + weightedPower.ToString("0.###", CultureInfo.InvariantCulture));
-            }
-
-            sb.AppendLine("  Effective combat power total (highest option): " + effectiveTotal.ToString("0.###", CultureInfo.InvariantCulture));
             return sb.ToString().TrimEnd();
         }
 
         private string AutoResolveBuildPowerDisplay()
         {
             string battleType = AutoResolveBattleTypeComboBox.SelectedIndex == 0 ? "Space" : (AutoResolveBattleTypeComboBox.SelectedIndex == 1 ? "Land" : "(not selected)");
-            return "Combat Power Preview\r\n" +
+            return "Combat Power Preview (autoresolve-applied)\r\n" +
                 "Battle Type: " + battleType + "\r\n\r\n" +
-                AutoResolveBuildSidePowerDetails("Attacker", autoResolveSideA, autoResolveSideB) +
+                AutoResolveBuildSidePowerDetails("Attacker", autoResolveSideA) +
                 "\r\n\r\n" +
-                AutoResolveBuildSidePowerDetails("Defender", autoResolveSideB, autoResolveSideA);
+                AutoResolveBuildSidePowerDetails("Defender", autoResolveSideB);
         }
 
         private void AutoResolveUpdatePowerDisplay()
@@ -1186,6 +1155,13 @@ namespace Holocron
         {
             if (ReferenceEquals(sender, AutoResolveBattleTypeComboBox))
             {
+                int selectedBattleType = AutoResolveBattleTypeComboBox.SelectedIndex;
+                if (selectedBattleType != autoResolveLastBattleType)
+                {
+                    AutoResolveClearUnitTables();
+                    autoResolveLastBattleType = selectedBattleType;
+                }
+
                 FillAutoResolveUnitSelection();
                 AutoResolveRebuildSideListsFromTables();
             }
@@ -1239,15 +1215,23 @@ namespace Holocron
             if (report == null) return "";
 
             string ownerName = AutoResolveOwnerToName(report.AttackerOwnerId);
-            string source = AutoResolveUnitNameForDisplay(report.SourceTypeName) + " [idx " + report.SourceUnitIndex.ToString() + "]";
+            string source = AutoResolveUnitNameForDisplay(report.SourceTypeName) + " [idx " + report.SourceUnitIndex.ToString(CultureInfo.InvariantCulture) + "]";
+            string sourceCategory = string.IsNullOrWhiteSpace(report.SourceCategory) ? "(none)" : report.SourceCategory;
+            string targetCategory = string.IsNullOrWhiteSpace(report.TargetCategory) ? "(global)" : report.TargetCategory;
 
-            return ownerName + " " + report.SourceKind + " engagement: " + source +
-                " | source power " + report.SourcePowerBefore.ToString("0.###", CultureInfo.InvariantCulture) +
-                " -> " + report.SourcePowerAfter.ToString("0.###", CultureInfo.InvariantCulture) +
-                " | target " + report.TargetCategory + " " + report.TargetCategoryBefore.ToString("0.###", CultureInfo.InvariantCulture) +
-                " -> " + report.TargetCategoryAfter.ToString("0.###", CultureInfo.InvariantCulture) +
-                " | target global " + report.TargetGlobalBefore.ToString("0.###", CultureInfo.InvariantCulture) +
-                " -> " + report.TargetGlobalAfter.ToString("0.###", CultureInfo.InvariantCulture);
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(ownerName + " engagement");
+            sb.AppendLine("+--------------------------------------+--------------------------------+");
+            sb.AppendLine("| Unit engagement by                  | " + source);
+            sb.AppendLine("| Engagement kind                     | " + report.SourceKind);
+            sb.AppendLine("| Multipliers                         | hero=" + report.HeroMultiplier.ToString("0.###", CultureInfo.InvariantCulture) + ", contrast=" + report.ContrastMultiplier.ToString("0.###", CultureInfo.InvariantCulture) + ", total=" + report.TotalMultiplier.ToString("0.###", CultureInfo.InvariantCulture));
+            sb.AppendLine("| Scaled power before target apply    | " + report.ScaledPower.ToString("0.###", CultureInfo.InvariantCulture));
+            sb.AppendLine("| Applied power using categories      | " + report.AppliedCombatPower.ToString("0.###", CultureInfo.InvariantCulture) + " source=" + sourceCategory + " -> target=" + targetCategory);
+            sb.AppendLine("| Target power change                 | " + report.TargetCategoryBefore.ToString("0.###", CultureInfo.InvariantCulture) + " -> " + report.TargetCategoryAfter.ToString("0.###", CultureInfo.InvariantCulture) + " target " + targetCategory);
+            sb.AppendLine("| Target global change                | " + report.TargetGlobalBefore.ToString("0.###", CultureInfo.InvariantCulture) + " -> " + report.TargetGlobalAfter.ToString("0.###", CultureInfo.InvariantCulture));
+            sb.AppendLine("| Base power change                   | " + report.SourcePowerBefore.ToString("0.###", CultureInfo.InvariantCulture) + " -> " + report.SourcePowerAfter.ToString("0.###", CultureInfo.InvariantCulture));
+            sb.Append("+--------------------------------------+--------------------------------+");
+            return sb.ToString();
         }
 
         private string AutoResolveBuildKillListText(AutoResolveBattle battleHistory, int ownerId)

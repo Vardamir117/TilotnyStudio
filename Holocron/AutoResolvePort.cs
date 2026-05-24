@@ -80,13 +80,19 @@ namespace Holocron
         public string SourceTypeName;
         public int SourceUnitIndex;
         public string SourceKind;
+        public string SourceCategory;
         public float SourcePowerBefore;
         public float SourcePowerAfter;
+        public float ScaledPower;
         public string TargetCategory;
         public float TargetCategoryBefore;
         public float TargetCategoryAfter;
         public float TargetGlobalBefore;
         public float TargetGlobalAfter;
+        public float HeroMultiplier;
+        public float ContrastMultiplier;
+        public float TotalMultiplier;
+        public float AppliedCombatPower;
     }
 
     public class AutoResolveAttritionReport
@@ -170,7 +176,6 @@ namespace Holocron
         // Space/land mode and circular battle-history index.
         private bool mIsSpace;
         private int mBattleID = -1;
-        private int mRoundCounter;
         private readonly List<AutoResolveEngagementReport> mLastEngagements = new List<AutoResolveEngagementReport>();
         private readonly List<AutoResolveAttritionReport> mLastAttritionReports = new List<AutoResolveAttritionReport>();
         private readonly Random mAttritionRandom = new Random(1);
@@ -387,8 +392,6 @@ namespace Holocron
                 destroyed = targetAliveBefore && targetedLoser != null && !targetedLoser.IsAlive;
             }
 
-            mRoundCounter++;
-
             mSides[0].UpdatePositions();
             mSides[1].UpdatePositions();
 
@@ -408,7 +411,6 @@ namespace Holocron
             mAggressor = -1;
             mRetreatingPlayer = -1;
             mWinningPlayer = -1;
-            mRoundCounter = 0;
             mLastEngagements.Clear();
             mLastAttritionReports.Clear();
             mBattleFought = false;
@@ -502,6 +504,7 @@ namespace Holocron
                 bool killUnit = false;
                 bool killBase = false;
 
+                // logging info
                 AutoResolveAttritionReport attritionReport = new AutoResolveAttritionReport();
                 attritionReport.SideOwnerId = sideOwnerId;
                 attritionReport.SideIndex = index;
@@ -520,17 +523,20 @@ namespace Holocron
                     {
                         // Non-playable factions are wiped out when they lose.
                         killUnit = true;
+                        // logging info
                         attritionReport.Decision = "KillUnit";
                         attritionReport.Notes = "Non-playable losing faction unit is always destroyed.";
                     }
                     else if (unit.IsSuperWeapon)
                     {
                         killUnit = false;
+                        //logging ingo
                         attritionReport.Decision = "KeepUnit";
                         attritionReport.Notes = "Super weapon survives by default.";
                         if (isLoser && SideHasSuperWeaponKiller(index == 0 ? 1 : 0))
                         {
                             killUnit = true;
+                            // logging info
                             attritionReport.Decision = "KillUnit";
                             attritionReport.Notes = "Super weapon killed by opposing super-weapon killer.";
                             if (ReferenceEquals(weakestUnit, unit)) weakestUnit = null;
@@ -543,6 +549,7 @@ namespace Holocron
                         Update_Battle_History(unit);
                         killBase = true;
                         killUnit = false;
+                        //logging info
                         attritionReport.Decision = "KillBase";
                         attritionReport.Notes = "Losing planet/base branch destroys base state.";
                     }
@@ -550,6 +557,7 @@ namespace Holocron
                     {
                         // MLL: Kill all structures if the player is the loser.
                         killUnit = true;
+                        //logging info
                         attritionReport.Decision = "KillUnit";
                         attritionReport.Notes = "Losing structure is always destroyed.";
                     }
@@ -581,6 +589,7 @@ namespace Holocron
                                 current[selectedIndex].Force -= delta;
                                 garrisonRemaining -= delta;
                             }
+                            // logging info
                             attritionReport.Notes = "Applied garrison power reduction of " + unit.GarrisonPower.ToString("0.###") + ".";
                         }
 
@@ -613,12 +622,14 @@ namespace Holocron
                                         current[selectedIndex].Force -= delta;
                                         replacementRemaining -= delta;
                                     }
+                                    //logging info
                                     attritionReport.Decision = "KeepUnit";
                                     attritionReport.Notes = "Planetary replacement base retained with replacement power " + unit.PlanetaryReplacementPower.ToString("0.###") + ".";
                                 }
                                 else
                                 {
                                     killBase = true;
+                                    //logging info
                                     attritionReport.Decision = "KillBase";
                                     attritionReport.Notes = "No planetary replacement base available.";
                                 }
@@ -653,11 +664,14 @@ namespace Holocron
                                     unitRemainingReduction -= delta;
                                 }
                                 killUnit = false;
+
+                                // logging info
                                 attritionReport.Decision = "KeepUnit";
                                 attritionReport.Notes = "Unit survives by attrition allowance check.";
                             }
                             else
                             {
+                                // logging info
                                 attritionReport.Decision = "KillUnit";
                                 if (string.IsNullOrEmpty(attritionReport.Notes))
                                 {
@@ -682,6 +696,7 @@ namespace Holocron
                     else
                     {
                         weakKilled = true;
+                        // logging info
                         attritionReport.Notes += (string.IsNullOrEmpty(attritionReport.Notes) ? "" : " ") + "Weakest unit deferred for post-loop kill handling.";
                     }
                 }
@@ -692,6 +707,7 @@ namespace Holocron
 
                 currentTotal = 0f;
                 for (int t = 0; t < current.Count; t++) currentTotal += current[t].Force;
+                // logging info
                 attritionReport.ForceAfter = currentTotal;
                 mLastAttritionReports.Add(attritionReport);
 
@@ -708,6 +724,7 @@ namespace Holocron
                 weakestUnit.IsAlive = false;
                 Update_Battle_History(weakestUnit);
 
+                // logging info
                 AutoResolveAttritionReport weakestReport = new AutoResolveAttritionReport();
                 weakestReport.SideOwnerId = sideOwnerId;
                 weakestReport.SideIndex = index;
@@ -824,6 +841,9 @@ namespace Holocron
 
             float originalPower = remainingPower;
             float factor = 0.0f;
+            // logging info
+            float heroMultiplier = 1.0f;
+            float contrastMultiplier = 1.0f;
 
             if (factorTable != null && unit.ContrastCategories != null)
             {
@@ -841,6 +861,8 @@ namespace Holocron
             if (factor != 0.0f)
             {
                 remainingPower *= factor;
+                // logging info
+                heroMultiplier = factor;
             }
 
             string globalKey = mIsSpace ? "__GLOBAL_SPACE__" : "__GLOBAL_GROUND__";
@@ -849,6 +871,10 @@ namespace Holocron
             {
                 float contrastWeight = Get_Unit_Contrast_Weight(unit, bestCategory);
                 remainingPower *= contrastWeight;
+                // logging info
+                contrastMultiplier = contrastWeight;
+                engagement.ScaledPower = remainingPower;
+                engagement.SourceCategory = Get_Best_Source_Category_For_Target(unit, bestCategory);
 
                 int targetIndex = mContrastCategoryToIndex[bestCategory];
 
@@ -859,18 +885,57 @@ namespace Holocron
 
                 int globalIndex = mContrastCategoryToIndex[globalKey];
                 current[globalIndex].Force -= (modifiedForceApplied + remainingPower);
+
+                // logging info
+                engagement.AppliedCombatPower = modifiedForceApplied;
             }
             else
             {
                 int globalIndex = mContrastCategoryToIndex[globalKey];
-                current[globalIndex].Force -= remainingPower;
+                float appliedToGlobal = remainingPower;
+                engagement.ScaledPower = appliedToGlobal;
+                engagement.SourceCategory = unit.ContrastCategories == null ? null : unit.ContrastCategories.FirstOrDefault();
+                current[globalIndex].Force -= appliedToGlobal;
                 remainingPower = 0.0f;
+
+                // logging info
+                engagement.AppliedCombatPower = appliedToGlobal;
             }
 
-            if (engagement != null)
+            // logging info
+            engagement.HeroMultiplier = heroMultiplier;
+            engagement.ContrastMultiplier = contrastMultiplier;
+            engagement.TotalMultiplier = heroMultiplier * contrastMultiplier;
+            engagement.SourcePowerAfter = remainingPower;
+        }
+           
+        // logging util
+        private string Get_Best_Source_Category_For_Target(AutoResolveCombatant unit, string targetCategory)
+        {
+            if (unit == null || unit.ContrastCategories == null || unit.ContrastCategories.Count == 0) return null;
+            if (string.IsNullOrWhiteSpace(targetCategory)) return unit.ContrastCategories[0];
+
+            string bestCategory = null;
+            float bestWeight = float.MinValue;
+
+            for (int i = 0; i < unit.ContrastCategories.Count; i++)
             {
-                engagement.SourcePowerAfter = remainingPower;
+                string friendlyCategory = unit.ContrastCategories[i];
+                if (string.IsNullOrWhiteSpace(friendlyCategory)) continue;
+
+                float weight = ContrastWeightProvider == null ? 1.0f : ContrastWeightProvider(targetCategory, friendlyCategory);
+
+                // Match Get_Average_Contrast_Factor semantics: ignore default/no-op 1.0 mappings.
+                if (Math.Abs(weight - 1.0f) <= 0.0001f) continue;
+
+                if (weight > bestWeight)
+                {
+                    bestWeight = weight;
+                    bestCategory = friendlyCategory;
+                }
             }
+
+            return bestCategory ?? unit.ContrastCategories[0];
         }
 
         public void Side_Attack(List<AutoResolveCombatant> units, TargetResult targetForce, ref TargetResult result, int playerId)
@@ -952,6 +1017,7 @@ namespace Holocron
                     {
                         Find_Contrast_Index(remainingPower, unit, result, out bestCategory);
 
+                        //logging info
                         AutoResolveEngagementReport engagement = new AutoResolveEngagementReport();
                         engagement.AttackerOwnerId = playerId;
                         engagement.SourceTypeName = unit.TypeName;
@@ -966,6 +1032,7 @@ namespace Holocron
 
                         Apply_Unit_Contrast(ref remainingPower, unit, ref result, bestCategory, catTable, mIsSpace ? MapEnvironmentType.Space : MapEnvironmentType.Ground, engagement);
 
+                        //logging info
                         engagement.TargetCategoryAfter = string.IsNullOrWhiteSpace(bestCategory) ? 0.0f : result[targetIndex].Force;
                         engagement.TargetGlobalAfter = result[globalIndex].Force;
                         mLastEngagements.Add(engagement);
@@ -981,6 +1048,7 @@ namespace Holocron
                 {
                     Find_Contrast_Index(unitRemainingPower, unit, result, out bestCategory);
 
+                    //logging info
                     AutoResolveEngagementReport engagement = new AutoResolveEngagementReport();
                     engagement.AttackerOwnerId = playerId;
                     engagement.SourceTypeName = unit.TypeName;
@@ -995,6 +1063,7 @@ namespace Holocron
 
                     Apply_Unit_Contrast(ref unitRemainingPower, unit, ref result, bestCategory, catTable, mIsSpace ? MapEnvironmentType.Space : MapEnvironmentType.Ground, engagement);
 
+                    //logging info
                     engagement.TargetCategoryAfter = string.IsNullOrWhiteSpace(bestCategory) ? 0.0f : result[targetIndex].Force;
                     engagement.TargetGlobalAfter = result[globalIndex].Force;
                     mLastEngagements.Add(engagement);
@@ -1298,7 +1367,6 @@ namespace Holocron
 
             mSides[0].Init();
             mSides[1].Init();
-            mRoundCounter = 0;
             mLastEngagements.Clear();
             mBattleFought = false;
 
