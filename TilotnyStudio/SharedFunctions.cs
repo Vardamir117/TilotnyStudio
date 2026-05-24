@@ -2507,7 +2507,7 @@ public static class SharedFunctions
                 entities.PlanetBounds = Math.Max(entities.PlanetBounds, -y);
             }
             else if (line.Contains("<Planet_Surface_Accessible>") && line.ToLower().Contains("yes")) has_ground = true;
-            else if (line.Contains("<Planet_Credit_Value>")) credits = Int32.Parse(ReadXMLElement(line));
+            else if (line.Contains("<Planet_Credit_Value>")) credits = (int)Single.Parse(ReadXMLElement(line));
             else if (line.Contains("<Planet_Ability_Name>"))
             {
                 switch (ReadXMLElement(line))
@@ -3687,15 +3687,15 @@ public static class SharedFunctions
             else if ((entity.behaviors.Contains("DUMMY_ORBITAL_STRUCTURE") || entity.modebehaviors.Contains("DUMMY_ORBITAL_STRUCTURE")) && (entity.elementName != "W_DummyStructure" || entity.elementName != "MiscObject"))
             {
                 entities.spaceStructures.Add(entity);
-            }//todo fightermode > 0 once gunships are in a better spot
-            else if (entity.fightermode >= 0 || entity.behaviors.Contains("DUMMY_SPACE_FIGHTER_SQUADRON") || entity.modebehaviors.Contains("DUMMY_SPACE_FIGHTER_SQUADRON"))
-            {
-                entities.fighters.Add(entity);
             }
-            else if (entity.behaviors.Contains("SIMPLE_SPACE_LOCOMOTOR") || entity.modebehaviors.Contains("SIMPLE_SPACE_LOCOMOTOR"))
+            else if (entity.fightermode == 0 || entity.behaviors.Contains("SIMPLE_SPACE_LOCOMOTOR") || entity.modebehaviors.Contains("SIMPLE_SPACE_LOCOMOTOR"))
             {
                 if (entity.hero) entities.spaceHeroes.Add(entity);
                 else entities.spaceUnits.Add(entity);
+            }
+            else if (entity.fightermode > 0 || entity.behaviors.Contains("DUMMY_SPACE_FIGHTER_SQUADRON") || entity.modebehaviors.Contains("DUMMY_SPACE_FIGHTER_SQUADRON"))
+            {
+                entities.fighters.Add(entity);
             }
             else if (entity.percompany > 0)
             {
@@ -3795,6 +3795,28 @@ public static class SharedFunctions
         return hps;
     }
 
+    public static List<String> readLuaSpawnLibrary(string[] UnitLib)
+    {
+        List<string> corenne = new List<string>();
+        string spawn = "";
+        foreach (string line in UnitLib)
+        {
+            if (line.Contains("[\""))
+            {//Between [" and "] is the spawn name. May need to handle the version without that in the future
+                spawn = line.Substring(line.IndexOf("[") + 2, line.IndexOf("]") - line.IndexOf("[") - 3);
+            }
+            if (line.Contains("Initial"))
+            {
+                string trimmed = fullTrim(line);
+                int amount = trimmed.IndexOf("Initial=");
+                string qty = trimmed.Substring(amount + 8, trimmed.IndexOf(",") - amount - 8);
+                amount = Int32.Parse(qty);
+                for (int i = 0; i < amount; i++) corenne.Add(spawn);
+            }
+        }
+        return corenne;
+    }
+
     public static List<String> getGroundUnitLibrary(string unitname)
     {
         List<string> corenne = new List<string>();
@@ -3808,22 +3830,25 @@ public static class SharedFunctions
             if (path != "") //fail return for getModFile
             {
                 string[] UnitLib = File.ReadAllLines(path);
-                string spawn = "";
-                foreach (string line in UnitLib)
-                {
-                    if (line.Contains("[\""))
-                    {//Between [" and "] is the spawn name. May need to handle the version without that in the future
-                        spawn = line.Substring(line.IndexOf("[") + 2, line.IndexOf("]") - line.IndexOf("[") - 3);
-                    }
-                    if (line.Contains("Initial"))
-                    {
-                        string trimmed = fullTrim(line);
-                        int amount = trimmed.IndexOf("Initial=");
-                        string qty = trimmed.Substring(amount + 8, trimmed.IndexOf(",") - amount - 8);
-                        amount = Int32.Parse(qty);
-                        for (int i = 0; i < amount; i++) corenne.Add(spawn);
-                    }
-                }
+                corenne = readLuaSpawnLibrary(UnitLib);
+            }
+        }
+        return corenne;
+    }
+
+    public static List<String> getSpaceUnitLibrary(string unitname)
+    {
+        List<string> corenne = new List<string>();
+        List<string> paths = new List<string>();//Check several old ways of doing this fr backwards compatibility
+        paths.Add(getModFile("Scripts\\Library\\gameobjects\\" + unitname + ".lua"));//TODO I am only guessing this is the final version after mod content loader is dead
+        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\gameobjects\\" + unitname + ".lua"));
+
+        foreach (string path in paths)
+        {
+            if (path != "") //fail return for getModFile
+            {
+                string[] UnitLib = File.ReadAllLines(path);
+                corenne = readLuaSpawnLibrary(UnitLib);
             }
         }
         return corenne;
@@ -3837,7 +3862,7 @@ public static class SharedFunctions
         for (int i = 0; i < entities.objects.Count; i++)
         {
             unit company = entities.objects[i];
-            if (company.percompany > 0) //Only companies, squadrons, and suchlike need to be considered
+            if (company.percompany > 0 || company.unitname.Contains("_Group")) //Only companies, squadrons, and suchlike need to be considered
             {
                 string caps = "\"" + company.unitname.ToUpper() + "\"";
                 //Check for Lua build limits
@@ -3891,6 +3916,17 @@ public static class SharedFunctions
                     }
                     //else newcompanyunits.Add(target); //Will need this if spawners are ever mixed with regular units
                     company.spawner_dummies.Add(target);
+                }
+                if (company.unitname.Contains("_Group"))
+                {
+                    List<string> returned = getSpaceUnitLibrary(company.unitname);
+                    foreach (string unit in returned) newcompanyunits.Add(unit);
+                    if (newcompanyunits.Count > 0)
+                    {
+                        company.consolidatedhps = new List<hardpoint>(); //Groups generally variant off of the base unit and have HPs that don't count
+                        company.spawner_dummies.Add(company.unitname);
+                    }
+                    else continue;
                 }
                 if (newcompanyunits.Count > 0) company.companyunits = newcompanyunits;
 
@@ -3966,6 +4002,7 @@ public static class SharedFunctions
                                     if (company.garrison_type == "") company.garrison_type = unit.garrison_type;
                                     if (company.categories.Count == 0) company.categories = unit.categories;
                                     if (company.flags.Count == 0) company.flags = unit.flags;
+                                    if (company.fightermode < 0) company.fightermode = unit.fightermode;
                                     if (company.bombingRunUnit == "") company.bombingRunUnit = unit.bombingRunUnit;
                                     foreach (string behavior in unit.behaviors)
                                     {
@@ -4040,6 +4077,7 @@ public static class SharedFunctions
                                 if (company.garrison_type == "") company.garrison_type = subcompany.garrison_type;
                                 if (company.categories.Count == 0) company.categories = subcompany.categories;
                                 if (company.flags.Count == 0) company.flags = subcompany.flags;
+                                if (company.fightermode < 0) company.fightermode = subcompany.fightermode;
                                 if (company.bombingRunUnit == "") company.bombingRunUnit = subcompany.bombingRunUnit;
                                 foreach (string behavior in subcompany.behaviors)
                                 {

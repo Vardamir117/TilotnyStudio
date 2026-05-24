@@ -675,7 +675,7 @@ namespace TilotnyStudio
             parseObjects(entities);
             untemplate(entities);
             categorizeObjects(entities);
-            entities.groundCompanies = unitToCompanyData(entities.groundCompanies, entities.groundUnits, entities.containers);
+            unitToCompanyData(entities);
             parsePrereqs(entities.groundCompanies,false);
             parsePrereqs(entities.spaceUnits, true);
 

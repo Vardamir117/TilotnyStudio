@@ -670,6 +670,16 @@ namespace Holocron
                                 name.heroes.Add(hero.username + " (Standalone)");
                                 globals.shipnames[index] = name;
                             }
+                            else if (hero.unitclass == "TEXT_ENCYCLOPEDIA_CLASS_UNIQUE_SHIP")
+                            {
+                                shipname nuevo = new shipname();
+                                nuevo.name = hero.username;
+                                nuevo.units = new List<string>();
+                                nuevo.heroes = new List<string>();
+                                nuevo.heroes.Add(hero.username + " (Standalone)");
+                                nuevo.unused = new List<string>();
+                                globals.shipnames.Add(nuevo);
+                            }
                         }
 
                         Checked = new List<string>();
