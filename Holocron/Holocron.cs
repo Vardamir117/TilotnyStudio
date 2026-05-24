@@ -1181,7 +1181,7 @@ namespace Holocron
         {
             if (AutoResolveSideAFactionComboBox.Items.Count == 0)
             {
-                foreach (holo_faction faction in globals.factions)
+                foreach (faction faction in entities.factions)
                 {
                     AutoResolveSideAFactionComboBox.Items.Add(faction.textname);
                     AutoResolveSideBFactionComboBox.Items.Add(faction.textname);
@@ -1246,7 +1246,7 @@ namespace Holocron
 
         private string AutoResolveOwnerToName(int owner)
         {
-            if (owner >= 0 && owner < globals.factions.Count) return globals.factions[owner].textname;
+            if (owner >= 0 && owner < entities.factions.Count) return entities.factions[owner].textname;
             return "Owner " + owner.ToString();
         }
 
