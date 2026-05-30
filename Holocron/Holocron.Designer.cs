@@ -304,6 +304,7 @@
             this.AutoResolveSideAFacLabel = new System.Windows.Forms.Label();
             this.AutoResolveRunButton = new System.Windows.Forms.Button();
             this.AutoResolveResultTextBox = new System.Windows.Forms.TextBox();
+            this.AutoResolveContrastGridLabel = new System.Windows.Forms.Label();
             this.AutoResolveRetreatWinnerAttritionNumeric = new System.Windows.Forms.NumericUpDown();
             this.AutoResolveRetreatWinnerAttritionLabel = new System.Windows.Forms.Label();
             this.AutoResolveRetreatLoserAttritionNumeric = new System.Windows.Forms.NumericUpDown();
@@ -3285,6 +3286,7 @@
             this.tabAutoResolve.Controls.Add(this.AutoResolveSideAFacLabel);
             this.tabAutoResolve.Controls.Add(this.AutoResolveRunButton);
             this.tabAutoResolve.Controls.Add(this.AutoResolveResultTextBox);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveContrastGridLabel);
             this.tabAutoResolve.Controls.Add(this.AutoResolveRetreatWinnerAttritionNumeric);
             this.tabAutoResolve.Controls.Add(this.AutoResolveRetreatWinnerAttritionLabel);
             this.tabAutoResolve.Controls.Add(this.AutoResolveRetreatLoserAttritionNumeric);
@@ -3434,6 +3436,15 @@
             this.AutoResolveResultTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.AutoResolveResultTextBox.Size = new System.Drawing.Size(731, 447);
             this.AutoResolveResultTextBox.TabIndex = 15;
+            // 
+            // AutoResolveContrastGridLabel
+            // 
+            this.AutoResolveContrastGridLabel.AutoSize = true;
+            this.AutoResolveContrastGridLabel.Location = new System.Drawing.Point(746, 12);
+            this.AutoResolveContrastGridLabel.Name = "AutoResolveContrastGridLabel";
+            this.AutoResolveContrastGridLabel.Size = new System.Drawing.Size(167, 13);
+            this.AutoResolveContrastGridLabel.TabIndex = 32;
+            this.AutoResolveContrastGridLabel.Text = "Friendly contrast weights by enemy";
             // 
             // AutoResolveRetreatWinnerAttritionNumeric
             // 
@@ -3994,6 +4005,7 @@
         private System.Windows.Forms.NumericUpDown AutoResolveTransportLossesNumeric;
         private System.Windows.Forms.NumericUpDown AutoResolveTechLevelNumeric;
         private System.Windows.Forms.Label AutoResolveTechLevelLabel;
+        private System.Windows.Forms.Label AutoResolveContrastGridLabel;
         private System.Windows.Forms.Label AutoResolveAttritionAllowanceLabel;
         private System.Windows.Forms.Label TransportLossesLabel;
         private System.Windows.Forms.ListBox GCListBox;

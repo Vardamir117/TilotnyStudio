@@ -7,37 +7,35 @@ namespace Holocron
     // Port helpers for TargetContrast.cpp behavior used by auto-resolve.
     public static class TargetContrastPort
     {
-        // Mirrors TargetContrastClass::Get_Average_Contrast_Factor semantics for category-based contrast maps.
-        public static float Get_Average_Contrast_Factor(
-            IEnumerable<string> friendlyCategories,
-            string enemyCategory,
-            Func<string, string, float> contrastWeightProvider)
+        public struct WeightedCategoryEntry
         {
-            if (friendlyCategories == null || string.IsNullOrWhiteSpace(enemyCategory)) return 0.0f;
+            public ulong CategoryMask;
+            public float Weight;
+        }
+
+        // Mirrors TargetContrastClass::Get_Average_Contrast_Factor semantics for bitmask categories.
+        public static float Get_Average_Contrast_Factor(
+            ulong friendlyCategoryMask,
+            List<WeightedCategoryEntry> weightList)
+        {
+            if (friendlyCategoryMask == 0UL || weightList == null || weightList.Count == 0) return 0.0f;
 
             float totalWeight = 0.0f;
             int weightCount = 0;
             bool matchesContrast = false;
 
-            foreach (string friendlyCategory in friendlyCategories.Where(x => !string.IsNullOrWhiteSpace(x)))
+            for (int i = 0; i < weightList.Count; i++)
             {
-                float? maybeWeight = null;
+                WeightedCategoryEntry entry = weightList[i];
+                if ((friendlyCategoryMask & entry.CategoryMask) == 0UL) continue;
 
-                if (contrastWeightProvider != null)
-                {
-                    maybeWeight = contrastWeightProvider(enemyCategory, friendlyCategory);
-                }
-
-                if (!maybeWeight.HasValue) continue;
-
-                float weight = maybeWeight.Value;
                 matchesContrast = true;
 
                 // C++ parity: ignore weights of exactly 1.0f when computing average,
                 // but still mark that the contrast matched.
-                if (Math.Abs(weight - 1.0f) > 0.0001f)
+                if (Math.Abs(entry.Weight - 1.0f) > 0.0001f)
                 {
-                    totalWeight += weight;
+                    totalWeight += entry.Weight;
                     weightCount++;
                 }
             }

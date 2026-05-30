@@ -2002,6 +2002,7 @@ public static class SharedFunctions
             if(name == "InfantryHero") entities.GroundCategories.Add(name);
             if (name == "VehicleHero") entities.GroundCategories.Add(name);
             if (name == "SpaceHero") entities.SpaceCategories.Add(name);
+            entities.CategoryBitMasks[name] = hex;
         }
     }
 
@@ -4768,6 +4769,7 @@ public struct entities {
     public static List<string> AllCategories = new List<string>();
     public static List<string> SpaceCategories = new List<string>();
     public static List<string> GroundCategories = new List<string>();
+    public static Dictionary<string, ulong> CategoryBitMasks = new Dictionary<string, ulong>(StringComparer.OrdinalIgnoreCase);
 
     public static Bitmap MTmaster;
     public static List<IconData> IconData = new List<IconData>();

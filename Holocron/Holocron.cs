@@ -95,18 +95,22 @@ namespace Holocron
             public static bool suppresshistory = false;
         }
 
+        public struct weighted_type_entry
+        {
+            public string name;
+            public ulong categoryMask;
+            public float weight;
+        }
+
         public struct weighted_type_list
         {
-            public List<string> typeNames;
-            public List<float> weights;
+            public ulong enemyCategoryMask;
+            public List<weighted_type_entry> weightedTypes;
         }
 
         public struct contrast_values
         {
-            public List<string> enemyTypes;
             public List<weighted_type_list> friendlyTypeLists;
-            public List<List<string>> friendlyTypeNames;
-            public List<List<float>> friendlyTypeWeights;
             public Dictionary<string, float> typeScale;
         }
 
@@ -129,6 +133,7 @@ namespace Holocron
         private int autoResolveSideBOwner = 1;
         private DataGridView autoResolveSideAGrid;
         private DataGridView autoResolveSideBGrid;
+        private DataGridView autoResolveContrastGrid;
         private bool autoResolveTablesInitialized = false;
         private int autoResolveLastBattleType = -1;
 
@@ -398,16 +403,13 @@ namespace Holocron
         private contrast_values ReadContrastValues()
         {
             contrast_values contrastValues = new contrast_values();
-            contrastValues.enemyTypes = new List<string>();
             contrastValues.friendlyTypeLists = new List<weighted_type_list>();
-            contrastValues.friendlyTypeNames = new List<List<string>>();
-            contrastValues.friendlyTypeWeights = new List<List<float>>();
             contrastValues.typeScale = new Dictionary<string, float>();
 
             string[] lines = File.ReadAllLines(getModFile("Scripts\\Library\\PGAICommands.lua"));
             bool inContrastFunction = false;
 
-            string currentEnemy = "";
+            ulong currentEnemyCategoryMask = 0UL;
             List<string> currentNames = null;
             List<float> currentWeights = null;
 
@@ -425,7 +427,7 @@ namespace Holocron
 
                 if (line.StartsWith("EnemyContrastTypes[_e_cnt]"))
                 {
-                    currentEnemy = LuaParser.ExtractLuaQuotedValue(line);
+                    currentEnemyCategoryMask = AutoResolveGetCategoryMask(LuaParser.ExtractLuaQuotedValue(line));
                     continue;
                 }
 
@@ -440,13 +442,18 @@ namespace Holocron
                     currentWeights = LuaParser.ParseLuaFloatArray(line);
 
                     weighted_type_list list = new weighted_type_list();
-                    list.typeNames = currentNames;
-                    list.weights = currentWeights;
+                    list.enemyCategoryMask = currentEnemyCategoryMask;
+                    list.weightedTypes = new List<weighted_type_entry>();
+                    for (int i = 0; i < Math.Min(currentNames.Count, currentWeights.Count); i++)
+                    {
+                        weighted_type_entry entry = new weighted_type_entry();
+                        entry.name = currentNames[i];
+                        entry.categoryMask = AutoResolveGetCategoryMask(currentNames[i]);
+                        entry.weight = currentWeights[i];
+                        list.weightedTypes.Add(entry);
+                    }
 
-                    contrastValues.enemyTypes.Add(currentEnemy);
                     contrastValues.friendlyTypeLists.Add(list);
-                    contrastValues.friendlyTypeNames.Add(new List<string>(currentNames));
-                    contrastValues.friendlyTypeWeights.Add(new List<float>(currentWeights));
                     continue;
                 }
 
@@ -949,6 +956,7 @@ namespace Holocron
                 .ToList();
 
             AutoResolveApplyGridUnitChoices(availableUnits);
+            AutoResolveFillContrastGrid();
         }
 
         private void AutoResolveCreateEditableTables()
@@ -957,9 +965,11 @@ namespace Holocron
 
             autoResolveSideAGrid = AutoResolveCreateSideGrid(new Point(12, 55));
             autoResolveSideBGrid = AutoResolveCreateSideGrid(new Point(399, 55));
+            autoResolveContrastGrid = AutoResolveCreateContrastGrid(new Point(749, 32));
 
             tabAutoResolve.Controls.Add(autoResolveSideAGrid);
             tabAutoResolve.Controls.Add(autoResolveSideBGrid);
+            tabAutoResolve.Controls.Add(autoResolveContrastGrid);
 
             autoResolveTablesInitialized = true;
         }
@@ -994,6 +1004,42 @@ namespace Holocron
             grid.CellValueChanged += AutoResolveGrid_CellValueChanged;
             grid.CurrentCellDirtyStateChanged += AutoResolveGrid_CurrentCellDirtyStateChanged;
             grid.UserDeletedRow += AutoResolveGrid_UserDeletedRow;
+
+            return grid;
+        }
+
+        private DataGridView AutoResolveCreateContrastGrid(Point location)
+        {
+            DataGridView grid = new DataGridView();
+            grid.Location = location;
+            grid.Size = new Size(725, 746);
+            grid.AllowUserToAddRows = false;
+            grid.AllowUserToDeleteRows = false;
+            grid.AllowUserToOrderColumns = false;
+            grid.ReadOnly = true;
+            grid.RowHeadersVisible = false;
+            grid.AutoGenerateColumns = false;
+            grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            grid.MultiSelect = false;
+
+            DataGridViewTextBoxColumn enemyColumn = new DataGridViewTextBoxColumn();
+            enemyColumn.Name = "EnemyCategory";
+            enemyColumn.HeaderText = "Enemy Category";
+            enemyColumn.Width = 180;
+
+            DataGridViewTextBoxColumn friendlyColumn = new DataGridViewTextBoxColumn();
+            friendlyColumn.Name = "FriendlyCategory";
+            friendlyColumn.HeaderText = "Friendly Category";
+            friendlyColumn.Width = 300;
+
+            DataGridViewTextBoxColumn weightColumn = new DataGridViewTextBoxColumn();
+            weightColumn.Name = "Weight";
+            weightColumn.HeaderText = "Weight";
+            weightColumn.Width = 90;
+
+            grid.Columns.Add(enemyColumn);
+            grid.Columns.Add(friendlyColumn);
+            grid.Columns.Add(weightColumn);
 
             return grid;
         }
@@ -1084,41 +1130,136 @@ namespace Holocron
         private void AutoResolveRefreshSideListboxes()
         {
             AutoResolveRebuildSideListsFromTables();
+            AutoResolveFillContrastGrid();
             AutoResolveUpdatePowerDisplay();
         }
 
-        private float? AutoResolveTryGetContrastWeight(string enemyType, string friendlyType)
+        private ulong AutoResolveGetCategoryMask(string category)
         {
-            if (globals.ContrastValues.enemyTypes == null || globals.ContrastValues.friendlyTypeLists == null) return null;
+            if (string.IsNullOrWhiteSpace(category) || entities.CategoryBitMasks == null) return 0UL;
 
-            int entries = Math.Min(globals.ContrastValues.enemyTypes.Count, globals.ContrastValues.friendlyTypeLists.Count);
-            for (int i = 0; i < entries; i++)
+            ulong value;
+            if (entities.CategoryBitMasks.TryGetValue(category, out value)) return value;
+            return 0UL;
+        }
+
+        private ulong AutoResolveGetCategoryMask(IEnumerable<string> categories)
+        {
+            ulong combined = 0UL;
+            if (categories == null) return combined;
+
+            foreach (string category in categories)
             {
-                if (!string.Equals(globals.ContrastValues.enemyTypes[i], enemyType, StringComparison.OrdinalIgnoreCase)) continue;
-
-                weighted_type_list weighted = globals.ContrastValues.friendlyTypeLists[i];
-                if (weighted.typeNames == null || weighted.weights == null) return null;
-
-                int pairCount = Math.Min(weighted.typeNames.Count, weighted.weights.Count);
-                for (int j = 0; j < pairCount; j++)
-                {
-                    if (string.Equals(weighted.typeNames[j], friendlyType, StringComparison.OrdinalIgnoreCase)) return weighted.weights[j];
-                }
-                return null;
+                combined |= AutoResolveGetCategoryMask(category);
             }
 
-            return null;
+            return combined;
         }
 
-        private float AutoResolveGetContrastWeight(string enemyType, string friendlyType)
+        private List<string> AutoResolveGetCategoriesFromMask(ulong categoryMask, IEnumerable<string> fallbackCategories)
         {
-            float? weight = AutoResolveTryGetContrastWeight(enemyType, friendlyType);
-            return weight ?? 1f;
+            List<string> categories = new List<string>();
+            if (categoryMask != 0UL)
+            {
+                foreach (string category in entities.AllCategories)
+                {
+                    ulong mask = AutoResolveGetCategoryMask(category);
+                    if (mask != 0UL && (categoryMask & mask) != 0UL) categories.Add(category);
+                }
+
+                if (categories.Count == 0 && entities.CategoryBitMasks != null)
+                {
+                    foreach (KeyValuePair<string, ulong> pair in entities.CategoryBitMasks)
+                    {
+                        if (pair.Value != 0UL && (categoryMask & pair.Value) != 0UL) categories.Add(pair.Key);
+                    }
+                }
+            }
+
+            if (categories.Count == 0 && fallbackCategories != null)
+            {
+                foreach (string category in fallbackCategories)
+                {
+                    if (!string.IsNullOrWhiteSpace(category)) categories.Add(category);
+                }
+            }
+
+            return categories;
         }
 
-        private Dictionary<string, float> AutoResolveBuildCategoryPowerMap(List<autoresolve_entry> side, bool space)
+        private string AutoResolveGetDisplayCategoryFromMask(ulong categoryMask, IEnumerable<string> fallbackCategories = null)
         {
-            Dictionary<string, float> values = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
+            List<string> categories = AutoResolveGetCategoriesFromMask(categoryMask, fallbackCategories);
+            return categories.Count > 0 ? categories[0] : null;
+        }
+
+        private List<TargetContrastPort.WeightedCategoryEntry> AutoResolveGetContrastWeights(ulong enemyTypeMask)
+        {
+            List<TargetContrastPort.WeightedCategoryEntry> weights = new List<TargetContrastPort.WeightedCategoryEntry>();
+            if (globals.ContrastValues.friendlyTypeLists == null) return weights;
+
+            for (int i = 0; i < globals.ContrastValues.friendlyTypeLists.Count; i++)
+            {
+                weighted_type_list weighted = globals.ContrastValues.friendlyTypeLists[i];
+                if ((weighted.enemyCategoryMask & enemyTypeMask) == 0UL) continue;
+
+                for (int j = 0; j < weighted.weightedTypes.Count; j++)
+                {
+                    weighted_type_entry weightedType = weighted.weightedTypes[j];
+                    if (weightedType.categoryMask == 0UL) continue;
+
+                    TargetContrastPort.WeightedCategoryEntry entry = new TargetContrastPort.WeightedCategoryEntry();
+                    entry.CategoryMask = weightedType.categoryMask;
+                    entry.Weight = weightedType.weight;
+                    weights.Add(entry);
+                }
+
+                return weights;
+            }
+
+            return weights;
+        }
+
+        private void AutoResolveFillContrastGrid()
+        {
+            if (autoResolveContrastGrid == null) return;
+
+            autoResolveContrastGrid.Rows.Clear();
+            if (globals.ContrastValues.friendlyTypeLists == null) return;
+
+            for (int i = 0; i < globals.ContrastValues.friendlyTypeLists.Count; i++)
+            {
+                weighted_type_list weighted = globals.ContrastValues.friendlyTypeLists[i];
+                string enemyCategory = AutoResolveGetDisplayCategoryFromMask(weighted.enemyCategoryMask);
+                if (string.IsNullOrWhiteSpace(enemyCategory)) enemyCategory = "(none)";
+
+                if (weighted.weightedTypes == null || weighted.weightedTypes.Count == 0)
+                {
+                    autoResolveContrastGrid.Rows.Add(enemyCategory, "(none)", "");
+                    continue;
+                }
+
+                for (int j = 0; j < weighted.weightedTypes.Count; j++)
+                {
+                    weighted_type_entry weightedType = weighted.weightedTypes[j];
+                    string friendlyCategory = weightedType.name;
+                    if (string.IsNullOrWhiteSpace(friendlyCategory))
+                    {
+                        friendlyCategory = AutoResolveGetDisplayCategoryFromMask(weightedType.categoryMask);
+                    }
+                    if (string.IsNullOrWhiteSpace(friendlyCategory)) friendlyCategory = "(none)";
+
+                    autoResolveContrastGrid.Rows.Add(
+                        j == 0 ? enemyCategory : "",
+                        friendlyCategory,
+                        weightedType.weight.ToString("0.###", CultureInfo.InvariantCulture));
+                }
+            }
+        }
+
+        private Dictionary<ulong, float> AutoResolveBuildCategoryPowerMap(List<autoresolve_entry> side, bool space)
+        {
+            Dictionary<ulong, float> values = new Dictionary<ulong, float>();
 
             foreach (autoresolve_entry entry in side)
             {
@@ -1126,14 +1267,13 @@ namespace Holocron
                 if (space && isTransport) continue;
 
                 float power = Math.Max(0f, entry.source.cp) * Math.Max(1, entry.quantity);
-                if (power <= 0f || entry.source.categories == null || entry.source.categories.Count == 0) continue;
+                if (power <= 0f) continue;
 
-                string category = entry.source.categories[0];
-                if (string.IsNullOrWhiteSpace(category)) continue;
+                ulong categoryMask = AutoResolveGetCategoryMask(entry.source.categories);
 
                 float extant;
-                if (values.TryGetValue(category, out extant)) values[category] = extant + power;
-                else values[category] = power;
+                if (values.TryGetValue(categoryMask, out extant)) values[categoryMask] = extant + power;
+                else values[categoryMask] = power;
             }
 
             return values;
@@ -1164,19 +1304,18 @@ namespace Holocron
                 float garrisonPower = Math.Max(0f, garrisonUnit.cp) * count;
                 if (garrisonPower <= 0f) continue;
 
-                string garrisonCategory = (garrisonUnit.categories != null && garrisonUnit.categories.Count > 0)
-                    ? garrisonUnit.categories[0]
-                    : null;
+                ulong garrisonCategoryMask = AutoResolveGetCategoryMask(garrisonUnit.categories);
+                string garrisonCategory = AutoResolveGetDisplayCategoryFromMask(garrisonCategoryMask, garrisonUnit.categories);
 
-                entries.Add(new AutoResolveBuiltObject { ContrastCategory = garrisonCategory, Power = garrisonPower });
+                entries.Add(new AutoResolveBuiltObject { CategoryMask = garrisonCategoryMask, ContrastCategory = garrisonCategory, Power = garrisonPower });
             }
 
             return entries;
         }
 
-        private Dictionary<string, float> AutoResolveBuildGarrisonCategoryPowerMap(List<autoresolve_entry> side)
+        private Dictionary<ulong, float> AutoResolveBuildGarrisonCategoryPowerMap(List<autoresolve_entry> side)
         {
-            Dictionary<string, float> values = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
+            Dictionary<ulong, float> values = new Dictionary<ulong, float>();
             Dictionary<string, unit> unitLookup = AutoResolveGetUnitSource()
                 .GroupBy(x => x.unitname, StringComparer.OrdinalIgnoreCase)
                 .ToDictionary(x => x.Key, x => x.First(), StringComparer.OrdinalIgnoreCase);
@@ -1191,14 +1330,16 @@ namespace Holocron
                 for (int g = 0; g < garrisonEntries.Count; g++)
                 {
                     AutoResolveBuiltObject garrisonEntry = garrisonEntries[g];
-                    if (garrisonEntry == null || string.IsNullOrWhiteSpace(garrisonEntry.ContrastCategory)) continue;
+                    if (garrisonEntry == null) continue;
 
                     float power = garrisonEntry.Power * entryCount;
                     if (power <= 0f) continue;
 
+                    ulong categoryMask = garrisonEntry.CategoryMask;
+
                     float extant;
-                    if (values.TryGetValue(garrisonEntry.ContrastCategory, out extant)) values[garrisonEntry.ContrastCategory] = extant + power;
-                    else values[garrisonEntry.ContrastCategory] = power;
+                    if (values.TryGetValue(categoryMask, out extant)) values[categoryMask] = extant + power;
+                    else values[categoryMask] = power;
                 }
             }
 
@@ -1219,10 +1360,10 @@ namespace Holocron
         {
             StringBuilder sb = new StringBuilder();
             bool space = AutoResolveBattleTypeComboBox.SelectedIndex == 0;
-            Dictionary<string, float> ownCategories = AutoResolveBuildCategoryPowerMap(ownEntries, space);
-            Dictionary<string, float> garrisonCategories = AutoResolveBuildGarrisonCategoryPowerMap(ownEntries);
+            Dictionary<ulong, float> ownCategories = AutoResolveBuildCategoryPowerMap(ownEntries, space);
+            Dictionary<ulong, float> garrisonCategories = AutoResolveBuildGarrisonCategoryPowerMap(ownEntries);
 
-            foreach (KeyValuePair<string, float> garrison in garrisonCategories)
+            foreach (KeyValuePair<ulong, float> garrison in garrisonCategories)
             {
                 float extant;
                 if (ownCategories.TryGetValue(garrison.Key, out extant)) ownCategories[garrison.Key] = extant + garrison.Value;
@@ -1233,8 +1374,10 @@ namespace Holocron
             float garrisonPower = garrisonCategories.Values.Sum();
             float rawPowerWithGarrison = rawPower + garrisonPower;
             float appliedPower = ownCategories.Values.Sum();
+            int totalPopulation = ownEntries.Sum(x => Math.Max(0, x.source.pop) * Math.Max(1, x.quantity));
 
             sb.AppendLine(sideName + " listed combat power: " + rawPowerWithGarrison.ToString("0.###", CultureInfo.InvariantCulture));
+            sb.AppendLine(sideName + " total population: " + totalPopulation.ToString(CultureInfo.InvariantCulture));
             if (garrisonPower > 0f)
             {
                 sb.AppendLine("  Includes garrison combat power: " + garrisonPower.ToString("0.###", CultureInfo.InvariantCulture));
@@ -1246,7 +1389,7 @@ namespace Holocron
                 float excludedTransports = rawPowerWithGarrison - appliedPower;
                 if (excludedTransports > 0f)
                 {
-                    sb.AppendLine("  Space mode excludes transport contribution from side-force totals: " + excludedTransports.ToString("0.###", CultureInfo.InvariantCulture));
+                    sb.AppendLine("  Space mode excludes transport contribution from force totals: " + excludedTransports.ToString("0.###", CultureInfo.InvariantCulture));
                 }
             }
 
@@ -1256,10 +1399,12 @@ namespace Holocron
                 return sb.ToString().TrimEnd();
             }
 
-            sb.AppendLine("  Side-force category totals (as used by Calculate_Side_Force):");
-            foreach (KeyValuePair<string, float> own in ownCategories.OrderByDescending(x => x.Value))
+            sb.AppendLine("  Force category totals:");
+            foreach (KeyValuePair<ulong, float> own in ownCategories.OrderByDescending(x => x.Value))
             {
-                sb.AppendLine("    " + own.Key + ": " + own.Value.ToString("0.###", CultureInfo.InvariantCulture));
+                string categoryName = AutoResolveGetDisplayCategoryFromMask(own.Key);
+                if (string.IsNullOrWhiteSpace(categoryName)) categoryName = "(none)";
+                sb.AppendLine("    " + categoryName + ": " + own.Value.ToString("0.###", CultureInfo.InvariantCulture));
             }
 
             return sb.ToString().TrimEnd();
@@ -1268,7 +1413,7 @@ namespace Holocron
         private string AutoResolveBuildPowerDisplay()
         {
             string battleType = AutoResolveBattleTypeComboBox.SelectedIndex == 0 ? "Space" : (AutoResolveBattleTypeComboBox.SelectedIndex == 1 ? "Land" : "(not selected)");
-            return "Combat Power Preview (autoresolve-applied)\r\n" +
+            return "Combat Power Preview\r\n" +
                 "Battle Type: " + battleType + "\r\n\r\n" +
                 AutoResolveBuildSidePowerDetails("Attacker", autoResolveSideA) +
                 "\r\n\r\n" +
@@ -1325,7 +1470,7 @@ namespace Holocron
 
         private List<AutoResolveCombatant> AutoResolveBuildCombatants(List<autoresolve_entry> entries, int owner, bool space)
         {
-            List<AutoResolveCombatant> corenne = new List<AutoResolveCombatant>();
+            List<AutoResolveCombatant> combatants = new List<AutoResolveCombatant>();
             Dictionary<string, unit> unitLookup = AutoResolveGetUnitSource()
                 .GroupBy(x => x.unitname, StringComparer.OrdinalIgnoreCase)
                 .ToDictionary(x => x.Key, x => x.First(), StringComparer.OrdinalIgnoreCase);
@@ -1338,11 +1483,11 @@ namespace Holocron
                     combatant.TypeName = entry.source.unitname;
                     combatant.OwnerId = owner;
                     combatant.Power = Math.Max(0.01f, entry.source.cp);
-                    combatant.Health = 1.0f;
                     combatant.IsEscort = false;
                     combatant.IsTransport = entry.source.behaviors != null && entry.source.behaviors.Contains("TRANSPORT");
-                    combatant.ContrastCategories = new List<string>();
-                    foreach (string category in entry.source.categories) combatant.ContrastCategories.Add(category);
+
+                    ulong combatantCategoryMask = AutoResolveGetCategoryMask(entry.source.categories);
+                    combatant.CategoryMask = combatantCategoryMask;
 
                     int techIndex = AutoResolveGetSelectedTechLevel();
                     List<AutoResolveBuiltObject> garrisonEntries = AutoResolveBuildGarrisonEntries(entry.source, unitLookup, techIndex);
@@ -1352,15 +1497,14 @@ namespace Holocron
                         if (garrisonEntry == null || garrisonEntry.Power <= 0f) continue;
 
                         combatant.GarrisonPower += garrisonEntry.Power;
-                        combatant.GarrisonEntries.Add(new AutoResolveBuiltObject { ContrastCategory = garrisonEntry.ContrastCategory, Power = garrisonEntry.Power });
+                        combatant.GarrisonEntries.Add(new AutoResolveBuiltObject { CategoryMask = garrisonEntry.CategoryMask, ContrastCategory = garrisonEntry.ContrastCategory, Power = garrisonEntry.Power });
                     }
 
-                    combatant.IncludeGarrisonInAttrition = combatant.GarrisonPower > 0f;
-                    corenne.Add(combatant);
+                    combatants.Add(combatant);
                 }
             }
 
-            return corenne;
+            return combatants;
         }
 
         private string AutoResolveOwnerToName(int owner)
@@ -1400,7 +1544,7 @@ namespace Holocron
             sb.AppendLine("| Applied power using categories      | " + report.AppliedCombatPower.ToString("0.###", CultureInfo.InvariantCulture) + " source=" + sourceCategory + " -> target=" + targetCategory);
             sb.AppendLine("| Target power change                 | " + report.TargetCategoryBefore.ToString("0.###", CultureInfo.InvariantCulture) + " -> " + report.TargetCategoryAfter.ToString("0.###", CultureInfo.InvariantCulture) + " target " + targetCategory);
             sb.AppendLine("| Target global change                | " + report.TargetGlobalBefore.ToString("0.###", CultureInfo.InvariantCulture) + " -> " + report.TargetGlobalAfter.ToString("0.###", CultureInfo.InvariantCulture));
-            sb.AppendLine("| Base power change                   | " + report.SourcePowerBefore.ToString("0.###", CultureInfo.InvariantCulture) + " -> " + report.SourcePowerAfter.ToString("0.###", CultureInfo.InvariantCulture));
+            sb.AppendLine("| Unit base power change              | " + report.SourcePowerBefore.ToString("0.###", CultureInfo.InvariantCulture) + " -> " + report.SourcePowerAfter.ToString("0.###", CultureInfo.InvariantCulture));
             sb.Append("+--------------------------------------+--------------------------------+");
             return sb.ToString();
         }
@@ -1507,7 +1651,9 @@ namespace Holocron
             List<AutoResolveCombatant> defender = AutoResolveBuildCombatants(autoResolveSideB, autoResolveSideBOwner, space);
 
             AutoResolveClass sim = new AutoResolveClass();
-            sim.ContrastWeightProvider = AutoResolveGetContrastWeight;
+            sim.ContrastWeightProvider = AutoResolveGetContrastWeights;
+            sim.CategoryMaskProvider = AutoResolveGetCategoryMask;
+            sim.CategoryNameProvider = mask => AutoResolveGetDisplayCategoryFromMask(mask);
             AutoResolveApplyAttritionInputs(sim);
             AutoResolveHResult prep = space ? sim.Prepare_For_Space() : sim.Prepare_For_Land();
             if (prep != AutoResolveHResult.S_OK)

@@ -8,11 +8,11 @@ namespace Holocron
     {
         public class ContrastForceStruct
         {
-            public string Category;
+            public ulong Category;
             public float Force;
             public bool Ground;
 
-            public ContrastForceStruct(string category, float force, bool ground)
+            public ContrastForceStruct(ulong category, float force, bool ground)
             {
                 Category = category;
                 Force = force;
