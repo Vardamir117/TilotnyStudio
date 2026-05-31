@@ -74,12 +74,17 @@ namespace Holocron
             this.label11 = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.SkirmishPanel = new System.Windows.Forms.Panel();
+            this.SkirmishFalseRB = new System.Windows.Forms.RadioButton();
+            this.SkirmishTrueRB = new System.Windows.Forms.RadioButton();
+            this.SkirmishAnyRB = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.ShipyardUpDown)).BeginInit();
             this.BuildPanel.SuspendLayout();
             this.PlanetPanel.SuspendLayout();
             this.InfluencePanel.SuspendLayout();
             this.LimitPanel.SuspendLayout();
             this.ComplementPanel.SuspendLayout();
+            this.SkirmishPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // label7
@@ -477,7 +482,7 @@ namespace Holocron
             this.ComplementPanel.Controls.Add(this.ComplementFalseRB);
             this.ComplementPanel.Controls.Add(this.ComplementTrueRB);
             this.ComplementPanel.Controls.Add(this.ComplementAnyRB);
-            this.ComplementPanel.Location = new System.Drawing.Point(289, 345);
+            this.ComplementPanel.Location = new System.Drawing.Point(189, 348);
             this.ComplementPanel.Name = "ComplementPanel";
             this.ComplementPanel.Size = new System.Drawing.Size(120, 72);
             this.ComplementPanel.TabIndex = 67;
@@ -546,11 +551,55 @@ namespace Holocron
             this.label3.TabIndex = 75;
             this.label3.Text = "0 is used for an undefined shipyard/fighters";
             // 
+            // SkirmishPanel
+            // 
+            this.SkirmishPanel.Controls.Add(this.SkirmishFalseRB);
+            this.SkirmishPanel.Controls.Add(this.SkirmishTrueRB);
+            this.SkirmishPanel.Controls.Add(this.SkirmishAnyRB);
+            this.SkirmishPanel.Location = new System.Drawing.Point(315, 348);
+            this.SkirmishPanel.Name = "SkirmishPanel";
+            this.SkirmishPanel.Size = new System.Drawing.Size(120, 72);
+            this.SkirmishPanel.TabIndex = 68;
+            // 
+            // SkirmishFalseRB
+            // 
+            this.SkirmishFalseRB.AutoSize = true;
+            this.SkirmishFalseRB.Location = new System.Drawing.Point(4, 51);
+            this.SkirmishFalseRB.Name = "SkirmishFalseRB";
+            this.SkirmishFalseRB.Size = new System.Drawing.Size(67, 17);
+            this.SkirmishFalseRB.TabIndex = 2;
+            this.SkirmishFalseRB.TabStop = true;
+            this.SkirmishFalseRB.Text = "GC Units";
+            this.SkirmishFalseRB.UseVisualStyleBackColor = true;
+            // 
+            // SkirmishTrueRB
+            // 
+            this.SkirmishTrueRB.AutoSize = true;
+            this.SkirmishTrueRB.Location = new System.Drawing.Point(4, 27);
+            this.SkirmishTrueRB.Name = "SkirmishTrueRB";
+            this.SkirmishTrueRB.Size = new System.Drawing.Size(91, 17);
+            this.SkirmishTrueRB.TabIndex = 1;
+            this.SkirmishTrueRB.TabStop = true;
+            this.SkirmishTrueRB.Text = "Skirmish Units";
+            this.SkirmishTrueRB.UseVisualStyleBackColor = true;
+            // 
+            // SkirmishAnyRB
+            // 
+            this.SkirmishAnyRB.AutoSize = true;
+            this.SkirmishAnyRB.Location = new System.Drawing.Point(4, 4);
+            this.SkirmishAnyRB.Name = "SkirmishAnyRB";
+            this.SkirmishAnyRB.Size = new System.Drawing.Size(63, 17);
+            this.SkirmishAnyRB.TabIndex = 0;
+            this.SkirmishAnyRB.TabStop = true;
+            this.SkirmishAnyRB.Text = "All Units";
+            this.SkirmishAnyRB.UseVisualStyleBackColor = true;
+            // 
             // UnitFilter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(842, 450);
+            this.Controls.Add(this.SkirmishPanel);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label11);
@@ -582,7 +631,7 @@ namespace Holocron
             this.Controls.Add(this.FactionListBox);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "UnitFilter";
-            this.Text = "Filter Setup";
+            this.Text = "Unit Filter Configuration";
             this.Load += new System.EventHandler(this.UnitFilter_Load);
             ((System.ComponentModel.ISupportInitialize)(this.ShipyardUpDown)).EndInit();
             this.BuildPanel.ResumeLayout(false);
@@ -595,6 +644,8 @@ namespace Holocron
             this.LimitPanel.PerformLayout();
             this.ComplementPanel.ResumeLayout(false);
             this.ComplementPanel.PerformLayout();
+            this.SkirmishPanel.ResumeLayout(false);
+            this.SkirmishPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -646,5 +697,9 @@ namespace Holocron
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Panel SkirmishPanel;
+        private System.Windows.Forms.RadioButton SkirmishFalseRB;
+        private System.Windows.Forms.RadioButton SkirmishTrueRB;
+        private System.Windows.Forms.RadioButton SkirmishAnyRB;
     }
 }

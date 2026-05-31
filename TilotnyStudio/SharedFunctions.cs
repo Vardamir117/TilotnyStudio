@@ -22,6 +22,8 @@ using System.Drawing;
 //Affil also controls subsquad where used box. Hero "affils" will updated by custom esque expansion anyway
 //add unit/hero/structure radio to where used. Go ahead and parse the latter two? Hero can cover ground and space with the open tab telling me which
 
+//convert various touppers and tolowers to String.Equals(, , StringComparison.OrdinalIgnoreCase) for that sweet microoptimization in key locations
+
 public static class SharedFunctions
 {
     public static string UpOneFolder(string Path)
@@ -330,6 +332,7 @@ public static class SharedFunctions
     {
         if (unit.LocalName == "Planet") return true;
         //Todo Eclipse hps failed completely for unclear reasons when using LastChild rather than InnerText. May want to switch all fields over?
+        //last child includes comments, innertext does not
         string name = unit.Attributes[0].Value;
         //System.Xml.XmlNode value = unit.SelectSingleNode("descendant::Ship_Class");
         //if (!(value is null)){ //Filters out fighters but can also cause problems with gunships
@@ -369,8 +372,9 @@ public static class SharedFunctions
         float skirmbuildtime = -1;
         float maintenance = -1;
         float cp = -1;
-        int limit_concurrent = -1;
-        int limit_lifetime = -1;
+        int limit_concurrent = -2; //Unlike most fields, -1 is a valid and even important value on limits
+        int limit_lifetime = -2;
+        int limit_planet = -2;
         int pop = -1;
         int percompany = -1;
         int gui_row = -1;
@@ -394,7 +398,7 @@ public static class SharedFunctions
         System.Xml.XmlNode value = unit.SelectSingleNode("descendant::Tech_Level");
         if (!(value is null))
         {
-            techlevel = Int32.Parse(value.LastChild.Value);
+            techlevel = Int32.Parse(value.InnerText);
         }
         value = unit.SelectSingleNode("descendant::Build_Initially_Locked");
         if (!(value is null))
@@ -581,7 +585,7 @@ public static class SharedFunctions
         {
             if (!(value.LastChild is null))
             {
-                reqstructures = value.LastChild.Value;
+                reqstructures = value.InnerText;
             }
             else reqstructures = "";
         }
@@ -590,7 +594,7 @@ public static class SharedFunctions
         {
             if (!(value.LastChild is null))
             {
-                reqorbit = value.LastChild.Value;
+                reqorbit = value.InnerText;
             }
         }
         value = unit.SelectSingleNode("descendant::Shield_Armor_Type");
@@ -598,7 +602,7 @@ public static class SharedFunctions
         {
             if (!(value.LastChild is null))
             {
-                shield_type = fullTrim(value.LastChild.Value);
+                shield_type = fullTrim(value.InnerText);
             }
         }
         value = unit.SelectSingleNode("descendant::Armor_Type");
@@ -606,7 +610,7 @@ public static class SharedFunctions
         {
             if (!(value.LastChild is null))
             {
-                armor_type = fullTrim(value.LastChild.Value);
+                armor_type = fullTrim(value.InnerText);
             }
         }
         value = unit.SelectSingleNode("descendant::Encyclopedia_Unit_Class");
@@ -626,7 +630,7 @@ public static class SharedFunctions
         {
             if (!(value.LastChild is null))
             {
-                planets = ReadWhiteSpaceAsCommas(value.LastChild.Value);
+                planets = ReadWhiteSpaceAsCommas(value.InnerText);
             }
         }
         value = unit.SelectSingleNode("descendant::Encyclopedia_Text");
@@ -634,7 +638,7 @@ public static class SharedFunctions
         {
             if (!(value.LastChild is null))
             {
-                tooltip = value.LastChild.Value;
+                tooltip = value.InnerText;
             }
         }
         value = unit.SelectSingleNode("descendant::Icon_Name");
@@ -704,6 +708,11 @@ public static class SharedFunctions
         if (!(value is null))
         {
             limit_lifetime = Int32.Parse(value.LastChild.Value);
+        }
+        value = unit.SelectSingleNode("descendant::Build_Max_Instances_Per_Planet");
+        if (!(value is null))
+        {
+            if (!(value.LastChild is null)) limit_planet = Int32.Parse(value.LastChild.Value);
         }
         value = unit.SelectSingleNode("descendant::Max_Speed");
         if (!(value is null))
@@ -1263,6 +1272,11 @@ public static class SharedFunctions
                     shieldBonus = 0,
                     healthBonus = 0,
                     speedBonus = 0,
+
+                    percentCredits = 0,
+                    absoluteCredits = 0,
+                    priceReduction = 0,
+                    timeReduction = 0,
                 };
                 forlist.type = able.Name;
                 if (able.Attributes is null || able.Attributes.Count == 0) {
@@ -1306,13 +1320,13 @@ public static class SharedFunctions
 
                 //admin
                 abdata = able.SelectSingleNode("descendant::Price_Reduction_Percentage"); //todo these probably need to go to different variables
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.priceReduction = Single.Parse(abdata.LastChild.Value);
                 abdata = able.SelectSingleNode("descendant::Time_Reduction_Percentage");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.timeReduction = Single.Parse(abdata.LastChild.Value);
                 abdata = able.SelectSingleNode("descendant::Percentage_Income_Modifier");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.percentCredits = Single.Parse(abdata.LastChild.Value);
                 abdata = able.SelectSingleNode("descendant::Absolute_Income_Modifier");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.absoluteCredits = Single.Parse(abdata.LastChild.Value);
 
                 //Point defense
                 abdata = able.SelectSingleNode("descendant::Projectile_Types_Targeted");
@@ -1418,6 +1432,7 @@ public static class SharedFunctions
             gui_row = gui_row,
             limit_concurrent = limit_concurrent,
             limit_lifetime = limit_lifetime,
+            limit_planet = limit_planet,
             speed = speed,
             min_speed = min_speed,
             accel = accel,
@@ -1452,6 +1467,7 @@ public static class SharedFunctions
             gui_row_baseID = -1,
             concurrent_baseID = -1,
             lifetime_baseID = -1,
+            planetlimit_baseID = -1,
             speed_baseID = -1,
             min_speed_baseID = -1,
             accel_baseID = -1,
@@ -2088,8 +2104,8 @@ public static class SharedFunctions
                         if (!(value is null))
                         {
                             if (!(value.LastChild is null))
-                            {
-                                damageAmount += float.Parse(value.LastChild.Value);
+                            {//Overrides Projectile_Damage if nonzero
+                                damageAmount = float.Parse(value.LastChild.Value);
                             }
                         }
                         value = proj.SelectSingleNode("descendant::Projectile_Blast_Area_Range");
@@ -2424,12 +2440,152 @@ public static class SharedFunctions
         }
     }
 
+    public static bool IsHiddenObject(unit unit)
+    {//Conditions that mean it should never be displayed
+        return unit.unitname.Contains("Template_") || (unit.unitname.Contains("_Dummy") || unit.unitname.Contains("_Marker") || unit.unitname.Contains("ZLayer"));
+    }
+
+    public static bool IsSkirmishObject(unit unit)
+    {
+        return unit.unitname.Contains("Skirmish_") || (unit.unitname.Contains("_MP") && !unit.unitname.Contains("_MP_"));
+    }
+
     public static string ReadXMLElement(string line)
     {
         int start = line.IndexOf(">") + 1;
         int end = line.LastIndexOf("<");
 
         return line.Substring(start, end - start);
+    }
+
+    public static bool CheckLuaIndex(string ID, string line)
+    {
+        return line.Contains(ID + " = ") || line.Contains("[\"" + ID + "\"]");
+    }
+
+    public static void parseFactions(entities entities)
+    {
+        entities.factions.Clear();
+
+        XmlDocument fcdoc = readModXmlOrMeg("XML\\FactionFiles.xml", entities);
+        XmlNode fcroot = fcdoc.DocumentElement;
+
+        XmlNodeList files = fcroot.SelectNodes("*");
+
+        string[] gameconstants = new string[0];
+        List<string> paths = new List<string>();//Check several old ways of doing this fr backwards compatibility
+        paths.Add(getModFile("Scripts\\Library\\GameConstants.lua"));//TODO I am only guessing this is the final version after mod content loader is dead
+        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\GameConstants.lua"));
+
+        foreach (string path in paths)
+        {
+            if (path != "") //fail return for getModFile
+            {
+                gameconstants = File.ReadAllLines(path);
+                break;
+            }
+        }
+        int factionNameStart = Array.FindIndex(gameconstants, s => s.Contains("ALL_FACTION_NAMES"));
+        int factionColorStart = Array.FindIndex(gameconstants, s => s.Contains("FACTION_COLORS"));
+        int factionAbbrevStart = Array.FindIndex(gameconstants, s => s.Contains("ALL_FACTION_ABBREVIATIONS"));
+        int factionAIStart = Array.FindIndex(gameconstants, s => s.Contains("ALL_FACTIONS_AI"));
+        int factionAliasStart = Array.FindIndex(gameconstants, s => s.Contains("ALIASES"));
+
+        int limit = factionNameStart - factionColorStart;
+
+        foreach (XmlNode file in files)
+        {
+            if (!(file.LastChild is null))
+            {
+                string filename = file.LastChild.Value.Trim();
+                XmlDocument doc = readModXmlOrMeg("XML\\" + filename, entities);
+                XmlNode root = doc.DocumentElement;
+
+                var factions = root.SelectNodes("*");
+                foreach (XmlElement faction in factions)
+                {
+                    faction newfaction = new faction();
+                    string name = faction.GetAttribute("Name");
+                    string id = faction.SelectSingleNode("descendant::Text_ID").InnerText.Trim();
+                    string color = faction.SelectSingleNode("descendant::Color").InnerText.Trim();
+                    string taccolor = faction.SelectSingleNode("descendant::No_Colorization_Color").InnerText.Trim();
+                    bool playable = faction.SelectSingleNode("descendant::Is_Playable").InnerText.ToLower().Contains("true");
+                    XmlNode node = faction.SelectSingleNode("descendant::BTS");
+                    string BTS = "";
+                    if (!(node is null) && !(node.InnerText is null))
+                    {
+                        BTS = node.InnerText.Trim().Replace("\t", "");
+                    }
+                    
+
+                    int[] col = ReadXMLCSV(color);
+                    int[] tcol = ReadXMLCSV(taccolor);
+
+                    newfaction.codename = name;
+                    newfaction.textname = Find_Text_Entry(id);
+                    newfaction.color = col;
+                    newfaction.tcolor = tcol;
+                    newfaction.playable = playable;
+                    newfaction.BTS = BTS;
+
+                    string LuaName = name.ToUpper();
+                    newfaction.luaname = "";
+                    for (int i = factionNameStart; i < factionNameStart + limit; i++)
+                    {
+                        string line = gameconstants[i];
+                        if (CheckLuaIndex(LuaName, line))
+                        {
+                            newfaction.luaname = line.Substring(line.IndexOf("\"") + 1, line.LastIndexOf("\"") - line.IndexOf("\"") - 1);
+                            if (newfaction.luaname == "REPORT_THIS_PROTEUS_BUG_B") //Probably best to hide this, but it's always going to be a bit weird when it shares an ID with nonplayable
+                            {
+                                newfaction.luaname = "Minor Warlords";
+                            }
+                            break;
+                        }
+                    }
+                    newfaction.abbreviation = "";
+                    for (int i = factionAbbrevStart; i < factionAbbrevStart + limit; i++)
+                    {
+                        string line = gameconstants[i];
+                        if (CheckLuaIndex(LuaName, line))
+                        {
+                            newfaction.abbreviation = line.Substring(line.IndexOf("\"") + 1, line.LastIndexOf("\"") - line.IndexOf("\"") - 1);
+                            break;
+                        }
+                    }
+                    newfaction.ai = "";
+                    for (int i = factionAIStart; i < factionAIStart + limit; i++)
+                    {
+                        string line = gameconstants[i];
+                        if (CheckLuaIndex(LuaName, line))
+                        {
+                            newfaction.ai = line.Substring(line.IndexOf("\"") + 1, line.LastIndexOf("\"") - line.IndexOf("\"") - 1);
+                            break;
+                        }
+                    }
+                    newfaction.lcolor = new int[] { 0, 0, 0, 255 };
+                    for (int i = factionColorStart; i < factionColorStart + limit; i++)
+                    {
+                        string line = gameconstants[i];
+                        if (CheckLuaIndex(LuaName, line))
+                        {
+                            line = line.Substring(line.LastIndexOf("-") + 1, line.Length - line.LastIndexOf("-") - 1); //strip out any inline comments
+                            string[] colors = (line.Substring(line.IndexOf("{") + 1, line.LastIndexOf("}") - line.IndexOf("{") - 1)).Split(',');
+                            for (int j = 0; j < colors.Length || j < 3; j++)
+                            {
+                                string comp = colors[j];
+                                comp = comp.Substring(comp.LastIndexOf("=") + 1, comp.Length - comp.LastIndexOf("=") - 1).Trim();
+                                newfaction.lcolor[j] = int.Parse(comp);
+                            }
+                            break;
+                        }
+                    }
+
+
+                    entities.factions.Add(newfaction);
+                }
+            }
+        }
     }
 
     public static void parsePlanetsTheHardWay(entities entities, bool allplanets = false)
@@ -2452,7 +2608,6 @@ public static class SharedFunctions
         int shipyard = 0;
         string groundMap = "";
         string spaceMap = "";
-        string terrain = "";
         string mapTerrain = "";
         bool has_ground = false;
 
@@ -2472,7 +2627,6 @@ public static class SharedFunctions
                 shipyard = 0;
                 groundMap = "";
                 spaceMap = "";
-                terrain = "";
                 has_ground = false;
             }
             else if (line.Contains("</Planet>"))
@@ -2487,7 +2641,6 @@ public static class SharedFunctions
                     credits = credits,
                     groundMap = groundMap,
                     spaceMap = spaceMap,
-                    terrain = terrain,
                     has_ground = has_ground,
                     desc_pop = population_desc,
                     shipyard = shipyard,
@@ -2556,7 +2709,7 @@ public static class SharedFunctions
                                 mapTerrain = "Volcanic";
                                 break;
                             case 6:
-                                mapTerrain = "Space";
+                                mapTerrain = "Urban";
                                 break;
                             case 7:
                                 mapTerrain = "Space";
@@ -2594,10 +2747,9 @@ public static class SharedFunctions
             float y = 0;
             int credits = 0;
             int shipyard = 0;
+            string mapTerrain = "";
             string groundMap = "";
             string spaceMap = "";
-            string terrain = "";
-            string mapTerrain = "";
             bool has_ground = false;
 
             XmlNodeList xmlNodes = planet.SelectNodes("*");
@@ -2675,7 +2827,7 @@ public static class SharedFunctions
                                         mapTerrain = "Volcanic";
                                         break;
                                     case 6:
-                                        mapTerrain = "Space";
+                                        mapTerrain = "Urban";
                                         break;
                                     case 7:
                                         mapTerrain = "Space";
@@ -2700,7 +2852,6 @@ public static class SharedFunctions
                 credits = credits,
                 groundMap = groundMap,
                 spaceMap = spaceMap,
-                terrain = terrain,
                 has_ground = has_ground,
                 desc_pop = population_desc,
                 shipyard = shipyard,
@@ -2714,41 +2865,61 @@ public static class SharedFunctions
 
     public static string getTerrainType(string map)
     {
+        int terraintype = getTerrainIndex(map);
+
+        return getTerrainName(terraintype); ;
+    }
+
+    public static string getTerrainName(int terraintype)
+    {
         string mapTerrain = "";
-        string mappath = getModFile("Art\\Maps\\" + map); //todo get preread value from meg
-        if (mappath != "")
+        switch (terraintype)
         {
-            byte[] data = File.ReadAllBytes(mappath); //byte 46 is terrain type
-            switch (data[46])
+            default:
+                mapTerrain = "Temperate";
+                break;
+            case 1:
+                mapTerrain = "Arctic";
+                break;
+            case 2:
+                mapTerrain = "Desert";
+                break;
+            case 3:
+                mapTerrain = "Forest";
+                break;
+            case 4:
+                mapTerrain = "Swamp";
+                break;
+            case 5:
+                mapTerrain = "Volcanic";
+                break;
+            case 6:
+                mapTerrain = "Urban";
+                break;
+            case 7:
+                mapTerrain = "Space";
+                break;
+        }
+        return mapTerrain;
+    }
+
+    public static int getTerrainIndex(string map)
+    {
+        int terraintype = -1;
+        
+        int presaved = entities.mapcache.FindIndex(s => s == map);
+        if (presaved >= 0) terraintype = entities.terraincache[presaved];
+        else
+        {
+            string mappath = getModFile("Art\\Maps\\" + map); //todo get preread value from meg
+            if (mappath != "")
             {
-                default:
-                    mapTerrain = "Temperate";
-                    break;
-                case 1:
-                    mapTerrain = "Arctic";
-                    break;
-                case 2:
-                    mapTerrain = "Desert";
-                    break;
-                case 3:
-                    mapTerrain = "Forest";
-                    break;
-                case 4:
-                    mapTerrain = "Swamp";
-                    break;
-                case 5:
-                    mapTerrain = "Volcanic";
-                    break;
-                case 6:
-                    mapTerrain = "Space";
-                    break;
-                case 7:
-                    mapTerrain = "Space";
-                    break;
+                byte[] data = File.ReadAllBytes(mappath); //byte 46 is terrain type
+                terraintype = data[46];
             }
         }
 
-        return mapTerrain;
+        return terraintype;
     }
 
     public static void parsePlanets(entities entities, bool allplanets = false)
@@ -2775,9 +2946,9 @@ public static class SharedFunctions
             int shipyard = 0;
             int land_structures = 0;
             int max_starbase = 0;
+            int pop = 0;
             string groundMap = "";
             string spaceMap = "";
-            string terrain = "";
             string weather = "";
             bool has_ground = false;
             bool tradehub = false;
@@ -2845,6 +3016,11 @@ public static class SharedFunctions
             {
                 max_starbase = Int32.Parse(value.InnerText);
             }
+            value = planet.SelectSingleNode("descendant::Additional_Population_Capacity");
+            if (!(value is null))
+            {
+                pop = Int32.Parse(value.InnerText);
+            }
             value = planet.SelectSingleNode("descendant::Planet_Ability_Name");
             if (!(value is null))
             {
@@ -2885,7 +3061,7 @@ public static class SharedFunctions
                 credits = credits,
                 groundMap = groundMap,
                 spaceMap = spaceMap,
-                terrain = terrain,
+                terrain_id = -1,
                 has_ground = has_ground,
                 desc_pop = population_desc,
                 shipyard = shipyard,
@@ -2894,6 +3070,8 @@ public static class SharedFunctions
                 max_starbase = max_starbase,
                 desc_weather = weather,
                 tradehub = tradehub,
+                pop = pop,
+                sortstring = username,
             };
             entities.Planets.Add(planet_obj);
         }
@@ -2985,7 +3163,7 @@ public static class SharedFunctions
                             {
                                 if (!(value.LastChild is null))
                                 {
-                                    planets = ReadWhiteSpaceAsCommas(value.LastChild.Value);
+                                    planets = ReadWhiteSpaceAsCommas(value.InnerText);
                                     if (planets.Length <= 5) continue; //It's some loader or other such fake GC, hopefully
                                 }
                             }
@@ -3408,15 +3586,20 @@ public static class SharedFunctions
                                     unidad.gui_row = unidad2.gui_row;
                                     unidad.gui_row_baseID = unidad2.gui_row_baseID + 1;
                                 }
-                                if (unidad.limit_concurrent < 0)
+                                if (unidad.limit_concurrent < -1) //-1 is a possible end result that denotes infinite to the game
                                 {
                                     unidad.limit_concurrent = unidad2.limit_concurrent;
                                     unidad.concurrent_baseID = unidad2.concurrent_baseID + 1;
                                 }
-                                if (unidad.limit_lifetime < 0)
+                                if (unidad.limit_lifetime < -1)
                                 {
                                     unidad.limit_lifetime = unidad2.limit_lifetime;
                                     unidad.lifetime_baseID = unidad2.lifetime_baseID + 1;
+                                }
+                                if (unidad.limit_planet < -1)
+                                {
+                                    unidad.limit_planet = unidad2.limit_planet;
+                                    unidad.planetlimit_baseID = unidad2.planetlimit_baseID + 1;
                                 }
                                 if (unidad.speed < 0)
                                 {
@@ -3534,6 +3717,7 @@ public static class SharedFunctions
             if (unidad.maintenance < 0) unidad.maintenance_baseID = -1;
             if (unidad.gui_row < 0) unidad.gui_row_baseID = -1;
             if (unidad.limit_concurrent < 0) unidad.concurrent_baseID = -1;
+            if (unidad.planetlimit_baseID < 0) unidad.planetlimit_baseID = -1;
             if (unidad.limit_lifetime < 0) unidad.lifetime_baseID = -1;
             if (unidad.speed < 0) unidad.speed_baseID = -1;
             if (unidad.min_speed < 0) unidad.min_speed_baseID = -1;
@@ -3563,7 +3747,7 @@ public static class SharedFunctions
                 {
                     for (int j = 0; j + 1 < unidad.terrainMaps.Count; j += 2)
                     {
-                        if (unidad.terrainMaps[j + 1].ToLower() != unidad.model.ToLower())
+                        if (String.Equals(unidad.terrainMaps[j + 1], unidad.model, StringComparison.OrdinalIgnoreCase))//unidad.terrainMaps[j + 1].ToLower() != unidad.model.ToLower())
                         {
                             newmaps.Add(unidad.terrainMaps[j]);
                         }
@@ -3600,68 +3784,6 @@ public static class SharedFunctions
                 else unidad.fightermode = 1;
             }
             else unidad.fightermode = -1;
-
-            if(unidad.garrison.Count > 0)
-            {
-                int highest_tech = 0; //The structure of parseing should mean the inital set is in ascending tech order
-                List<garrison_entry> new_garrison = new List<garrison_entry>();
-                foreach (garrison_entry initial_entry in unidad.garrison)
-                {
-                    int newtech = initial_entry.parsingtech;
-                    bool found = false;
-                    for (int j = 0; j < new_garrison.Count; j++)
-                    {
-                        garrison_entry new_gar = new_garrison[j];
-                        if (newtech > highest_tech)
-                        {
-                            //If there is a gap in tech, copy last defined tech to all values in it
-                            for (int techid = highest_tech + 1; techid < newtech; techid++)
-                            {
-                                new_gar.tech[techid] = new_gar.tech[highest_tech];
-                                new_gar.upfront[techid] = new_gar.upfront[highest_tech];
-                                new_gar.reserve[techid] = new_gar.reserve[highest_tech];
-                            }
-                        }
-                        if (initial_entry.unitname == new_gar.unitname)
-                        {
-                            found = true;
-                            new_gar.tech[newtech] = true;
-                            new_gar.upfront[newtech] = initial_entry.parsingupfront;
-                            new_gar.reserve[newtech] = initial_entry.parsingreserve;
-                            new_garrison[j] = new_gar;
-                            //do not break or any skipped units will not have tech updated
-                        }
-                    }
-                    if (!found)
-                    {
-                        garrison_entry new_garr = new garrison_entry
-                        {
-                            unitname = initial_entry.unitname,
-                            tech = new bool[6],
-                            upfront = new int[6],
-                            reserve = new int[6],
-                        };
-                        //todo get user facing name, squad size float, is bomber from unit data
-                        new_garr.tech[newtech] = true;
-                        new_garr.upfront[newtech] = initial_entry.parsingupfront;
-                        new_garr.reserve[newtech] = initial_entry.parsingreserve;
-                        new_garrison.Add(new_garr);
-                    }
-                    highest_tech = newtech;
-                }
-                for (int j = 0; j < new_garrison.Count; j++) //Copy last defined tech to any undefined up to the max
-                {
-                    garrison_entry new_gar = new_garrison[j];
-                    for (int techid = highest_tech + 1; techid < 6; techid++)
-                    {
-                        new_gar.tech[techid] = new_gar.tech[highest_tech];
-                        new_gar.upfront[techid] = new_gar.upfront[highest_tech];
-                        new_gar.reserve[techid] = new_gar.reserve[highest_tech];
-                    }
-                    new_garrison[j] = new_gar;
-                }
-                unidad.garrison = new_garrison;
-            }
 
             entities.objects[i] = unidad;
         }
@@ -3706,7 +3828,7 @@ public static class SharedFunctions
             {
                 entities.containers.Add(entity);
             }
-            else if (entity.behaviors.Contains("WALK_LOCOMOTOR") || entity.behaviors.Contains("LAND_TEAM_INFANTRY_LOCOMOTOR") || entity.behaviors.Contains("FLYING_LOCOMOTOR") || entity.modebehaviors.Contains("WALK_LOCOMOTOR") || entity.modebehaviors.Contains("LAND_TEAM_INFANTRY_LOCOMOTOR") || entity.modebehaviors.Contains("FLYING_LOCOMOTOR"))
+            else if (entity.behaviors.Contains("WALK_LOCOMOTOR") || entity.behaviors.Contains("LAND_TEAM_INFANTRY_LOCOMOTOR") || entity.behaviors.Contains("FLYING_LOCOMOTOR") || entity.modebehaviors.Contains("WALK_LOCOMOTOR") || entity.modebehaviors.Contains("LAND_TEAM_INFANTRY_LOCOMOTOR") || entity.modebehaviors.Contains("FLYING_LOCOMOTOR") || entity.categories.Contains("NonCombatHero"))
             {
                 if (entity.hero) entities.groundHeroes.Add(entity);
                 else entities.groundUnits.Add(entity);
@@ -4004,6 +4126,8 @@ public static class SharedFunctions
                                     if (company.flags.Count == 0) company.flags = unit.flags;
                                     if (company.fightermode < 0) company.fightermode = unit.fightermode;
                                     if (company.bombingRunUnit == "") company.bombingRunUnit = unit.bombingRunUnit;
+                                    if (company.abilities.Count == 0) company.abilities = unit.abilities;
+                                    if (company.unitabilities.Count == 0) company.unitabilities = unit.unitabilities;
                                     foreach (string behavior in unit.behaviors)
                                     {
                                         if (!company.behaviors.Contains(behavior)) company.behaviors.Add(behavior);
@@ -4034,6 +4158,7 @@ public static class SharedFunctions
             entities.objects[i] = company;
         }
         //A second pass to apply unit data from subcompanies to the main company after all subs are collected
+        //And it also does garrisons on the assumption that objects with subcompanies are not spawned, otherwise it'd have to be on a third pass
         for (int i = 0; i < entities.objects.Count; i++)
         {
             unit company = entities.objects[i];
@@ -4079,6 +4204,8 @@ public static class SharedFunctions
                                 if (company.flags.Count == 0) company.flags = subcompany.flags;
                                 if (company.fightermode < 0) company.fightermode = subcompany.fightermode;
                                 if (company.bombingRunUnit == "") company.bombingRunUnit = subcompany.bombingRunUnit;
+                                if (company.abilities.Count == 0) company.abilities = subcompany.abilities;
+                                if (company.unitabilities.Count == 0) company.unitabilities = subcompany.unitabilities;
                                 foreach (string behavior in subcompany.behaviors)
                                 {
                                     if (!company.behaviors.Contains(behavior)) company.behaviors.Add(behavior);
@@ -4099,6 +4226,111 @@ public static class SharedFunctions
                         }
                     }
                 }
+                entities.objects[i] = company;
+            }
+            if (company.garrison.Count > 0)
+            {
+                List<string> finalBombers = new List<string>();
+                List<string> bomberTypes = new List<string>();
+                List<string> landTypes = new List<string>();
+                string lastbomber = "";
+                int highest_tech = 0; //The structure of parsing should mean the inital set is in ascending tech order
+                List<garrison_entry> new_garrison = new List<garrison_entry>();
+                foreach (garrison_entry initial_entry in company.garrison)
+                {
+                    int newtech = initial_entry.parsingtech;
+                    bool found = false;
+                    for (int j = 0; j < new_garrison.Count; j++)
+                    {
+                        garrison_entry new_gar = new_garrison[j];
+                        if (newtech > highest_tech)
+                        {
+                            //If there is a gap in tech, copy last defined tech to all values in it
+                            for (int techid = highest_tech + 1; techid < newtech; techid++)
+                            {
+                                new_gar.tech[techid] = new_gar.tech[highest_tech];
+                                new_gar.upfront[techid] = new_gar.upfront[highest_tech];
+                                new_gar.reserve[techid] = new_gar.reserve[highest_tech];
+                            }
+                        }
+                        if (initial_entry.unitname == new_gar.unitname)
+                        {
+                            found = true;
+                            new_gar.tech[newtech] = true;
+                            new_gar.upfront[newtech] = initial_entry.parsingupfront;
+                            new_gar.reserve[newtech] = initial_entry.parsingreserve;
+                            new_garrison[j] = new_gar;
+                            if (new_gar.bomber) lastbomber = landTypes[bomberTypes.FindIndex(s => s == new_gar.unitname)];
+                            //do not break or any skipped units will not have tech updated
+                        }
+                    }
+                    if (!found)
+                    {
+                        int index = LookupUntemplateID(initial_entry.unitname);
+                        unit spawned = new unit();
+                        if (index < entities.objecthashes.Count)
+                        {
+                            for (int j = 0; j < entities.objecthashes[index].Count; j++)
+                            {
+                                unit candidate = entities.objects[entities.objecthashes[index][j]];
+                                if (String.Equals(candidate.unitname, initial_entry.unitname, StringComparison.OrdinalIgnoreCase)) //Can't trust people to match case!
+                                {
+                                    spawned = candidate;
+                                    break;
+                                }
+                            }
+                        }
+                        float squad_size = 1;
+                        string lower = initial_entry.unitname.ToLower();
+                        if (lower.Contains("_double")) squad_size = 2;
+                        else if (lower.Contains("_half")) squad_size = 0.5f;
+                        else if (lower.Contains("_third")) squad_size = 1f/3;
+                        else if (lower.Contains("_triple")) squad_size = 3;
+                        garrison_entry new_garr = new garrison_entry
+                        {
+                            unitname = initial_entry.unitname,
+                            tech = new bool[6],
+                            upfront = new int[6],
+                            reserve = new int[6],
+                            squad_size = squad_size,
+                            username = spawned.username,
+                            bomber = !(spawned.bombingRunUnit is null) && spawned.bombingRunUnit != "",
+                            cp = spawned.cp,
+                        };
+                        //todo get user facing name, squad size float, is bomber from unit data
+                        new_garr.tech[newtech] = true;
+                        new_garr.upfront[newtech] = initial_entry.parsingupfront;
+                        new_garr.reserve[newtech] = initial_entry.parsingreserve;
+                        new_garrison.Add(new_garr);
+                        if (new_garr.bomber)
+                        {
+                            lastbomber = spawned.bombingRunUnit;
+                            bomberTypes.Add(initial_entry.unitname);
+                            landTypes.Add(spawned.bombingRunUnit);
+                        }
+                    }
+                    if (newtech > highest_tech)
+                    {//Save the last bomber defined in each tech level, but don't list them multiple times
+                        if (lastbomber != "" && !finalBombers.Contains(lastbomber)) finalBombers.Add(lastbomber);
+                        lastbomber = "";
+                        highest_tech = newtech;
+                    }
+                }
+                for (int j = 0; j < new_garrison.Count; j++) //Copy last defined tech to any undefined up to the max
+                {
+                    garrison_entry new_gar = new_garrison[j];
+                    for (int techid = highest_tech + 1; techid < 6; techid++)
+                    {
+                        new_gar.tech[techid] = new_gar.tech[highest_tech];
+                        new_gar.upfront[techid] = new_gar.upfront[highest_tech];
+                        new_gar.reserve[techid] = new_gar.reserve[highest_tech];
+                    }
+                    new_garrison[j] = new_gar;
+                }
+                if (lastbomber != "" && !finalBombers.Contains(lastbomber)) finalBombers.Add(lastbomber); //Save the last bomber loaded into memory if it isn't already saved from an earlier tech level
+                company.bombingRunUnit = SerializeStringArray(finalBombers);
+                company.garrison = new_garrison;
+
                 entities.objects[i] = company;
             }
         }
@@ -4357,6 +4589,40 @@ public static class SharedFunctions
         return corenne;
     }
 
+    public static void readPlanetSpawnTables(entities entities)
+    {
+        entities.spawnSets.Clear();
+        string namepath = getModFile("Scripts\\Library\\UnitSpawnerTables.lua");
+        if (namepath != "")
+        {
+            string[] Lib = File.ReadAllLines(namepath);
+            int planetTableReadState = 0;
+            foreach (string line in Lib)
+            {
+                if (planetTableReadState > 0 && line.Contains("="))
+                {
+                    string[] split = line.Replace("\"", "").Replace("[", "").Replace("]", "").Replace(",", "").Replace(" ", "").Trim().Split('=');
+                    int index = entities.spawnSets.FindIndex(s => s.name == split[1]);
+                    if (index >= 0) entities.spawnSets[index].planets.Add(split[0]);
+                    else
+                    {
+                        spawnSet nuevo = new spawnSet
+                        {
+                            name = split[1],
+                            planets = new List<string> { split[0] },
+                        };
+                        entities.spawnSets.Add(nuevo);
+                    }
+                }
+                if (line.Contains("planetTable"))
+                {
+                    planetTableReadState++;
+                    if (planetTableReadState >= 2) return;
+                }
+            }
+        }
+    }
+
 }
 
 public struct MEGentry
@@ -4428,10 +4694,15 @@ public struct faction
 {
     public string codename;
     public string textname;
+    public string luaname;
+    public string abbreviation;
+    public string ai;
+    public string BTS;
     public bool playable;
 
     public int[] color;
     public int[] tcolor;
+    public int[] lcolor;
 
     public override string ToString()
     {
@@ -4484,6 +4755,7 @@ public struct unit
     public int gui_row;
     public int limit_concurrent;
     public int limit_lifetime;
+    public int limit_planet;
     public int garrison_slots;
     public int garrison_value;
     public float speed;
@@ -4511,6 +4783,7 @@ public struct unit
     public int gui_row_baseID;
     public int concurrent_baseID;
     public int lifetime_baseID;
+    public int planetlimit_baseID;
     public int speed_baseID;
     public int min_speed_baseID;
     public int accel_baseID;
@@ -4576,6 +4849,10 @@ public struct ability
     public float defenseBonus;
     public float shieldBonus;
     public float healthBonus;
+    public float absoluteCredits;
+    public float percentCredits;
+    public float priceReduction;
+    public float timeReduction;
 
     public override string ToString()
     {
@@ -4614,6 +4891,7 @@ public struct garrison_entry
     public int[] upfront;
     public int[] reserve;
     public float squad_size;
+    public float cp;
     public int parsingtech;
     public int parsingupfront;
     public int parsingreserve;
@@ -4628,6 +4906,7 @@ public struct garrison_lua
     public int upfront;
     public int reserve;
     public float squad_size;
+    public float cp;
     public bool bomber;
     public bool standard;
     public bool[] tech;
@@ -4656,10 +4935,10 @@ public struct planet
     public string desc_weather;
     public string desc_tactical;
     public string desc_advantage;
-    public string terrain;
     public string groundMap;
     public string spaceMap;
     public string destroyedMap;
+    public string sortstring;
     public faction owner; //For usage within a GC
     public bool has_ground;
     public bool tradehub;
@@ -4671,10 +4950,14 @@ public struct planet
     public int max_starbase;
     public int land_structures;
     public int shipyard;
+    public int terrain_id;
+    public int sortint;
 
     public override string ToString()
     {
-        return username; //todo sort options
+        if (sortstring == username) return username;
+        else if (sortstring != "") return "(" + sortstring + ") " + username;
+        else return "(" + sortint.ToString() + ") " + username;
     }
 }
 
@@ -4714,6 +4997,12 @@ public struct galacticConquest
     {
         return username;
     }
+}
+
+public struct spawnSet
+{
+    public string name;
+    public List<string> planets;
 }
 
 public struct entities {
@@ -4775,6 +5064,9 @@ public struct entities {
 
     public static List<planet> Planets = new List<planet>();
     public static float PlanetBounds = 0;
+    public static List<string> mapcache = new List<string>();
+    public static List<int> terraincache = new List<int>();
+
     public static List<tradeRoute> Routes = new List<tradeRoute>();
     //public static List<List<int>> Routeshashes = new List<List<int>>();
     public static List<galacticConquest> Conquests = new List<galacticConquest>();
@@ -4782,6 +5074,8 @@ public struct entities {
     public static List<string> AllCategories = new List<string>();
     public static List<string> SpaceCategories = new List<string>();
     public static List<string> GroundCategories = new List<string>();
+
+    public static List<spawnSet> spawnSets = new List<spawnSet>();
 
     public static Bitmap MTmaster;
     public static List<IconData> IconData = new List<IconData>();

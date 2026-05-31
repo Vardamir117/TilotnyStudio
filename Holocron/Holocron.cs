@@ -13,27 +13,37 @@ using System.Windows.Forms;
 using System.Xml;
 using static Holocron.UnitFilter;
 using static Holocron.UnitSort;
+using static Holocron.PlanetFilter;
+using static Holocron.PlanetSort;
 using static SharedFunctions;
 
 /*
  *https://www.nuget.org/packages/HtmlAgilityPack/ handles invalid XML better
  *https://github.com/LorettaDevs/Loretta Lua parsing
  *
- * todo - subunits on ground units tells you which companies it is in?
+ * Universal function to goto appropriate unit - find which matches and do that
+ *
+ * todo - subunits on ground units/fighters tells you which companies spawn it? Or new fields
  * 
- * todo - hash setup for projectiles and hardpoints? It did help a lot in untemplating
+ * add other or nonfighter category to garrisons for fighter mode <= 0
+ * 
+ * Add required planets, GCs with required planets, corporate discounts (structures and heroes), planets with corporate discounts... the latter renders a corporations lookup tab obsolete, if you also sextend the discount filter to structures
+ * 
+ * more functional right clicks - save images on conquest and planet maps, save/detail accuracy table?...
+ * Don't use messagebox - create dedicated listbox popup
  * 
  * filter units by skirmish/_MP
  * 
  * sort/filter by abilities: has admin, PD range...
  * 
  * armor matrix is broken in vanilla
+ * So is bordering planets
+ * Got an out of memory exception when opening one of teh vanilla campaigns
  * 
- * Why is Empires at War 2 Empire not being grouped with the other faction's era 2 version? Not CCoGM, that's to be expected
  * 
- * use user facing faction names on structure listboxes - probably do need to pull holo_faction into entities
  * 
  * read and display multimedia texts for a campaign in the campaign page. Perhaps just the dialog txt in a chapter sorting panel
+ * read names of all dialog texts in stories, display in one listbox and chapters in another?
  * 
  * parse regional spawn sets (e.g. Generic UR) make accessible on planet and spawn set lookup?
  * 
@@ -42,18 +52,15 @@ using static SharedFunctions;
  * todo - log mode might need to add pulse interval depending on how sheets do it
  * log mode should ideally adjust reload nonproportionally
  * 
- * try to keep general for all EaW mods. arse unit files from gameconstants instead of assuming path?
  * 
- * Gunship untangle problem - to unit to companies pre-categorization?
 keep history updated whenever a tab or subtab is implemented
 there might be a bit of oddness in the history tracking when factions share a name
 Tilot - up two levels, does swfoc.exe exist? If yes enable dropdown
 
-lookup for name lists? Just listbox of file names with count as a sort option
 
 Venator BTS should explain the turrets
 
-lexical filter for fighter, single/other squadron, half, third, double, triple
+
 
 auto parse sfx for bts comments? go through file, saving last comment that doesn't have asterisks, when finding a unit SFX stop. Maybe keep a minimum distance
 don't save on inital parse, reconstruct from variant chain on unit selection?
@@ -75,6 +82,9 @@ namespace Holocron
             public static UnitSortClass UnitSortConfig = new UnitSortClass();
             public static UnitFilterClass UnitFilterConfig = new UnitFilterClass();
 
+            public static PlanetSortClass PlanetSortConfig = new PlanetSortClass();
+            public static PlanetFilterClass PlanetFilterConfig = new PlanetFilterClass();
+
             public static List<shipname> shipnames = new List<shipname>();
 
             //Assume map picturebox is a square of odd pixel count, the same size between GC and planet pages
@@ -82,6 +92,11 @@ namespace Holocron
             public static float scale;
 
             public static bool allplanets = false; //todo make sure this is off for releases
+            public static List<unit> MoneyStructures = new List<unit>();
+            public static List<unit> DiscountEntities = new List<unit>();
+
+            public static int tradebase = 50; //Todo read this from the data
+            public static int tradehubmultiplier = 2;
         }
 
         public static class nav
@@ -179,13 +194,18 @@ namespace Holocron
             load_mods();
             globals.UnitSortConfig.SortType = UnitSortTypes.Name;
             globals.UnitSortConfig.denomtype = "Absolute Value";
+            globals.PlanetSortConfig.SortType = PlanetSortTypes.Name;
             UnitFilter INeedYourFunctions = new UnitFilter();
             globals.UnitFilterConfig = INeedYourFunctions.newFilter();
+            PlanetFilter IStillNeedYourFunctions = new PlanetFilter();
+            globals.PlanetFilterConfig = IStillNeedYourFunctions.newFilter();
 
             //todo stop right aligned? controls from resizing in stupid ways when the design tab is reopened
             //In lieu of a proper fix, make things right aligned at runtime...
             PlanetGCListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
             PlanetBTSTextBox.Anchor = AnchorStyles.Top |  AnchorStyles.Right | AnchorStyles.Left;
+            ConquestBTSTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
+            FactionBTSTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             MapsInPlanetsListbox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             MapSearchBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             PlanetCampaignLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -202,7 +222,7 @@ namespace Holocron
             UnitSubunitPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             UnitAbilityPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             UnitBTSPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
-            BTSRichTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
+            UnitBTSTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
 
             LookupTabControl.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
 
@@ -213,17 +233,21 @@ namespace Holocron
         {
             Loading loadscreen = new Loading();
             loadscreen.Show();
-            entities.factions.Clear();
             FactionListBox.Items.Clear();
-            PlanetListBox.Items.Clear();
             GCListBox.Items.Clear();
+            PlanetListBox.Items.Clear();
+            UnitListBox.Items.Clear();
             System.Threading.Thread t = new System.Threading.Thread(() => LoadThread(loadscreen));
             t.Start();
             MissionListBox.Items.Clear();
             SpawnListBox.Items.Clear();
             StandardFListBox.Items.Clear();
             RandomFListBox.Items.Clear();
+            entities.mapcache = new List<string>();
+            entities.terraincache = new List<int>();
             globals.shipnames.Clear();
+            globals.MoneyStructures.Clear();
+            globals.DiscountEntities.Clear();
         }
 
         private void LoadThread(Loading loadscreen)
@@ -260,28 +284,8 @@ namespace Holocron
             entities.readerrors = "";
 
             loadscreen.ChangeText("Parsing faction data");
-            XmlDocument doc = readModXmlOrMeg("XML\\Factions.xml", entities);
-            XmlNode root = doc.DocumentElement;
-
-            var factions = root.SelectNodes("descendant::Faction");
-            foreach (XmlElement faction in factions)
-            {
-                faction newfaction = new faction();
-                string name = faction.GetAttribute("Name");
-                string id = faction.SelectSingleNode("descendant::Text_ID").InnerText.Trim();
-                string color = faction.SelectSingleNode("descendant::Color").InnerText.Trim();
-                string taccolor = faction.SelectSingleNode("descendant::No_Colorization_Color").InnerText.Trim();
-
-                int[] col = ReadXMLCSV(color);
-                int[] tcol = ReadXMLCSV(taccolor);
-
-                newfaction.codename = name;
-                newfaction.textname = Find_Text_Entry(id);
-                newfaction.color = col;
-                newfaction.tcolor = tcol;
-                entities.factions.Add(newfaction);
-                FactionListBox.BeginInvoke(new Action(() => FactionListBox.Items.Add(newfaction.textname)));
-            }
+            parseFactions(entities);
+            foreach(faction faction in entities.factions) FactionListBox.BeginInvoke(new Action(() => FactionListBox.Items.Add(faction.textname)));
 
             loadscreen.ChangeText("Parsing projectile data");
             List<string> listfiles = getModFiles("XML\\Projectiles", "*.xml");
@@ -336,6 +340,8 @@ namespace Holocron
             //entities.spaceHeroes = unitToCompanyData(entities.spaceHeroes, entities.spaceUnits, entities.containers, true);
             loadscreen.ChangeText("Parsing planet data");
             parsePlanets(entities, globals.allplanets);
+            loadscreen.ChangeText("Reading Planet specific spawn sets");
+            readPlanetSpawnTables(entities);
             loadscreen.ChangeText("Parsing trade routes");
             parseTradeRoutes(entities);
             loadscreen.ChangeText("Parsing galactic conquests");
@@ -371,7 +377,23 @@ namespace Holocron
             planet,
             unit,
             govs,
+            map,
             lookups,
+        }
+
+        enum lookupsubtabs
+        {
+            lkMatrix,
+            lkProj,
+            lkName,
+            lkNameFile,
+            lkReward,
+            lkSpawn,
+            lkCorporations,
+            lkHero,
+            lkStandard,
+            lkRandom,
+            lkRegional,
         }
 
         private void insert_history(int main, int secondary, string entity, bool go_to = false)
@@ -401,7 +423,8 @@ namespace Holocron
             int secondary = nav.secondary[historyid];
             string item = nav.item[historyid];
 
-            MainTab.SelectedIndex = (int)main;
+            MainTab.SelectedIndex = (int)main; //If lookups start demanding a tertiary //if(main < historymaintabs.lookups) 
+            //else MainTab.SelectedIndex = (int)(main - 1 - historymaintabs.lookups);
             bool found = false;
             switch (main)
             {
@@ -454,12 +477,12 @@ namespace Holocron
                             break;
                         }
                     }
-                    if (!found)
+                    if (!found) //unify goto units to not care about rb
                     {
                         UnitSearchTextBox.Text = "";
                         UnitFilter INeedYourFunctions = new UnitFilter();
                         globals.UnitFilterConfig = INeedYourFunctions.newFilter();
-                        UnitFIlterTypeLabel.Text = INeedYourFunctions.filterDocumentation;
+                        UnitFilterTypeLabel.Text = INeedYourFunctions.filterDocumentation;
                         populateUnitListbox();
                         for (int i = 0; i < UnitListBox.Items.Count; i++)
                         {
@@ -506,6 +529,39 @@ namespace Holocron
                             found = true;
                             break;
                         }
+                    }
+                    if (!found)
+                    {
+                        PlanetSearchBox.Text = "";
+                        PlanetFilter IStillNeedYourFunctions = new PlanetFilter();
+                        globals.PlanetFilterConfig = IStillNeedYourFunctions.newFilter();
+                        PlanetFilterTypeLabel.Text = IStillNeedYourFunctions.filterDocumentation;
+                        populatePlanetListbox();
+                        for (int i = 0; i < PlanetListBox.Items.Count; i++)
+                        {
+                            if (item == ((planet)PlanetListBox.Items[i]).codename)
+                            {
+                                PlanetListBox.SelectedItem = PlanetListBox.Items[i];
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                case historymaintabs.lookups:
+                    LookupTabControl.SelectedIndex = secondary;
+                    switch (secondary)
+                    {
+                        case 5:
+                            for (int i = 0; i < SpawnListBox.Items.Count; i++)
+                            {
+                                if (item == (string)SpawnListBox.Items[i])
+                                {
+                                    SpawnListBox.SelectedItem = SpawnListBox.Items[i];
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            break;
                     }
                     break;
                 default:
@@ -750,7 +806,7 @@ namespace Holocron
                         List<string> missionfiles = getModFiles("Scripts\\Library\\spawn-sets", "*.lua");
                         foreach (string file in missionfiles)
                         {
-                            SpawnListBox.Items.Add(LastFolderOrFile(file).ToUpper().Replace(".LUA", ""));
+                            if (!file.Contains("DEBUG")) SpawnListBox.Items.Add(LastFolderOrFile(file).ToUpper().Replace(".LUA", ""));
                         }
                     }
                     break;
@@ -991,6 +1047,24 @@ namespace Holocron
         private void SpawnListBox_SelectedIndexChanged(object sender, EventArgs e)
         {//Todo list planets where used
             SpawnText.Text = File.ReadAllText(getModFile("Scripts\\Library\\spawn-sets\\" + SpawnListBox.SelectedItem + ".lua"));
+            SpawnPlanetListBox.Items.Clear();
+            spawnSet set = entities.spawnSets.FirstOrDefault(s => String.Equals(s.name, (string)SpawnListBox.SelectedItem, StringComparison.OrdinalIgnoreCase));
+            if(!(set.name is null))
+            {
+                foreach (string planetname in set.planets)
+                {
+                    planet planet = entities.Planets.FirstOrDefault(s => String.Equals(s.codename, planetname, StringComparison.OrdinalIgnoreCase));
+                    if (!(planet.codename is null)) SpawnPlanetListBox.Items.Add(planet);
+                }
+            }
+        }
+
+        private void SpawnGoTo_Click(object sender, EventArgs e)
+        {
+            if (SpawnPlanetListBox.SelectedItems.Count > 0)
+            {
+                insert_history((int)historymaintabs.planet, 0, ((planet)SpawnPlanetListBox.SelectedItem).codename, true);
+            }
         }
 
         private void StandardFListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -1003,35 +1077,232 @@ namespace Holocron
             RandomFText.Text = File.ReadAllText(getModFile("Scripts\\Library\\random-fighters\\" + RandomFListBox.SelectedItem + ".lua"));
         }
 
+        private string colorString(int[] color)
+        {
+            if (color is null) return "";
+            string corenne = "";
+            bool furst = true;
+            foreach(int component in color)
+            {
+                if (furst) furst = false;
+                else corenne += ", ";
+                corenne += component.ToString();
+            }
+            return corenne;
+        }
+
+        private Color factioncolor(int[] color)
+        {
+            if (color is null) return Color.Transparent;
+            return Color.FromArgb(color[3], color[0], color[1], color[2]);
+        }
+
         private void FactionListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            FactionGCListbox.Items.Clear();
-            FactionSpaceListBox.Items.Clear();
-            FactionGroundListbox.Items.Clear();
+            FactionFactoryListbox.Items.Clear();
+            FactionUnitInternalLabel.Text = "";
+            FactionUnitAvailabilityLabel.Text = "";
             if (FactionListBox.SelectedIndex < 0)
             {
                 FactionNameLabel.Text = "";
                 FactionInternalLabel.Text = "Internal Name: ";
+                FactionLuaNameLabel.Text = "";
+                FactionAILabel.Text = "";
+                FactionAbbreviationLabel.Text = "";
+                FactionColorLabel.Text = "";
+                FactionTColorLabel.Text = "";
+                FactionLColorLabel.Text = "";
+
+                FactionGCListbox.Items.Clear();
+                FactionUnitListBox.Items.Clear();
+                FactionFactoryOptionsListBox.Items.Clear();
                 return;
             }
             faction faction = entities.factions[FactionListBox.SelectedIndex];
+            FactionListBox.Tag = faction;
             insert_history((int)historymaintabs.faction, 0, faction.codename);
 
             FactionNameLabel.Text = faction.textname;
             FactionInternalLabel.Text = "Internal Name: " + faction.codename;
-            foreach (galacticConquest GC in entities.Conquests)
+            if (faction.luaname == "") FactionLuaNameLabel.Text = "";
+            else FactionLuaNameLabel.Text = "Lua Name: " + faction.luaname;
+            if (faction.ai == "") FactionAILabel.Text = "";
+            else FactionAILabel.Text = "AI Type: " + faction.ai;
+            if (faction.abbreviation == "") FactionAbbreviationLabel.Text = "";
+            else FactionAbbreviationLabel.Text = "Abbreviation: " + faction.abbreviation;
+            FactionColorLabel.Text = "Color: " + colorString(faction.color);
+            FactionColorLabel.BackColor = factioncolor(faction.color);
+            FactionTColorLabel.Text = "Tatical Color: " + colorString(faction.tcolor);
+            FactionTColorLabel.BackColor = factioncolor(faction.tcolor);
+            if (faction.luaname == "") FactionLColorLabel.Text = "";
+            else FactionLColorLabel.Text = "Lua Color: " + colorString(faction.lcolor);
+            FactionLColorLabel.BackColor = factioncolor(faction.lcolor);
+
+            string Luapath =  getModFile("Scripts\\Story\\GCMenu_DescriptionText.lua");
+            FactionDescLabel.Text = "";
+            if (Luapath != "")
             {
-                if (GC.factionsPresent.Contains(faction.codename)) FactionGCListbox.Items.Add(GC);
+                string[] library = File.ReadAllLines(Luapath);
+                int mode = 0;
+                string upper = faction.codename.ToUpper();
+                foreach (string line in library)
+                {
+                    if (mode == 0 && CheckLuaIndex(upper, line)) mode = 1;
+                    if (mode == 1 && line.Contains("Overviews")) mode = 2;
+                    if (mode == 2 && line.Contains("DEFAULT"))
+                    {
+                        FactionDescLabel.Text = line.Substring(line.LastIndexOf("=") + 1, line.Length - line.LastIndexOf("=") - 1).Trim().Replace("\"","");
+                        break;
+                    }
+                }
             }
-            foreach (unit unit in entities.spaceUnits)
+            if (faction.BTS != "") FactionBTSTextBox.Text = "Behind the scenes:\n" + faction.BTS;
+            else FactionBTSTextBox.Text = "";
+
+            populateFactionGCBox();
+            populateFactionUnitBox();
+            foreach (unit factory in entities.structures)
             {
-                if (unit.affiliations.Contains(faction.codename)) FactionSpaceListBox.Items.Add(unit);
+                if (factory.affiliations.Contains(faction.codename))
+                {
+                    if(entities.groundCompanies.FindIndex(s => s.reqstructures.Contains(factory.unitname) && s.affiliations.Contains(faction.codename) && s.techlevel <= 5) >= 0) FactionFactoryListbox.Items.Add(factory);
+                }
             }
-            foreach (unit unit in entities.groundCompanies)
+            foreach (unit factory in entities.spaceStructures)
             {
-                if (unit.affiliations.Contains(faction.codename)) FactionGroundListbox.Items.Add(unit);
+                if (factory.affiliations.Contains(faction.codename) && !factory.unitname.ToUpper().Contains("_DUMMY") && !factory.unitname.ToUpper().Contains("INFLUENCE_"))
+                {
+                    if (entities.spaceUnits.FindIndex(s => s.reqstructures.Contains(factory.unitname) && s.affiliations.Contains(faction.codename) && s.techlevel <= 5) >= 0) FactionFactoryListbox.Items.Add(factory);
+                }
             }
         }
+
+        private void populateFactionGCBox()
+        {
+            FactionGCListbox.Items.Clear();
+            string faction = ((faction)FactionListBox.Tag).codename;
+            foreach (galacticConquest GC in entities.Conquests)
+            {
+                bool add = false;
+                if (GC.Type == GCType.Progressive && FactionProgressiveCheckBox.Checked) add = true;
+                if (GC.Type == GCType.Regional && FactionRegionalCheckBox.Checked) add = true;
+                if (GC.Type == GCType.Historical && FactionHistoricalCheckBox.Checked) add = true;
+                if ((GC.Type == GCType.Infinity || GC.Type == GCType.InfinityLayoutCopy) && FactionInfinityCheckBox.Checked) add = true;
+                if (add && GC.factionsPresent.Contains(faction)) FactionGCListbox.Items.Add(GC);
+            }
+        }
+
+        private void FactionUnitTypeRB_CheckedChanged(object sender, EventArgs e)
+        {
+            populateFactionUnitBox();
+        }
+
+        private void FactionUnitSearchTextBox_TextChanged(object sender, EventArgs e)
+        {
+            populateFactionUnitBox();
+        }
+
+        private void populateFactionUnitBox()
+        {
+            FactionUnitListBox.Items.Clear();
+            string faction = ((faction)FactionListBox.Tag).codename;
+            List<unit> src = entities.spaceUnits;
+            if (FactionGroundTeamRB.Checked) src = entities.groundCompanies;
+            else if (FactionSpaceHeroRB.Checked) src = entities.spaceHeroes;
+            else if (FactionHeroTeamRB.Checked) src = entities.heroCompanies;
+            foreach (unit unit in src)
+            {
+                if (unit.username.ToLower().Contains(FactionUnitSearchTextBox.Text.ToLower()) && unit.affiliations.Contains(faction) && !IsHiddenObject(unit) && !IsSkirmishObject(unit) && !unit.unitname.Contains("Convoy") && !unit.unitname.Contains("Cheat") && !unit.unitname.Contains("Mission") && !unit.unitname.Contains("GW_") && !unit.unitname.Contains("GROUNDWAR_") && unit.influence == 0)
+                {
+                    FactionUnitListBox.Items.Add(unit);
+                }
+            }
+        }
+
+        private void FactionCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            populateFactionGCBox();
+        }
+
+        private void FactionFactoryListbox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(FactionFactoryListbox.SelectedItems.Count > 0)
+            {
+                faction faction = (faction)FactionListBox.Tag; //todo support multi select units, make level one ships not match level 4 yards
+                List<string> factories = new List<string>();
+                foreach (unit factory in FactionFactoryListbox.SelectedItems) factories.Add(factory.unitname);
+                FactionFactoryOptionsListBox.Items.Clear();
+                foreach (unit unit in entities.groundCompanies)
+                {
+                    if (unit.techlevel <= 5 && unit.affiliations.Contains(faction.codename))
+                    {
+                        bool structmatch = false;
+                        foreach (string req in ReadWhiteSpaceAsCommas(unit.reqstructures))
+                        {
+                            if (factories.Contains(req))
+                            {
+                                structmatch = true;
+                                break;
+                            }
+                        }
+                        if (structmatch) FactionFactoryOptionsListBox.Items.Add(unit);
+                    }
+                }
+                foreach (unit unit in entities.spaceUnits)
+                {
+                    if (unit.techlevel <= 5 && unit.affiliations.Contains(faction.codename))
+                    {
+                        bool structmatch = false;
+                        foreach (string req in ReadWhiteSpaceAsCommas(unit.reqstructures))
+                        {
+                            if (factories.Contains(req))
+                            {
+                                if (req.Contains("_Shipyard"))
+                                {//Only match shipyards at the unit's level, not below. Multiselect lets all be checked
+                                    if (req.Contains("_Level_Two") && unit.level < 2) continue;
+                                    if (req.Contains("_Level_Three") && unit.level < 3) continue;
+                                    if (req.Contains("_Level_Four") && unit.level < 4) continue;
+                                }
+                                structmatch = true;
+                                break;
+                            }
+                        }
+                        if (structmatch) FactionFactoryOptionsListBox.Items.Add(unit);
+                    }
+                }
+            }
+        }
+
+        private void FactionGovListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void setFactionAvailText(unit unit)
+        {
+            faction faction = ((faction)FactionListBox.Tag);
+            FactionUnitInternalLabel.Text = "Internal Name: " + unit.unitname;
+            FactionUnitAvailabilityLabel.Text = checkUnitAvailibility(unit, faction);
+
+            string spawnsetlib = getModFile("Scripts\\Library\\spawn-sets\\"+ faction.codename.ToUpper()+".lua"); //TODO make sure this is still correct when modcontentloader is cut
+            if(spawnsetlib != "")
+            {
+                string filetext = File.ReadAllText(spawnsetlib);
+                if (filetext.Contains("\"" + unit.unitname + "\"")) FactionUnitAvailabilityLabel.Text += "\nStarting Force Option";
+            }
+        }
+
+        private void FactionUnitListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            unit unit = (unit)FactionUnitListBox.SelectedItem;
+            setFactionAvailText(unit);
+        }
+
+        private void FactionFactoryOptionsListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            unit unit = (unit)FactionFactoryOptionsListBox.SelectedItem;
+                setFactionAvailText(unit);
+            }
 
         private bool FullSalvoOn()
         {
@@ -1198,8 +1469,8 @@ namespace Holocron
             UnitNameLabel.Text = "Name: " + selectedUnit.username;
             UnitInternalLabel.Text = "Internal Name: " + selectedUnit.unitname;
             foreach (string entry in SplitXMLWhitespaceList(selectedUnit.tooltip)) UnitTooltipLabelRichTextBox.Text += Find_Text_Entry(entry) + "\n";
-            if (selectedUnit.BTS != "") BTSRichTextBox.Text = "Behind the scenes:\n" + selectedUnit.BTS;
-            else BTSRichTextBox.Text = "";
+            if (selectedUnit.BTS != "") UnitBTSTextBox.Text = "Behind the scenes:\n" + selectedUnit.BTS;
+            else UnitBTSTextBox.Text = "";
             setAbilityDependentStats();
 
             if (selectedUnit.pop > 0)  UnitPopLabel.Text = "Population: " + selectedUnit.pop.ToString();
@@ -1226,8 +1497,13 @@ namespace Holocron
                     else MapsAndBombingRunLabel.Text += ", ";
                     MapsAndBombingRunLabel.Text += map;
                 }
+                toolTip1.SetToolTip(MapsAndBombingRunLabel, "Terrain types on a planet with a different model than the standard one for the unit. On companies, this reflects any change in constituent units: not all units need have every listed model");
             }
-            else if (selectedUnit.bombingRunUnit != "") MapsAndBombingRunLabel.Text = "Bombing run unit: " + selectedUnit.bombingRunUnit;
+            else if (selectedUnit.bombingRunUnit != "")
+            {
+                MapsAndBombingRunLabel.Text = "Bombing run unit: " + selectedUnit.bombingRunUnit;
+                toolTip1.SetToolTip(MapsAndBombingRunLabel, "The type of bomber that this unit will unlock in land tactical. Multiple entries for a carrier represent changes across tech level, not a random choice");
+            }
             else MapsAndBombingRunLabel.Text = "";
             if (selectedUnit.maintenance > 0 && selectedUnit.fightermode > 0) MaintenanceLabel.Text = "Maintenance (actual/calculated): " + selectedUnit.maintenance + "/" + (selectedUnit.buildtime * 30 / 50).ToString("0"); //Maintenance is weird, don't question the formula
             else MaintenanceLabel.Text = "";
@@ -1240,10 +1516,34 @@ namespace Holocron
             }
             else if (!(selectedUnit.garrison is null) && selectedUnit.garrison.Count > 0)
             {
+                float fighterUpfront = 0;
+                float fighterReserve = 0;
+                float bomberUpfront = 0;
+                float bomberReserve = 0;
                 foreach (garrison_entry spawn in selectedUnit.garrison)
                 {
-                    if (spawn.tech[1]) UnitSubunitListbox.Items.Add(spawn.unitname);
+                    if (spawn.tech[1])
+                    {
+                        UnitSubunitListbox.Items.Add(spawn.unitname); //Todo need to massively rethink this later
+                        if (spawn.bomber)
+                        {
+                            bomberUpfront += spawn.squad_size * spawn.upfront[1];
+                            bomberReserve += spawn.squad_size * spawn.reserve[1];
+                        }
+                        else
+                        {
+                            fighterUpfront += spawn.squad_size * spawn.upfront[1];
+                            fighterReserve += spawn.squad_size * spawn.reserve[1];
+                        }
+                    }
                 }
+                if (fighterUpfront > 0) ComplementLabel.Text = "Fighters: "+ fighterUpfront.ToString("0.##") + " / " + fighterReserve.ToString("0.##");
+                if (fighterUpfront > 0 && bomberUpfront > 0) ComplementLabel.Text += " | ";
+                if (bomberUpfront > 0) ComplementLabel.Text += "Bombers: " + bomberUpfront.ToString("0.##") + " / " + bomberReserve.ToString("0.##");
+            }
+            else
+            {
+                ComplementLabel.Text = "";
             }
             UnitSubSquadListbox.Items.Clear();
             if (!(selectedUnit.subcompanies is null) && selectedUnit.subcompanies.Count > 0)
@@ -1316,7 +1616,7 @@ namespace Holocron
                     }
                 }
             }
-            AvailabilityLabel.Text = "";
+            AvailabilityLabel.Text = "Select a faction to show availability data";
 
             //TODO add required planets (and what GC the unit can be built in!
 
@@ -1338,12 +1638,32 @@ namespace Holocron
             else ReqUnitLabel.Text = "";
 
             List<string> spawnsets = getModFiles("Scripts\\Library\\spawn-sets", "*.lua"); //TODO make sure this is still correct when modcontentloader is cut
-            SpawnSetListBox.Items.Clear();
+            UnitSpawnSetListBox.Items.Clear();
             foreach (string file in spawnsets)
             {
                 string filetext = File.ReadAllText(file);
-                if(filetext.Contains("\""+selectedUnit.unitname+"\"")) SpawnSetListBox.Items.Add(LastFolderOrFile(file).ToUpper().Replace(".LUA", ""));
+                if(filetext.Contains("\""+selectedUnit.unitname+"\"")) UnitSpawnSetListBox.Items.Add(LastFolderOrFile(file).ToUpper().Replace(".LUA", ""));
             }//todo goto after history for the lookup is set up
+
+            UnitRequiredPlanetListbox.Items.Clear();
+            foreach (string planet in selectedUnit.planets)
+            {
+                planet planetObj = entities.Planets.FirstOrDefault(s => s.codename == planet);
+                if (!(planetObj.username is null) && planetObj.username != "") UnitRequiredPlanetListbox.Items.Add(planet);
+            }
+            UnitGCListbox.Items.Clear();
+            foreach (galacticConquest GC in entities.Conquests)
+            {
+                foreach (string planet in selectedUnit.planets)
+                {
+                    int id = entities.Conquests.FindIndex(s => s.planets.Contains(planet));
+                    if(id >= 0)
+                    {
+                        UnitGCListbox.Items.Add(GC);
+                        break;
+                    }
+                }
+            }
         }
 
         private unit sortUnit(unit unit)
@@ -1581,7 +1901,7 @@ namespace Holocron
                     case "Per Unit in Company":
                         denom = unit.percompany;
                         break;
-                }//Todo: might need to prvent division by 0? But if that results in an infinity symbol it's probably ok
+                }//Todo: might need to prevent division by 0? But if that results in an infinity symbol it's probably ok
                 unit.sortfloat /= denom;
             }
             return unit;
@@ -1762,9 +2082,9 @@ namespace Holocron
             for (int i = 0; i< units.Count; i++)
             {
                 unit unit = units[i];
-                if (unit.variantbase != "Infantry_Dummy_Template" && unit.unitname != "Infantry_Dummy_Template" && !unit.unitname.Contains("Template_") && !unit.unitname.Contains("_Captured") && (!StructureRadioButton.Checked || !SpaceStructureRadioButton.Checked || (unit.hp > 1 && !unit.flags.Contains("NotOpportunityTarget"))) )
+                if (unit.variantbase != "Infantry_Dummy_Template" && unit.unitname != "Infantry_Dummy_Template" && !IsHiddenObject(unit) && !unit.unitname.Contains("_Captured") && (!StructureRadioButton.Checked || !SpaceStructureRadioButton.Checked || (unit.hp > 1 && !unit.flags.Contains("NotOpportunityTarget"))) )
                 {
-                    if (filterUnit(unit) && (search == "" || (unit.username).ToLower().Contains(search.ToLower())))
+                    if ((search == "" || (unit.username).ToLower().Contains(search.ToLower())) && filterUnit(unit))
                     {
                         if (StructureRadioButton.Checked || SpaceStructureRadioButton.Checked)
                         {
@@ -2393,7 +2713,7 @@ namespace Holocron
             if (!filter.cancel)
             {
                 globals.UnitFilterConfig = filter.filterConfig;
-                UnitFIlterTypeLabel.Text = filter.filterDocumentation;
+                UnitFilterTypeLabel.Text = filter.filterDocumentation;
 
                 populateUnitListbox();
             }
@@ -2418,6 +2738,21 @@ namespace Holocron
             }
         }
 
+        private void UnitSpawnGotoButton_Click(object sender, EventArgs e)
+        {
+            if (UnitSpawnSetListBox.SelectedItems.Count > 0) insert_history((int)historymaintabs.lookups, (int)lookupsubtabs.lkSpawn, (string)UnitSpawnSetListBox.SelectedItem, true);
+        }
+
+        private void UnitGotoPlanetButton_Click(object sender, EventArgs e)
+        {
+            if (UnitRequiredPlanetListbox.SelectedItems.Count > 0) insert_history((int)historymaintabs.planet, 0, (string)UnitRequiredPlanetListbox.SelectedItem, true);
+        }
+
+        private void UnitGCGotoButton_Click(object sender, EventArgs e)
+        {
+            if (UnitGCListbox.SelectedItems.Count > 0)insert_history((int)historymaintabs.conquest, 0, ((galacticConquest)UnitGCListbox.SelectedItem).codename, true);
+        }
+
         private void FactionAvailableListbox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (FactionAvailableListbox.SelectedItems.Count > 0)
@@ -2436,27 +2771,290 @@ namespace Holocron
             else AvailabilityLabel.Text = "";
         }
 
-        private string checkUnitAvailibility(unit unit, faction faction)
+        private string readstatearray(bool[] statearray)
         {
             string corenne = "";
-            if (unit.fightermode > 0) return corenne;
-            if (unit.techlevel > 5) corenne = "Locked by tech level"; //todo add locked by req structures w/o affil (TR Hutt Keldabe)
+            bool laststate = false;
+            int lastindex = -1;
+            bool furst = true;
+            for(int i = 0; i < statearray.Length; i++)
+            {
+                bool state = statearray[i];
+                if (state && !laststate)
+                {
+                    if (furst) furst = false;
+                    else corenne += ", ";
+                    corenne += (i+1).ToString(); //Convert 0 index to 1 based
+                    lastindex = i+1;
+                }
+                if (!state && laststate && i != lastindex)
+                {
+                    corenne += "-"+i.ToString();
+                }
+                laststate = state;
+            }
+            if (laststate && (statearray.Length) != lastindex) corenne += "-" + statearray.Length.ToString();
+            return corenne;
+        }
+
+        private string checkUnitAvailibility(unit unit, faction faction)
+        {
+            string locks = "";
+            string unlocks = "";
+            bool firstlock = true;
+            bool firstunlock = true;
+            if (unit.fightermode > 0) return "";
+            if (unit.techlevel > 5) locks = "Locked by tech level"; //todo add locked by req structures w/o affil (TR Hutt Keldabe)
             else
             {
-                corenne = "Unlocks: ";
-                if (unit.locked < 1) corenne += "Default";
+                unlocks = "Unlocks: ";
+                if (unit.locked < 1)
+                {
+                    unlocks += "Default";
+                    firstunlock = false;
+                }
 
-                corenne += "\nLocks: ";
-                if (unit.locked == 1) corenne += "Default";
+                locks += "Locks: ";
+                if (unit.locked == 1)
+                {
+                    locks += "Default";
+                    firstlock = false;
+                }
+
+                string factionlower = faction.codename.ToLower();
+                string unitlower = "\""+unit.unitname.ToLower()+"\"";
+
+                //Tech states
+                List<string> statefiles = getModFiles("Scripts\\Library\\eawx-states\\tech", "*.lua");
+                bool[] lockarray = new bool[statefiles.Count];
+                bool[] unlockarray = new bool[statefiles.Count];
+                foreach (string statefile in statefiles)
+                {
+                    string[] statedata = File.ReadAllText(statefile).ToLower().Replace('(', ')').Split(')');
+
+                    bool parsenext = false;
+                    foreach (string chunk in statedata)
+                    {
+                        if (parsenext)
+                        {
+                            parsenext = false;
+                            string[] lazyparse2 = chunk.Replace('{', '}').Split('}');
+                            if (lazyparse2.Length == 3)
+                            {
+                                if (lazyparse2[0].Contains(factionlower) && lazyparse2[1].Contains(unitlower))
+                                {
+                                    string techstring = LastFolderOrFile(statefile).ToLower();//.Replace("-era-", " ").Replace(".lua", "");
+                                    int techid = -1;
+                                    if (techstring.Contains("one"))
+                                    {
+                                        techid = 0;
+                                    }
+                                    else if (techstring.Contains("two"))
+                                    {
+                                        techid = 1;
+                                    }
+                                    else if (techstring.Contains("three"))
+                                    {
+                                        techid = 2;
+                                    }
+                                    else if (techstring.Contains("four"))
+                                    {
+                                        techid = 3;
+                                    }
+                                    else if (techstring.Contains("five"))
+                                    {
+                                        techid = 4;
+                                    }
+                                    else if (techstring.Contains("six"))
+                                    {
+                                        techid = 5;
+                                    }
+                                    else if (techstring.Contains("seven"))
+                                    {
+                                        techid = 6;
+                                    }
+                                    else if (techstring.Contains("eight"))
+                                    {
+                                        techid = 7;
+                                    }
+                                    else if (techstring.Contains("nine"))
+                                    {
+                                        techid = 8;
+                                    }
+                                    else if (techstring.Contains("ten"))
+                                    {
+                                        techid = 9;
+                                    }
+                                    else if (techstring.Contains("eleven"))
+                                    {
+                                        techid = 10;
+                                    }
+                                    else if (techstring.Contains("twelve"))
+                                    {
+                                        techid = 11;
+                                    }
+                                    if (techid < 0) break;
+
+
+                                    if (lazyparse2[2].Contains("false"))
+                                    {
+                                        lockarray[techid] = true;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        unlockarray[techid] = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        else if (chunk.Contains("unitutil.setlocklist")) parsenext = true;
+                    }
+                }
+                //Turn final lockarrays into human readable results
+                string states = readstatearray(unlockarray);
+                if(states != "")
+                {
+                    if (firstunlock) firstunlock = false;
+                    else unlocks += ", ";
+                    unlocks += "Tech " + states;
+                }
+                states = readstatearray(lockarray);
+                if (states != "")
+                {
+                    if (firstlock) firstlock = false;
+                    else locks += ", ";
+                    locks += "Tech " + states;
+                }
+
+                //Research
+                string research = getModFile("Scripts\\Library\\eawx-plugins\\tech-handler\\TechHandler.lua");
+                if(research != "")
+                {
+                    string[] statedata = File.ReadAllText(research).Replace('(', ')').Split(')');
+
+                    bool parsenext = false;
+                    string researchname = "";
+                    foreach (string chunk in statedata)
+                    {
+                        if (parsenext)
+                        {
+                            parsenext = false;
+                            int fStart = -1;
+                            int uStart = -1;
+                            int lStart = -1;
+                            int hStart = -1;
+
+                            int commaCount = 0;
+                            bool inArray = false;
+                            bool breakout = false;
+
+                            for (int i = 0; i < chunk.Length; i++)
+                            {
+                                char car = chunk[i];
+                                if (!inArray && car == ',')
+                                {
+                                    commaCount++;
+                                    switch (commaCount)
+                                    {
+                                        case 3:
+                                            fStart = i+1;
+                                            break;
+                                        case 4:
+                                            //if factions don't match, move one
+                                            if(!chunk.Substring(fStart, i - 1 - fStart).ToLower().Contains("\""+factionlower+ "\"")) breakout = true;
+                                            uStart = i + 1;
+                                            break;
+                                        case 5:
+                                            if (chunk.Substring(uStart, i - 1 - uStart).ToLower().Contains(unitlower))
+                                            {
+                                                if (firstunlock) firstunlock = false;
+                                                else unlocks += ", ";
+                                                unlocks += researchname;
+                                            }
+                                            lStart = i + 1;
+                                            break;
+                                        case 6:
+                                            if (chunk.Substring(lStart, i - 1 - lStart).ToLower().Contains(unitlower))
+                                            {
+                                                if (firstlock) firstlock = false;
+                                                else locks += ", ";
+                                                locks += researchname;
+                                                breakout = true; //all data parsed, no reason to keep going
+                                            }
+                                            hStart = i + 1;
+                                            break;
+                                        /*case 7: todo: pull hero spawns from this. Move breakout
+                                            if (chunk.Substring(hStart, i - 1 - hStart).Contains(unitlower))
+                                            {
+                                                
+                                            }
+                                            break;*/
+                                    }
+                                }
+                                if (car == '{') inArray = true;
+                                if (car == '}') inArray = false;
+                                if (breakout) break;
+                            }
+                        }
+                        if (chunk.Contains("GenericResearch"))
+                        {
+                            int selfdot = chunk.LastIndexOf('.');
+                            if(selfdot >= 0)
+                            {
+                                researchname = chunk.Substring(selfdot+1, chunk.LastIndexOf('=') - selfdot - 2);
+                                parsenext = true;
+                            }
+                        }
+                    }
+                }
+
+                //todo regimes
+
+                //GC master scripts
+                statefiles = getModFiles("Scripts\\Story", "GC_MasterScript_*.lua");
+                foreach (string statefile in statefiles)
+                {
+                    string[] lines = File.ReadAllLines(statefile);
+                    List<string> factionaliases = new List<string>();
+                    List<string> unitaliases = new List<string>();
+
+                    for (int i = 0; i < lines.Length; i++)
+                    {
+                        string line = lines[i].ToLower();
+                        if (line.Contains("find_player") && line.Contains(factionlower)) factionaliases.Add(line.Split('=')[0].Trim());
+                        if (line.Contains("find_object_type") && line.Contains(unitlower)) unitaliases.Add(line.Split('=')[0].Trim());
+                        bool u = line.Contains("unlock_tech");
+                        bool l = line.Contains(".lock_tech");
+                        if((u || l) && (lines.Contains(factionlower) || factionaliases.Any(line.Contains)) && (lines.Contains(unitlower) || unitaliases.Any(line.Contains)))
+                        {//Todo parse GCs for scripts and use username of GC
+                            string GC = LastFolderOrFile(statefile).ToLower().Replace("gc_masterscript_","").Replace(".lua", "").Replace("_", " ");
+                            if (u)
+                            {
+                                if (firstunlock) firstunlock = false;
+                                else unlocks += ", ";
+                                unlocks += GC;
+                            }
+                            else if (l)
+                            {
+                                if (firstlock) firstlock = false;
+                                else locks += ", ";
+                                locks += GC;
+                            }
+                            break;
+                        }
+                    }
+                }
             }
 
             string missionfile = getModFile("Scripts\\Library\\eawx-plugins\\intervention-missions\\rewards\\RewardTables_" + faction.codename.ToUpper() + ".lua");
             if (File.Exists(missionfile))
             {
                 string filetext = File.ReadAllText(missionfile);
-                if (filetext.Contains("\"" + unit.unitname + "\"")) corenne += "\nMission Reward";
+                if (filetext.Contains("\"" + unit.unitname + "\"")) locks += "\nMission Reward";
             }
-            return corenne;
+            return unlocks+"\n"+locks;
         }
 
         private void UnitAbilityListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -2562,6 +3160,10 @@ namespace Holocron
                     if (able.recharge > 0) AbilityTimeLabel.Text = "Recharge: " + able.recharge.ToString("0");
                     if (able.genericValue > 0) AbilityValueLabel.Text = "Value: " + able.genericValue;
                     else AbilityValueLabel.Text = "";
+                    if (able.percentCredits > 0) AbilityValueLabel.Text = "Planet Income Increase: " + able.percentCredits * 100 + "%";
+                    if (able.absoluteCredits > 0) AbilityValueLabel.Text = "Planet Income Addition: " + able.absoluteCredits;
+                    if (able.priceReduction > 0) AbilityValueLabel.Text = "Price Reduction: " + able.priceReduction * 100 + "%";
+                    if (able.timeReduction > 0) AbilityValueLabel.Text = "Time Reduction: " + able.timeReduction * 100 + "%";
                     AbilityActivationRadiusLabel.Text = "";
                     if (able.minradius > 0) AbilityActivationRadiusLabel.Text = "Min Activation: " + able.minradius + " ";
                     if (able.maxradius > 0) AbilityActivationRadiusLabel.Text = "Max Activation: " + able.maxradius;
@@ -2632,6 +3234,106 @@ namespace Holocron
 
         }
 
+        private void getDiscountCategory(List<unit> src)
+        {
+            foreach (unit unit in src)
+            {
+                bool toadd = false;
+                foreach (ability able in unit.abilities)
+                {
+                    if (able.type == "Reduce_Production_Price_Ability")
+                    {
+                        toadd = true;
+                        break;
+                    }
+                }
+                if (toadd) globals.DiscountEntities.Add(unit);
+            }
+        }
+
+        private void getDiscountObjects()
+        {
+            if (globals.DiscountEntities.Count == 0)
+            {
+                getDiscountCategory(entities.structures);
+                getDiscountCategory(entities.spaceStructures);
+                getDiscountCategory(entities.groundHeroes);
+                getDiscountCategory(entities.spaceHeroes);
+            }
+        }
+
+        private void getMoneyStructures()
+        {
+            if (globals.MoneyStructures.Count == 0)
+            {
+                foreach (unit structure in entities.structures)
+                {//Cost is for the Skirmish_Ground_Mining_Facility
+                    if (structure.techlevel <= 5 && structure.affiliations.Count > 0 && structure.cost > 0 && ((structure.limit_planet > 0 && structure.limit_concurrent < 0) || structure.planets.Length > 0))
+                    {
+                        bool toadd = false;
+                        foreach (ability able in structure.abilities)
+                        {
+                            if (able.type == "Planet_Income_Bonus_Ability" && able.absoluteCredits > 0 || able.percentCredits > 0) //Technically this fails to account for a postive in one and a negative in the other. This would require an analysis of the base income to see if it should be used
+                            {
+                                toadd = true;
+                                break;
+                            }
+                        }
+                        if (toadd) globals.MoneyStructures.Add(structure);
+                    }
+                }
+                foreach (unit structure in entities.spaceStructures)
+                {
+                    if (structure.techlevel <= 5 && structure.affiliations.Count > 0 && ((structure.limit_planet > 0 && structure.limit_concurrent < 0) || structure.planets.Length > 0))
+                    {
+                        bool toadd = false;
+                        foreach (ability able in structure.abilities)
+                        {
+                            if (able.type == "Planet_Income_Bonus_Ability" && able.absoluteCredits > 0 || able.percentCredits > 0)
+                            {
+                                toadd = true;
+                                break;
+                            }
+                        }
+                        if (toadd) globals.MoneyStructures.Add(structure);
+                    }
+                }
+            }
+
+        }
+
+        private int getPotentialIncome(planet planet)
+        {
+            int add = 0;
+            float mult = 1;
+            //Init relevant trimmed list to perform better when calling for hundreds of planets on a sort
+            getMoneyStructures();
+            foreach (unit structure in globals.MoneyStructures)
+            {
+                string visible = structure.unitname;
+                string[] vis = structure.planets;
+                if (structure.planets.Length == 0 || structure.planets.Contains(planet.codename))
+                {
+                    foreach (ability able in structure.abilities)
+                    {
+                        if (able.type == "Planet_Income_Bonus_Ability")
+                        {
+                            int qty = 1;
+                            if (structure.limit_planet > 1) qty = structure.limit_planet;
+                            add += (int)able.absoluteCredits * qty;
+                            mult += able.percentCredits * qty;
+                        }
+                    }
+                }
+            }
+            return (int)(planet.credits * mult + add);
+        }
+
+        private void GoToSpawnSetButton_Click(object sender, EventArgs e)
+        {
+            insert_history((int)historymaintabs.lookups, (int)lookupsubtabs.lkSpawn, GoToSpawnSetButton.Text, true);
+        }
+
         private void PlanetListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(PlanetListBox.SelectedItems.Count > 0)
@@ -2646,6 +3348,56 @@ namespace Holocron
                 PlanetShipyardLabel.Text = "Shipyard: " + planet.shipyard.ToString();
                 PlanetStarbaseLabel.Text = "Starbase: " + planet.max_starbase.ToString();
                 PlanetGroundSlotsLabel.Text = "Ground Slots: " + planet.land_structures.ToString();
+                PlanetPopulationLabel.Text = "Population: " + planet.pop.ToString();
+                PlanetHubLabel.Visible = planet.tradehub;
+
+                int potential = getPotentialIncome(planet);
+                if (globals.PlanetFilterConfig.GCs.Count == 1)
+                {
+                    galacticConquest GC = globals.PlanetFilterConfig.GCs[0];
+                    int connections = 0;
+                    List<string> connected = new List<string>();
+                    foreach (tradeRoute route in GC.traderouteObjects)
+                    {
+                        if (route.planets[0] == planet.codename)
+                        {
+                            planet linked = GC.planetObjects.FirstOrDefault(s => s.codename == route.planets[1]);
+                            if (!(linked.username is null)) connected.Add(linked.username);
+                            connections++;
+                        }
+                        if (route.planets[1] == planet.codename)
+                        {
+                            planet linked = GC.planetObjects.FirstOrDefault(s => s.codename == route.planets[0]);
+                            if (!(linked.username is null)) connected.Add(linked.username);
+                            connections++;
+                        }
+                    }
+                    PlanetConnectionsLabel.Text = "Connections: " + connections;
+                    toolTip1.SetToolTip(PlanetConnectionsLabel, "Connected to:\n" + SerializeStringArray(connected));
+                    int tradehub = 1;
+                    if (planet.tradehub) tradehub = globals.tradehubmultiplier;
+                    if (entities.modid == "") tradehub = 0;
+                    potential += connections * globals.tradebase * tradehub;
+                }
+                else PlanetConnectionsLabel.Text = "";
+                PlanetPotentialabel.Text = "Potential Income: " + potential.ToString();
+
+                if (globals.PlanetSortConfig.SortType == PlanetSortTypes.Name) PlanetSortLabel.Text = ""; //Pretty redundant to show in this case
+                else if (planet.sortstring != "") PlanetSortLabel.Text = "Sort: " + planet.sortstring;
+                else PlanetSortLabel.Text = "Sort: " + planet.sortint.ToString();
+
+                spawnSet set = entities.spawnSets.FirstOrDefault(s => s.planets.Contains(planet.codename.ToUpper()));
+                if (set.planets is null)
+                {
+                    PlanetSpawnSetLabel.Visible = false;
+                    GoToSpawnSetButton.Visible = false;
+                }
+                else
+                {
+                    PlanetSpawnSetLabel.Visible = true;
+                    GoToSpawnSetButton.Visible = true;
+                    GoToSpawnSetButton.Text = set.name;
+                }
 
                 SpaceMapLabel.Text = "Space Map: " + planet.spaceMap;
                 if (planet.has_ground)
@@ -2697,6 +3449,10 @@ namespace Holocron
                 }
                 PlanetStructureListBox.Items.Clear();
                 foreach (unit unit in entities.structures)
+                {
+                    if (unit.planets.Contains(planet.codename)) PlanetStructureListBox.Items.Add(unit);
+                }
+                foreach (unit unit in entities.spaceStructures)
                 {
                     if (!unit.unitname.Contains("_Shipyard"))
                     {
@@ -2791,20 +3547,365 @@ namespace Holocron
             }
         }
 
+        private bool filterPlanet(planet planet)
+        {
+            if (globals.PlanetFilterConfig.GCs.Count > 0)
+            {
+                bool match = !globals.PlanetFilterConfig.UnionIntersection;
+                foreach(galacticConquest GC in globals.PlanetFilterConfig.GCs)
+                {
+                    if (GC.planets.Contains(planet.codename))
+                    {
+                        if (globals.PlanetFilterConfig.UnionIntersection)
+                        {
+                            match = true;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        if (!globals.PlanetFilterConfig.UnionIntersection)
+                        {
+                            match = false;
+                            break;
+                        }
+                    }
+                }
+                if (!match) return false;
+            }
+
+            int level = globals.PlanetFilterConfig.shipyardLevel;
+            if (level < 0) level = 0;
+            if (globals.PlanetFilterConfig.shipyardComparison == 0)
+            {
+                if (planet.shipyard < level) return false;
+            }
+            else if (globals.PlanetFilterConfig.shipyardComparison == 1)
+            {
+                if (planet.shipyard != level) return false;
+            }
+            else if (globals.PlanetFilterConfig.shipyardComparison == 2)
+            {
+                if (planet.shipyard > level) return false;
+            }
+
+            level = globals.PlanetFilterConfig.starbaseLevel;
+            if (level < 1) level = 1;
+            if (globals.PlanetFilterConfig.starbaseComparison == 0)
+            {
+                if (planet.max_starbase < level) return false;
+            }
+            else if (globals.PlanetFilterConfig.starbaseComparison == 1)
+            {
+                if (planet.max_starbase != level) return false;
+            }
+            else if (globals.PlanetFilterConfig.starbaseComparison == 2)
+            {
+                if (planet.max_starbase > level) return false;
+            }
+
+            level = globals.PlanetFilterConfig.slotsLevel;
+            if (level < 0) level = 0;
+            if (globals.PlanetFilterConfig.slotsComparison == 0)
+            {
+                if (planet.land_structures < level) return false;
+            }
+            else if (globals.PlanetFilterConfig.slotsComparison == 1)
+            {
+                if (planet.land_structures != level) return false;
+            }
+            else if (globals.PlanetFilterConfig.slotsComparison == 2)
+            {
+                if (planet.land_structures > level) return false;
+            }
+
+            level = globals.PlanetFilterConfig.incomeLevel;
+            if (level < 0) level = 0;
+            if (globals.PlanetFilterConfig.incomeComparison == 0)
+            {
+                if (planet.credits < level) return false;
+            }
+            else if (globals.PlanetFilterConfig.incomeComparison == 1)
+            {
+                if (planet.credits != level) return false;
+            }
+            else if (globals.PlanetFilterConfig.incomeComparison == 2)
+            {
+                if (planet.credits > level) return false;
+            }
+
+            level = globals.PlanetFilterConfig.potentialLevel;
+            if (level < 0) level = 0;
+            int potential = getPotentialIncome(planet);
+            if (globals.PlanetFilterConfig.potentialComparison == 0)
+            {
+                if (potential < level) return false;
+            }
+            else if (globals.PlanetFilterConfig.potentialComparison == 1)
+            {
+                if (potential != level) return false;
+            }
+            else if (globals.PlanetFilterConfig.potentialComparison == 2)
+            {
+                if (potential > level) return false;
+            }
+
+            if (globals.PlanetFilterConfig.hubMode > 0)
+            {
+                if (planet.tradehub)
+                {
+                    if (globals.PlanetFilterConfig.hubMode == 2) return false;
+                }
+                else
+                {
+                    if (globals.PlanetFilterConfig.hubMode == 1) return false;
+                }
+            }
+
+            if (globals.PlanetFilterConfig.spawnMode > 0)
+            {
+                spawnSet set = entities.spawnSets.FirstOrDefault(s => s.planets.Contains(planet.codename.ToUpper()));
+                if (set.planets is null)
+                {
+                    if (globals.PlanetFilterConfig.spawnMode == 2) return false;
+                }
+                else
+                {
+                    if (globals.PlanetFilterConfig.spawnMode == 1) return false;
+                }
+            }
+
+            if (globals.PlanetFilterConfig.unitFilter != unitFilter.any)
+            {
+                int space = entities.spaceUnits.FindIndex(s => s.planets.Contains(planet.codename));
+                if (globals.PlanetFilterConfig.unitFilter == unitFilter.space && space < 0) return false;
+                int ground = entities.groundCompanies.FindIndex(s => s.planets.Contains(planet.codename));
+                if (globals.PlanetFilterConfig.unitFilter == unitFilter.ground && ground < 0) return false;
+                if (globals.PlanetFilterConfig.unitFilter == unitFilter.has && (space < 0 && ground < 0)) return false;
+                if (globals.PlanetFilterConfig.unitFilter == unitFilter.none && (space >= 0 || ground >= 0)) return false;
+            }
+
+            if (globals.PlanetFilterConfig.buildingFilter != buildingFilter.any)
+            {
+                int space = entities.spaceStructures.FindIndex(s => s.planets.Contains(planet.codename) && !s.unitname.Contains("_Shipyard")); //everything has a shipyard
+                int ground = entities.structures.FindIndex(s => s.planets.Contains(planet.codename));
+                if (space < 0 && ground < 0)
+                {
+                    if (globals.PlanetFilterConfig.buildingFilter == buildingFilter.none) return true;
+                    return false;
+                }
+                else
+                {
+                    if (globals.PlanetFilterConfig.buildingFilter == buildingFilter.none) return false;
+                    if (globals.PlanetFilterConfig.buildingFilter == buildingFilter.has) return true;
+                    bool match = false;
+                    if (globals.PlanetFilterConfig.buildingFilter == buildingFilter.nonfinancial)
+                    {
+                        //Can't use the shortcuts because a planet could have a mine/corp and a nonfinancial buidling
+                        foreach(unit structure in entities.structures)
+                        {
+                            if (structure.planets.Contains(planet.codename))
+                            {
+                                bool unitmatch = true;
+                                foreach (ability able in structure.abilities)
+                                {
+                                    if (able.type == "Reduce_Production_Price_Ability" || able.type == "Planet_Income_Bonus_Ability")
+                                    {
+                                        unitmatch = false;
+                                        break;
+                                    }
+                                }
+                                if (unitmatch)
+                                {
+                                    match = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!match)
+                        {
+                            foreach (unit structure in entities.spaceStructures)
+                            {
+                                if (structure.planets.Contains(planet.codename) && !structure.unitname.Contains("_Shipyard"))
+                                {
+                                    bool unitmatch = true;
+                                    foreach (ability able in structure.abilities)
+                                    {
+                                        if (able.type == "Reduce_Production_Price_Ability" || able.type == "Planet_Income_Bonus_Ability")
+                                        {
+                                            unitmatch = false;
+                                            break;
+                                        }
+                                    }
+                                    if (unitmatch)
+                                    {
+                                        match = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (!match) return false;
+                    }
+                    if (globals.PlanetFilterConfig.buildingFilter != buildingFilter.income)
+                    {
+                        getDiscountObjects();
+                        
+                        foreach(unit corp in globals.DiscountEntities)
+                        {
+                            if (corp.planets.Contains(planet.codename))
+                            {
+                                match = true;
+                                break;
+                            }
+                        }
+                        if (match) return true;
+                        else
+                        {
+                            if (globals.PlanetFilterConfig.buildingFilter == buildingFilter.discount) return false;
+                        }
+                    }
+                    if (globals.PlanetFilterConfig.buildingFilter != buildingFilter.discount)
+                    {
+                        getMoneyStructures();
+
+                        foreach (unit mine in globals.MoneyStructures)
+                        {
+                            if (mine.planets.Contains(planet.codename))
+                            {
+                                match = true;
+                                break;
+                            }
+                        }
+                        if (match) return true;
+                        else return false;
+                    }
+                }
+            }
+
+            //Do this last because the performance is terrible
+            if (globals.PlanetFilterConfig.terrains.Count > 0)
+            {
+                if (planet.has_ground)
+                {
+                    int terraintype = planet.terrain_id;
+                    if (terraintype < 0)
+                    {//Save changes on the fly so the user who isn't trying to use every planet terrain can skip the long load
+                        terraintype = getTerrainIndex(planet.groundMap);
+                        int planetindex = entities.Planets.FindIndex(s => s.codename == planet.codename);
+                        planet update = entities.Planets[planetindex];
+                        update.terrain_id = terraintype;
+                        entities.Planets[planetindex] = update;
+                    }
+                    if (!globals.PlanetFilterConfig.terrains.Contains(terraintype)) return false;
+                }
+                else return false;
+            }
+
+            return true;
+        }
+
+        private planet sortPlanet(planet planet)
+        {
+            planet.sortstring = ""; //Used for detecting if the int should be displayed
+            switch (globals.PlanetSortConfig.SortType)
+            {
+                case PlanetSortTypes.Name:
+                    planet.sortstring = planet.username;
+                    break;
+                case PlanetSortTypes.Income:
+                    planet.sortint = planet.credits;
+                    break;
+                case PlanetSortTypes.shipyard:
+                    planet.sortint = planet.shipyard;
+                    break;
+                case PlanetSortTypes.Starbase:
+                    planet.sortint = planet.max_starbase;
+                    break;
+                case PlanetSortTypes.Slots:
+                    planet.sortint = planet.land_structures;
+                    break;
+                case PlanetSortTypes.Pop:
+                    planet.sortint = planet.pop;
+                    break;
+                case PlanetSortTypes.Potential:
+                    planet.sortint = getPotentialIncome(planet);
+                    break;
+                case PlanetSortTypes.Terrain:
+
+                    if (planet.has_ground)
+                    {
+                        int terraintype = planet.terrain_id;
+                        if (terraintype < 0)
+                        {//Save changes on the fly so the user who isn't trying to use every planet terrain can skip the long load
+                            terraintype = getTerrainIndex(planet.groundMap);
+                            int planetindex = entities.Planets.FindIndex(s => s.codename == planet.codename);
+                            planet update = entities.Planets[planetindex];
+                            update.terrain_id = terraintype;
+                            entities.Planets[planetindex] = update;
+                        }
+                        planet.sortstring = getTerrainName(terraintype);
+                    }
+                    else planet.sortstring = "Space Only";
+                    break;
+                case PlanetSortTypes.Production:
+                    int mode = globals.PlanetSortConfig.productionMode;
+                    planet.sortint = 0;
+                    if (mode == 0 || mode == 1) planet.sortint += entities.structures.Count(x => x.planets.Contains(planet.codename)) + entities.spaceStructures.Count(x => x.planets.Contains(planet.codename) && !x.unitname.Contains("_Shipyard"));
+                    if (mode == 0 || mode == 2 || mode == 3) planet.sortint += entities.spaceUnits.Count(x => x.planets.Contains(planet.codename));
+                    if (mode == 0 || mode == 2 || mode == 4) planet.sortint += entities.groundCompanies.Count(x => x.planets.Contains(planet.codename));
+                    break;
+                case PlanetSortTypes.Usage:
+                    int mood = globals.PlanetSortConfig.usageMode;
+                    planet.sortint = 0;
+                    if (mood == 1) planet.sortint = globals.PlanetFilterConfig.GCs.Count(x => x.planets.Contains(planet.codename));
+                    if (mood == 0 || mood == 2 || mood == 6) planet.sortint += entities.Conquests.Count(x => x.planets.Contains(planet.codename) && x.Type == GCType.Progressive);
+                    if (mood == 0 || mood == 3 || mood == 6) planet.sortint += entities.Conquests.Count(x => x.planets.Contains(planet.codename) && x.Type == GCType.Regional);
+                    if (mood == 0 || mood == 4 || mood == 6) planet.sortint += entities.Conquests.Count(x => x.planets.Contains(planet.codename) && x.Type == GCType.Historical);
+                    if (mood == 0 || mood == 5 || mood == 6) planet.sortint += entities.Conquests.Count(x => x.planets.Contains(planet.codename) && x.Type == GCType.Infinity);
+                    if (mood == 6) planet.sortint += entities.Conquests.Count(x => x.planets.Contains(planet.codename) && x.Type == GCType.InfinityLayoutCopy);
+                    break;
+                case PlanetSortTypes.SpaceMap:
+                    planet.sortstring = planet.spaceMap;
+                    break;
+                case PlanetSortTypes.GroundMap:
+                    planet.sortstring = planet.groundMap;
+                    break;
+                case PlanetSortTypes.Internal:
+                    planet.sortstring = planet.codename;
+                    break;
+                case PlanetSortTypes.X:
+                    planet.sortint = (int)planet.x_coord;
+                    break;
+                case PlanetSortTypes.Y:
+                    planet.sortint = (int)planet.y_coord;
+                    break;
+                case PlanetSortTypes.R:
+                    planet.sortint = (int)Math.Sqrt((planet.x_coord * planet.x_coord + planet.y_coord * planet.y_coord));
+                    break;
+            }
+
+            return planet;
+        }
+
         private void populatePlanetListbox()
         {
+            string save = "";
+            if (PlanetListBox.SelectedItems.Count > 0) save = ((planet)PlanetListBox.SelectedItem).codename;
             Bitmap Starfield = new Bitmap(PlanetPictureBox.Width, PlanetPictureBox.Height);
             Graphics g = Graphics.FromImage(Starfield);
             g.FillRectangle(new SolidBrush(Color.Black), 0, 0, PlanetPictureBox.Width, PlanetPictureBox.Height);
 
             List<quantizedObject> spaceMaps = new List<quantizedObject>();
             List<quantizedObject> groundMaps = new List<quantizedObject>();
+            List<planet> sorted = new List<planet>();
             PlanetListBox.Items.Clear();
-            foreach (planet planet in entities.Planets)
+            for (int i = 0; i < entities.Planets.Count; i++) //Can't use for each because terrain type is saved as it is calculated
             {
-                if (planet.codename != "Galaxy_Core_Art_Model" && planet.username.ToLower().Contains(PlanetSearchBox.Text.ToLower()))
+                planet planet = entities.Planets[i];
+                if (planet.codename != "Galaxy_Core_Art_Model" && planet.username.ToLower().Contains(PlanetSearchBox.Text.ToLower()) && filterPlanet(planet))
                 {
-                    PlanetListBox.Items.Add(planet);
+                    sorted.Add(sortPlanet(planet));
                     int x = (Int32)(planet.x_coord * globals.scale + globals.origin);
                     int y = (Int32)(planet.y_coord * globals.scale + globals.origin);
                     g.FillRectangle(new SolidBrush(Color.White), x, y, 1, 1);
@@ -2821,6 +3922,54 @@ namespace Holocron
                         groundMaps = quantizedAdd(groundMaps, q);
                     }
                 }
+            }
+            if (globals.PlanetSortConfig.SortType <= PlanetSortTypes.Name)
+            {
+                if (globals.PlanetSortConfig.Descending)
+                {
+                    sorted.Sort(delegate (planet b, planet a)
+                    {
+                        int xdiff = a.sortstring.CompareTo(b.sortstring);
+                        if (xdiff != 0) return xdiff;
+                        else return a.username.CompareTo(b.username);
+                    });
+                }
+                else
+                {
+                    sorted.Sort(delegate (planet a, planet b)
+                    {
+                        int xdiff = a.sortstring.CompareTo(b.sortstring);
+                        if (xdiff != 0) return xdiff;
+                        else return a.username.CompareTo(b.username);
+                    });
+                }
+            }
+            else
+            {
+                if (globals.PlanetSortConfig.Descending)
+                {
+                    sorted.Sort(delegate (planet b, planet a)
+                    {
+                        int xdiff = a.sortint.CompareTo(b.sortint);
+                        if (xdiff != 0) return xdiff;
+                        else return a.username.CompareTo(b.username);
+                    });
+                }
+                else
+                {
+                    sorted.Sort(delegate (planet a, planet b)
+                    {
+                        int xdiff = a.sortint.CompareTo(b.sortint);
+                        if (xdiff != 0) return xdiff;
+                        else return a.username.CompareTo(b.username);
+                    });
+                }
+            }
+
+            foreach (planet planet in sorted)
+            {
+                PlanetListBox.Items.Add(sortPlanet(planet));
+                if (planet.codename == save) PlanetListBox.SelectedItem = planet;
             }
 
             PlanetPictureBox.Tag = Starfield;
@@ -2899,8 +4048,9 @@ namespace Holocron
         {
             if (PlanetStructureListBox.SelectedItems.Count > 0)
             {
-                //todo handle space structures
-                insert_history((int)historymaintabs.unit, 7, ((unit)PlanetStructureListBox.SelectedItem).unitname, true);
+                string structure = ((unit)PlanetStructureListBox.SelectedItem).unitname;
+                if (entities.spaceStructures.FindIndex(s => s.unitname == structure) >= 0) insert_history((int)historymaintabs.unit, 8, structure, true);
+                else insert_history((int)historymaintabs.unit, 7, structure, true);
             }
         }
 
@@ -2918,6 +4068,44 @@ namespace Holocron
             {
                 insert_history((int)historymaintabs.unit, 1, ((unit)PlanetGroundListBox.SelectedItem).unitname, true);
             }
+        }
+
+        private void PlanetSortButton_Click(object sender, EventArgs e)
+        {
+            PlanetSort sort = new PlanetSort();
+            sort.sortConfig = globals.PlanetSortConfig;
+            //todo add the others
+            sort.ShowDialog();
+
+            if (!sort.cancel)
+            {
+                globals.PlanetSortConfig = sort.sortConfig;
+                PlanetSortTypeLabel.Text = sort.sortDocumentation;
+
+                populatePlanetListbox();
+            }
+        }
+
+        private void PlanetFilterButton_Click(object sender, EventArgs e)
+        {
+            PlanetFilter filter = new PlanetFilter();
+            filter.filterConfig = globals.PlanetFilterConfig;
+            filter.GCFull = entities.Conquests;
+
+            filter.ShowDialog();
+
+            if (!filter.cancel)
+            {
+                globals.PlanetFilterConfig = filter.filterConfig;
+                PlanetFilterTypeLabel.Text = filter.filterDocumentation;
+
+                populatePlanetListbox();
+            }
+        }
+
+        private void PlanetExportButton_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void populateGCListbox()
@@ -3068,14 +4256,18 @@ namespace Holocron
                 galacticConquest GC = (galacticConquest)GCListBox.SelectedItem;
 
                 int planetcount = 0;
+                int borderplanets = 0;
                 int income = 0;
                 int level_4 = 0;
                 int level_3 = 0;
                 int level_2 = 0;
                 int level_1 = 0;
+                List<string> borderingplanets = new List<string>();
+                List<string> borderingfactions = new List<string>();
 
                 faction active = (faction)GCPresentListbox.SelectedItem;
-                foreach (planet planet in (List<planet>)GCActiveListBox.Tag)
+                List<planet> ownedPlanets = (List<planet>)GCActiveListBox.Tag;
+                foreach (planet planet in ownedPlanets)
                 {
                     if (active.codename == planet.owner.codename)
                     {
@@ -3085,13 +4277,51 @@ namespace Holocron
                         if (planet.shipyard == 3) level_3++;
                         if (planet.shipyard == 2) level_2++;
                         if (planet.shipyard == 1) level_1++;
+
+                        bool bordered = false;
+                        List<tradeRoute> links = GC.traderouteObjects.FindAll(s => s.planets[0] == planet.codename);
+                        foreach(tradeRoute route in links)
+                        {
+                            planet connected = ownedPlanets.FirstOrDefault(s => s.codename == route.planets[1]);
+                            if(!(connected.codename is null))
+                            {
+                                string owner = connected.owner.codename;
+                                if(owner != planet.owner.codename && connected.owner.playable) //Todo: use Lua value of NoneAI to inform this?
+                                {
+                                    bordered = true;
+                                    if(!borderingplanets.Contains(connected.username)) borderingplanets.Add(connected.username);
+                                    if (!borderingfactions.Contains(connected.owner.textname)) borderingfactions.Add(connected.owner.textname);
+                                }
+                            }
+                        }
+                        links = GC.traderouteObjects.FindAll(s => s.planets[1] == planet.codename);
+                        foreach (tradeRoute route in links)
+                        {
+                            planet connected = ownedPlanets.FirstOrDefault(s => s.codename == route.planets[0]);
+                            if (!(connected.codename is null))
+                            {
+                                string owner = connected.owner.codename;
+                                if (owner != planet.owner.codename && connected.owner.playable)
+                                {
+                                    bordered = true;
+                                    if (!borderingplanets.Contains(connected.username)) borderingplanets.Add(connected.username);
+                                    if (!borderingfactions.Contains(connected.owner.textname)) borderingfactions.Add(connected.owner.textname);
+                                }
+                            }
+                        }
+                        if(bordered) borderplanets++;
                     }
+                    borderingplanets.Sort();
                 }
 
                 GCPresentPlanetsLabel.Text = "Planets: " + planetcount + " (" + (100 * planetcount / GC.planetObjects.Count).ToString("0") + "% of total)";
                 GCPresentIncomeLabel.Text = "Income: " + income + " ("+ (100 * income / (int)GCPresentIncomeLabel.Tag).ToString("0") + "% of total)";
                 GCPresentShipyardsLabel.Text = "Level 4 Shipyards: " + level_4 + "\nLevel 3 Shipyards: " + level_3 + "\nLevel 2 Shipyards: " + level_2 + "\nLevel 1 Shipyards: " + level_1;
-                GCPresentBorderLabel.Text = ""; //Todo this can be calculated from the trade routes and planet ownership
+                GCPresentBorderLabel.Text = "Border Planets: " + borderplanets + " (" + (100 * borderplanets / planetcount).ToString("0") + "% of owned territory)";
+                GCPresentBorderingLabel.Text = "Bordering Planets: " + borderingplanets.Count;
+                toolTip1.SetToolTip(GCPresentBorderingLabel, "Count of distinct planets owned by another playable/active faction bordering this faction\n" + SerializeStringArray(borderingplanets));
+                GCPresentBorderFactionsLabel.Text = "Bordering Factions: " + borderingfactions.Count;
+                toolTip1.SetToolTip(GCPresentBorderFactionsLabel, "Count of distinct playable/active factions bordering this faction's territory\n" + SerializeStringArray(borderingfactions));
             }
             else
             {
@@ -3099,6 +4329,8 @@ namespace Holocron
                 GCPresentIncomeLabel.Text = "";
                 GCPresentShipyardsLabel.Text = "";
                 GCPresentBorderLabel.Text = "";
+                GCPresentBorderingLabel.Text = "";
+                GCPresentBorderFactionsLabel.Text = "";
             }
             populateGCPlanetListBox();
         }
@@ -3122,14 +4354,28 @@ namespace Holocron
                 GCPlanetIncomeLabel.Text = "Income: " + planet.credits;
                 GCPlanetShipyardLabel.Text = "Shipyard Level: " + planet.shipyard;
                 int connections = 0;
+                List<string> connected = new List<string>();
                 foreach(tradeRoute route in GC.traderouteObjects)
                 {
-                    if (route.planets.Contains(planet.codename)) connections++;
+                    if (route.planets[0] == planet.codename)
+                    {
+                        planet linked = GC.planetObjects.FirstOrDefault(s => s.codename == route.planets[1]);
+                        if(!(linked.username is null)) connected.Add(linked.username);
+                        connections++;
+                    }
+                    if (route.planets[1] == planet.codename)
+                    {
+                        planet linked = GC.planetObjects.FirstOrDefault(s => s.codename == route.planets[0]);
+                        if (!(linked.username is null)) connected.Add(linked.username);
+                        connections++;
+                    }
                 }
-                GCPlanetConnectionLabel.Text = "Connections: " + connections; //Todo read from
+                GCPlanetConnectionLabel.Text = "Connections: " + connections;
+                toolTip1.SetToolTip(GCPlanetConnectionLabel, "Connected to:\n" + SerializeStringArray(connected));
                 int tradehub = 1;
-                if (planet.tradehub) tradehub = 2;
-                GCPlanetPotentialLabel.Text = "Potential Income: " + (planet.credits * 3 + connections * 50 * tradehub); //Todo handle trade hubs, use planet field that takes mines into account
+                if (planet.tradehub) tradehub = globals.tradehubmultiplier;
+                if (entities.modid == "") tradehub = 0;
+                GCPlanetPotentialLabel.Text = "Potential Income: " + (getPotentialIncome(planet) + connections * globals.tradebase * tradehub);
                 GCPlanetForceLabel.Text = "Forces:";
 
                 for(int i = 0; i < GC.forceLocation[GCActiveListBox.SelectedIndex].Count; i++)
@@ -3159,6 +4405,13 @@ namespace Holocron
             {
                 insert_history((int)historymaintabs.planet, 0, ((planet)GCPlanetListBox.SelectedItem).codename, true);
             }
+        }
+
+        private void AbilityTargetUnitLabel_Click(object sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+            if (me.Button == MouseButtons.Left) MessageBox.Show(AbilityTargetUnitLabel.Text);
+            else if (me.Button == MouseButtons.Right) System.Windows.Forms.Clipboard.SetText(AbilityTargetUnitLabel.Text);
         }
 
         //Don't put any functions below here if you want it to still compile
