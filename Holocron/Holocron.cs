@@ -499,10 +499,9 @@ namespace Holocron
             planet,
             unit,
             govs,
-            map,
-            lookups,
             galaxy,
             autoresolve,
+            lookups,
         }
 
         enum lookupsubtabs

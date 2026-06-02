@@ -409,6 +409,7 @@
             this.MainTab.SuspendLayout();
             this.tabAutoResolve.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveTransportLossesNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveTechLevelNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveRetreatWinnerAttritionNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveRetreatLoserAttritionNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveWinnerAttritionNumeric)).BeginInit();
@@ -1066,7 +1067,7 @@
             this.SpaceStructureRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SpaceStructureRadioButton.Location = new System.Drawing.Point(6, 272);
             this.SpaceStructureRadioButton.Name = "SpaceStructureRadioButton";
-            this.SpaceStructureRadioButton.Size = new System.Drawing.Size(127, 20);
+            this.SpaceStructureRadioButton.Size = new System.Drawing.Size(128, 20);
             this.SpaceStructureRadioButton.TabIndex = 62;
             this.SpaceStructureRadioButton.Text = "Space Structures";
             this.SpaceStructureRadioButton.UseVisualStyleBackColor = true;
@@ -1139,7 +1140,7 @@
             this.StructureRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.StructureRadioButton.Location = new System.Drawing.Point(6, 245);
             this.StructureRadioButton.Name = "StructureRadioButton";
-            this.StructureRadioButton.Size = new System.Drawing.Size(131, 20);
+            this.StructureRadioButton.Size = new System.Drawing.Size(132, 20);
             this.StructureRadioButton.TabIndex = 56;
             this.StructureRadioButton.Text = "Ground Structures";
             this.StructureRadioButton.UseVisualStyleBackColor = true;
@@ -2984,7 +2985,7 @@
             this.SpaceMapLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SpaceMapLabel.Location = new System.Drawing.Point(392, 506);
             this.SpaceMapLabel.Name = "SpaceMapLabel";
-            this.SpaceMapLabel.Size = new System.Drawing.Size(80, 16);
+            this.SpaceMapLabel.Size = new System.Drawing.Size(81, 16);
             this.SpaceMapLabel.TabIndex = 68;
             this.SpaceMapLabel.Text = "Space Map:";
             // 
@@ -2994,7 +2995,7 @@
             this.GroundMapLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GroundMapLabel.Location = new System.Drawing.Point(392, 542);
             this.GroundMapLabel.Name = "GroundMapLabel";
-            this.GroundMapLabel.Size = new System.Drawing.Size(84, 16);
+            this.GroundMapLabel.Size = new System.Drawing.Size(85, 16);
             this.GroundMapLabel.TabIndex = 67;
             this.GroundMapLabel.Text = "Ground Map:";
             // 
@@ -3015,7 +3016,7 @@
             this.PlanetCodeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.PlanetCodeLabel.Location = new System.Drawing.Point(744, 3);
             this.PlanetCodeLabel.Name = "PlanetCodeLabel";
-            this.PlanetCodeLabel.Size = new System.Drawing.Size(93, 16);
+            this.PlanetCodeLabel.Size = new System.Drawing.Size(94, 16);
             this.PlanetCodeLabel.TabIndex = 65;
             this.PlanetCodeLabel.Text = "Internal Name:";
             // 
@@ -4042,7 +4043,7 @@
             0,
             0,
             196608});
-            this.AutoResolveTransportLossesNumeric.Location = new System.Drawing.Point(150, 254);
+            this.AutoResolveTransportLossesNumeric.Location = new System.Drawing.Point(150, 264);
             this.AutoResolveTransportLossesNumeric.Maximum = new decimal(new int[] {
             1,
             0,
@@ -4060,7 +4061,7 @@
             // TransportLossesLabel
             // 
             this.TransportLossesLabel.AutoSize = true;
-            this.TransportLossesLabel.Location = new System.Drawing.Point(56, 256);
+            this.TransportLossesLabel.Location = new System.Drawing.Point(56, 266);
             this.TransportLossesLabel.Name = "TransportLossesLabel";
             this.TransportLossesLabel.Size = new System.Drawing.Size(88, 13);
             this.TransportLossesLabel.TabIndex = 28;
@@ -4068,7 +4069,7 @@
             // 
             // AutoResolveTechLevelNumeric
             // 
-            this.AutoResolveTechLevelNumeric.Location = new System.Drawing.Point(150, 230);
+            this.AutoResolveTechLevelNumeric.Location = new System.Drawing.Point(150, 240);
             this.AutoResolveTechLevelNumeric.Maximum = new decimal(new int[] {
             5,
             0,
@@ -4082,9 +4083,9 @@
             // AutoResolveTechLevelLabel
             // 
             this.AutoResolveTechLevelLabel.AutoSize = true;
-            this.AutoResolveTechLevelLabel.Location = new System.Drawing.Point(89, 232);
+            this.AutoResolveTechLevelLabel.Location = new System.Drawing.Point(89, 242);
             this.AutoResolveTechLevelLabel.Name = "AutoResolveTechLevelLabel";
-            this.AutoResolveTechLevelLabel.Size = new System.Drawing.Size(55, 13);
+            this.AutoResolveTechLevelLabel.Size = new System.Drawing.Size(57, 13);
             this.AutoResolveTechLevelLabel.TabIndex = 30;
             this.AutoResolveTechLevelLabel.Text = "Tech level";
             // 
@@ -4146,7 +4147,7 @@
             // 
             // AutoResolveRunButton
             // 
-            this.AutoResolveRunButton.Location = new System.Drawing.Point(278, 278);
+            this.AutoResolveRunButton.Location = new System.Drawing.Point(278, 288);
             this.AutoResolveRunButton.Name = "AutoResolveRunButton";
             this.AutoResolveRunButton.Size = new System.Drawing.Size(171, 37);
             this.AutoResolveRunButton.TabIndex = 14;
@@ -4157,12 +4158,12 @@
             // AutoResolveResultTextBox
             // 
             this.AutoResolveResultTextBox.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AutoResolveResultTextBox.Location = new System.Drawing.Point(12, 331);
+            this.AutoResolveResultTextBox.Location = new System.Drawing.Point(12, 341);
             this.AutoResolveResultTextBox.Multiline = true;
             this.AutoResolveResultTextBox.Name = "AutoResolveResultTextBox";
             this.AutoResolveResultTextBox.ReadOnly = true;
             this.AutoResolveResultTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.AutoResolveResultTextBox.Size = new System.Drawing.Size(731, 447);
+            this.AutoResolveResultTextBox.Size = new System.Drawing.Size(731, 437);
             this.AutoResolveResultTextBox.TabIndex = 15;
             // 
             // AutoResolveContrastGridLabel
@@ -4170,7 +4171,7 @@
             this.AutoResolveContrastGridLabel.AutoSize = true;
             this.AutoResolveContrastGridLabel.Location = new System.Drawing.Point(746, 12);
             this.AutoResolveContrastGridLabel.Name = "AutoResolveContrastGridLabel";
-            this.AutoResolveContrastGridLabel.Size = new System.Drawing.Size(167, 13);
+            this.AutoResolveContrastGridLabel.Size = new System.Drawing.Size(171, 13);
             this.AutoResolveContrastGridLabel.TabIndex = 32;
             this.AutoResolveContrastGridLabel.Text = "Friendly contrast weights by enemy";
             // 
@@ -4182,7 +4183,7 @@
             0,
             0,
             196608});
-            this.AutoResolveRetreatWinnerAttritionNumeric.Location = new System.Drawing.Point(611, 302);
+            this.AutoResolveRetreatWinnerAttritionNumeric.Location = new System.Drawing.Point(611, 312);
             this.AutoResolveRetreatWinnerAttritionNumeric.Maximum = new decimal(new int[] {
             1,
             0,
@@ -4201,7 +4202,7 @@
             // AutoResolveRetreatWinnerAttritionLabel
             // 
             this.AutoResolveRetreatWinnerAttritionLabel.AutoSize = true;
-            this.AutoResolveRetreatWinnerAttritionLabel.Location = new System.Drawing.Point(488, 304);
+            this.AutoResolveRetreatWinnerAttritionLabel.Location = new System.Drawing.Point(488, 314);
             this.AutoResolveRetreatWinnerAttritionLabel.Name = "AutoResolveRetreatWinnerAttritionLabel";
             this.AutoResolveRetreatWinnerAttritionLabel.Size = new System.Drawing.Size(117, 13);
             this.AutoResolveRetreatWinnerAttritionLabel.TabIndex = 24;
@@ -4215,7 +4216,7 @@
             0,
             0,
             196608});
-            this.AutoResolveRetreatLoserAttritionNumeric.Location = new System.Drawing.Point(611, 278);
+            this.AutoResolveRetreatLoserAttritionNumeric.Location = new System.Drawing.Point(611, 288);
             this.AutoResolveRetreatLoserAttritionNumeric.Maximum = new decimal(new int[] {
             1,
             0,
@@ -4234,7 +4235,7 @@
             // AutoResolveRetreatLoserAttritionLabel
             // 
             this.AutoResolveRetreatLoserAttritionLabel.AutoSize = true;
-            this.AutoResolveRetreatLoserAttritionLabel.Location = new System.Drawing.Point(496, 280);
+            this.AutoResolveRetreatLoserAttritionLabel.Location = new System.Drawing.Point(496, 290);
             this.AutoResolveRetreatLoserAttritionLabel.Name = "AutoResolveRetreatLoserAttritionLabel";
             this.AutoResolveRetreatLoserAttritionLabel.Size = new System.Drawing.Size(109, 13);
             this.AutoResolveRetreatLoserAttritionLabel.TabIndex = 22;
@@ -4248,7 +4249,7 @@
             0,
             0,
             196608});
-            this.AutoResolveWinnerAttritionNumeric.Location = new System.Drawing.Point(150, 302);
+            this.AutoResolveWinnerAttritionNumeric.Location = new System.Drawing.Point(150, 312);
             this.AutoResolveWinnerAttritionNumeric.Maximum = new decimal(new int[] {
             1,
             0,
@@ -4267,7 +4268,7 @@
             // AutoResolveWinnerAttritionLabel
             // 
             this.AutoResolveWinnerAttritionLabel.AutoSize = true;
-            this.AutoResolveWinnerAttritionLabel.Location = new System.Drawing.Point(35, 304);
+            this.AutoResolveWinnerAttritionLabel.Location = new System.Drawing.Point(35, 314);
             this.AutoResolveWinnerAttritionLabel.Name = "AutoResolveWinnerAttritionLabel";
             this.AutoResolveWinnerAttritionLabel.Size = new System.Drawing.Size(109, 13);
             this.AutoResolveWinnerAttritionLabel.TabIndex = 20;
@@ -4281,7 +4282,7 @@
             0,
             0,
             196608});
-            this.AutoResolveLoserAttritionNumeric.Location = new System.Drawing.Point(150, 278);
+            this.AutoResolveLoserAttritionNumeric.Location = new System.Drawing.Point(150, 288);
             this.AutoResolveLoserAttritionNumeric.Maximum = new decimal(new int[] {
             1,
             0,
@@ -4300,7 +4301,7 @@
             // AutoResolveLoserAttritionLabel
             // 
             this.AutoResolveLoserAttritionLabel.AutoSize = true;
-            this.AutoResolveLoserAttritionLabel.Location = new System.Drawing.Point(43, 280);
+            this.AutoResolveLoserAttritionLabel.Location = new System.Drawing.Point(43, 290);
             this.AutoResolveLoserAttritionLabel.Name = "AutoResolveLoserAttritionLabel";
             this.AutoResolveLoserAttritionLabel.Size = new System.Drawing.Size(101, 13);
             this.AutoResolveLoserAttritionLabel.TabIndex = 18;
@@ -4314,7 +4315,7 @@
             0,
             0,
             196608});
-            this.AutoResolveAttritionAllowanceNumeric.Location = new System.Drawing.Point(611, 254);
+            this.AutoResolveAttritionAllowanceNumeric.Location = new System.Drawing.Point(611, 264);
             this.AutoResolveAttritionAllowanceNumeric.Maximum = new decimal(new int[] {
             10,
             0,
@@ -4333,7 +4334,7 @@
             // AutoResolveAttritionAllowanceLabel
             // 
             this.AutoResolveAttritionAllowanceLabel.AutoSize = true;
-            this.AutoResolveAttritionAllowanceLabel.Location = new System.Drawing.Point(478, 256);
+            this.AutoResolveAttritionAllowanceLabel.Location = new System.Drawing.Point(478, 266);
             this.AutoResolveAttritionAllowanceLabel.Name = "AutoResolveAttritionAllowanceLabel";
             this.AutoResolveAttritionAllowanceLabel.Size = new System.Drawing.Size(127, 13);
             this.AutoResolveAttritionAllowanceLabel.TabIndex = 26;
