@@ -5110,12 +5110,7 @@ namespace Holocron
             }
         }
 
-        private void AutoResolveUnitComboBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
 
-        }
-
-        private void AutoResolveLoserAttritionLabel_Click(object sender, EventArgs e)
         private void PlanetSortButton_Click(object sender, EventArgs e)
         {
             PlanetSort sort = new PlanetSort();

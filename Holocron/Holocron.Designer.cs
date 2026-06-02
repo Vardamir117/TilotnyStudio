@@ -4305,7 +4305,6 @@
             this.AutoResolveLoserAttritionLabel.Size = new System.Drawing.Size(101, 13);
             this.AutoResolveLoserAttritionLabel.TabIndex = 18;
             this.AutoResolveLoserAttritionLabel.Text = "Loser Attrition Value";
-            this.AutoResolveLoserAttritionLabel.Click += new System.EventHandler(this.AutoResolveLoserAttritionLabel_Click);
             // 
             // AutoResolveAttritionAllowanceNumeric
             // 
