@@ -650,7 +650,7 @@
             this.Controls.Add(this.ShipyardRB);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "UnitSort";
-            this.Text = "Sort Configuration";
+            this.Text = "Unit Sort Configuration";
             this.Load += new System.EventHandler(this.UserSort_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
