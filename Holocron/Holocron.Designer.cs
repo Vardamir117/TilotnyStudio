@@ -348,6 +348,32 @@
             this.MainTab = new System.Windows.Forms.TabControl();
             this.tabGov = new System.Windows.Forms.TabPage();
             this.tabGalaxy = new System.Windows.Forms.TabPage();
+            this.tabAutoResolve = new System.Windows.Forms.TabPage();
+            this.AutoResolveTransportLossesNumeric = new System.Windows.Forms.NumericUpDown();
+            this.TransportLossesLabel = new System.Windows.Forms.Label();
+            this.AutoResolveTechLevelNumeric = new System.Windows.Forms.NumericUpDown();
+            this.AutoResolveTechLevelLabel = new System.Windows.Forms.Label();
+            this.AutoResolveSideBLabel = new System.Windows.Forms.Label();
+            this.AutoResolveSideALabel = new System.Windows.Forms.Label();
+            this.AutoResolveSideBFactionComboBox = new System.Windows.Forms.ComboBox();
+            this.AutoResolveSideBFacLabel = new System.Windows.Forms.Label();
+            this.AutoResolveSideAFactionComboBox = new System.Windows.Forms.ComboBox();
+            this.AutoResolveSideAFacLabel = new System.Windows.Forms.Label();
+            this.AutoResolveRunButton = new System.Windows.Forms.Button();
+            this.AutoResolveResultTextBox = new System.Windows.Forms.TextBox();
+            this.AutoResolveContrastGridLabel = new System.Windows.Forms.Label();
+            this.AutoResolveRetreatWinnerAttritionNumeric = new System.Windows.Forms.NumericUpDown();
+            this.AutoResolveRetreatWinnerAttritionLabel = new System.Windows.Forms.Label();
+            this.AutoResolveRetreatLoserAttritionNumeric = new System.Windows.Forms.NumericUpDown();
+            this.AutoResolveRetreatLoserAttritionLabel = new System.Windows.Forms.Label();
+            this.AutoResolveWinnerAttritionNumeric = new System.Windows.Forms.NumericUpDown();
+            this.AutoResolveWinnerAttritionLabel = new System.Windows.Forms.Label();
+            this.AutoResolveLoserAttritionNumeric = new System.Windows.Forms.NumericUpDown();
+            this.AutoResolveLoserAttritionLabel = new System.Windows.Forms.Label();
+            this.AutoResolveAttritionAllowanceNumeric = new System.Windows.Forms.NumericUpDown();
+            this.AutoResolveAttritionAllowanceLabel = new System.Windows.Forms.Label();
+            this.AutoResolveBattleTypeComboBox = new System.Windows.Forms.ComboBox();
+            this.AutoResolveBattleTypeLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.menuStrip1.SuspendLayout();
@@ -381,6 +407,13 @@
             this.tabFactions.SuspendLayout();
             this.FactionPanel.SuspendLayout();
             this.MainTab.SuspendLayout();
+            this.tabAutoResolve.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveTransportLossesNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveRetreatWinnerAttritionNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveRetreatLoserAttritionNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveWinnerAttritionNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveLoserAttritionNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveAttritionAllowanceNumeric)).BeginInit();
             this.SuspendLayout();
             // 
             // contextMenuStrip1
@@ -1033,7 +1066,7 @@
             this.SpaceStructureRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SpaceStructureRadioButton.Location = new System.Drawing.Point(6, 272);
             this.SpaceStructureRadioButton.Name = "SpaceStructureRadioButton";
-            this.SpaceStructureRadioButton.Size = new System.Drawing.Size(128, 20);
+            this.SpaceStructureRadioButton.Size = new System.Drawing.Size(127, 20);
             this.SpaceStructureRadioButton.TabIndex = 62;
             this.SpaceStructureRadioButton.Text = "Space Structures";
             this.SpaceStructureRadioButton.UseVisualStyleBackColor = true;
@@ -1106,7 +1139,7 @@
             this.StructureRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.StructureRadioButton.Location = new System.Drawing.Point(6, 245);
             this.StructureRadioButton.Name = "StructureRadioButton";
-            this.StructureRadioButton.Size = new System.Drawing.Size(132, 20);
+            this.StructureRadioButton.Size = new System.Drawing.Size(131, 20);
             this.StructureRadioButton.TabIndex = 56;
             this.StructureRadioButton.Text = "Ground Structures";
             this.StructureRadioButton.UseVisualStyleBackColor = true;
@@ -2951,7 +2984,7 @@
             this.SpaceMapLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SpaceMapLabel.Location = new System.Drawing.Point(392, 506);
             this.SpaceMapLabel.Name = "SpaceMapLabel";
-            this.SpaceMapLabel.Size = new System.Drawing.Size(81, 16);
+            this.SpaceMapLabel.Size = new System.Drawing.Size(80, 16);
             this.SpaceMapLabel.TabIndex = 68;
             this.SpaceMapLabel.Text = "Space Map:";
             // 
@@ -2961,7 +2994,7 @@
             this.GroundMapLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.GroundMapLabel.Location = new System.Drawing.Point(392, 542);
             this.GroundMapLabel.Name = "GroundMapLabel";
-            this.GroundMapLabel.Size = new System.Drawing.Size(85, 16);
+            this.GroundMapLabel.Size = new System.Drawing.Size(84, 16);
             this.GroundMapLabel.TabIndex = 67;
             this.GroundMapLabel.Text = "Ground Map:";
             // 
@@ -2982,7 +3015,7 @@
             this.PlanetCodeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.PlanetCodeLabel.Location = new System.Drawing.Point(744, 3);
             this.PlanetCodeLabel.Name = "PlanetCodeLabel";
-            this.PlanetCodeLabel.Size = new System.Drawing.Size(94, 16);
+            this.PlanetCodeLabel.Size = new System.Drawing.Size(93, 16);
             this.PlanetCodeLabel.TabIndex = 65;
             this.PlanetCodeLabel.Text = "Internal Name:";
             // 
@@ -3940,6 +3973,7 @@
             this.MainTab.Controls.Add(this.tabUnits);
             this.MainTab.Controls.Add(this.tabGov);
             this.MainTab.Controls.Add(this.tabGalaxy);
+            this.MainTab.Controls.Add(this.tabAutoResolve);
             this.MainTab.Controls.Add(this.tabLookups);
             this.MainTab.Location = new System.Drawing.Point(0, 27);
             this.MainTab.Name = "MainTab";
@@ -3965,6 +3999,368 @@
             this.tabGalaxy.TabIndex = 7;
             this.tabGalaxy.Text = "Galaxy Map";
             this.tabGalaxy.UseVisualStyleBackColor = true;
+            // 
+            // tabAutoResolve
+            // 
+            this.tabAutoResolve.Controls.Add(this.AutoResolveTransportLossesNumeric);
+            this.tabAutoResolve.Controls.Add(this.TransportLossesLabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveTechLevelNumeric);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveTechLevelLabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveSideBLabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveSideALabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveSideBFactionComboBox);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveSideBFacLabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveSideAFactionComboBox);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveSideAFacLabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveRunButton);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveResultTextBox);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveContrastGridLabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveRetreatWinnerAttritionNumeric);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveRetreatWinnerAttritionLabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveRetreatLoserAttritionNumeric);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveRetreatLoserAttritionLabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveWinnerAttritionNumeric);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveWinnerAttritionLabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveLoserAttritionNumeric);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveLoserAttritionLabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveAttritionAllowanceNumeric);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveAttritionAllowanceLabel);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveBattleTypeComboBox);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveBattleTypeLabel);
+            this.tabAutoResolve.Location = new System.Drawing.Point(4, 22);
+            this.tabAutoResolve.Name = "tabAutoResolve";
+            this.tabAutoResolve.Size = new System.Drawing.Size(1487, 781);
+            this.tabAutoResolve.TabIndex = 8;
+            this.tabAutoResolve.Text = "Auto resolve";
+            this.tabAutoResolve.UseVisualStyleBackColor = true;
+            // 
+            // AutoResolveTransportLossesNumeric
+            // 
+            this.AutoResolveTransportLossesNumeric.DecimalPlaces = 3;
+            this.AutoResolveTransportLossesNumeric.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.AutoResolveTransportLossesNumeric.Location = new System.Drawing.Point(150, 254);
+            this.AutoResolveTransportLossesNumeric.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.AutoResolveTransportLossesNumeric.Name = "AutoResolveTransportLossesNumeric";
+            this.AutoResolveTransportLossesNumeric.Size = new System.Drawing.Size(121, 20);
+            this.AutoResolveTransportLossesNumeric.TabIndex = 29;
+            this.AutoResolveTransportLossesNumeric.Value = new decimal(new int[] {
+            333333,
+            0,
+            0,
+            393216});
+            // 
+            // TransportLossesLabel
+            // 
+            this.TransportLossesLabel.AutoSize = true;
+            this.TransportLossesLabel.Location = new System.Drawing.Point(56, 256);
+            this.TransportLossesLabel.Name = "TransportLossesLabel";
+            this.TransportLossesLabel.Size = new System.Drawing.Size(88, 13);
+            this.TransportLossesLabel.TabIndex = 28;
+            this.TransportLossesLabel.Text = "Transport Losses";
+            // 
+            // AutoResolveTechLevelNumeric
+            // 
+            this.AutoResolveTechLevelNumeric.Location = new System.Drawing.Point(150, 230);
+            this.AutoResolveTechLevelNumeric.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.AutoResolveTechLevelNumeric.Name = "AutoResolveTechLevelNumeric";
+            this.AutoResolveTechLevelNumeric.Size = new System.Drawing.Size(121, 20);
+            this.AutoResolveTechLevelNumeric.TabIndex = 31;
+            this.AutoResolveTechLevelNumeric.ValueChanged += new System.EventHandler(this.AutoResolveInputChanged);
+            // 
+            // AutoResolveTechLevelLabel
+            // 
+            this.AutoResolveTechLevelLabel.AutoSize = true;
+            this.AutoResolveTechLevelLabel.Location = new System.Drawing.Point(89, 232);
+            this.AutoResolveTechLevelLabel.Name = "AutoResolveTechLevelLabel";
+            this.AutoResolveTechLevelLabel.Size = new System.Drawing.Size(55, 13);
+            this.AutoResolveTechLevelLabel.TabIndex = 30;
+            this.AutoResolveTechLevelLabel.Text = "Tech level";
+            // 
+            // AutoResolveSideBLabel
+            // 
+            this.AutoResolveSideBLabel.AutoSize = true;
+            this.AutoResolveSideBLabel.Location = new System.Drawing.Point(398, 35);
+            this.AutoResolveSideBLabel.Name = "AutoResolveSideBLabel";
+            this.AutoResolveSideBLabel.Size = new System.Drawing.Size(51, 13);
+            this.AutoResolveSideBLabel.TabIndex = 10;
+            this.AutoResolveSideBLabel.Text = "Defender";
+            // 
+            // AutoResolveSideALabel
+            // 
+            this.AutoResolveSideALabel.AutoSize = true;
+            this.AutoResolveSideALabel.Location = new System.Drawing.Point(9, 35);
+            this.AutoResolveSideALabel.Name = "AutoResolveSideALabel";
+            this.AutoResolveSideALabel.Size = new System.Drawing.Size(47, 13);
+            this.AutoResolveSideALabel.TabIndex = 9;
+            this.AutoResolveSideALabel.Text = "Attacker";
+            // 
+            // AutoResolveSideBFactionComboBox
+            // 
+            this.AutoResolveSideBFactionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.AutoResolveSideBFactionComboBox.FormattingEnabled = true;
+            this.AutoResolveSideBFactionComboBox.Location = new System.Drawing.Point(585, 32);
+            this.AutoResolveSideBFactionComboBox.Name = "AutoResolveSideBFactionComboBox";
+            this.AutoResolveSideBFactionComboBox.Size = new System.Drawing.Size(158, 21);
+            this.AutoResolveSideBFactionComboBox.TabIndex = 4;
+            this.AutoResolveSideBFactionComboBox.SelectedIndexChanged += new System.EventHandler(this.AutoResolveInputChanged);
+            // 
+            // AutoResolveSideBFacLabel
+            // 
+            this.AutoResolveSideBFacLabel.AutoSize = true;
+            this.AutoResolveSideBFacLabel.Location = new System.Drawing.Point(537, 35);
+            this.AutoResolveSideBFacLabel.Name = "AutoResolveSideBFacLabel";
+            this.AutoResolveSideBFacLabel.Size = new System.Drawing.Size(42, 13);
+            this.AutoResolveSideBFacLabel.TabIndex = 3;
+            this.AutoResolveSideBFacLabel.Text = "Faction";
+            // 
+            // AutoResolveSideAFactionComboBox
+            // 
+            this.AutoResolveSideAFactionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.AutoResolveSideAFactionComboBox.FormattingEnabled = true;
+            this.AutoResolveSideAFactionComboBox.Location = new System.Drawing.Point(194, 32);
+            this.AutoResolveSideAFactionComboBox.Name = "AutoResolveSideAFactionComboBox";
+            this.AutoResolveSideAFactionComboBox.Size = new System.Drawing.Size(158, 21);
+            this.AutoResolveSideAFactionComboBox.TabIndex = 2;
+            this.AutoResolveSideAFactionComboBox.SelectedIndexChanged += new System.EventHandler(this.AutoResolveInputChanged);
+            // 
+            // AutoResolveSideAFacLabel
+            // 
+            this.AutoResolveSideAFacLabel.AutoSize = true;
+            this.AutoResolveSideAFacLabel.Location = new System.Drawing.Point(146, 35);
+            this.AutoResolveSideAFacLabel.Name = "AutoResolveSideAFacLabel";
+            this.AutoResolveSideAFacLabel.Size = new System.Drawing.Size(42, 13);
+            this.AutoResolveSideAFacLabel.TabIndex = 1;
+            this.AutoResolveSideAFacLabel.Text = "Faction";
+            // 
+            // AutoResolveRunButton
+            // 
+            this.AutoResolveRunButton.Location = new System.Drawing.Point(278, 278);
+            this.AutoResolveRunButton.Name = "AutoResolveRunButton";
+            this.AutoResolveRunButton.Size = new System.Drawing.Size(171, 37);
+            this.AutoResolveRunButton.TabIndex = 14;
+            this.AutoResolveRunButton.Text = "Run Auto Resolve";
+            this.AutoResolveRunButton.UseVisualStyleBackColor = true;
+            this.AutoResolveRunButton.Click += new System.EventHandler(this.AutoResolveRunButton_Click);
+            // 
+            // AutoResolveResultTextBox
+            // 
+            this.AutoResolveResultTextBox.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AutoResolveResultTextBox.Location = new System.Drawing.Point(12, 331);
+            this.AutoResolveResultTextBox.Multiline = true;
+            this.AutoResolveResultTextBox.Name = "AutoResolveResultTextBox";
+            this.AutoResolveResultTextBox.ReadOnly = true;
+            this.AutoResolveResultTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.AutoResolveResultTextBox.Size = new System.Drawing.Size(731, 447);
+            this.AutoResolveResultTextBox.TabIndex = 15;
+            // 
+            // AutoResolveContrastGridLabel
+            // 
+            this.AutoResolveContrastGridLabel.AutoSize = true;
+            this.AutoResolveContrastGridLabel.Location = new System.Drawing.Point(746, 12);
+            this.AutoResolveContrastGridLabel.Name = "AutoResolveContrastGridLabel";
+            this.AutoResolveContrastGridLabel.Size = new System.Drawing.Size(167, 13);
+            this.AutoResolveContrastGridLabel.TabIndex = 32;
+            this.AutoResolveContrastGridLabel.Text = "Friendly contrast weights by enemy";
+            // 
+            // AutoResolveRetreatWinnerAttritionNumeric
+            // 
+            this.AutoResolveRetreatWinnerAttritionNumeric.DecimalPlaces = 3;
+            this.AutoResolveRetreatWinnerAttritionNumeric.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.AutoResolveRetreatWinnerAttritionNumeric.Location = new System.Drawing.Point(611, 302);
+            this.AutoResolveRetreatWinnerAttritionNumeric.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.AutoResolveRetreatWinnerAttritionNumeric.Name = "AutoResolveRetreatWinnerAttritionNumeric";
+            this.AutoResolveRetreatWinnerAttritionNumeric.Size = new System.Drawing.Size(121, 20);
+            this.AutoResolveRetreatWinnerAttritionNumeric.TabIndex = 25;
+            this.AutoResolveRetreatWinnerAttritionNumeric.Value = new decimal(new int[] {
+            50,
+            0,
+            0,
+            131072});
+            this.AutoResolveRetreatWinnerAttritionNumeric.ValueChanged += new System.EventHandler(this.AutoResolveInputChanged);
+            // 
+            // AutoResolveRetreatWinnerAttritionLabel
+            // 
+            this.AutoResolveRetreatWinnerAttritionLabel.AutoSize = true;
+            this.AutoResolveRetreatWinnerAttritionLabel.Location = new System.Drawing.Point(488, 304);
+            this.AutoResolveRetreatWinnerAttritionLabel.Name = "AutoResolveRetreatWinnerAttritionLabel";
+            this.AutoResolveRetreatWinnerAttritionLabel.Size = new System.Drawing.Size(117, 13);
+            this.AutoResolveRetreatWinnerAttritionLabel.TabIndex = 24;
+            this.AutoResolveRetreatWinnerAttritionLabel.Text = "Retreat Winner Attrition";
+            // 
+            // AutoResolveRetreatLoserAttritionNumeric
+            // 
+            this.AutoResolveRetreatLoserAttritionNumeric.DecimalPlaces = 3;
+            this.AutoResolveRetreatLoserAttritionNumeric.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.AutoResolveRetreatLoserAttritionNumeric.Location = new System.Drawing.Point(611, 278);
+            this.AutoResolveRetreatLoserAttritionNumeric.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.AutoResolveRetreatLoserAttritionNumeric.Name = "AutoResolveRetreatLoserAttritionNumeric";
+            this.AutoResolveRetreatLoserAttritionNumeric.Size = new System.Drawing.Size(121, 20);
+            this.AutoResolveRetreatLoserAttritionNumeric.TabIndex = 23;
+            this.AutoResolveRetreatLoserAttritionNumeric.Value = new decimal(new int[] {
+            65,
+            0,
+            0,
+            131072});
+            this.AutoResolveRetreatLoserAttritionNumeric.ValueChanged += new System.EventHandler(this.AutoResolveInputChanged);
+            // 
+            // AutoResolveRetreatLoserAttritionLabel
+            // 
+            this.AutoResolveRetreatLoserAttritionLabel.AutoSize = true;
+            this.AutoResolveRetreatLoserAttritionLabel.Location = new System.Drawing.Point(496, 280);
+            this.AutoResolveRetreatLoserAttritionLabel.Name = "AutoResolveRetreatLoserAttritionLabel";
+            this.AutoResolveRetreatLoserAttritionLabel.Size = new System.Drawing.Size(109, 13);
+            this.AutoResolveRetreatLoserAttritionLabel.TabIndex = 22;
+            this.AutoResolveRetreatLoserAttritionLabel.Text = "Retreat Loser Attrition";
+            // 
+            // AutoResolveWinnerAttritionNumeric
+            // 
+            this.AutoResolveWinnerAttritionNumeric.DecimalPlaces = 3;
+            this.AutoResolveWinnerAttritionNumeric.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.AutoResolveWinnerAttritionNumeric.Location = new System.Drawing.Point(150, 302);
+            this.AutoResolveWinnerAttritionNumeric.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.AutoResolveWinnerAttritionNumeric.Name = "AutoResolveWinnerAttritionNumeric";
+            this.AutoResolveWinnerAttritionNumeric.Size = new System.Drawing.Size(121, 20);
+            this.AutoResolveWinnerAttritionNumeric.TabIndex = 21;
+            this.AutoResolveWinnerAttritionNumeric.Value = new decimal(new int[] {
+            75,
+            0,
+            0,
+            131072});
+            this.AutoResolveWinnerAttritionNumeric.ValueChanged += new System.EventHandler(this.AutoResolveInputChanged);
+            // 
+            // AutoResolveWinnerAttritionLabel
+            // 
+            this.AutoResolveWinnerAttritionLabel.AutoSize = true;
+            this.AutoResolveWinnerAttritionLabel.Location = new System.Drawing.Point(35, 304);
+            this.AutoResolveWinnerAttritionLabel.Name = "AutoResolveWinnerAttritionLabel";
+            this.AutoResolveWinnerAttritionLabel.Size = new System.Drawing.Size(109, 13);
+            this.AutoResolveWinnerAttritionLabel.TabIndex = 20;
+            this.AutoResolveWinnerAttritionLabel.Text = "Winner Attrition Value";
+            // 
+            // AutoResolveLoserAttritionNumeric
+            // 
+            this.AutoResolveLoserAttritionNumeric.DecimalPlaces = 3;
+            this.AutoResolveLoserAttritionNumeric.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.AutoResolveLoserAttritionNumeric.Location = new System.Drawing.Point(150, 278);
+            this.AutoResolveLoserAttritionNumeric.Maximum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.AutoResolveLoserAttritionNumeric.Name = "AutoResolveLoserAttritionNumeric";
+            this.AutoResolveLoserAttritionNumeric.Size = new System.Drawing.Size(121, 20);
+            this.AutoResolveLoserAttritionNumeric.TabIndex = 19;
+            this.AutoResolveLoserAttritionNumeric.Value = new decimal(new int[] {
+            80,
+            0,
+            0,
+            131072});
+            this.AutoResolveLoserAttritionNumeric.ValueChanged += new System.EventHandler(this.AutoResolveInputChanged);
+            // 
+            // AutoResolveLoserAttritionLabel
+            // 
+            this.AutoResolveLoserAttritionLabel.AutoSize = true;
+            this.AutoResolveLoserAttritionLabel.Location = new System.Drawing.Point(43, 280);
+            this.AutoResolveLoserAttritionLabel.Name = "AutoResolveLoserAttritionLabel";
+            this.AutoResolveLoserAttritionLabel.Size = new System.Drawing.Size(101, 13);
+            this.AutoResolveLoserAttritionLabel.TabIndex = 18;
+            this.AutoResolveLoserAttritionLabel.Text = "Loser Attrition Value";
+            this.AutoResolveLoserAttritionLabel.Click += new System.EventHandler(this.AutoResolveLoserAttritionLabel_Click);
+            // 
+            // AutoResolveAttritionAllowanceNumeric
+            // 
+            this.AutoResolveAttritionAllowanceNumeric.DecimalPlaces = 3;
+            this.AutoResolveAttritionAllowanceNumeric.Increment = new decimal(new int[] {
+            1,
+            0,
+            0,
+            196608});
+            this.AutoResolveAttritionAllowanceNumeric.Location = new System.Drawing.Point(611, 254);
+            this.AutoResolveAttritionAllowanceNumeric.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.AutoResolveAttritionAllowanceNumeric.Name = "AutoResolveAttritionAllowanceNumeric";
+            this.AutoResolveAttritionAllowanceNumeric.Size = new System.Drawing.Size(121, 20);
+            this.AutoResolveAttritionAllowanceNumeric.TabIndex = 27;
+            this.AutoResolveAttritionAllowanceNumeric.Value = new decimal(new int[] {
+            333333,
+            0,
+            0,
+            393216});
+            this.AutoResolveAttritionAllowanceNumeric.ValueChanged += new System.EventHandler(this.AutoResolveInputChanged);
+            // 
+            // AutoResolveAttritionAllowanceLabel
+            // 
+            this.AutoResolveAttritionAllowanceLabel.AutoSize = true;
+            this.AutoResolveAttritionAllowanceLabel.Location = new System.Drawing.Point(478, 256);
+            this.AutoResolveAttritionAllowanceLabel.Name = "AutoResolveAttritionAllowanceLabel";
+            this.AutoResolveAttritionAllowanceLabel.Size = new System.Drawing.Size(127, 13);
+            this.AutoResolveAttritionAllowanceLabel.TabIndex = 26;
+            this.AutoResolveAttritionAllowanceLabel.Text = "Attrition Allowance Factor";
+            // 
+            // AutoResolveBattleTypeComboBox
+            // 
+            this.AutoResolveBattleTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.AutoResolveBattleTypeComboBox.FormattingEnabled = true;
+            this.AutoResolveBattleTypeComboBox.Items.AddRange(new object[] {
+            "Space",
+            "Land"});
+            this.AutoResolveBattleTypeComboBox.Location = new System.Drawing.Point(76, 5);
+            this.AutoResolveBattleTypeComboBox.Name = "AutoResolveBattleTypeComboBox";
+            this.AutoResolveBattleTypeComboBox.Size = new System.Drawing.Size(121, 21);
+            this.AutoResolveBattleTypeComboBox.TabIndex = 16;
+            this.AutoResolveBattleTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.AutoResolveInputChanged);
+            // 
+            // AutoResolveBattleTypeLabel
+            // 
+            this.AutoResolveBattleTypeLabel.AutoSize = true;
+            this.AutoResolveBattleTypeLabel.Location = new System.Drawing.Point(9, 8);
+            this.AutoResolveBattleTypeLabel.Name = "AutoResolveBattleTypeLabel";
+            this.AutoResolveBattleTypeLabel.Size = new System.Drawing.Size(61, 13);
+            this.AutoResolveBattleTypeLabel.TabIndex = 17;
+            this.AutoResolveBattleTypeLabel.Text = "Battle Type";
             // 
             // contextMenuStrip2
             // 
@@ -4035,6 +4431,15 @@
             this.FactionPanel.ResumeLayout(false);
             this.FactionPanel.PerformLayout();
             this.MainTab.ResumeLayout(false);
+            this.tabAutoResolve.ResumeLayout(false);
+            this.tabAutoResolve.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveTransportLossesNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveTechLevelNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveRetreatWinnerAttritionNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveRetreatLoserAttritionNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveWinnerAttritionNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveLoserAttritionNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AutoResolveAttritionAllowanceNumeric)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -4272,6 +4677,32 @@
         private System.Windows.Forms.Label PlanetMapSearchLabel;
         private System.Windows.Forms.TextBox MapSearchBox;
         private System.Windows.Forms.TabPage NameFileTab;
+        private System.Windows.Forms.TabPage tabAutoResolve;
+        private System.Windows.Forms.ComboBox AutoResolveSideBFactionComboBox;
+        private System.Windows.Forms.Label AutoResolveSideBFacLabel;
+        private System.Windows.Forms.ComboBox AutoResolveSideAFactionComboBox;
+        private System.Windows.Forms.Label AutoResolveSideAFacLabel;
+        private System.Windows.Forms.Label AutoResolveSideALabel;
+        private System.Windows.Forms.Label AutoResolveSideBLabel;
+        private System.Windows.Forms.Button AutoResolveRunButton;
+        private System.Windows.Forms.TextBox AutoResolveResultTextBox;
+        private System.Windows.Forms.ComboBox AutoResolveBattleTypeComboBox;
+        private System.Windows.Forms.Label AutoResolveBattleTypeLabel;
+        private System.Windows.Forms.Label AutoResolveLoserAttritionLabel;
+        private System.Windows.Forms.NumericUpDown AutoResolveLoserAttritionNumeric;
+        private System.Windows.Forms.Label AutoResolveWinnerAttritionLabel;
+        private System.Windows.Forms.NumericUpDown AutoResolveWinnerAttritionNumeric;
+        private System.Windows.Forms.Label AutoResolveRetreatLoserAttritionLabel;
+        private System.Windows.Forms.NumericUpDown AutoResolveRetreatLoserAttritionNumeric;
+        private System.Windows.Forms.Label AutoResolveRetreatWinnerAttritionLabel;
+        private System.Windows.Forms.NumericUpDown AutoResolveRetreatWinnerAttritionNumeric;
+        private System.Windows.Forms.NumericUpDown AutoResolveAttritionAllowanceNumeric;
+        private System.Windows.Forms.NumericUpDown AutoResolveTransportLossesNumeric;
+        private System.Windows.Forms.NumericUpDown AutoResolveTechLevelNumeric;
+        private System.Windows.Forms.Label AutoResolveTechLevelLabel;
+        private System.Windows.Forms.Label AutoResolveContrastGridLabel;
+        private System.Windows.Forms.Label AutoResolveAttritionAllowanceLabel;
+        private System.Windows.Forms.Label TransportLossesLabel;
         private System.Windows.Forms.ListBox GCListBox;
         private System.Windows.Forms.PictureBox GCPictureBox;
         private System.Windows.Forms.CheckBox InfinityCheckBox;

@@ -1851,6 +1851,20 @@ public static class SharedFunctions
         entities.AllArmors.Clear();
 
         XmlDocument consts = readModXmlOrMeg("XML\\GameConstants.xml", entities);
+
+        float ParseFloat(string xpath)
+        {
+            XmlNode node = consts.DocumentElement.SelectSingleNode("descendant::" + xpath);
+            return float.Parse(fullTrim(node.InnerText), System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        entities.AutoResolveSettings.AttritionAllowanceFactor = ParseFloat("AutoResolveAttritionAllowanceFactor");
+        entities.AutoResolveSettings.TransportLosses = ParseFloat("AutoResolveTransportLosses");
+        entities.AutoResolveSettings.RetreatLoserAttrition = ParseFloat("RetreatAutoResolveLoserAttrition");
+        entities.AutoResolveSettings.RetreatWinnerAttrition = ParseFloat("RetreatAutoResolveWinnerAttrition");
+        entities.AutoResolveSettings.LoserAttrition = ParseFloat("AutoResolveLoserAttrition");
+        entities.AutoResolveSettings.WinnerAttrition = ParseFloat("AutoResolveWinnerAttrition");
+
         XmlNode typedef = consts.DocumentElement.SelectSingleNode("descendant::Armor_Types");
         string[] types = fullTrim(typedef.InnerText).Split(',');
         foreach (string type in types)
@@ -2009,6 +2023,7 @@ public static class SharedFunctions
             if(name == "InfantryHero") entities.GroundCategories.Add(name);
             if (name == "VehicleHero") entities.GroundCategories.Add(name);
             if (name == "SpaceHero") entities.SpaceCategories.Add(name);
+            entities.CategoryBitMasks[name] = hex;
         }
     }
 
@@ -5077,6 +5092,16 @@ public struct galacticConquest
     }
 }
 
+public class AutoResolveSettings
+{
+    public float AttritionAllowanceFactor = 0.333333f;
+    public float TransportLosses = 0.333333f;
+    public float RetreatLoserAttrition = 0.65f;
+    public float RetreatWinnerAttrition = 0.50f;
+    public float LoserAttrition = 0.80f;
+    public float WinnerAttrition = 0.75f;
+}
+
 public struct spawnSet
 {
     public string name;
@@ -5152,11 +5177,13 @@ public struct entities {
     public static List<string> AllCategories = new List<string>();
     public static List<string> SpaceCategories = new List<string>();
     public static List<string> GroundCategories = new List<string>();
+    public static Dictionary<string, ulong> CategoryBitMasks = new Dictionary<string, ulong>(StringComparer.OrdinalIgnoreCase);
 
     public static List<spawnSet> spawnSets = new List<spawnSet>();
 
     public static Bitmap MTmaster;
     public static List<IconData> IconData = new List<IconData>();
+    public static AutoResolveSettings AutoResolveSettings = new AutoResolveSettings();
 
     public static string modid; //Should be deprecated in Rev 1.0, but keep around for compatibility
     public static string readerrors = "";
