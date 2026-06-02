@@ -103,6 +103,13 @@
             this.Unitpanel = new System.Windows.Forms.Panel();
             this.CollapseUnitAvailPanel = new System.Windows.Forms.Button();
             this.UnitAvailPanel = new System.Windows.Forms.Panel();
+            this.UnitGCGotoButton = new System.Windows.Forms.Button();
+            this.UnitGotoPlanetButton = new System.Windows.Forms.Button();
+            this.UnitSpawnGotoButton = new System.Windows.Forms.Button();
+            this.label30 = new System.Windows.Forms.Label();
+            this.UnitRequiredPlanetListbox = new System.Windows.Forms.ListBox();
+            this.label29 = new System.Windows.Forms.Label();
+            this.UnitGCListbox = new System.Windows.Forms.ListBox();
             this.label14 = new System.Windows.Forms.Label();
             this.FactionAvailableListbox = new System.Windows.Forms.ListBox();
             this.AvailabilityLabel = new System.Windows.Forms.Label();
@@ -263,6 +270,12 @@
             this.tabGCs = new System.Windows.Forms.TabPage();
             this.GCListBox = new System.Windows.Forms.ListBox();
             this.GCPanel = new System.Windows.Forms.Panel();
+            this.SpeechCheckBox = new System.Windows.Forms.CheckBox();
+            this.GCChapterLabel = new System.Windows.Forms.Label();
+            this.label31 = new System.Windows.Forms.Label();
+            this.GCChapterListBox = new System.Windows.Forms.ListBox();
+            this.GCStoryTextBox = new System.Windows.Forms.RichTextBox();
+            this.GCDialogListBox = new System.Windows.Forms.ListBox();
             this.GCPresentBorderFactionsLabel = new System.Windows.Forms.Label();
             this.GCPresentBorderingLabel = new System.Windows.Forms.Label();
             this.ConquestBTSTextBox = new System.Windows.Forms.RichTextBox();
@@ -292,8 +305,13 @@
             this.RegionalCheckBox = new System.Windows.Forms.CheckBox();
             this.ProgressiveCheckBox = new System.Windows.Forms.CheckBox();
             this.GCPictureBox = new System.Windows.Forms.PictureBox();
+            this.GCSpeechListBox = new System.Windows.Forms.ListBox();
             this.tabFactions = new System.Windows.Forms.TabPage();
             this.FactionPanel = new System.Windows.Forms.Panel();
+            this.FactionGotoUnitButton = new System.Windows.Forms.Button();
+            this.FactionGotoConquestButton = new System.Windows.Forms.Button();
+            this.FactionGotoBuildableButton = new System.Windows.Forms.Button();
+            this.FactionGotoFactoryButton = new System.Windows.Forms.Button();
             this.FactionUnitInternalLabel = new System.Windows.Forms.Label();
             this.FactionGovListBox = new System.Windows.Forms.ListBox();
             this.FactionUnitAvailabilityLabel = new System.Windows.Forms.Label();
@@ -332,13 +350,6 @@
             this.tabGalaxy = new System.Windows.Forms.TabPage();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.label29 = new System.Windows.Forms.Label();
-            this.UnitGCListbox = new System.Windows.Forms.ListBox();
-            this.label30 = new System.Windows.Forms.Label();
-            this.UnitRequiredPlanetListbox = new System.Windows.Forms.ListBox();
-            this.UnitSpawnGotoButton = new System.Windows.Forms.Button();
-            this.UnitGotoPlanetButton = new System.Windows.Forms.Button();
-            this.UnitGCGotoButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tabLookups.SuspendLayout();
             this.LookupTabControl.SuspendLayout();
@@ -1234,6 +1245,72 @@
             this.UnitAvailPanel.Name = "UnitAvailPanel";
             this.UnitAvailPanel.Size = new System.Drawing.Size(1039, 231);
             this.UnitAvailPanel.TabIndex = 9;
+            // 
+            // UnitGCGotoButton
+            // 
+            this.UnitGCGotoButton.Location = new System.Drawing.Point(993, 71);
+            this.UnitGCGotoButton.Name = "UnitGCGotoButton";
+            this.UnitGCGotoButton.Size = new System.Drawing.Size(48, 23);
+            this.UnitGCGotoButton.TabIndex = 45;
+            this.UnitGCGotoButton.Text = "Go to";
+            this.UnitGCGotoButton.UseVisualStyleBackColor = true;
+            this.UnitGCGotoButton.Click += new System.EventHandler(this.UnitGCGotoButton_Click);
+            // 
+            // UnitGotoPlanetButton
+            // 
+            this.UnitGotoPlanetButton.Location = new System.Drawing.Point(754, 71);
+            this.UnitGotoPlanetButton.Name = "UnitGotoPlanetButton";
+            this.UnitGotoPlanetButton.Size = new System.Drawing.Size(48, 23);
+            this.UnitGotoPlanetButton.TabIndex = 44;
+            this.UnitGotoPlanetButton.Text = "Go to";
+            this.UnitGotoPlanetButton.UseVisualStyleBackColor = true;
+            this.UnitGotoPlanetButton.Click += new System.EventHandler(this.UnitGotoPlanetButton_Click);
+            // 
+            // UnitSpawnGotoButton
+            // 
+            this.UnitSpawnGotoButton.Location = new System.Drawing.Point(645, 71);
+            this.UnitSpawnGotoButton.Name = "UnitSpawnGotoButton";
+            this.UnitSpawnGotoButton.Size = new System.Drawing.Size(31, 23);
+            this.UnitSpawnGotoButton.TabIndex = 43;
+            this.UnitSpawnGotoButton.Text = "Go";
+            this.UnitSpawnGotoButton.UseVisualStyleBackColor = true;
+            this.UnitSpawnGotoButton.Click += new System.EventHandler(this.UnitSpawnGotoButton_Click);
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label30.Location = new System.Drawing.Point(678, 71);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(66, 20);
+            this.label30.TabIndex = 42;
+            this.label30.Text = "Planets:";
+            // 
+            // UnitRequiredPlanetListbox
+            // 
+            this.UnitRequiredPlanetListbox.FormattingEnabled = true;
+            this.UnitRequiredPlanetListbox.Location = new System.Drawing.Point(682, 94);
+            this.UnitRequiredPlanetListbox.Name = "UnitRequiredPlanetListbox";
+            this.UnitRequiredPlanetListbox.Size = new System.Drawing.Size(120, 121);
+            this.UnitRequiredPlanetListbox.TabIndex = 41;
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label29.Location = new System.Drawing.Point(804, 71);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(152, 20);
+            this.label29.TabIndex = 40;
+            this.label29.Text = "Galactic Conquests:";
+            // 
+            // UnitGCListbox
+            // 
+            this.UnitGCListbox.FormattingEnabled = true;
+            this.UnitGCListbox.Location = new System.Drawing.Point(808, 94);
+            this.UnitGCListbox.Name = "UnitGCListbox";
+            this.UnitGCListbox.Size = new System.Drawing.Size(233, 121);
+            this.UnitGCListbox.TabIndex = 39;
             // 
             // label14
             // 
@@ -2964,6 +3041,12 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.GCPanel.AutoScroll = true;
+            this.GCPanel.Controls.Add(this.SpeechCheckBox);
+            this.GCPanel.Controls.Add(this.GCChapterLabel);
+            this.GCPanel.Controls.Add(this.label31);
+            this.GCPanel.Controls.Add(this.GCChapterListBox);
+            this.GCPanel.Controls.Add(this.GCStoryTextBox);
+            this.GCPanel.Controls.Add(this.GCDialogListBox);
             this.GCPanel.Controls.Add(this.GCPresentBorderFactionsLabel);
             this.GCPanel.Controls.Add(this.GCPresentBorderingLabel);
             this.GCPanel.Controls.Add(this.ConquestBTSTextBox);
@@ -2993,10 +3076,72 @@
             this.GCPanel.Controls.Add(this.RegionalCheckBox);
             this.GCPanel.Controls.Add(this.ProgressiveCheckBox);
             this.GCPanel.Controls.Add(this.GCPictureBox);
+            this.GCPanel.Controls.Add(this.GCSpeechListBox);
             this.GCPanel.Location = new System.Drawing.Point(398, 6);
             this.GCPanel.Name = "GCPanel";
             this.GCPanel.Size = new System.Drawing.Size(1081, 769);
             this.GCPanel.TabIndex = 64;
+            // 
+            // SpeechCheckBox
+            // 
+            this.SpeechCheckBox.AutoSize = true;
+            this.SpeechCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SpeechCheckBox.Location = new System.Drawing.Point(210, 850);
+            this.SpeechCheckBox.Name = "SpeechCheckBox";
+            this.SpeechCheckBox.Size = new System.Drawing.Size(127, 24);
+            this.SpeechCheckBox.TabIndex = 102;
+            this.SpeechCheckBox.Text = "Speech Mode";
+            this.SpeechCheckBox.UseVisualStyleBackColor = true;
+            this.SpeechCheckBox.CheckedChanged += new System.EventHandler(this.SpeechCheckBox_CheckedChanged);
+            // 
+            // GCChapterLabel
+            // 
+            this.GCChapterLabel.AutoSize = true;
+            this.GCChapterLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCChapterLabel.Location = new System.Drawing.Point(339, 851);
+            this.GCChapterLabel.Name = "GCChapterLabel";
+            this.GCChapterLabel.Size = new System.Drawing.Size(78, 20);
+            this.GCChapterLabel.TabIndex = 100;
+            this.GCChapterLabel.Text = "Chapters:";
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label31.Location = new System.Drawing.Point(1, 851);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(107, 20);
+            this.label31.TabIndex = 99;
+            this.label31.Text = "Story Dialogs:";
+            // 
+            // GCChapterListBox
+            // 
+            this.GCChapterListBox.FormattingEnabled = true;
+            this.GCChapterListBox.Location = new System.Drawing.Point(343, 874);
+            this.GCChapterListBox.Name = "GCChapterListBox";
+            this.GCChapterListBox.Size = new System.Drawing.Size(38, 199);
+            this.GCChapterListBox.TabIndex = 98;
+            this.toolTip1.SetToolTip(this.GCChapterListBox, "The factions that start with planets in this Galactic Conquest");
+            this.GCChapterListBox.SelectedIndexChanged += new System.EventHandler(this.GCChapterListBox_SelectedIndexChanged);
+            // 
+            // GCStoryTextBox
+            // 
+            this.GCStoryTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCStoryTextBox.Location = new System.Drawing.Point(385, 874);
+            this.GCStoryTextBox.Name = "GCStoryTextBox";
+            this.GCStoryTextBox.Size = new System.Drawing.Size(676, 199);
+            this.GCStoryTextBox.TabIndex = 97;
+            this.GCStoryTextBox.Text = "";
+            // 
+            // GCDialogListBox
+            // 
+            this.GCDialogListBox.FormattingEnabled = true;
+            this.GCDialogListBox.Location = new System.Drawing.Point(0, 874);
+            this.GCDialogListBox.Name = "GCDialogListBox";
+            this.GCDialogListBox.Size = new System.Drawing.Size(337, 199);
+            this.GCDialogListBox.TabIndex = 96;
+            this.toolTip1.SetToolTip(this.GCDialogListBox, "The factions that start with planets in this Galactic Conquest");
+            this.GCDialogListBox.SelectedIndexChanged += new System.EventHandler(this.GCDialogListBox_SelectedIndexChanged);
             // 
             // GCPresentBorderFactionsLabel
             // 
@@ -3020,7 +3165,7 @@
             // 
             // ConquestBTSTextBox
             // 
-            this.ConquestBTSTextBox.Location = new System.Drawing.Point(0, 852);
+            this.ConquestBTSTextBox.Location = new System.Drawing.Point(0, 1075);
             this.ConquestBTSTextBox.Name = "ConquestBTSTextBox";
             this.ConquestBTSTextBox.Size = new System.Drawing.Size(1061, 148);
             this.ConquestBTSTextBox.TabIndex = 93;
@@ -3120,8 +3265,9 @@
             this.GCPresentBorderLabel.Size = new System.Drawing.Size(118, 20);
             this.GCPresentBorderLabel.TabIndex = 81;
             this.GCPresentBorderLabel.Text = "Border Planets:";
-            this.toolTip1.SetToolTip(this.GCPresentBorderLabel, "Count of planets bordering another playable/active faction\r\n\r\nFactions marked <Is" +
-        "_Playable>false</Is_Playable> are not included");
+            this.toolTip1.SetToolTip(this.GCPresentBorderLabel, "Count of planets bordering another playable/active faction\r\n\r\nFactions with an AI" +
+        " type of None are not included, or with no AI type and marked <Is_Playable>false" +
+        "</Is_Playable>");
             // 
             // GCPresentShipyardsLabel
             // 
@@ -3167,12 +3313,10 @@
             // 
             // GCPlanetListBox
             // 
-            this.GCPlanetListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
             this.GCPlanetListBox.FormattingEnabled = true;
             this.GCPlanetListBox.Location = new System.Drawing.Point(630, 79);
             this.GCPlanetListBox.Name = "GCPlanetListBox";
-            this.GCPlanetListBox.Size = new System.Drawing.Size(221, 2981);
+            this.GCPlanetListBox.Size = new System.Drawing.Size(221, 784);
             this.GCPlanetListBox.TabIndex = 76;
             this.GCPlanetListBox.SelectedIndexChanged += new System.EventHandler(this.GCPlanetListBox_SelectedIndexChanged);
             // 
@@ -3188,12 +3332,10 @@
             // 
             // GCPresentListbox
             // 
-            this.GCPresentListbox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
             this.GCPresentListbox.FormattingEnabled = true;
             this.GCPresentListbox.Location = new System.Drawing.Point(0, 535);
             this.GCPresentListbox.Name = "GCPresentListbox";
-            this.GCPresentListbox.Size = new System.Drawing.Size(117, 2526);
+            this.GCPresentListbox.Size = new System.Drawing.Size(117, 316);
             this.GCPresentListbox.TabIndex = 74;
             this.toolTip1.SetToolTip(this.GCPresentListbox, "The factions that start with planets in this Galactic Conquest");
             this.GCPresentListbox.SelectedIndexChanged += new System.EventHandler(this.GCPresentListbox_SelectedIndexChanged);
@@ -3313,6 +3455,16 @@
             this.GCPictureBox.TabIndex = 64;
             this.GCPictureBox.TabStop = false;
             // 
+            // GCSpeechListBox
+            // 
+            this.GCSpeechListBox.FormattingEnabled = true;
+            this.GCSpeechListBox.Location = new System.Drawing.Point(0, 874);
+            this.GCSpeechListBox.Name = "GCSpeechListBox";
+            this.GCSpeechListBox.Size = new System.Drawing.Size(381, 199);
+            this.GCSpeechListBox.TabIndex = 101;
+            this.toolTip1.SetToolTip(this.GCSpeechListBox, "The factions that start with planets in this Galactic Conquest");
+            this.GCSpeechListBox.SelectedIndexChanged += new System.EventHandler(this.GCSpeechListBox_SelectedIndexChanged);
+            // 
             // tabFactions
             // 
             this.tabFactions.Controls.Add(this.FactionPanel);
@@ -3331,6 +3483,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.FactionPanel.AutoScroll = true;
+            this.FactionPanel.Controls.Add(this.FactionGotoUnitButton);
+            this.FactionPanel.Controls.Add(this.FactionGotoConquestButton);
+            this.FactionPanel.Controls.Add(this.FactionGotoBuildableButton);
+            this.FactionPanel.Controls.Add(this.FactionGotoFactoryButton);
             this.FactionPanel.Controls.Add(this.FactionUnitInternalLabel);
             this.FactionPanel.Controls.Add(this.FactionGovListBox);
             this.FactionPanel.Controls.Add(this.FactionUnitAvailabilityLabel);
@@ -3367,6 +3523,46 @@
             this.FactionPanel.Name = "FactionPanel";
             this.FactionPanel.Size = new System.Drawing.Size(1203, 775);
             this.FactionPanel.TabIndex = 1;
+            // 
+            // FactionGotoUnitButton
+            // 
+            this.FactionGotoUnitButton.Location = new System.Drawing.Point(243, 552);
+            this.FactionGotoUnitButton.Name = "FactionGotoUnitButton";
+            this.FactionGotoUnitButton.Size = new System.Drawing.Size(48, 23);
+            this.FactionGotoUnitButton.TabIndex = 107;
+            this.FactionGotoUnitButton.Text = "Go to";
+            this.FactionGotoUnitButton.UseVisualStyleBackColor = true;
+            this.FactionGotoUnitButton.Click += new System.EventHandler(this.FactionGotoUnitButton_Click);
+            // 
+            // FactionGotoConquestButton
+            // 
+            this.FactionGotoConquestButton.Location = new System.Drawing.Point(243, 143);
+            this.FactionGotoConquestButton.Name = "FactionGotoConquestButton";
+            this.FactionGotoConquestButton.Size = new System.Drawing.Size(48, 23);
+            this.FactionGotoConquestButton.TabIndex = 106;
+            this.FactionGotoConquestButton.Text = "Go to";
+            this.FactionGotoConquestButton.UseVisualStyleBackColor = true;
+            this.FactionGotoConquestButton.Click += new System.EventHandler(this.FactionGotoConquestButton_Click);
+            // 
+            // FactionGotoBuildableButton
+            // 
+            this.FactionGotoBuildableButton.Location = new System.Drawing.Point(1004, 143);
+            this.FactionGotoBuildableButton.Name = "FactionGotoBuildableButton";
+            this.FactionGotoBuildableButton.Size = new System.Drawing.Size(48, 23);
+            this.FactionGotoBuildableButton.TabIndex = 105;
+            this.FactionGotoBuildableButton.Text = "Go to";
+            this.FactionGotoBuildableButton.UseVisualStyleBackColor = true;
+            this.FactionGotoBuildableButton.Click += new System.EventHandler(this.FactionGotoBuildableButton_Click);
+            // 
+            // FactionGotoFactoryButton
+            // 
+            this.FactionGotoFactoryButton.Location = new System.Drawing.Point(662, 143);
+            this.FactionGotoFactoryButton.Name = "FactionGotoFactoryButton";
+            this.FactionGotoFactoryButton.Size = new System.Drawing.Size(48, 23);
+            this.FactionGotoFactoryButton.TabIndex = 104;
+            this.FactionGotoFactoryButton.Text = "Go to";
+            this.FactionGotoFactoryButton.UseVisualStyleBackColor = true;
+            this.FactionGotoFactoryButton.Click += new System.EventHandler(this.FactionGotoFactoryButton_Click);
             // 
             // FactionUnitInternalLabel
             // 
@@ -3477,12 +3673,10 @@
             // 
             // FactionDescLabel
             // 
-            this.FactionDescLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.FactionDescLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FactionDescLabel.Location = new System.Drawing.Point(12, 74);
             this.FactionDescLabel.Name = "FactionDescLabel";
-            this.FactionDescLabel.Size = new System.Drawing.Size(1711, 69);
+            this.FactionDescLabel.Size = new System.Drawing.Size(1171, 69);
             this.FactionDescLabel.TabIndex = 89;
             this.FactionDescLabel.Text = "Description:";
             this.toolTip1.SetToolTip(this.FactionDescLabel, "The primary color of the faction, on the galactic map, minimap, and several other" +
@@ -3503,7 +3697,7 @@
             // 
             this.FactionTColorLabel.AutoSize = true;
             this.FactionTColorLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FactionTColorLabel.Location = new System.Drawing.Point(431, 54);
+            this.FactionTColorLabel.Location = new System.Drawing.Point(773, 34);
             this.FactionTColorLabel.Name = "FactionTColorLabel";
             this.FactionTColorLabel.Size = new System.Drawing.Size(108, 20);
             this.FactionTColorLabel.TabIndex = 87;
@@ -3514,7 +3708,7 @@
             // 
             this.FactionColorLabel.AutoSize = true;
             this.FactionColorLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FactionColorLabel.Location = new System.Drawing.Point(12, 54);
+            this.FactionColorLabel.Location = new System.Drawing.Point(773, 14);
             this.FactionColorLabel.Name = "FactionColorLabel";
             this.FactionColorLabel.Size = new System.Drawing.Size(50, 20);
             this.FactionColorLabel.TabIndex = 86;
@@ -3526,7 +3720,7 @@
             // 
             this.FactionAbbreviationLabel.AutoSize = true;
             this.FactionAbbreviationLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FactionAbbreviationLabel.Location = new System.Drawing.Point(431, 34);
+            this.FactionAbbreviationLabel.Location = new System.Drawing.Point(12, 34);
             this.FactionAbbreviationLabel.Name = "FactionAbbreviationLabel";
             this.FactionAbbreviationLabel.Size = new System.Drawing.Size(101, 20);
             this.FactionAbbreviationLabel.TabIndex = 85;
@@ -3539,7 +3733,7 @@
             // 
             this.FactionAILabel.AutoSize = true;
             this.FactionAILabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FactionAILabel.Location = new System.Drawing.Point(773, 34);
+            this.FactionAILabel.Location = new System.Drawing.Point(431, 54);
             this.FactionAILabel.Name = "FactionAILabel";
             this.FactionAILabel.Size = new System.Drawing.Size(67, 20);
             this.FactionAILabel.TabIndex = 84;
@@ -3552,7 +3746,7 @@
             // 
             this.FactionLuaNameLabel.AutoSize = true;
             this.FactionLuaNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FactionLuaNameLabel.Location = new System.Drawing.Point(12, 34);
+            this.FactionLuaNameLabel.Location = new System.Drawing.Point(431, 34);
             this.FactionLuaNameLabel.Name = "FactionLuaNameLabel";
             this.FactionLuaNameLabel.Size = new System.Drawing.Size(86, 20);
             this.FactionLuaNameLabel.TabIndex = 83;
@@ -3782,72 +3976,6 @@
             this.toolTip1.AutoPopDelay = 15000;
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
-            // 
-            // label29
-            // 
-            this.label29.AutoSize = true;
-            this.label29.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label29.Location = new System.Drawing.Point(804, 71);
-            this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(152, 20);
-            this.label29.TabIndex = 40;
-            this.label29.Text = "Galactic Conquests:";
-            // 
-            // UnitGCListbox
-            // 
-            this.UnitGCListbox.FormattingEnabled = true;
-            this.UnitGCListbox.Location = new System.Drawing.Point(808, 94);
-            this.UnitGCListbox.Name = "UnitGCListbox";
-            this.UnitGCListbox.Size = new System.Drawing.Size(233, 121);
-            this.UnitGCListbox.TabIndex = 39;
-            // 
-            // label30
-            // 
-            this.label30.AutoSize = true;
-            this.label30.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label30.Location = new System.Drawing.Point(678, 71);
-            this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(66, 20);
-            this.label30.TabIndex = 42;
-            this.label30.Text = "Planets:";
-            // 
-            // UnitRequiredPlanetListbox
-            // 
-            this.UnitRequiredPlanetListbox.FormattingEnabled = true;
-            this.UnitRequiredPlanetListbox.Location = new System.Drawing.Point(682, 94);
-            this.UnitRequiredPlanetListbox.Name = "UnitRequiredPlanetListbox";
-            this.UnitRequiredPlanetListbox.Size = new System.Drawing.Size(120, 121);
-            this.UnitRequiredPlanetListbox.TabIndex = 41;
-            // 
-            // UnitSpawnGotoButton
-            // 
-            this.UnitSpawnGotoButton.Location = new System.Drawing.Point(645, 71);
-            this.UnitSpawnGotoButton.Name = "UnitSpawnGotoButton";
-            this.UnitSpawnGotoButton.Size = new System.Drawing.Size(31, 23);
-            this.UnitSpawnGotoButton.TabIndex = 43;
-            this.UnitSpawnGotoButton.Text = "Go";
-            this.UnitSpawnGotoButton.UseVisualStyleBackColor = true;
-            this.UnitSpawnGotoButton.Click += new System.EventHandler(this.UnitSpawnGotoButton_Click);
-            // 
-            // UnitGotoPlanetButton
-            // 
-            this.UnitGotoPlanetButton.Location = new System.Drawing.Point(754, 71);
-            this.UnitGotoPlanetButton.Name = "UnitGotoPlanetButton";
-            this.UnitGotoPlanetButton.Size = new System.Drawing.Size(48, 23);
-            this.UnitGotoPlanetButton.TabIndex = 44;
-            this.UnitGotoPlanetButton.Text = "Go to";
-            this.UnitGotoPlanetButton.UseVisualStyleBackColor = true;
-            this.UnitGotoPlanetButton.Click += new System.EventHandler(this.UnitGotoPlanetButton_Click);
-            // 
-            // UnitGCGotoButton
-            // 
-            this.UnitGCGotoButton.Location = new System.Drawing.Point(993, 71);
-            this.UnitGCGotoButton.Name = "UnitGCGotoButton";
-            this.UnitGCGotoButton.Size = new System.Drawing.Size(48, 23);
-            this.UnitGCGotoButton.TabIndex = 45;
-            this.UnitGCGotoButton.Text = "Go to";
-            this.UnitGCGotoButton.UseVisualStyleBackColor = true;
-            this.UnitGCGotoButton.Click += new System.EventHandler(this.UnitGCGotoButton_Click);
             // 
             // Holocron
             // 
@@ -4223,6 +4351,17 @@
         private System.Windows.Forms.ListBox UnitRequiredPlanetListbox;
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.ListBox UnitGCListbox;
+        private System.Windows.Forms.Label GCChapterLabel;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.ListBox GCChapterListBox;
+        private System.Windows.Forms.RichTextBox GCStoryTextBox;
+        private System.Windows.Forms.ListBox GCDialogListBox;
+        private System.Windows.Forms.CheckBox SpeechCheckBox;
+        private System.Windows.Forms.ListBox GCSpeechListBox;
+        private System.Windows.Forms.Button FactionGotoUnitButton;
+        private System.Windows.Forms.Button FactionGotoConquestButton;
+        private System.Windows.Forms.Button FactionGotoBuildableButton;
+        private System.Windows.Forms.Button FactionGotoFactoryButton;
     }
 }
 

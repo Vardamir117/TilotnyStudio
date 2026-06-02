@@ -1848,6 +1848,8 @@ public static class SharedFunctions
         entities.SpaceShields.Clear();
         entities.GroundArmors.Clear();
         entities.GroundShields.Clear();
+        entities.AllArmors.Clear();
+
         XmlDocument consts = readModXmlOrMeg("XML\\GameConstants.xml", entities);
         XmlNode typedef = consts.DocumentElement.SelectSingleNode("descendant::Armor_Types");
         string[] types = fullTrim(typedef.InnerText).Split(',');
@@ -1857,7 +1859,7 @@ public static class SharedFunctions
             else if (type.Contains("ShieldS_")) entities.SpaceShields.Add(type);
             else if (type.Contains("ArmourG_") || type.Contains("ArmorG_")) entities.GroundArmors.Add(type);
             else if (type.Contains("ShieldG_")) entities.GroundShields.Add(type);
-            //entities.AllArmors.Add(type); Already populated from categories
+            entities.AllArmors.Add(type); //Already populated from categories?
 
             ArmorMods armors = new ArmorMods();
             armors.armorType = type;
@@ -1993,12 +1995,15 @@ public static class SharedFunctions
         XmlDocument doc = readModXmlOrMeg("XML\\Enum\\GameObjectCategoryType.xml", entities);
         XmlNode root = doc.DocumentElement;
         XmlNodeList cats = root.SelectNodes("*");
+        entities.SpaceCategories.Clear();
+        entities.GroundCategories.Clear();
+        entities.AllCategories.Clear();
         foreach (XmlNode cat in cats)
         {
             string name = cat.Name;
             ulong hex = Convert.ToUInt64(fullTrim(cat.InnerText), 16);
 
-            entities.AllArmors.Add(name);
+            entities.AllCategories.Add(name);
             if(hex < 256 && name != "None") entities.SpaceCategories.Add(name);
             else if (hex <= 4096) entities.GroundCategories.Add(name);
             if(name == "InfantryHero") entities.GroundCategories.Add(name);
@@ -2012,6 +2017,7 @@ public static class SharedFunctions
         XmlDocument doc = readModXmlOrMeg("XML\\Enum\\GameObjectPropertiesType.xml", entities);
         XmlNode root = doc.DocumentElement;
         XmlNodeList cats = root.SelectNodes("*");
+        entities.AllFlags.Clear();
         foreach (XmlNode cat in cats)
         {
             string name = cat.Name;
@@ -2105,7 +2111,8 @@ public static class SharedFunctions
                         {
                             if (!(value.LastChild is null))
                             {//Overrides Projectile_Damage if nonzero
-                                damageAmount = float.Parse(value.LastChild.Value);
+                                float amount = float.Parse(value.LastChild.Value);
+                                if(amount > 0) damageAmount = amount;
                             }
                         }
                         value = proj.SelectSingleNode("descendant::Projectile_Blast_Area_Range");
@@ -2191,9 +2198,15 @@ public static class SharedFunctions
                     }
                 }
 
-                if (proj.damageType == "") proj.damageType = "Damage_Default";
                 entities.projectiles[i] = proj;
             }
+        }
+
+        for (int i = 0; i < entities.projectiles.Count; i++)
+        {
+            projectile proj = entities.projectiles[i];
+            if (proj.damageType == "") proj.damageType = "Damage_Default";
+            entities.projectiles[i] = proj;
         }
     }
 
@@ -2247,12 +2260,15 @@ public static class SharedFunctions
                                     if (target.Contains("YES")) targetable = true;
                                 }
                             }
-                            value = hp.SelectSingleNode("descendant::Tooltip_Text");
-                            if (!(value is null))
+                            if (targetable) //Nontargetable hps have questionable reliability about making text that people can't see accurate
                             {
-                                if (!(value.LastChild is null))
+                                value = hp.SelectSingleNode("descendant::Tooltip_Text");
+                                if (!(value is null))
                                 {
-                                    text = fullTrim(value.LastChild.Value);
+                                    if (!(value.LastChild is null))
+                                    {
+                                        text = fullTrim(value.LastChild.Value);
+                                    }
                                 }
                             }
                             value = hp.SelectSingleNode("descendant::Fire_Projectile_Type");
@@ -3116,6 +3132,7 @@ public static class SharedFunctions
                         string faction = "";
                         string[] routes = new string[0];
                         List<string> factionsPresent = new List<string>();
+                        List<string> StoryPlots = new List<string>();
                         List<List<string>> forceOwner = new List<List<string>>();
                         List<List<string>> forceLocation = new List<List<string>>();
                         List<List<string>> forceType = new List<List<string>>();
@@ -3235,6 +3252,35 @@ public static class SharedFunctions
                                                 entities.Conquests[i].forceOwner.Add(owners);
                                                 entities.Conquests[i].forceLocation.Add(locations);
                                                 entities.Conquests[i].forceType.Add(types);
+
+                                                value = campaign.SelectSingleNode("descendant::Rebel_Story_Name");
+                                                if (!(value is null))
+                                                {
+                                                    string plot = value.InnerText.Trim();
+                                                    if (plot != "" && !entities.Conquests[i].StoryPlots.Contains(plot)) entities.Conquests[i].StoryPlots.Add(plot);
+                                                }
+                                                value = campaign.SelectSingleNode("descendant::Empire_Story_Name");
+                                                if (!(value is null))
+                                                {
+                                                    string plot = value.InnerText.Trim();
+                                                    if (plot != "" && !entities.Conquests[i].StoryPlots.Contains(plot)) entities.Conquests[i].StoryPlots.Add(plot);
+                                                }
+                                                value = campaign.SelectSingleNode("descendant::Underworld_Story_Name");
+                                                if (!(value is null))
+                                                {
+                                                    string plot = value.InnerText.Trim();
+                                                    if (plot != "" && !entities.Conquests[i].StoryPlots.Contains(plot)) entities.Conquests[i].StoryPlots.Add(plot);
+                                                }
+                                                value = campaign.SelectSingleNode("descendant::Story_Name");
+                                                if (!(value is null))
+                                                {
+                                                    string[] plots = ReadWhiteSpaceAsCommas(value.InnerText);
+                                                    for(int j = 1; j < plots.Length; j += 2)
+                                                    {
+                                                        string plot = plots[j];
+                                                        if (plot != "" && !entities.Conquests[i].StoryPlots.Contains(plot)) entities.Conquests[i].StoryPlots.Add(plot);
+                                                    }
+                                                }
                                                 addCampaign = false;
                                                 break;
                                             }
@@ -3276,6 +3322,35 @@ public static class SharedFunctions
                                 forceOwner.Add(owners);
                                 forceLocation.Add(locations);
                                 forceType.Add(types);
+
+                                value = campaign.SelectSingleNode("descendant::Rebel_Story_Name");
+                                if (!(value is null))
+                                {
+                                    string plot = value.InnerText.Trim();
+                                    if (plot != "") StoryPlots.Add(plot);
+                                }
+                                value = campaign.SelectSingleNode("descendant::Empire_Story_Name");
+                                if (!(value is null))
+                                {
+                                    string plot = value.InnerText.Trim();
+                                    if (plot != "") StoryPlots.Add(plot);
+                                }
+                                value = campaign.SelectSingleNode("descendant::Underworld_Story_Name");
+                                if (!(value is null))
+                                {
+                                    string plot = value.InnerText.Trim();
+                                    if (plot != "") StoryPlots.Add(plot);
+                                }
+                                value = campaign.SelectSingleNode("descendant::Story_Name");
+                                if (!(value is null))
+                                {
+                                    string[] plots = ReadWhiteSpaceAsCommas(value.InnerText);
+                                    for (int j = 1; j < plots.Length; j += 2)
+                                    {
+                                        string plot = plots[j];
+                                        if (plot != "") StoryPlots.Add(plot);
+                                    }
+                                }
                             }
                         }
                         catch (Exception e)
@@ -3323,6 +3398,7 @@ public static class SharedFunctions
                                 Type = Type,
                                 planetObjects = planetObjects,
                                 traderouteObjects = traderouteObjects,
+                                StoryPlots = StoryPlots,
                             };
                             entities.Conquests.Add(camp);
                         }
@@ -4674,6 +4750,7 @@ public struct hardpoint
         proj = proj.Replace("_Green", "").Replace("_green", "");
         proj = proj.Replace("_Yellow", "").Replace("_yellow", "");
         proj = proj.Replace("_Purple", "").Replace("_purple", "");
+        proj = proj.Replace("_Silver", "").Replace("_silver", "");
         return quantity.ToString() + "x " + proj.Replace("_", " ") + ": " + pulseCount.ToString() + " / " + recharge.ToString("0.0") + "s / " + range.ToString();
     }
 }
@@ -4986,6 +5063,7 @@ public struct galacticConquest
     public string[] traderoutes;
     public List<string> factionsPlayable;
     public List<string> factionsPresent;
+    public List<string> StoryPlots;
     public List<List<string>> forceOwner; //Minimally just for factions present, then benchmark to saving everything. Properly parse only on GCListboxClick
     public List<List<string>> forceLocation; //May be faster to make an array dimmed to match number of read Starting_Forces
     public List<List<string>> forceType;

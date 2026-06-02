@@ -13,6 +13,11 @@ using static SharedFunctions;
 using System.Globalization;
 using System.Threading;
 
+//only add to spawns sets if the object has a lua file
+//Removing units from Yevetha breaks things
+
+//automagically remove debug 
+
 //todo *path for a unit's source file means it's in the megs. Might want to do something with that eventually
 
 //todo used shared modfiles functions for mods, update to be able to handle local mod as well as workshop,

@@ -23,13 +23,19 @@ using static SharedFunctions;
  *
  * Universal function to goto appropriate unit - find which matches and do that
  *
+ *  export planet list
+ *
+ * Why are FotR skirmish infantry companies claiming to have infinite hp in the sort?
+ * 
+ * read -1 pop as 0 or 1 so the values don't go negative
+ *
  * todo - subunits on ground units/fighters tells you which companies spawn it? Or new fields
  * 
  * add other or nonfighter category to garrisons for fighter mode <= 0
  * 
  * Add required planets, GCs with required planets, corporate discounts (structures and heroes), planets with corporate discounts... the latter renders a corporations lookup tab obsolete, if you also sextend the discount filter to structures
  * 
- * more functional right clicks - save images on conquest and planet maps, save/detail accuracy table?...
+ * more right clicks with function - save images on conquest and planet maps, save/detail accuracy table?...
  * Don't use messagebox - create dedicated listbox popup
  * 
  * filter units by skirmish/_MP
@@ -37,15 +43,11 @@ using static SharedFunctions;
  * sort/filter by abilities: has admin, PD range...
  * 
  * armor matrix is broken in vanilla
- * So is bordering planets
- * Got an out of memory exception when opening one of teh vanilla campaigns
+ * Got an out of memory exception when opening one of the vanilla campaigns
  * 
  * 
+ * sound section for units - parse sourcing information, play sounds?
  * 
- * read and display multimedia texts for a campaign in the campaign page. Perhaps just the dialog txt in a chapter sorting panel
- * read names of all dialog texts in stories, display in one listbox and chapters in another?
- * 
- * parse regional spawn sets (e.g. Generic UR) make accessible on planet and spawn set lookup?
  * 
  * parse skirmish prereqs and tactical build lists. Especially for MDU alikes
  * 
@@ -56,9 +58,6 @@ using static SharedFunctions;
 keep history updated whenever a tab or subtab is implemented
 there might be a bit of oddness in the history tracking when factions share a name
 Tilot - up two levels, does swfoc.exe exist? If yes enable dropdown
-
-
-Venator BTS should explain the turrets
 
 
 
@@ -204,6 +203,9 @@ namespace Holocron
             //In lieu of a proper fix, make things right aligned at runtime...
             PlanetGCListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
             PlanetBTSTextBox.Anchor = AnchorStyles.Top |  AnchorStyles.Right | AnchorStyles.Left;
+            GCPresentListbox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            GCPlanetListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            GCStoryTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             ConquestBTSTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             FactionBTSTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             MapsInPlanetsListbox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
@@ -216,6 +218,7 @@ namespace Holocron
             PlanetGroundMapRB.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 
             UnitTextPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
+            FactionDescLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             ShipNameRichTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             UnitAvailPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             UnitStatPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
@@ -1212,7 +1215,7 @@ namespace Holocron
             else if (FactionHeroTeamRB.Checked) src = entities.heroCompanies;
             foreach (unit unit in src)
             {
-                if (unit.username.ToLower().Contains(FactionUnitSearchTextBox.Text.ToLower()) && unit.affiliations.Contains(faction) && !IsHiddenObject(unit) && !IsSkirmishObject(unit) && !unit.unitname.Contains("Convoy") && !unit.unitname.Contains("Cheat") && !unit.unitname.Contains("Mission") && !unit.unitname.Contains("GW_") && !unit.unitname.Contains("GROUNDWAR_") && unit.influence == 0)
+                if (unit.username.ToLower().Contains(FactionUnitSearchTextBox.Text.ToLower()) && unit.affiliations.Contains(faction) && !IsHiddenObject(unit) && !IsSkirmishObject(unit) && !unit.unitname.Contains("Convoy") && !unit.unitname.Contains("Cheat") && !unit.unitname.Contains("Mission") && !unit.unitname.Contains("Survival_") &&  !unit.unitname.Contains("GW_") && !unit.unitname.Contains("GROUNDWAR_") && unit.influence == 0)
                 {
                     FactionUnitListBox.Items.Add(unit);
                 }
@@ -1276,6 +1279,46 @@ namespace Holocron
         private void FactionGovListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void FactionGotoConquestButton_Click(object sender, EventArgs e)
+        {
+            if(FactionGCListbox.SelectedItems.Count > 0)
+            {
+                insert_history((int)historymaintabs.conquest, 0, ((galacticConquest)FactionGCListbox.SelectedItem).codename, true);
+            }
+        }
+
+        private void FactionGotoFactoryButton_Click(object sender, EventArgs e)
+        {
+            if (FactionFactoryListbox.SelectedItems.Count > 0)
+            {
+                string structure = ((unit)FactionFactoryListbox.SelectedItem).unitname;
+                if (entities.spaceStructures.FindIndex(s => s.unitname == structure) >= 0) insert_history((int)historymaintabs.unit, 8, structure, true);
+                else insert_history((int)historymaintabs.unit, 7, structure, true);
+            }
+        }
+
+        private void FactionGotoBuildableButton_Click(object sender, EventArgs e)
+        {
+            if (FactionFactoryOptionsListBox.SelectedItems.Count > 0)
+            {
+                string unit = ((unit)FactionFactoryOptionsListBox.SelectedItem).unitname;
+                if (entities.spaceUnits.FindIndex(s => s.unitname == unit) >= 0) insert_history((int)historymaintabs.unit, 0, unit, true);
+                else insert_history((int)historymaintabs.unit, 1, unit, true);
+            }
+        }
+
+        private void FactionGotoUnitButton_Click(object sender, EventArgs e)
+        {
+            if (FactionUnitListBox.SelectedItems.Count > 0)
+            {
+                string unit = ((unit)FactionUnitListBox.SelectedItem).unitname;
+                if(FactionSpaceUnitRB.Checked) insert_history((int)historymaintabs.unit, 0, unit, true);
+                else if (FactionGroundTeamRB.Checked) insert_history((int)historymaintabs.unit, 1, unit, true);
+                else if (FactionSpaceHeroRB.Checked) insert_history((int)historymaintabs.unit, 4, unit, true);
+                else if (FactionHeroTeamRB.Checked) insert_history((int)historymaintabs.unit, 5, unit, true);
+            }
         }
 
         private void setFactionAvailText(unit unit)
@@ -1590,17 +1633,11 @@ namespace Holocron
             {
                 if (!reqstru.Contains("_Dummy") && !(reqstru.Contains("INFLUENCE_")))
                 {
-                    foreach(unit building in entities.structures)
-                    {
-                        if(building.unitname.ToLower() == reqstru.ToLower())
-                        {
-                            unit building2 = building;
-                            building2.username = getBuildingAffils(building2);
-                            building2.sortstring = building2.username;
-                            ReqStructuresListBox.Items.Add(building2);
-                            break;
-                        }
-                    }
+                    unit req = entities.spaceStructures.FirstOrDefault(s => s.unitname.ToLower() == reqstru.ToLower());
+                    if(req.unitname is null) req = entities.structures.FirstOrDefault(s => s.unitname.ToLower() == reqstru.ToLower());
+                    req.username = getBuildingAffils(req);
+                    req.sortstring = req.username;
+                    ReqStructuresListBox.Items.Add(req);
                 }
             }
 
@@ -2052,6 +2089,7 @@ namespace Holocron
 
         private string getBuildingAffils(unit Building)
         {
+            if (Building.unitname is null) return "";
             if (!Building.unitname.Contains("_HQ") && Building.affiliations.Count > 0 && Building.affiliations.Count <= 2 && Building.affiliations[0] != "Neutral")
             {
                 Building.username += " (" + FactionNameFromCode(Building.affiliations[0], entities);
@@ -3013,39 +3051,67 @@ namespace Holocron
                 //todo regimes
 
                 //GC master scripts
-                statefiles = getModFiles("Scripts\\Story", "GC_MasterScript_*.lua");
-                foreach (string statefile in statefiles)
+                foreach(galacticConquest GC in entities.Conquests)
                 {
-                    string[] lines = File.ReadAllLines(statefile);
-                    List<string> factionaliases = new List<string>();
-                    List<string> unitaliases = new List<string>();
-
-                    for (int i = 0; i < lines.Length; i++)
+                    bool GClock = false;
+                    bool GCunlock = false;
+                    foreach (string plotfile in GC.StoryPlots)
                     {
-                        string line = lines[i].ToLower();
-                        if (line.Contains("find_player") && line.Contains(factionlower)) factionaliases.Add(line.Split('=')[0].Trim());
-                        if (line.Contains("find_object_type") && line.Contains(unitlower)) unitaliases.Add(line.Split('=')[0].Trim());
-                        bool u = line.Contains("unlock_tech");
-                        bool l = line.Contains(".lock_tech");
-                        if((u || l) && (lines.Contains(factionlower) || factionaliases.Any(line.Contains)) && (lines.Contains(unitlower) || unitaliases.Any(line.Contains)))
-                        {//Todo parse GCs for scripts and use username of GC
-                            string GC = LastFolderOrFile(statefile).ToLower().Replace("gc_masterscript_","").Replace(".lua", "").Replace("_", " ");
-                            if (u)
+                        XmlDocument doc = readModXmlOrMeg("XML\\" + plotfile, entities);
+                        XmlNodeList Luas = doc.SelectNodes("descendant::Lua_Script");
+                        foreach(XmlNode Lua in Luas)
+                        {
+                            if(!(Lua.InnerText is null))
                             {
-                                if (firstunlock) firstunlock = false;
-                                else unlocks += ", ";
-                                unlocks += GC;
+                                string statefile = getModFile("Scripts\\Story\\" + Lua.InnerText.Trim() + ".lua");
+                                if(statefile != "")
+                                {
+                                    string[] lines = File.ReadAllLines(statefile);
+                                    List<string> factionaliases = new List<string>();
+                                    List<string> unitaliases = new List<string>();
+
+                                    for (int i = 0; i < lines.Length; i++)
+                                    {
+                                        string line = lines[i].ToLower();
+                                        if (line.Contains("find_player") && line.Contains(factionlower)) factionaliases.Add(line.Split('=')[0].Trim());
+                                        if (line.Contains("find_object_type") && line.Contains(unitlower)) unitaliases.Add(line.Split('=')[0].Trim());
+                                        bool u = line.Contains("unlock_tech");
+                                        bool l = line.Contains(".lock_tech");
+                                        if ((u || l) && (lines.Contains(factionlower) || factionaliases.Any(line.Contains)) && (lines.Contains(unitlower) || unitaliases.Any(line.Contains)))
+                                        {
+                                            if (u)
+                                            {
+                                                if (!GCunlock)
+                                                {
+                                                    GCunlock = true;
+                                                    if (firstunlock) firstunlock = false;
+                                                    else unlocks += ", ";
+                                                    unlocks += GC.username;
+                                                }
+                                            }
+                                            else if (l)
+                                            {
+                                                if (!GClock)
+                                                {
+                                                    GClock = true;
+                                                    if (firstlock) firstlock = false;
+                                                    else locks += ", ";
+                                                    locks += GC.username;
+                                                }
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
                             }
-                            else if (l)
-                            {
-                                if (firstlock) firstlock = false;
-                                else locks += ", ";
-                                locks += GC;
-                            }
-                            break;
                         }
                     }
                 }
+
+                //Custom 
+
+
+                //Unit is capable of being unlocked
             }
 
             string missionfile = getModFile("Scripts\\Library\\eawx-plugins\\intervention-missions\\rewards\\RewardTables_" + faction.codename.ToUpper() + ".lua");
@@ -4122,6 +4188,21 @@ namespace Holocron
             }
         }
 
+        private string getDialogPath(string filename)
+        {
+            return getModFile("Scripts\\Story\\" + filename + ".txt");
+        }
+
+        public struct speechevent
+        {
+            public string title;
+            public string speech;
+            public override string ToString()
+            {
+                return title;
+            }
+        }
+
         private void GCListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(GCListBox.SelectedItems.Count > 0)
@@ -4161,6 +4242,66 @@ namespace Holocron
 
                 if (path != "") BTS = readBTS(path, id);
                 if (BTS != "") ConquestBTSTextBox.Text = "Behind the scenes\n\n" + BTS;
+
+                List<string> dialogs = new List<string>();
+                List<string> speeches = new List<string>();
+                List<speechevent> speechevents = new List<speechevent>();
+                foreach (string plotfile in Campaign.StoryPlots)
+                {
+                    XmlDocument storyplot = readModXmlOrMeg("XML\\" + plotfile, entities);
+                    XmlNodeList plots = storyplot.SelectNodes("descendant::Active_Plot");
+                    foreach (XmlNode plot in plots)
+                    {
+                        if (!(plot.InnerText is null) && plot.InnerText != "Conquests\\Player_Agnostic_Plot.xml" && plot.InnerText != "Conquests\\Documentation.xml") //Skip the EaWX universal plots
+                        {
+                            XmlDocument doc = readModXmlOrMeg("XML\\" + plot.InnerText, entities);
+                            XmlNodeList events = doc.SelectNodes("descendant::Event");
+                            foreach(XmlNode even in events)
+                            {
+                                XmlNode dialog = even.SelectSingleNode("descendant::Story_Dialog");
+                                if(!(dialog is null)) 
+                                {
+                                    string filepath = dialog.InnerText.Trim();
+                                    if (filepath != "" && !dialogs.Contains(filepath) && getDialogPath(filepath) != "") dialogs.Add(filepath);
+                                }
+                                XmlNode reward = even.SelectSingleNode("descendant::Reward_Type");
+                                if (!(reward is null))
+                                {
+                                    string rewardtype = reward.InnerText.Trim();
+                                    if(rewardtype == "MULTIMEDIA" || rewardtype == "SCREEN_TEXT")
+                                    {
+                                        string title = even.Attributes[0].Value;
+                                        if (!speeches.Contains(title) && !title.Contains("Template_") && title != "About1" && title != "About2" && title !="About3")
+                                        {
+                                            XmlNode param = even.SelectSingleNode("descendant::Reward_Param1");
+                                            if (!(param is null))
+                                            {
+                                                string text = param.InnerText.Trim();
+                                                speechevent entry = new speechevent
+                                                {
+                                                    title = title.Replace("_", " "),
+                                                    speech = Find_Text_Entry(text),
+                                                };
+                                                speechevents.Add(entry);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                GCDialogListBox.Items.Clear();
+                foreach (string dialog in dialogs) GCDialogListBox.Items.Add(dialog);
+
+                speechevents.Sort((s1, s2) => s1.title.CompareTo(s2.title));
+                GCSpeechListBox.Items.Clear();
+                foreach (speechevent speech in speechevents) GCSpeechListBox.Items.Add(speech);
+            }
+            else
+            {
+                GCChapterListBox.SelectedItems.Clear();
+                GCStoryTextBox.Text = "";
             }
         }
 
@@ -4249,6 +4390,8 @@ namespace Holocron
             GCPictureBox.Image = (Bitmap)GCPictureBox.Tag;
         }
 
+
+
         private void GCPresentListbox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(GCPresentListbox.SelectedItems.Count > 0)
@@ -4286,7 +4429,7 @@ namespace Holocron
                             if(!(connected.codename is null))
                             {
                                 string owner = connected.owner.codename;
-                                if(owner != planet.owner.codename && connected.owner.playable) //Todo: use Lua value of NoneAI to inform this?
+                                if(owner != planet.owner.codename && !(connected.owner.ai == "None" || (connected.owner.ai == "" && !connected.owner.playable)))
                                 {
                                     bordered = true;
                                     if(!borderingplanets.Contains(connected.username)) borderingplanets.Add(connected.username);
@@ -4301,7 +4444,7 @@ namespace Holocron
                             if (!(connected.codename is null))
                             {
                                 string owner = connected.owner.codename;
-                                if (owner != planet.owner.codename && connected.owner.playable)
+                                if (owner != planet.owner.codename && !(connected.owner.ai == "None" || (connected.owner.ai == "" && !connected.owner.playable)))
                                 {
                                     bordered = true;
                                     if (!borderingplanets.Contains(connected.username)) borderingplanets.Add(connected.username);
@@ -4380,7 +4523,13 @@ namespace Holocron
 
                 for(int i = 0; i < GC.forceLocation[GCActiveListBox.SelectedIndex].Count; i++)
                 {//Todo read name from entities.objects
-                    if (GC.forceLocation[GCActiveListBox.SelectedIndex][i] == planet.codename) GCPlanetForceLabel.Text += "\n"+ GC.forceType[GCActiveListBox.SelectedIndex][i];
+                    if (GC.forceLocation[GCActiveListBox.SelectedIndex][i] == planet.codename)
+                    {
+                        string aswrit = GC.forceType[GCActiveListBox.SelectedIndex][i];
+                        unit userfacing = entities.objects.FirstOrDefault(s => s.unitname == aswrit);
+                        if (!(userfacing.username is null) && userfacing.username != "") aswrit = userfacing.username;
+                        GCPlanetForceLabel.Text += "\n" + aswrit;
+                    }
                 }
             }
             else
@@ -4407,11 +4556,64 @@ namespace Holocron
             }
         }
 
+        private void GCDialogListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(GCDialogListBox.SelectedItems.Count > 0)
+            {
+                GCChapterListBox.Items.Clear();
+                string[] dialogfile = File.ReadAllLines(getDialogPath((string)GCDialogListBox.SelectedItem));
+                foreach(string line in dialogfile)
+                {
+                    if (line.Contains("[CHAPTER ")) GCChapterListBox.Items.Add(line.Replace("[CHAPTER ", "").Replace("]", ""));
+                }
+                if (GCChapterListBox.Items.Count > 0) GCChapterListBox.SelectedIndex = 0;
+            }
+        }
+
+        private void GCChapterListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string[] dialogfile = File.ReadAllLines(getDialogPath((string)GCDialogListBox.SelectedItem));
+            bool active = false;
+            string dialogtext = "";
+            foreach (string line in dialogfile)
+            {
+                if (line.Contains("[CHAPTER " + (string)GCChapterListBox.SelectedItem + "]")) active = true;
+                else if (line.Contains("[CHAPTER ") && active) break;
+
+                if (active)
+                {
+                    if(line.Length > 6)
+                    {
+                        //if (line.Substring(0, 5) == "TITLE") dialogtext += Find_Text_Entry(line.Substring(6, line.Length - 6)) + "\n"; Theoretically valid, but tends to be duplicated in the first line anyway
+                        if (line.Substring(0, 5) == "TEXT ") dialogtext += Find_Text_Entry(line.Substring(5, line.Length - 5)) + "\n";
+                        else if (line.Substring(0, 7) == "NEWLINE") dialogtext += "\n";
+                    }
+                }
+            }
+            GCStoryTextBox.Text = dialogtext;
+        }
+
+        private void GCSpeechListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (GCSpeechListBox.SelectedItems.Count > 0)
+            {
+                GCStoryTextBox.Text = ((speechevent)GCSpeechListBox.SelectedItem).speech;
+            }
+        }
+
         private void AbilityTargetUnitLabel_Click(object sender, EventArgs e)
         {
             MouseEventArgs me = (MouseEventArgs)e;
             if (me.Button == MouseButtons.Left) MessageBox.Show(AbilityTargetUnitLabel.Text);
             else if (me.Button == MouseButtons.Right) System.Windows.Forms.Clipboard.SetText(AbilityTargetUnitLabel.Text);
+        }
+
+        private void SpeechCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            //GCSpeechListBox.Visible = SpeechCheckBox.Checked; //Auto alignment is weird
+            GCDialogListBox.Visible = !SpeechCheckBox.Checked;
+            GCChapterListBox.Visible = !SpeechCheckBox.Checked;
+            GCChapterLabel.Visible = !SpeechCheckBox.Checked;
         }
 
         //Don't put any functions below here if you want it to still compile
