@@ -129,6 +129,36 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>442, 17</value>
   </metadata>
+  <data name="HealRadiusLabel.ToolTip" xml:space="preserve">
+    <value>DPS lowered by the inaccuracy of each weapon toward the selected category. Also includes range and armor/shield type modifers
+The collision system in EaW means "missed" shots can still hit the target, especially for larger units, and "hits" can miss accelerating/turning targets.
+The end value is only an approximation of how many of the shots fired should land.</value>
+  </data>
+  <data name="HealRechargeLabel.ToolTip" xml:space="preserve">
+    <value>DPS lowered by the inaccuracy of each weapon toward the selected category. Also includes range and armor/shield type modifers
+The collision system in EaW means "missed" shots can still hit the target, especially for larger units, and "hits" can miss accelerating/turning targets.
+The end value is only an approximation of how many of the shots fired should land.</value>
+  </data>
+  <data name="HealAmountLabel.ToolTip" xml:space="preserve">
+    <value>DPS lowered by the inaccuracy of each weapon toward the selected category. Also includes range and armor/shield type modifers
+The collision system in EaW means "missed" shots can still hit the target, especially for larger units, and "hits" can miss accelerating/turning targets.
+The end value is only an approximation of how many of the shots fired should land.</value>
+  </data>
+  <data name="PDRechargeLabel.ToolTip" xml:space="preserve">
+    <value>DPS lowered by the inaccuracy of each weapon toward the selected category. Also includes range and armor/shield type modifers
+The collision system in EaW means "missed" shots can still hit the target, especially for larger units, and "hits" can miss accelerating/turning targets.
+The end value is only an approximation of how many of the shots fired should land.</value>
+  </data>
+  <data name="HealScoreLabel.ToolTip" xml:space="preserve">
+    <value>DPS lowered by the inaccuracy of each weapon toward the selected category. Also includes range and armor/shield type modifers
+The collision system in EaW means "missed" shots can still hit the target, especially for larger units, and "hits" can miss accelerating/turning targets.
+The end value is only an approximation of how many of the shots fired should land.</value>
+  </data>
+  <data name="PDRadiusLabel.ToolTip" xml:space="preserve">
+    <value>DPS lowered by the inaccuracy of each weapon toward the selected category. Also includes range and armor/shield type modifers
+The collision system in EaW means "missed" shots can still hit the target, especially for larger units, and "hits" can miss accelerating/turning targets.
+The end value is only an approximation of how many of the shots fired should land.</value>
+  </data>
   <data name="ComplementLabel.ToolTip" xml:space="preserve">
     <value>Shield value divided by the mean damage modifier across key damage types to the unit's armor type
 Combat power calulations use the closely related shield*average damage absorption or shield*(1 - mean modifier)</value>

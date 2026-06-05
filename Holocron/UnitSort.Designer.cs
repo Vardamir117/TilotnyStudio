@@ -74,7 +74,19 @@
             this.label3 = new System.Windows.Forms.Label();
             this.ClearButton = new System.Windows.Forms.Button();
             this.NameCountRB = new System.Windows.Forms.RadioButton();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.ChainStartRB = new System.Windows.Forms.RadioButton();
+            this.ChainEndRB = new System.Windows.Forms.RadioButton();
+            this.pdRechargeRB = new System.Windows.Forms.RadioButton();
+            this.pdRadiusRB = new System.Windows.Forms.RadioButton();
+            this.HealRB = new System.Windows.Forms.RadioButton();
+            this.HealBox = new System.Windows.Forms.ComboBox();
+            this.DiscountPercentRB = new System.Windows.Forms.RadioButton();
+            this.IncomePercentRB = new System.Windows.Forms.RadioButton();
+            this.IncomeAmountRB = new System.Windows.Forms.RadioButton();
+            this.CommandBox = new System.Windows.Forms.ComboBox();
+            this.CommandBonusRB = new System.Windows.Forms.RadioButton();
+            this.CommandTypeBox = new System.Windows.Forms.ComboBox();
+            this.TimeReductionRB = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // NameRB
@@ -418,7 +430,7 @@
             this.DurabilityBox.Items.AddRange(new object[] {
             "Base Value",
             "Base+Reflect and Absorb",
-            "Average Modified",
+            "Modified",
             "On Incoming Damage"});
             this.DurabilityBox.Location = new System.Drawing.Point(273, 32);
             this.DurabilityBox.Name = "DurabilityBox";
@@ -456,18 +468,19 @@
             this.ComplementRB.TabStop = true;
             this.ComplementRB.Text = "Complement";
             this.ComplementRB.UseVisualStyleBackColor = true;
-            this.ComplementRB.Visible = false;
             // 
             // FighterTypeBox
             // 
             this.FighterTypeBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.FighterTypeBox.FormattingEnabled = true;
             this.FighterTypeBox.Items.AddRange(new object[] {
+            "All Count",
             "Fighter Count",
             "Bomber Count",
             "Fighters and Bomber Count",
+            "Other Count",
             "Combat Power"});
-            this.FighterTypeBox.Location = new System.Drawing.Point(273, 318);
+            this.FighterTypeBox.Location = new System.Drawing.Point(403, 314);
             this.FighterTypeBox.Name = "FighterTypeBox";
             this.FighterTypeBox.Size = new System.Drawing.Size(121, 21);
             this.FighterTypeBox.TabIndex = 43;
@@ -481,11 +494,10 @@
             "Upfront",
             "Reserve",
             "Upfront+Reserve"});
-            this.ReserveBox.Location = new System.Drawing.Point(425, 318);
+            this.ReserveBox.Location = new System.Drawing.Point(276, 314);
             this.ReserveBox.Name = "ReserveBox";
             this.ReserveBox.Size = new System.Drawing.Size(121, 21);
             this.ReserveBox.TabIndex = 44;
-            this.ReserveBox.Visible = false;
             // 
             // AccuracyCheckBox
             // 
@@ -511,7 +523,7 @@
             // GarrisonSlotsRB
             // 
             this.GarrisonSlotsRB.AutoSize = true;
-            this.GarrisonSlotsRB.Location = new System.Drawing.Point(103, 318);
+            this.GarrisonSlotsRB.Location = new System.Drawing.Point(171, 363);
             this.GarrisonSlotsRB.Name = "GarrisonSlotsRB";
             this.GarrisonSlotsRB.Size = new System.Drawing.Size(108, 17);
             this.GarrisonSlotsRB.TabIndex = 46;
@@ -578,31 +590,181 @@
             this.NameCountRB.AutoSize = true;
             this.NameCountRB.Location = new System.Drawing.Point(15, 230);
             this.NameCountRB.Name = "NameCountRB";
-            this.NameCountRB.Size = new System.Drawing.Size(118, 17);
+            this.NameCountRB.Size = new System.Drawing.Size(84, 17);
             this.NameCountRB.TabIndex = 52;
             this.NameCountRB.TabStop = true;
-            this.NameCountRB.Text = "Name Count TODO";
+            this.NameCountRB.Text = "Name Count";
             this.NameCountRB.UseVisualStyleBackColor = true;
-            this.NameCountRB.Visible = false;
             // 
-            // radioButton1
+            // ChainStartRB
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(57, 251);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(153, 17);
-            this.radioButton1.TabIndex = 53;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Variant (Chain Start) TODO";
-            this.radioButton1.UseVisualStyleBackColor = true;
-            this.radioButton1.Visible = false;
+            this.ChainStartRB.AutoSize = true;
+            this.ChainStartRB.Location = new System.Drawing.Point(15, 274);
+            this.ChainStartRB.Name = "ChainStartRB";
+            this.ChainStartRB.Size = new System.Drawing.Size(113, 17);
+            this.ChainStartRB.TabIndex = 53;
+            this.ChainStartRB.TabStop = true;
+            this.ChainStartRB.Text = "Variant Chain Start";
+            this.ChainStartRB.UseVisualStyleBackColor = true;
+            // 
+            // ChainEndRB
+            // 
+            this.ChainEndRB.AutoSize = true;
+            this.ChainEndRB.Location = new System.Drawing.Point(15, 295);
+            this.ChainEndRB.Name = "ChainEndRB";
+            this.ChainEndRB.Size = new System.Drawing.Size(110, 17);
+            this.ChainEndRB.TabIndex = 54;
+            this.ChainEndRB.TabStop = true;
+            this.ChainEndRB.Text = "Variant Chain End";
+            this.ChainEndRB.UseVisualStyleBackColor = true;
+            // 
+            // pdRechargeRB
+            // 
+            this.pdRechargeRB.AutoSize = true;
+            this.pdRechargeRB.Location = new System.Drawing.Point(533, 60);
+            this.pdRechargeRB.Name = "pdRechargeRB";
+            this.pdRechargeRB.Size = new System.Drawing.Size(142, 17);
+            this.pdRechargeRB.TabIndex = 55;
+            this.pdRechargeRB.TabStop = true;
+            this.pdRechargeRB.Text = "Point Defense Recharge";
+            this.pdRechargeRB.UseVisualStyleBackColor = true;
+            // 
+            // pdRadiusRB
+            // 
+            this.pdRadiusRB.AutoSize = true;
+            this.pdRadiusRB.Location = new System.Drawing.Point(533, 83);
+            this.pdRadiusRB.Name = "pdRadiusRB";
+            this.pdRadiusRB.Size = new System.Drawing.Size(128, 17);
+            this.pdRadiusRB.TabIndex = 56;
+            this.pdRadiusRB.TabStop = true;
+            this.pdRadiusRB.Text = "Point Defense Radius";
+            this.pdRadiusRB.UseVisualStyleBackColor = true;
+            // 
+            // HealRB
+            // 
+            this.HealRB.AutoSize = true;
+            this.HealRB.Location = new System.Drawing.Point(533, 106);
+            this.HealRB.Name = "HealRB";
+            this.HealRB.Size = new System.Drawing.Size(47, 17);
+            this.HealRB.TabIndex = 57;
+            this.HealRB.TabStop = true;
+            this.HealRB.Text = "Heal";
+            this.HealRB.UseVisualStyleBackColor = true;
+            // 
+            // HealBox
+            // 
+            this.HealBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.HealBox.FormattingEnabled = true;
+            this.HealBox.Items.AddRange(new object[] {
+            "Score",
+            "Amount or Percent",
+            "Amount",
+            "Percent",
+            "Radius",
+            "Recharge"});
+            this.HealBox.Location = new System.Drawing.Point(595, 105);
+            this.HealBox.Name = "HealBox";
+            this.HealBox.Size = new System.Drawing.Size(121, 21);
+            this.HealBox.TabIndex = 58;
+            // 
+            // DiscountPercentRB
+            // 
+            this.DiscountPercentRB.AutoSize = true;
+            this.DiscountPercentRB.Location = new System.Drawing.Point(533, 129);
+            this.DiscountPercentRB.Name = "DiscountPercentRB";
+            this.DiscountPercentRB.Size = new System.Drawing.Size(107, 17);
+            this.DiscountPercentRB.TabIndex = 59;
+            this.DiscountPercentRB.TabStop = true;
+            this.DiscountPercentRB.Text = "Discount Percent";
+            this.DiscountPercentRB.UseVisualStyleBackColor = true;
+            // 
+            // IncomePercentRB
+            // 
+            this.IncomePercentRB.AutoSize = true;
+            this.IncomePercentRB.Location = new System.Drawing.Point(533, 175);
+            this.IncomePercentRB.Name = "IncomePercentRB";
+            this.IncomePercentRB.Size = new System.Drawing.Size(100, 17);
+            this.IncomePercentRB.TabIndex = 60;
+            this.IncomePercentRB.TabStop = true;
+            this.IncomePercentRB.Text = "Income Percent";
+            this.IncomePercentRB.UseVisualStyleBackColor = true;
+            // 
+            // IncomeAmountRB
+            // 
+            this.IncomeAmountRB.AutoSize = true;
+            this.IncomeAmountRB.Location = new System.Drawing.Point(533, 198);
+            this.IncomeAmountRB.Name = "IncomeAmountRB";
+            this.IncomeAmountRB.Size = new System.Drawing.Size(99, 17);
+            this.IncomeAmountRB.TabIndex = 61;
+            this.IncomeAmountRB.TabStop = true;
+            this.IncomeAmountRB.Text = "Income Amount";
+            this.IncomeAmountRB.UseVisualStyleBackColor = true;
+            // 
+            // CommandBox
+            // 
+            this.CommandBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CommandBox.FormattingEnabled = true;
+            this.CommandBox.Items.AddRange(new object[] {
+            "Highest Stat",
+            "Average Stats"});
+            this.CommandBox.Location = new System.Drawing.Point(639, 221);
+            this.CommandBox.Name = "CommandBox";
+            this.CommandBox.Size = new System.Drawing.Size(121, 21);
+            this.CommandBox.TabIndex = 63;
+            // 
+            // CommandBonusRB
+            // 
+            this.CommandBonusRB.AutoSize = true;
+            this.CommandBonusRB.Location = new System.Drawing.Point(533, 222);
+            this.CommandBonusRB.Name = "CommandBonusRB";
+            this.CommandBonusRB.Size = new System.Drawing.Size(105, 17);
+            this.CommandBonusRB.TabIndex = 62;
+            this.CommandBonusRB.TabStop = true;
+            this.CommandBonusRB.Text = "Command Bonus";
+            this.CommandBonusRB.UseVisualStyleBackColor = true;
+            // 
+            // CommandTypeBox
+            // 
+            this.CommandTypeBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.CommandTypeBox.FormattingEnabled = true;
+            this.CommandTypeBox.Items.AddRange(new object[] {
+            "Universal Boosts Only",
+            "Universal+Specialized",
+            "Specialized Boosts Only"});
+            this.CommandTypeBox.Location = new System.Drawing.Point(546, 248);
+            this.CommandTypeBox.Name = "CommandTypeBox";
+            this.CommandTypeBox.Size = new System.Drawing.Size(214, 21);
+            this.CommandTypeBox.TabIndex = 64;
+            // 
+            // TimeReductionRB
+            // 
+            this.TimeReductionRB.AutoSize = true;
+            this.TimeReductionRB.Location = new System.Drawing.Point(533, 152);
+            this.TimeReductionRB.Name = "TimeReductionRB";
+            this.TimeReductionRB.Size = new System.Drawing.Size(100, 17);
+            this.TimeReductionRB.TabIndex = 65;
+            this.TimeReductionRB.TabStop = true;
+            this.TimeReductionRB.Text = "Time Reduction";
+            this.TimeReductionRB.UseVisualStyleBackColor = true;
             // 
             // UnitSort
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(767, 408);
-            this.Controls.Add(this.radioButton1);
+            this.Controls.Add(this.TimeReductionRB);
+            this.Controls.Add(this.CommandTypeBox);
+            this.Controls.Add(this.CommandBox);
+            this.Controls.Add(this.CommandBonusRB);
+            this.Controls.Add(this.IncomeAmountRB);
+            this.Controls.Add(this.IncomePercentRB);
+            this.Controls.Add(this.DiscountPercentRB);
+            this.Controls.Add(this.HealBox);
+            this.Controls.Add(this.HealRB);
+            this.Controls.Add(this.pdRadiusRB);
+            this.Controls.Add(this.pdRechargeRB);
+            this.Controls.Add(this.ChainEndRB);
+            this.Controls.Add(this.ChainStartRB);
             this.Controls.Add(this.NameCountRB);
             this.Controls.Add(this.ClearButton);
             this.Controls.Add(this.label3);
@@ -704,6 +866,18 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button ClearButton;
         private System.Windows.Forms.RadioButton NameCountRB;
-        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.RadioButton ChainStartRB;
+        private System.Windows.Forms.RadioButton ChainEndRB;
+        private System.Windows.Forms.RadioButton pdRechargeRB;
+        private System.Windows.Forms.RadioButton pdRadiusRB;
+        private System.Windows.Forms.RadioButton HealRB;
+        private System.Windows.Forms.ComboBox HealBox;
+        private System.Windows.Forms.RadioButton DiscountPercentRB;
+        private System.Windows.Forms.RadioButton IncomePercentRB;
+        private System.Windows.Forms.RadioButton IncomeAmountRB;
+        private System.Windows.Forms.ComboBox CommandBox;
+        private System.Windows.Forms.RadioButton CommandBonusRB;
+        private System.Windows.Forms.ComboBox CommandTypeBox;
+        private System.Windows.Forms.RadioButton TimeReductionRB;
     }
 }

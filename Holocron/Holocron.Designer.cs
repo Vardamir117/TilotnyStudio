@@ -376,6 +376,13 @@
             this.AutoResolveBattleTypeLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.VariantLabel = new System.Windows.Forms.Label();
+            this.PDRadiusLabel = new System.Windows.Forms.Label();
+            this.HealScoreLabel = new System.Windows.Forms.Label();
+            this.PDRechargeLabel = new System.Windows.Forms.Label();
+            this.HealAmountLabel = new System.Windows.Forms.Label();
+            this.HealRechargeLabel = new System.Windows.Forms.Label();
+            this.HealRadiusLabel = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tabLookups.SuspendLayout();
             this.LookupTabControl.SuspendLayout();
@@ -1845,6 +1852,12 @@
             // 
             // UnitStatPanel
             // 
+            this.UnitStatPanel.Controls.Add(this.HealRadiusLabel);
+            this.UnitStatPanel.Controls.Add(this.HealRechargeLabel);
+            this.UnitStatPanel.Controls.Add(this.HealAmountLabel);
+            this.UnitStatPanel.Controls.Add(this.PDRechargeLabel);
+            this.UnitStatPanel.Controls.Add(this.HealScoreLabel);
+            this.UnitStatPanel.Controls.Add(this.PDRadiusLabel);
             this.UnitStatPanel.Controls.Add(this.ComplementLabel);
             this.UnitStatPanel.Controls.Add(this.AlphaCheckBox);
             this.UnitStatPanel.Controls.Add(this.FlagLabel);
@@ -2277,6 +2290,7 @@
             // 
             // UnitTextPanel
             // 
+            this.UnitTextPanel.Controls.Add(this.VariantLabel);
             this.UnitTextPanel.Controls.Add(this.MaintenanceLabel);
             this.UnitTextPanel.Controls.Add(this.ShipNameRichTextBox);
             this.UnitTextPanel.Controls.Add(this.UnitSkirmTimeLabel);
@@ -4373,6 +4387,82 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
+            // VariantLabel
+            // 
+            this.VariantLabel.AutoSize = true;
+            this.VariantLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.VariantLabel.Location = new System.Drawing.Point(3, 341);
+            this.VariantLabel.Name = "VariantLabel";
+            this.VariantLabel.Size = new System.Drawing.Size(10, 13);
+            this.VariantLabel.TabIndex = 17;
+            this.VariantLabel.Text = ".";
+            // 
+            // PDRadiusLabel
+            // 
+            this.PDRadiusLabel.AutoSize = true;
+            this.PDRadiusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.PDRadiusLabel.Location = new System.Drawing.Point(585, 105);
+            this.PDRadiusLabel.Name = "PDRadiusLabel";
+            this.PDRadiusLabel.Size = new System.Drawing.Size(79, 17);
+            this.PDRadiusLabel.TabIndex = 41;
+            this.PDRadiusLabel.Text = "PD Radius:";
+            this.toolTip1.SetToolTip(this.PDRadiusLabel, resources.GetString("PDRadiusLabel.ToolTip"));
+            // 
+            // HealScoreLabel
+            // 
+            this.HealScoreLabel.AutoSize = true;
+            this.HealScoreLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HealScoreLabel.Location = new System.Drawing.Point(585, 122);
+            this.HealScoreLabel.Name = "HealScoreLabel";
+            this.HealScoreLabel.Size = new System.Drawing.Size(79, 16);
+            this.HealScoreLabel.TabIndex = 42;
+            this.HealScoreLabel.Text = "Heal Score:";
+            this.toolTip1.SetToolTip(this.HealScoreLabel, resources.GetString("HealScoreLabel.ToolTip"));
+            // 
+            // PDRechargeLabel
+            // 
+            this.PDRechargeLabel.AutoSize = true;
+            this.PDRechargeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.PDRechargeLabel.Location = new System.Drawing.Point(585, 89);
+            this.PDRechargeLabel.Name = "PDRechargeLabel";
+            this.PDRechargeLabel.Size = new System.Drawing.Size(97, 17);
+            this.PDRechargeLabel.TabIndex = 43;
+            this.PDRechargeLabel.Text = "PD Recharge:";
+            this.toolTip1.SetToolTip(this.PDRechargeLabel, resources.GetString("PDRechargeLabel.ToolTip"));
+            // 
+            // HealAmountLabel
+            // 
+            this.HealAmountLabel.AutoSize = true;
+            this.HealAmountLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HealAmountLabel.Location = new System.Drawing.Point(585, 138);
+            this.HealAmountLabel.Name = "HealAmountLabel";
+            this.HealAmountLabel.Size = new System.Drawing.Size(88, 16);
+            this.HealAmountLabel.TabIndex = 44;
+            this.HealAmountLabel.Text = "Heal Amount:";
+            this.toolTip1.SetToolTip(this.HealAmountLabel, resources.GetString("HealAmountLabel.ToolTip"));
+            // 
+            // HealRechargeLabel
+            // 
+            this.HealRechargeLabel.AutoSize = true;
+            this.HealRechargeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HealRechargeLabel.Location = new System.Drawing.Point(585, 154);
+            this.HealRechargeLabel.Name = "HealRechargeLabel";
+            this.HealRechargeLabel.Size = new System.Drawing.Size(103, 16);
+            this.HealRechargeLabel.TabIndex = 45;
+            this.HealRechargeLabel.Text = "Heal Recharge:";
+            this.toolTip1.SetToolTip(this.HealRechargeLabel, resources.GetString("HealRechargeLabel.ToolTip"));
+            // 
+            // HealRadiusLabel
+            // 
+            this.HealRadiusLabel.AutoSize = true;
+            this.HealRadiusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HealRadiusLabel.Location = new System.Drawing.Point(585, 170);
+            this.HealRadiusLabel.Name = "HealRadiusLabel";
+            this.HealRadiusLabel.Size = new System.Drawing.Size(86, 16);
+            this.HealRadiusLabel.TabIndex = 46;
+            this.HealRadiusLabel.Text = "Heal Radius:";
+            this.toolTip1.SetToolTip(this.HealRadiusLabel, resources.GetString("HealRadiusLabel.ToolTip"));
+            // 
             // Holocron
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -4793,6 +4883,13 @@
         private System.Windows.Forms.Button FactionGotoConquestButton;
         private System.Windows.Forms.Button FactionGotoBuildableButton;
         private System.Windows.Forms.Button FactionGotoFactoryButton;
+        private System.Windows.Forms.Label VariantLabel;
+        private System.Windows.Forms.Label PDRechargeLabel;
+        private System.Windows.Forms.Label HealScoreLabel;
+        private System.Windows.Forms.Label PDRadiusLabel;
+        private System.Windows.Forms.Label HealAmountLabel;
+        private System.Windows.Forms.Label HealRadiusLabel;
+        private System.Windows.Forms.Label HealRechargeLabel;
     }
 }
 

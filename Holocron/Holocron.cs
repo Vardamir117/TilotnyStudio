@@ -23,15 +23,19 @@ using static SharedFunctions;
  *
  * Universal function to goto appropriate unit - find which matches and do that
  *
- *  export planet list
+ * use absence of changelogs to detect EaWX versions
+ * 
+ * sort with xml complements. CP of reserves = initcp*(1 - (0.5^(init/reserve)))
  *
  * Why are FotR skirmish infantry companies claiming to have infinite hp in the sort?
  * 
+ * lock controls during load
+ * 
  * read -1 pop as 0 or 1 so the values don't go negative
  *
+ *add box containing things that spawn the unit as a garrison/in company units, another box for structures/heroes that discount it
+ *
  * todo - subunits on ground units/fighters tells you which companies spawn it? Or new fields
- * 
- * add other or nonfighter category to garrisons for fighter mode <= 0
  * 
  * Add required planets, GCs with required planets, corporate discounts (structures and heroes), planets with corporate discounts... the latter renders a corporations lookup tab obsolete, if you also sextend the discount filter to structures
  * 
@@ -40,7 +44,9 @@ using static SharedFunctions;
  * 
  * filter units by skirmish/_MP
  * 
- * sort/filter by abilities: has admin, PD range...
+ * add all space categories to filter page, not just targeting ones. Or just all categories and let them sort out ground?
+ * 
+ * sort/filter by abilities: has admin, PD reload and range, has command bonus, has specialized bonus?. Sort by average and max command percent?...
  * 
  * armor matrix is broken in vanilla
  * Got an out of memory exception when opening one of the vanilla campaigns
@@ -54,7 +60,9 @@ using static SharedFunctions;
  * todo - log mode might need to add pulse interval depending on how sheets do it
  * log mode should ideally adjust reload nonproportionally
  * 
+ * complement CP and dps are slightly different than sheet. Stop using floats? Or does some rounding need to be forced?
  * 
+ * planet preferred revolt, influence modifiers
 keep history updated whenever a tab or subtab is implemented
 there might be a bit of oddness in the history tracking when factions share a name
 Tilot - up two levels, does swfoc.exe exist? If yes enable dropdown
@@ -2450,9 +2458,42 @@ namespace Holocron
 
             //abilities
             UnitAbilityListBox.Items.Clear();
+            bool pd = false;
+            bool heal = false;
             foreach (unitability able in selectedUnit.unitabilities) UnitAbilityListBox.Items.Add(able);
             AbilityListBox.Items.Clear();
-            foreach (ability able in selectedUnit.abilities) AbilityListBox.Items.Add(able);
+            foreach (ability able in selectedUnit.abilities)
+            {
+                AbilityListBox.Items.Add(able);
+                switch (able.type)
+                {
+                    case "Laser_Defense_Ability": //todo: check if first or last defined has priority and set a flag if it's first
+                        pd = true;
+                        PDRechargeLabel.Text = "PD Recharge: " + able.recharge;
+                        PDRadiusLabel.Text = "PD Radius: " + able.radius;
+                        break;
+                    case "Force_Healing_Ability":
+                        heal = true;
+                        HealScoreLabel.Text = "Heal Score: " + getHealScore(able);
+                        if(able.genericValue > 0) HealAmountLabel.Text = "Heal Amount: " + able.genericValue;
+                        else HealAmountLabel.Text = "Heal Percent: " + able.duration * 100 + "%";
+                        HealRechargeLabel.Text = "Heal Recharge: " + able.recharge;
+                        HealRadiusLabel.Text = "Heal Radius: " + able.radius;
+                        break;
+                }
+            }
+            if (!pd)
+            {
+                PDRechargeLabel.Text = "";
+                PDRadiusLabel.Text = "";
+            }
+            if (!heal)
+            {
+                HealScoreLabel.Text = "";
+                HealAmountLabel.Text = "";
+                HealRechargeLabel.Text = "";
+                HealRadiusLabel.Text = "";
+            }
             ResetAbilitySelection();
 
             IconData icondata = DatParser.GetIconData(selectedUnit.icon, entities);
@@ -2523,6 +2564,12 @@ namespace Holocron
             else MapsAndBombingRunLabel.Text = "";
             if (selectedUnit.maintenance > 0 && selectedUnit.fightermode > 0) MaintenanceLabel.Text = "Maintenance (actual/calculated): " + selectedUnit.maintenance + "/" + (selectedUnit.buildtime * 30 / 50).ToString("0"); //Maintenance is weird, don't question the formula
             else MaintenanceLabel.Text = "";
+            if (selectedUnit.variantchain.Count > 0)
+            {
+                VariantLabel.Text = "Variant Chain: " + selectedUnit.variantchain[selectedUnit.variantchain.Count-1];
+                for (int i = selectedUnit.variantchain.Count - 2; i >= 0; i--) VariantLabel.Text += ", " + selectedUnit.variantchain[i];
+            }
+            else VariantLabel.Text = "";
             setDPSBreakdown(true);
 
             UnitSubunitListbox.Items.Clear();
@@ -2536,26 +2583,36 @@ namespace Holocron
                 float fighterReserve = 0;
                 float bomberUpfront = 0;
                 float bomberReserve = 0;
+                float otherUpfront = 0;
+                float otherReserve = 0;
                 foreach (garrison_entry spawn in selectedUnit.garrison)
                 {
                     if (spawn.tech[1])
                     {
                         UnitSubunitListbox.Items.Add(spawn.unitname); //Todo need to massively rethink this later
-                        if (spawn.bomber)
+                        if (spawn.fightermode == 2)
                         {
                             bomberUpfront += spawn.squad_size * spawn.upfront[1];
                             bomberReserve += spawn.squad_size * spawn.reserve[1];
                         }
-                        else
+                        else if (spawn.fightermode == 1)
                         {
                             fighterUpfront += spawn.squad_size * spawn.upfront[1];
                             fighterReserve += spawn.squad_size * spawn.reserve[1];
+                        }
+                        else
+                        {
+                            otherUpfront += spawn.squad_size * spawn.upfront[1];
+                            otherReserve += spawn.squad_size * spawn.reserve[1];
                         }
                     }
                 }
                 if (fighterUpfront > 0) ComplementLabel.Text = "Fighters: "+ fighterUpfront.ToString("0.##") + " / " + fighterReserve.ToString("0.##");
                 if (fighterUpfront > 0 && bomberUpfront > 0) ComplementLabel.Text += " | ";
                 if (bomberUpfront > 0) ComplementLabel.Text += "Bombers: " + bomberUpfront.ToString("0.##") + " / " + bomberReserve.ToString("0.##");
+                if (fighterUpfront > 0 || bomberUpfront > 0) ComplementLabel.Text += " | Other: ";
+                else ComplementLabel.Text = "Spawned Units: ";
+                if (otherUpfront > 0) ComplementLabel.Text += otherUpfront.ToString("0.##") + " / " + otherReserve.ToString("0.##");
             }
             else
             {
@@ -2713,6 +2770,20 @@ namespace Holocron
                     break;
                 case UnitSortTypes.CP:
                     unit.sortfloat = unit.cp; //todo include complement cp
+                    if (globals.UnitSortConfig.complementCP)
+                    {
+                        foreach(garrison_entry gar in unit.garrison)
+                        {
+                            if (gar.tech[1])
+                            {
+                                //float upfrontcp = gar.cp * gar.upfront[1]; //For debug purposes
+                                //float reserveratio = (float)Math.Pow(0.5, (double)gar.reserve[1] / gar.upfront[1]);
+                                //float reservecp = upfrontcp * (1 - reserveratio);
+                                unit.sortfloat += gar.cp * gar.upfront[1] * (2 - (float)Math.Pow(0.5, (double)gar.reserve[1] / gar.upfront[1]));
+                            }
+                            
+                        }
+                    }
                     break;
                 case UnitSortTypes.Durability: //TODO modifiers for reflect/absorb
                     float shield = unit.shield;
@@ -2867,15 +2938,118 @@ namespace Holocron
                         }
                     }
                     break;
-                //todo Complement
-                //case UnitSortTypes.Complement:
-                //    unit.sortfloat = unit.regen;
-                //    break;
+                case UnitSortTypes.Complement:
+                    unit.sortfloat = 0;
+                    foreach (garrison_entry gar in unit.garrison)
+                    {
+                        if (gar.tech[1])
+                        {
+                            int mode = globals.UnitSortConfig.fighterBomberMode;
+                            bool wutt = (!SpaceRadioButton.Checked && !SpaceHeroRadioButton.Checked && !SpaceStructureRadioButton.Checked);
+                            bool wut = (gar.fightermode <= 0 && (mode < 1 || mode > 3));
+                            bool y = (gar.fightermode == 1 && !(mode == 2 || mode == 4));
+                            bool how = (gar.fightermode == 2 && !(mode == 1 || mode == 4));
+                            if ((!SpaceRadioButton.Checked && !SpaceHeroRadioButton.Checked && !SpaceStructureRadioButton.Checked) || (gar.fightermode <= 0 && (mode < 1 || mode > 3)) || (gar.fightermode == 1 && !(mode == 2 || mode == 4)) || (gar.fightermode == 2 && !(mode == 1 || mode == 4)))
+                            {
+                                /* All Count
+                                    Fighter Count
+                                    Bomber Count
+                                    Fighters and Bomber Count
+                                    Other Count
+                                    Combat Power
+
+                                    Upfront
+                                    Reserve
+                                    Upfront+Reserve */
+                                if (mode == 5)
+                                {
+                                    float upfrontcp = gar.cp * gar.upfront[1];
+                                    if (globals.UnitSortConfig.upfrontReserveMode != 1) unit.sortfloat += upfrontcp;
+                                    if (globals.UnitSortConfig.upfrontReserveMode != 0)
+                                    {
+                                        unit.sortfloat += upfrontcp * (1 - (float)Math.Pow(0.5, (double)gar.reserve[1] / gar.upfront[1]));
+                                    }
+                                }
+                                else
+                                {
+                                    if (globals.UnitSortConfig.upfrontReserveMode != 1) unit.sortfloat += gar.upfront[1] * gar.squad_size;
+                                    if (globals.UnitSortConfig.upfrontReserveMode != 0) unit.sortfloat += gar.reserve[1] * gar.squad_size;
+                                }
+                            }
+                        }
+
+                    }
+                    break;
                 case UnitSortTypes.GarrisonCap:
                     unit.sortfloat = unit.garrison_slots;
                     break;
                 case UnitSortTypes.GarrisonValue:
                     unit.sortfloat = unit.garrison_value;
+                    break;
+                case UnitSortTypes.NameCount:
+                    unit.sortfloat = findUnitNameFile(unit, entities).Length; //Todo. Caching to improve performance? 
+                    break;
+                case UnitSortTypes.ChainStart:
+                    if (unit.variantchain.Count > 0) unit.sortstring = unit.variantchain[unit.variantchain.Count - 1];
+                    else unit.sortstring = " ";
+                    break;
+                case UnitSortTypes.ChainEnd:
+                    if (unit.variantchain.Count > 0) unit.sortstring = unit.variantchain[0];
+                    else unit.sortstring = " ";
+                    break;
+                case UnitSortTypes.pdRecharge:
+                    ability able = unit.abilities.FirstOrDefault(s => s.type == "Laser_Defense_Ability"); //todo may need to find last instead
+                    if (able.recharge > 0) unit.sortfloat = able.recharge;
+                    else unit.sortfloat = float.PositiveInfinity;
+                    break;
+                case UnitSortTypes.pdRadius:
+                    ability able2 = unit.abilities.FirstOrDefault(s => s.type == "Laser_Defense_Ability");
+                    unit.sortfloat = able2.radius;
+                    break;
+                case UnitSortTypes.Heal:
+                    ability healable = unit.abilities.FirstOrDefault(s => s.type == "Force_Healing_Ability"); //todo may need to find last instead
+                    if(healable.recharge > 0)
+                    {
+                        switch (globals.UnitSortConfig.HealMode)
+                        {
+                            case 0:
+                                unit.sortfloat = getHealScore(healable);
+                                break;
+                            case 1:
+                                if (healable.genericValue > 0) unit.sortfloat = healable.genericValue;
+                                else unit.sortfloat = healable.duration*100;
+                                break;
+                            case 2:
+                                unit.sortfloat = healable.genericValue;
+                                break;
+                            case 3:
+                                unit.sortfloat = healable.duration * 100;
+                                break;
+                            case 4:
+                                unit.sortfloat = healable.radius;
+                                break;
+                            case 5:
+                                unit.sortfloat = healable.recharge;
+                                break;
+                        }
+                    }
+                    else unit.sortfloat = 0;
+                    break;
+                case UnitSortTypes.Discount://todo: consider how to handle multiple independent
+                    ability cheap = unit.abilities.FirstOrDefault(s => s.type == "Reduce_Production_Price_Ability");
+                    unit.sortfloat = cheap.priceReduction;
+                    break;
+                case UnitSortTypes.TimeReduction:
+                    ability fast = unit.abilities.FirstOrDefault(s => s.type == "Reduce_Production_Time_Ability");
+                    unit.sortfloat = fast.timeReduction;
+                    break;
+                case UnitSortTypes.incomePercent:
+                    ability cash = unit.abilities.FirstOrDefault(s => s.type == "Planet_Income_Bonus_Ability");
+                    unit.sortfloat = cash.percentCredits;
+                    break;
+                case UnitSortTypes.incomeAmount:
+                    ability money = unit.abilities.FirstOrDefault(s => s.type == "Planet_Income_Bonus_Ability");
+                    unit.sortfloat = money.absoluteCredits;
                     break;
             }
 
@@ -2912,6 +3086,7 @@ namespace Holocron
                         denom = unit.percompany;
                         break;
                 }//Todo: might need to prevent division by 0? But if that results in an infinity symbol it's probably ok
+                if (denom < 0) denom = 1;
                 unit.sortfloat /= denom;
             }
             return unit;
@@ -4195,9 +4370,14 @@ namespace Holocron
                 else
                 {//Todo rename some of these to be more specific based on type
                     AbilityTimeLabel.Text = "";
-                    if (able.duration > 0) AbilityTimeLabel.Text = "Duration: " + able.duration.ToString("0") + " ";
-                    if (able.recharge > 0) AbilityTimeLabel.Text = "Recharge: " + able.recharge.ToString("0");
-                    if (able.genericValue > 0) AbilityValueLabel.Text = "Value: " + able.genericValue;
+                    if (able.duration > 0 && able.type != "Force_Healing_Ability") AbilityTimeLabel.Text = "Duration: " + able.duration.ToString("0") + " ";
+                    if (able.recharge > 0) AbilityTimeLabel.Text += "Recharge: " + able.recharge.ToString("0");
+                    if (able.genericValue > 0 && able.type != "Force_Healing_Ability") AbilityValueLabel.Text = "Value: " + able.genericValue;
+                    else if (able.type == "Force_Healing_Ability")
+                    {
+                        if (able.genericValue > 0) AbilityValueLabel.Text = "Heal Amount: " + able.genericValue + " ";
+                        if (able.duration > 0 ) AbilityValueLabel.Text = "Heal Percent: " + able.duration*100+"%";
+                    }
                     else AbilityValueLabel.Text = "";
                     if (able.percentCredits > 0) AbilityValueLabel.Text = "Planet Income Increase: " + able.percentCredits * 100 + "%";
                     if (able.absoluteCredits > 0) AbilityValueLabel.Text = "Planet Income Addition: " + able.absoluteCredits;
@@ -4205,8 +4385,8 @@ namespace Holocron
                     if (able.timeReduction > 0) AbilityValueLabel.Text = "Time Reduction: " + able.timeReduction * 100 + "%";
                     AbilityActivationRadiusLabel.Text = "";
                     if (able.minradius > 0) AbilityActivationRadiusLabel.Text = "Min Activation: " + able.minradius + " ";
-                    if (able.maxradius > 0) AbilityActivationRadiusLabel.Text = "Max Activation: " + able.maxradius;
-                    if(able.type == "Force_Healing_Ability" && !able.genericBool) AbilityActivationRadiusLabel.Text = "Heals all units in radius";
+                    if (able.maxradius > 0) AbilityActivationRadiusLabel.Text += "Max Activation: " + able.maxradius;
+                    if (able.type == "Force_Healing_Ability" && !able.genericBool) AbilityActivationRadiusLabel.Text += "Heals all units in radius";
                     if (able.radius > 0) AbilityRadiusLabel.Text = "Radius: " + able.radius;
                     else AbilityRadiusLabel.Text = "";
                     if (able.linkedEntity != "") AbilityLinkedLabel.Text = "Linked Object: " + able.linkedEntity;
@@ -4268,9 +4448,8 @@ namespace Holocron
                 {
                     foreach (unit unit in UnitListBox.Items) filewrite.WriteLine(unit);
                 }
+                MessageBox.Show("Unit list saved to file");
             }
-            MessageBox.Show("Unit list saved to file");
-
         }
 
         private void getDiscountCategory(List<unit> src)
@@ -5145,7 +5324,17 @@ namespace Holocron
 
         private void PlanetExportButton_Click(object sender, EventArgs e)
         {
-
+            SaveFileDialog fil = new SaveFileDialog();
+            fil.Filter = ("Text Files (*.txt)|*.txt|All files (*.*)|*.*");
+            fil.Title = "Export Planet list";
+            if (fil.ShowDialog() == DialogResult.OK)
+            {
+                using (StreamWriter filewrite = new StreamWriter(fil.FileName))
+                {
+                    foreach (planet planet in PlanetListBox.Items) filewrite.WriteLine(planet);
+                }
+                MessageBox.Show("Planet list saved to file");
+            }
         }
 
         private void populateGCListbox()

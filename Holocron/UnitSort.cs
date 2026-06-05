@@ -23,6 +23,8 @@ namespace Holocron
             Class,
             SType,
             AType,
+            ChainStart,
+            ChainEnd,
             Name, //Put all string sort classes before Name so < can find them
             Pop,
             Price,
@@ -47,6 +49,15 @@ namespace Holocron
             Complement,
             GarrisonCap,
             GarrisonValue,
+            NameCount,
+            pdRecharge,
+            pdRadius,
+            Heal,
+            Discount,
+            TimeReduction,
+            incomePercent,
+            incomeAmount,
+            CommandBonus,
         }
 
         public struct UnitSortClass
@@ -59,6 +70,9 @@ namespace Holocron
             public int DurabilityMode;
             public int fighterBomberMode;
             public int upfrontReserveMode;
+            public int HealMode;
+            public int CommandMode;
+            public int CommandTypeMode;
         }
 
         public UnitSort()
@@ -82,7 +96,6 @@ namespace Holocron
 
             //These only don't share locations for convenience in layout coding
             ShipyardRB.Location = CompanySizeRB.Location;
-            GarrisonSlotsRB.Location = ComplementRB.Location;
 
             switch (UnitRBtype)
             {
@@ -90,23 +103,50 @@ namespace Holocron
                     denomTypes.Add("Per Crew");
                     ShipyardRB.Visible = true;
                     CrewRB.Visible = true;
-                    ComplementRB.Visible = true;
+                    //ComplementRB.Visible = true;
                     FighterTypeBox.Visible = true;
-                    ReserveBox.Visible = true;
+                    //ReserveBox.Visible = true; //Think of the XML spawns for heroes and builsings
                     GarrisonSlotsRB.Visible = false;
+                    GarrisonValueRB.Visible = false;
                     break;
                 case 1: //ground companies
                     denomTypes.Add("Per Unit in Company");
+                    CompanySizeRB.Visible = true;
                     break;
                 case 2: //ground units
-                    new List<string> { "Absolute Value", "Per Combat Power" };
+                case 6: //GroundHero
+                    denomTypes = new List<string> { "Absolute Value", "Per Combat Power" };
                     PriceRB.Visible = false;
                     SkPriceRB.Visible = false;
                     BuildTimeRB.Visible = false;
                     SkBuildTimeRB.Visible = false;
+                    PopRB.Visible = false;
+                    NameCountRB.Visible = false;
                     break;
-                //todo heroes, structures...
+                case 3: //Fighter
+                    break;
+                case 4: //SpaceHero
+                    PriceRB.Visible = false;
+                    BuildTimeRB.Visible = false;
+                    FighterTypeBox.Visible = true;
+                    GarrisonSlotsRB.Visible = false;
+                    GarrisonValueRB.Visible = false;
+                    break;
+                case 5: //HeroCompanies
+                    PriceRB.Visible = false;
+                    BuildTimeRB.Visible = false;
+                    denomTypes.Add("Per Unit in Company");
+                    CompanySizeRB.Visible = true;
+                    break;
+                case 7: //ground structures
+                    break;
+                case 8: //space structures
+                    FighterTypeBox.Visible = true;
+                    break;
             }
+
+            DenomComboBox.Items.Clear();
+            foreach (string denom in denomTypes) DenomComboBox.Items.Add(denom);
 
             loadFromConfig();
         }
@@ -196,15 +236,58 @@ namespace Holocron
                 case UnitSortTypes.GarrisonValue:
                     GarrisonValueRB.Checked = true;
                     break;
+                case UnitSortTypes.NameCount:
+                    NameCountRB.Checked = true;
+                    break;
+                case UnitSortTypes.ChainStart:
+                    ChainStartRB.Checked = true;
+                    break;
+                case UnitSortTypes.ChainEnd:
+                    ChainEndRB.Checked = true;
+                    break;
+                case UnitSortTypes.pdRecharge:
+                    pdRechargeRB.Checked = true;
+                    break;
+                case UnitSortTypes.pdRadius:
+                    pdRadiusRB.Checked = true;
+                    break;
+                case UnitSortTypes.Heal:
+                    HealRB.Checked = true;
+                    break;
+                case UnitSortTypes.Discount:
+                    DiscountPercentRB.Checked = true;
+                    break;
+                case UnitSortTypes.TimeReduction:
+                    TimeReductionRB.Checked = true;
+                    break;
+                case UnitSortTypes.incomePercent:
+                    IncomePercentRB.Checked = true;
+                    break;
+                case UnitSortTypes.incomeAmount:
+                    IncomeAmountRB.Checked = true;
+                    break;
+                case UnitSortTypes.CommandBonus:
+                    CommandBonusRB.Checked = true;
+                    break;
                 default:
                     break;
             }
 
             //todo = Set RB and such from passed UnitConfig
             DurabilityBox.SelectedIndex = sortConfig.DurabilityMode;
+            if (DurabilityBox.SelectedIndex < 0) DurabilityBox.SelectedIndex = 0;
             FighterTypeBox.SelectedIndex = sortConfig.fighterBomberMode;
-            ReserveBox.SelectedIndex = sortConfig.fighterBomberMode;
+            if (FighterTypeBox.SelectedIndex < 0) FighterTypeBox.SelectedIndex = 0;
+            ReserveBox.SelectedIndex = sortConfig.upfrontReserveMode;
+            if (ReserveBox.SelectedIndex < 0) ReserveBox.SelectedIndex = 0;
             DenomComboBox.Text = sortConfig.denomtype;
+            if (DenomComboBox.SelectedIndex < 0) DenomComboBox.SelectedIndex = 0;
+            HealBox.SelectedIndex = sortConfig.HealMode;
+            if (HealBox.SelectedIndex < 0) HealBox.SelectedIndex = 0;
+            CommandBox.SelectedIndex = sortConfig.CommandMode;
+            if (CommandBox.SelectedIndex < 0) CommandBox.SelectedIndex = 0;
+            CommandTypeBox.SelectedIndex = sortConfig.CommandTypeMode;
+            if (CommandTypeBox.SelectedIndex < 0) CommandTypeBox.SelectedIndex = 0;
             if (sortConfig.Descending) AscComboBox.SelectedIndex = 1;
             else AscComboBox.SelectedIndex = 0;
             ComplementCheckBox.Checked = sortConfig.complementCP;
@@ -252,16 +335,33 @@ namespace Holocron
             else if (ComplementRB.Checked) sortConfig.SortType = UnitSortTypes.Complement;
             else if (GarrisonSlotsRB.Checked) sortConfig.SortType = UnitSortTypes.GarrisonCap;
             else if (GarrisonValueRB.Checked) sortConfig.SortType = UnitSortTypes.GarrisonValue;
+            else if (NameCountRB.Checked) sortConfig.SortType = UnitSortTypes.NameCount;
+            else if (ChainStartRB.Checked) sortConfig.SortType = UnitSortTypes.ChainStart;
+            else if (ChainEndRB.Checked) sortConfig.SortType = UnitSortTypes.ChainEnd;
+            else if (pdRechargeRB.Checked) sortConfig.SortType = UnitSortTypes.pdRecharge;
+            else if (pdRadiusRB.Checked) sortConfig.SortType = UnitSortTypes.pdRadius;
+            else if (HealRB.Checked) sortConfig.SortType = UnitSortTypes.Heal;
+            else if (DiscountPercentRB.Checked) sortConfig.SortType = UnitSortTypes.Discount;
+            else if (TimeReductionRB.Checked) sortConfig.SortType = UnitSortTypes.TimeReduction;
+            else if (IncomePercentRB.Checked) sortConfig.SortType = UnitSortTypes.incomePercent;
+            else if (IncomeAmountRB.Checked) sortConfig.SortType = UnitSortTypes.incomeAmount;
+            else if (CommandBonusRB.Checked) sortConfig.SortType = UnitSortTypes.CommandBonus;
+
 
             sortConfig.complementCP = ComplementCheckBox.Checked;
-            if(sortConfig.SortType >= UnitSortTypes.CP && sortConfig.complementCP) sortDocumentation += " (including complement)";
+            if(sortConfig.SortType == UnitSortTypes.CP && sortConfig.complementCP) sortDocumentation += " (including complement)";
             sortConfig.DurabilityMode = DurabilityBox.SelectedIndex;
             if(sortConfig.SortType >= UnitSortTypes.Durability && sortConfig.SortType <= UnitSortTypes.Regen) sortDocumentation += " " + DurabilityBox.Text;
             sortConfig.fighterBomberMode = FighterTypeBox.SelectedIndex;
-            sortConfig.fighterBomberMode = ReserveBox.SelectedIndex;
+            sortConfig.upfrontReserveMode = ReserveBox.SelectedIndex;
             if (sortConfig.SortType >= UnitSortTypes.Complement) sortDocumentation += " " + FighterTypeBox.Text + "/" + ReserveBox.Text;
             sortConfig.Accuracy = AccuracyCheckBox.Checked;
-            if (sortConfig.SortType >= UnitSortTypes.dpsAvg && sortConfig.SortType <= UnitSortTypes.dpsShield) sortDocumentation += " (including Accuracy)";
+            if (sortConfig.SortType >= UnitSortTypes.dpsAvg && sortConfig.SortType <= UnitSortTypes.dpsShield && sortConfig.Accuracy) sortDocumentation += " (including Accuracy)";
+            sortConfig.HealMode = HealBox.SelectedIndex;
+            if (sortConfig.SortType == UnitSortTypes.Heal) sortDocumentation += " " + HealBox.Text;
+            sortConfig.CommandMode = CommandBox.SelectedIndex;
+            sortConfig.CommandTypeMode = CommandTypeBox.SelectedIndex;
+            if (sortConfig.SortType == UnitSortTypes.CommandBonus) sortDocumentation += " " + CommandBox.Text + " ("+CommandTypeBox.Text+")";
 
             //todo add modifiers to return string and vars
             if (AscComboBox.SelectedIndex > 0) sortConfig.Descending = true;

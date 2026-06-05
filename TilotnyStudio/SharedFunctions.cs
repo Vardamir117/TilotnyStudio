@@ -1319,7 +1319,7 @@ public static class SharedFunctions
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
 
                 //admin
-                abdata = able.SelectSingleNode("descendant::Price_Reduction_Percentage"); //todo these probably need to go to different variables
+                abdata = able.SelectSingleNode("descendant::Price_Reduction_Percentage");
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.priceReduction = Single.Parse(abdata.LastChild.Value);
                 abdata = able.SelectSingleNode("descendant::Time_Reduction_Percentage");
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.timeReduction = Single.Parse(abdata.LastChild.Value);
@@ -1341,6 +1341,8 @@ public static class SharedFunctions
                 //Heal
                 abdata = able.SelectSingleNode("descendant::Heal_Amount");
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
+                abdata = able.SelectSingleNode("descendant::Heal_Percent");
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value); //Might want another variable for this
                 abdata = able.SelectSingleNode("descendant::Heal_Range");
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.radius = Single.Parse(abdata.LastChild.Value);
                 abdata = able.SelectSingleNode("descendant::Heal_Interval_In_Secs");
@@ -1529,6 +1531,14 @@ public static class SharedFunctions
         }*/
 
         return false;
+    }
+
+    public static float getHealScore(ability able)
+    {
+        float corenne = able.genericValue / able.recharge;
+        if (able.applicable_categories.Contains("Fighter")) corenne *= 12;
+        else if (able.genericBool) corenne *= 20;
+        return corenne;
     }
 
     public static void parseObjectFile(string objectfile, entities entities)
@@ -4351,7 +4361,7 @@ public static class SharedFunctions
                             new_gar.upfront[newtech] = initial_entry.parsingupfront;
                             new_gar.reserve[newtech] = initial_entry.parsingreserve;
                             new_garrison[j] = new_gar;
-                            if (new_gar.bomber) lastbomber = landTypes[bomberTypes.FindIndex(s => s == new_gar.unitname)];
+                            if (new_gar.fightermode == 2) lastbomber = landTypes[bomberTypes.FindIndex(s => s == new_gar.unitname)];
                             //do not break or any skipped units will not have tech updated
                         }
                     }
@@ -4385,7 +4395,7 @@ public static class SharedFunctions
                             reserve = new int[6],
                             squad_size = squad_size,
                             username = spawned.username,
-                            bomber = !(spawned.bombingRunUnit is null) && spawned.bombingRunUnit != "",
+                            fightermode = spawned.fightermode,
                             cp = spawned.cp,
                         };
                         //todo get user facing name, squad size float, is bomber from unit data
@@ -4393,7 +4403,7 @@ public static class SharedFunctions
                         new_garr.upfront[newtech] = initial_entry.parsingupfront;
                         new_garr.reserve[newtech] = initial_entry.parsingreserve;
                         new_garrison.Add(new_garr);
-                        if (new_garr.bomber)
+                        if (new_garr.fightermode == 2)
                         {
                             lastbomber = spawned.bombingRunUnit;
                             bomberTypes.Add(initial_entry.unitname);
@@ -4987,7 +4997,7 @@ public struct garrison_entry
     public int parsingtech;
     public int parsingupfront;
     public int parsingreserve;
-    public bool bomber;
+    public int fightermode;
     public bool[] tech;
 }
 
@@ -4999,7 +5009,7 @@ public struct garrison_lua
     public int reserve;
     public float squad_size;
     public float cp;
-    public bool bomber;
+    public int fightermode;
     public bool standard;
     public bool[] tech;
     public bool[] era; //also regime
