@@ -87,6 +87,12 @@
             this.CommandBonusRB = new System.Windows.Forms.RadioButton();
             this.CommandTypeBox = new System.Windows.Forms.ComboBox();
             this.TimeReductionRB = new System.Windows.Forms.RadioButton();
+            this.DamageCheckBox = new System.Windows.Forms.CheckBox();
+            this.HPCheckBox = new System.Windows.Forms.CheckBox();
+            this.ShieldheckBox = new System.Windows.Forms.CheckBox();
+            this.FoWCheckBox = new System.Windows.Forms.CheckBox();
+            this.SpeedCheckBox = new System.Windows.Forms.CheckBox();
+            this.DefCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // NameRB
@@ -747,11 +753,89 @@
             this.TimeReductionRB.Text = "Time Reduction";
             this.TimeReductionRB.UseVisualStyleBackColor = true;
             // 
+            // DamageCheckBox
+            // 
+            this.DamageCheckBox.AutoSize = true;
+            this.DamageCheckBox.Checked = true;
+            this.DamageCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.DamageCheckBox.Location = new System.Drawing.Point(546, 273);
+            this.DamageCheckBox.Name = "DamageCheckBox";
+            this.DamageCheckBox.Size = new System.Drawing.Size(66, 17);
+            this.DamageCheckBox.TabIndex = 66;
+            this.DamageCheckBox.Text = "Damage";
+            this.DamageCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // HPCheckBox
+            // 
+            this.HPCheckBox.AutoSize = true;
+            this.HPCheckBox.Checked = true;
+            this.HPCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.HPCheckBox.Location = new System.Drawing.Point(618, 274);
+            this.HPCheckBox.Name = "HPCheckBox";
+            this.HPCheckBox.Size = new System.Drawing.Size(41, 17);
+            this.HPCheckBox.TabIndex = 67;
+            this.HPCheckBox.Text = "HP";
+            this.HPCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // ShieldheckBox
+            // 
+            this.ShieldheckBox.AutoSize = true;
+            this.ShieldheckBox.Checked = true;
+            this.ShieldheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ShieldheckBox.Location = new System.Drawing.Point(684, 273);
+            this.ShieldheckBox.Name = "ShieldheckBox";
+            this.ShieldheckBox.Size = new System.Drawing.Size(55, 17);
+            this.ShieldheckBox.TabIndex = 68;
+            this.ShieldheckBox.Text = "Shield";
+            this.ShieldheckBox.UseVisualStyleBackColor = true;
+            // 
+            // FoWCheckBox
+            // 
+            this.FoWCheckBox.AutoSize = true;
+            this.FoWCheckBox.Checked = true;
+            this.FoWCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.FoWCheckBox.Location = new System.Drawing.Point(684, 295);
+            this.FoWCheckBox.Name = "FoWCheckBox";
+            this.FoWCheckBox.Size = new System.Drawing.Size(54, 17);
+            this.FoWCheckBox.TabIndex = 71;
+            this.FoWCheckBox.Text = "Vision";
+            this.FoWCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // SpeedCheckBox
+            // 
+            this.SpeedCheckBox.AutoSize = true;
+            this.SpeedCheckBox.Checked = true;
+            this.SpeedCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.SpeedCheckBox.Location = new System.Drawing.Point(618, 296);
+            this.SpeedCheckBox.Name = "SpeedCheckBox";
+            this.SpeedCheckBox.Size = new System.Drawing.Size(57, 17);
+            this.SpeedCheckBox.TabIndex = 70;
+            this.SpeedCheckBox.Text = "Speed";
+            this.SpeedCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // DefCheckBox
+            // 
+            this.DefCheckBox.AutoSize = true;
+            this.DefCheckBox.Checked = true;
+            this.DefCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.DefCheckBox.Location = new System.Drawing.Point(546, 295);
+            this.DefCheckBox.Name = "DefCheckBox";
+            this.DefCheckBox.Size = new System.Drawing.Size(66, 17);
+            this.DefCheckBox.TabIndex = 69;
+            this.DefCheckBox.Text = "Defense";
+            this.DefCheckBox.UseVisualStyleBackColor = true;
+            // 
             // UnitSort
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(767, 408);
+            this.Controls.Add(this.FoWCheckBox);
+            this.Controls.Add(this.SpeedCheckBox);
+            this.Controls.Add(this.DefCheckBox);
+            this.Controls.Add(this.ShieldheckBox);
+            this.Controls.Add(this.HPCheckBox);
+            this.Controls.Add(this.DamageCheckBox);
             this.Controls.Add(this.TimeReductionRB);
             this.Controls.Add(this.CommandTypeBox);
             this.Controls.Add(this.CommandBox);
@@ -879,5 +963,11 @@
         private System.Windows.Forms.RadioButton CommandBonusRB;
         private System.Windows.Forms.ComboBox CommandTypeBox;
         private System.Windows.Forms.RadioButton TimeReductionRB;
+        private System.Windows.Forms.CheckBox DamageCheckBox;
+        private System.Windows.Forms.CheckBox HPCheckBox;
+        private System.Windows.Forms.CheckBox ShieldheckBox;
+        private System.Windows.Forms.CheckBox FoWCheckBox;
+        private System.Windows.Forms.CheckBox SpeedCheckBox;
+        private System.Windows.Forms.CheckBox DefCheckBox;
     }
 }

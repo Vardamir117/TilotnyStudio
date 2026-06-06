@@ -2945,10 +2945,6 @@ namespace Holocron
                         if (gar.tech[1])
                         {
                             int mode = globals.UnitSortConfig.fighterBomberMode;
-                            bool wutt = (!SpaceRadioButton.Checked && !SpaceHeroRadioButton.Checked && !SpaceStructureRadioButton.Checked);
-                            bool wut = (gar.fightermode <= 0 && (mode < 1 || mode > 3));
-                            bool y = (gar.fightermode == 1 && !(mode == 2 || mode == 4));
-                            bool how = (gar.fightermode == 2 && !(mode == 1 || mode == 4));
                             if ((!SpaceRadioButton.Checked && !SpaceHeroRadioButton.Checked && !SpaceStructureRadioButton.Checked) || (gar.fightermode <= 0 && (mode < 1 || mode > 3)) || (gar.fightermode == 1 && !(mode == 2 || mode == 4)) || (gar.fightermode == 2 && !(mode == 1 || mode == 4)))
                             {
                                 /* All Count
@@ -3050,6 +3046,108 @@ namespace Holocron
                 case UnitSortTypes.incomeAmount:
                     ability money = unit.abilities.FirstOrDefault(s => s.type == "Planet_Income_Bonus_Ability");
                     unit.sortfloat = money.absoluteCredits;
+                    break;
+                case UnitSortTypes.CommandBonus:
+                    List<ability> PerStack = new List<ability>();
+                    bool anymod = false;
+                    foreach(ability cmd in unit.abilities)
+                    {
+                        int mode = globals.UnitSortConfig.CommandTypeMode;
+                        int stack = cmd.stacking;
+                        if (cmd.damageBonus > 0 || cmd.healthBonus > 0 || cmd.shieldBonus > 0 || cmd.defenseBonus > 0 || cmd.speedBonus > 0)
+                        {
+                            bool notspecial = cmd.applicable_categories.Contains("All");
+                            if (notspecial && mode == 0 || mode == 1 || !notspecial && mode == 2)
+                            {
+                                anymod = true;
+                                int id = PerStack.FindIndex(s => s.stacking == stack);
+                                if(id < 0) PerStack.Add(cmd);
+                                else
+                                {
+                                    ability stackable = PerStack[id];
+                                    if (stackable.damageBonus < cmd.damageBonus) stackable.damageBonus = cmd.damageBonus;
+                                    if (stackable.healthBonus < cmd.healthBonus) stackable.healthBonus = cmd.healthBonus;
+                                    if (stackable.shieldBonus < cmd.shieldBonus) stackable.shieldBonus = cmd.shieldBonus;
+                                    if (stackable.defenseBonus < cmd.defenseBonus) stackable.defenseBonus = cmd.defenseBonus;
+                                    if (stackable.speedBonus < cmd.speedBonus) stackable.speedBonus = cmd.speedBonus;
+                                    PerStack[id] = stackable;
+                                }
+                            }
+                        }
+                        if(mode < 2 && cmd.type == "Battlefield_Modifier_Ability") //Vision mods are always universal
+                        {
+                            anymod = true;
+                            int id = PerStack.FindIndex(s => s.stacking == stack);
+                            if (id < 0) PerStack.Add(cmd);
+                            else
+                            {
+                                ability stackable = PerStack[id];
+                                if (stackable.genericValue < cmd.genericValue) stackable.genericValue = cmd.genericValue;
+                                PerStack[id] = stackable;
+                            }
+                        }
+                    }
+                    if (anymod)
+                    {
+                        float dmg = 0;
+                        float hp = 0;
+                        float sh = 0;
+                        float def = 0;
+                        float speed = 0;
+                        float fow = 0;
+                        foreach (ability stacked in PerStack)
+                        {
+                            if (stacked.damageBonus > 0 && globals.UnitSortConfig.CommandCategories[0]) dmg += stacked.damageBonus;
+                            if (stacked.healthBonus > 0 && globals.UnitSortConfig.CommandCategories[1]) hp += stacked.healthBonus;
+                            if (stacked.shieldBonus > 0 && globals.UnitSortConfig.CommandCategories[2]) sh += stacked.shieldBonus;
+                            if (stacked.defenseBonus > 0 && globals.UnitSortConfig.CommandCategories[3]) def += stacked.defenseBonus;
+                            if (stacked.speedBonus > 0 && globals.UnitSortConfig.CommandCategories[4]) speed += stacked.speedBonus;
+                            if (stacked.genericValue > 0 && globals.UnitSortConfig.CommandCategories[5]) fow += stacked.genericValue - 1; //Fow is special and is centered around 1
+                        }
+
+                        switch (globals.UnitSortConfig.CommandMode)
+                        {
+                            case 0:
+                                unit.sortfloat = Math.Max(dmg, Math.Max(hp, Math.Max(sh, Math.Max(def, Math.Max(speed, fow)))));
+                                break;
+                            case 1:
+                                float corenne = 0;
+                                float den = 0;
+                                if (dmg > 0)
+                                {
+                                    corenne += dmg;
+                                    den++;
+                                }
+                                if (hp > 0)
+                                {
+                                    corenne += hp;
+                                    den++;
+                                }
+                                if (sh > 0)
+                                {
+                                    corenne += sh;
+                                    den++;
+                                }
+                                if (def > 0)
+                                {
+                                    corenne += def;
+                                    den++;
+                                }
+                                if (speed > 0)
+                                {
+                                    corenne += speed;
+                                    den++;
+                                }
+                                if (fow > 0)
+                                {
+                                    corenne += fow;
+                                    den++;
+                                }
+                                unit.sortfloat = corenne / den;
+                                break;
+                        }
+                    }
+                    else unit.sortfloat = 0;
                     break;
             }
 
@@ -3212,9 +3310,91 @@ namespace Holocron
                 }
             }
 
-            //todo fighters
+            if (globals.UnitFilterConfig.complementMode > 0)
+            {
+                if (unit.garrison.Count > 0)
+                {
+                    if (globals.UnitFilterConfig.complementMode == 2) return false;
+                }
+                else
+                {
+                    if (globals.UnitFilterConfig.complementMode == 1) return false;
+                }
+            }
 
-            if (SpaceRadioButton.Checked) //This should not be relelvant to other settings
+            if (globals.UnitFilterConfig.skirmishMode > 0)
+            {
+                if (IsSkirmishObject(unit))
+                {
+                    if (globals.UnitFilterConfig.skirmishMode == 2) return false;
+                }
+                else
+                {
+                    if (globals.UnitFilterConfig.skirmishMode == 1) return false;
+                }
+            }
+
+            if (globals.UnitFilterConfig.pdMode > 0)
+            {
+                if (unit.abilities.FindIndex(s => s.type == "Laser_Defense_Ability") >= 0)
+                {
+                    if (globals.UnitFilterConfig.pdMode == 2) return false;
+                }
+                else
+                {
+                    if (globals.UnitFilterConfig.pdMode == 1) return false;
+                }
+            }
+
+            if (globals.UnitFilterConfig.healMode > 0)
+            {
+                if (unit.abilities.FindIndex(s => s.type == "Force_Healing_Ability") >= 0)
+                {
+                    if (globals.UnitFilterConfig.healMode == 2) return false;
+                }
+                else
+                {
+                    if (globals.UnitFilterConfig.healMode == 1) return false;
+                }
+            }
+
+            if (globals.UnitFilterConfig.discountMode > 0)
+            {
+                if (unit.abilities.FindIndex(s => s.type == "Reduce_Production_Price_Ability") >= 0)
+                {
+                    if (globals.UnitFilterConfig.discountMode == 2) return false;
+                }
+                else
+                {
+                    if (globals.UnitFilterConfig.discountMode == 1) return false;
+                }
+            }
+
+            if (globals.UnitFilterConfig.incomeMode > 0)
+            {
+                if (unit.abilities.FindIndex(s => s.type == "Planet_Income_Bonus_Ability") >= 0)
+                {
+                    if (globals.UnitFilterConfig.incomeMode == 2) return false;
+                }
+                else
+                {
+                    if (globals.UnitFilterConfig.incomeMode == 1) return false;
+                }
+            }
+
+            if (globals.UnitFilterConfig.commandMode > 0)
+            {
+                if (unit.abilities.FindIndex(s => s.type == "Combat_Bonus_Ability") >= 0)
+                {
+                    if (globals.UnitFilterConfig.commandMode == 2) return false;
+                }
+                else
+                {
+                    if (globals.UnitFilterConfig.commandMode == 1) return false;
+                }
+            }
+
+            if (SpaceRadioButton.Checked) //This should not be relevant to other settings
             {
                 int level = globals.UnitFilterConfig.shipyardLevel;
                 if (level < 0) level = 0;

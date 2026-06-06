@@ -78,6 +78,26 @@ namespace Holocron
             this.SkirmishFalseRB = new System.Windows.Forms.RadioButton();
             this.SkirmishTrueRB = new System.Windows.Forms.RadioButton();
             this.SkirmishAnyRB = new System.Windows.Forms.RadioButton();
+            this.PDPanel = new System.Windows.Forms.Panel();
+            this.PDFalseRB = new System.Windows.Forms.RadioButton();
+            this.PDTrueRB = new System.Windows.Forms.RadioButton();
+            this.PDAnyRB = new System.Windows.Forms.RadioButton();
+            this.HealPanel = new System.Windows.Forms.Panel();
+            this.HealFalseRB = new System.Windows.Forms.RadioButton();
+            this.HealTrueRB = new System.Windows.Forms.RadioButton();
+            this.HealAnyRB = new System.Windows.Forms.RadioButton();
+            this.DiscountPanel = new System.Windows.Forms.Panel();
+            this.DiscountFalseRB = new System.Windows.Forms.RadioButton();
+            this.DiscountTrueRB = new System.Windows.Forms.RadioButton();
+            this.DiscountAnyRB = new System.Windows.Forms.RadioButton();
+            this.CommandPanel = new System.Windows.Forms.Panel();
+            this.CommandFalseRB = new System.Windows.Forms.RadioButton();
+            this.CommandTrueRB = new System.Windows.Forms.RadioButton();
+            this.CommandAnyRB = new System.Windows.Forms.RadioButton();
+            this.IncomeAnyRB = new System.Windows.Forms.RadioButton();
+            this.IncomeTrueRB = new System.Windows.Forms.RadioButton();
+            this.IncomeFalseRB = new System.Windows.Forms.RadioButton();
+            this.IncomePanel = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.ShipyardUpDown)).BeginInit();
             this.BuildPanel.SuspendLayout();
             this.PlanetPanel.SuspendLayout();
@@ -85,6 +105,11 @@ namespace Holocron
             this.LimitPanel.SuspendLayout();
             this.ComplementPanel.SuspendLayout();
             this.SkirmishPanel.SuspendLayout();
+            this.PDPanel.SuspendLayout();
+            this.HealPanel.SuspendLayout();
+            this.DiscountPanel.SuspendLayout();
+            this.CommandPanel.SuspendLayout();
+            this.IncomePanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // label7
@@ -109,7 +134,7 @@ namespace Holocron
             // ClearButton
             // 
             this.ClearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ClearButton.Location = new System.Drawing.Point(456, 409);
+            this.ClearButton.Location = new System.Drawing.Point(619, 409);
             this.ClearButton.Name = "ClearButton";
             this.ClearButton.Size = new System.Drawing.Size(104, 29);
             this.ClearButton.TabIndex = 54;
@@ -120,7 +145,7 @@ namespace Holocron
             // UnitFilterCancelButton
             // 
             this.UnitFilterCancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UnitFilterCancelButton.Location = new System.Drawing.Point(712, 409);
+            this.UnitFilterCancelButton.Location = new System.Drawing.Point(875, 409);
             this.UnitFilterCancelButton.Name = "UnitFilterCancelButton";
             this.UnitFilterCancelButton.Size = new System.Drawing.Size(104, 29);
             this.UnitFilterCancelButton.TabIndex = 53;
@@ -131,7 +156,7 @@ namespace Holocron
             // UnitFilterAcceptButton
             // 
             this.UnitFilterAcceptButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UnitFilterAcceptButton.Location = new System.Drawing.Point(587, 409);
+            this.UnitFilterAcceptButton.Location = new System.Drawing.Point(750, 409);
             this.UnitFilterAcceptButton.Name = "UnitFilterAcceptButton";
             this.UnitFilterAcceptButton.Size = new System.Drawing.Size(104, 29);
             this.UnitFilterAcceptButton.TabIndex = 52;
@@ -556,7 +581,7 @@ namespace Holocron
             this.SkirmishPanel.Controls.Add(this.SkirmishFalseRB);
             this.SkirmishPanel.Controls.Add(this.SkirmishTrueRB);
             this.SkirmishPanel.Controls.Add(this.SkirmishAnyRB);
-            this.SkirmishPanel.Location = new System.Drawing.Point(315, 348);
+            this.SkirmishPanel.Location = new System.Drawing.Point(859, 32);
             this.SkirmishPanel.Name = "SkirmishPanel";
             this.SkirmishPanel.Size = new System.Drawing.Size(120, 72);
             this.SkirmishPanel.TabIndex = 68;
@@ -594,11 +619,231 @@ namespace Holocron
             this.SkirmishAnyRB.Text = "All Units";
             this.SkirmishAnyRB.UseVisualStyleBackColor = true;
             // 
+            // PDPanel
+            // 
+            this.PDPanel.Controls.Add(this.PDFalseRB);
+            this.PDPanel.Controls.Add(this.PDTrueRB);
+            this.PDPanel.Controls.Add(this.PDAnyRB);
+            this.PDPanel.Location = new System.Drawing.Point(315, 348);
+            this.PDPanel.Name = "PDPanel";
+            this.PDPanel.Size = new System.Drawing.Size(120, 72);
+            this.PDPanel.TabIndex = 68;
+            // 
+            // PDFalseRB
+            // 
+            this.PDFalseRB.AutoSize = true;
+            this.PDFalseRB.Location = new System.Drawing.Point(4, 51);
+            this.PDFalseRB.Name = "PDFalseRB";
+            this.PDFalseRB.Size = new System.Drawing.Size(109, 17);
+            this.PDFalseRB.TabIndex = 2;
+            this.PDFalseRB.TabStop = true;
+            this.PDFalseRB.Text = "No Point Defense";
+            this.PDFalseRB.UseVisualStyleBackColor = true;
+            // 
+            // PDTrueRB
+            // 
+            this.PDTrueRB.AutoSize = true;
+            this.PDTrueRB.Location = new System.Drawing.Point(4, 27);
+            this.PDTrueRB.Name = "PDTrueRB";
+            this.PDTrueRB.Size = new System.Drawing.Size(114, 17);
+            this.PDTrueRB.TabIndex = 1;
+            this.PDTrueRB.TabStop = true;
+            this.PDTrueRB.Text = "Has Point Defense";
+            this.PDTrueRB.UseVisualStyleBackColor = true;
+            // 
+            // PDAnyRB
+            // 
+            this.PDAnyRB.AutoSize = true;
+            this.PDAnyRB.Location = new System.Drawing.Point(4, 4);
+            this.PDAnyRB.Name = "PDAnyRB";
+            this.PDAnyRB.Size = new System.Drawing.Size(113, 17);
+            this.PDAnyRB.TabIndex = 0;
+            this.PDAnyRB.TabStop = true;
+            this.PDAnyRB.Text = "Any Point Defense";
+            this.PDAnyRB.UseVisualStyleBackColor = true;
+            // 
+            // HealPanel
+            // 
+            this.HealPanel.Controls.Add(this.HealFalseRB);
+            this.HealPanel.Controls.Add(this.HealTrueRB);
+            this.HealPanel.Controls.Add(this.HealAnyRB);
+            this.HealPanel.Location = new System.Drawing.Point(441, 348);
+            this.HealPanel.Name = "HealPanel";
+            this.HealPanel.Size = new System.Drawing.Size(120, 72);
+            this.HealPanel.TabIndex = 68;
+            // 
+            // HealFalseRB
+            // 
+            this.HealFalseRB.AutoSize = true;
+            this.HealFalseRB.Location = new System.Drawing.Point(4, 51);
+            this.HealFalseRB.Name = "HealFalseRB";
+            this.HealFalseRB.Size = new System.Drawing.Size(64, 17);
+            this.HealFalseRB.TabIndex = 2;
+            this.HealFalseRB.TabStop = true;
+            this.HealFalseRB.Text = "No Heal";
+            this.HealFalseRB.UseVisualStyleBackColor = true;
+            // 
+            // HealTrueRB
+            // 
+            this.HealTrueRB.AutoSize = true;
+            this.HealTrueRB.Location = new System.Drawing.Point(4, 27);
+            this.HealTrueRB.Name = "HealTrueRB";
+            this.HealTrueRB.Size = new System.Drawing.Size(69, 17);
+            this.HealTrueRB.TabIndex = 1;
+            this.HealTrueRB.TabStop = true;
+            this.HealTrueRB.Text = "Has Heal";
+            this.HealTrueRB.UseVisualStyleBackColor = true;
+            // 
+            // HealAnyRB
+            // 
+            this.HealAnyRB.AutoSize = true;
+            this.HealAnyRB.Location = new System.Drawing.Point(4, 4);
+            this.HealAnyRB.Name = "HealAnyRB";
+            this.HealAnyRB.Size = new System.Drawing.Size(68, 17);
+            this.HealAnyRB.TabIndex = 0;
+            this.HealAnyRB.TabStop = true;
+            this.HealAnyRB.Text = "Any Heal";
+            this.HealAnyRB.UseVisualStyleBackColor = true;
+            // 
+            // DiscountPanel
+            // 
+            this.DiscountPanel.Controls.Add(this.DiscountFalseRB);
+            this.DiscountPanel.Controls.Add(this.DiscountTrueRB);
+            this.DiscountPanel.Controls.Add(this.DiscountAnyRB);
+            this.DiscountPanel.Location = new System.Drawing.Point(859, 119);
+            this.DiscountPanel.Name = "DiscountPanel";
+            this.DiscountPanel.Size = new System.Drawing.Size(131, 72);
+            this.DiscountPanel.TabIndex = 69;
+            // 
+            // DiscountFalseRB
+            // 
+            this.DiscountFalseRB.AutoSize = true;
+            this.DiscountFalseRB.Location = new System.Drawing.Point(4, 51);
+            this.DiscountFalseRB.Name = "DiscountFalseRB";
+            this.DiscountFalseRB.Size = new System.Drawing.Size(84, 17);
+            this.DiscountFalseRB.TabIndex = 2;
+            this.DiscountFalseRB.TabStop = true;
+            this.DiscountFalseRB.Text = "No Discount";
+            this.DiscountFalseRB.UseVisualStyleBackColor = true;
+            // 
+            // DiscountTrueRB
+            // 
+            this.DiscountTrueRB.AutoSize = true;
+            this.DiscountTrueRB.Location = new System.Drawing.Point(4, 27);
+            this.DiscountTrueRB.Name = "DiscountTrueRB";
+            this.DiscountTrueRB.Size = new System.Drawing.Size(89, 17);
+            this.DiscountTrueRB.TabIndex = 1;
+            this.DiscountTrueRB.TabStop = true;
+            this.DiscountTrueRB.Text = "Has Discount";
+            this.DiscountTrueRB.UseVisualStyleBackColor = true;
+            // 
+            // DiscountAnyRB
+            // 
+            this.DiscountAnyRB.AutoSize = true;
+            this.DiscountAnyRB.Location = new System.Drawing.Point(4, 4);
+            this.DiscountAnyRB.Name = "DiscountAnyRB";
+            this.DiscountAnyRB.Size = new System.Drawing.Size(88, 17);
+            this.DiscountAnyRB.TabIndex = 0;
+            this.DiscountAnyRB.TabStop = true;
+            this.DiscountAnyRB.Text = "Any Discount";
+            this.DiscountAnyRB.UseVisualStyleBackColor = true;
+            // 
+            // CommandPanel
+            // 
+            this.CommandPanel.Controls.Add(this.CommandFalseRB);
+            this.CommandPanel.Controls.Add(this.CommandTrueRB);
+            this.CommandPanel.Controls.Add(this.CommandAnyRB);
+            this.CommandPanel.Location = new System.Drawing.Point(859, 297);
+            this.CommandPanel.Name = "CommandPanel";
+            this.CommandPanel.Size = new System.Drawing.Size(131, 72);
+            this.CommandPanel.TabIndex = 69;
+            // 
+            // CommandFalseRB
+            // 
+            this.CommandFalseRB.AutoSize = true;
+            this.CommandFalseRB.Location = new System.Drawing.Point(4, 51);
+            this.CommandFalseRB.Name = "CommandFalseRB";
+            this.CommandFalseRB.Size = new System.Drawing.Size(122, 17);
+            this.CommandFalseRB.TabIndex = 2;
+            this.CommandFalseRB.TabStop = true;
+            this.CommandFalseRB.Text = "No Command Bonus";
+            this.CommandFalseRB.UseVisualStyleBackColor = true;
+            // 
+            // CommandTrueRB
+            // 
+            this.CommandTrueRB.AutoSize = true;
+            this.CommandTrueRB.Location = new System.Drawing.Point(4, 27);
+            this.CommandTrueRB.Name = "CommandTrueRB";
+            this.CommandTrueRB.Size = new System.Drawing.Size(127, 17);
+            this.CommandTrueRB.TabIndex = 1;
+            this.CommandTrueRB.TabStop = true;
+            this.CommandTrueRB.Text = "Has Command Bonus";
+            this.CommandTrueRB.UseVisualStyleBackColor = true;
+            // 
+            // CommandAnyRB
+            // 
+            this.CommandAnyRB.AutoSize = true;
+            this.CommandAnyRB.Location = new System.Drawing.Point(4, 4);
+            this.CommandAnyRB.Name = "CommandAnyRB";
+            this.CommandAnyRB.Size = new System.Drawing.Size(126, 17);
+            this.CommandAnyRB.TabIndex = 0;
+            this.CommandAnyRB.TabStop = true;
+            this.CommandAnyRB.Text = "Any Command Bonus";
+            this.CommandAnyRB.UseVisualStyleBackColor = true;
+            // 
+            // IncomeAnyRB
+            // 
+            this.IncomeAnyRB.AutoSize = true;
+            this.IncomeAnyRB.Location = new System.Drawing.Point(4, 4);
+            this.IncomeAnyRB.Name = "IncomeAnyRB";
+            this.IncomeAnyRB.Size = new System.Drawing.Size(81, 17);
+            this.IncomeAnyRB.TabIndex = 0;
+            this.IncomeAnyRB.TabStop = true;
+            this.IncomeAnyRB.Text = "Any Income";
+            this.IncomeAnyRB.UseVisualStyleBackColor = true;
+            // 
+            // IncomeTrueRB
+            // 
+            this.IncomeTrueRB.AutoSize = true;
+            this.IncomeTrueRB.Location = new System.Drawing.Point(4, 27);
+            this.IncomeTrueRB.Name = "IncomeTrueRB";
+            this.IncomeTrueRB.Size = new System.Drawing.Size(82, 17);
+            this.IncomeTrueRB.TabIndex = 1;
+            this.IncomeTrueRB.TabStop = true;
+            this.IncomeTrueRB.Text = "Has Income";
+            this.IncomeTrueRB.UseVisualStyleBackColor = true;
+            // 
+            // IncomeFalseRB
+            // 
+            this.IncomeFalseRB.AutoSize = true;
+            this.IncomeFalseRB.Location = new System.Drawing.Point(4, 51);
+            this.IncomeFalseRB.Name = "IncomeFalseRB";
+            this.IncomeFalseRB.Size = new System.Drawing.Size(77, 17);
+            this.IncomeFalseRB.TabIndex = 2;
+            this.IncomeFalseRB.TabStop = true;
+            this.IncomeFalseRB.Text = "No Income";
+            this.IncomeFalseRB.UseVisualStyleBackColor = true;
+            // 
+            // IncomePanel
+            // 
+            this.IncomePanel.Controls.Add(this.IncomeFalseRB);
+            this.IncomePanel.Controls.Add(this.IncomeTrueRB);
+            this.IncomePanel.Controls.Add(this.IncomeAnyRB);
+            this.IncomePanel.Location = new System.Drawing.Point(859, 207);
+            this.IncomePanel.Name = "IncomePanel";
+            this.IncomePanel.Size = new System.Drawing.Size(120, 72);
+            this.IncomePanel.TabIndex = 69;
+            // 
             // UnitFilter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(842, 450);
+            this.ClientSize = new System.Drawing.Size(991, 450);
+            this.Controls.Add(this.CommandPanel);
+            this.Controls.Add(this.IncomePanel);
+            this.Controls.Add(this.DiscountPanel);
+            this.Controls.Add(this.HealPanel);
+            this.Controls.Add(this.PDPanel);
             this.Controls.Add(this.SkirmishPanel);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.checkBox1);
@@ -646,6 +891,16 @@ namespace Holocron
             this.ComplementPanel.PerformLayout();
             this.SkirmishPanel.ResumeLayout(false);
             this.SkirmishPanel.PerformLayout();
+            this.PDPanel.ResumeLayout(false);
+            this.PDPanel.PerformLayout();
+            this.HealPanel.ResumeLayout(false);
+            this.HealPanel.PerformLayout();
+            this.DiscountPanel.ResumeLayout(false);
+            this.DiscountPanel.PerformLayout();
+            this.CommandPanel.ResumeLayout(false);
+            this.CommandPanel.PerformLayout();
+            this.IncomePanel.ResumeLayout(false);
+            this.IncomePanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -701,5 +956,25 @@ namespace Holocron
         private System.Windows.Forms.RadioButton SkirmishFalseRB;
         private System.Windows.Forms.RadioButton SkirmishTrueRB;
         private System.Windows.Forms.RadioButton SkirmishAnyRB;
+        private System.Windows.Forms.Panel PDPanel;
+        private System.Windows.Forms.RadioButton PDFalseRB;
+        private System.Windows.Forms.RadioButton PDTrueRB;
+        private System.Windows.Forms.RadioButton PDAnyRB;
+        private System.Windows.Forms.Panel HealPanel;
+        private System.Windows.Forms.RadioButton HealFalseRB;
+        private System.Windows.Forms.RadioButton HealTrueRB;
+        private System.Windows.Forms.RadioButton HealAnyRB;
+        private System.Windows.Forms.Panel DiscountPanel;
+        private System.Windows.Forms.RadioButton DiscountFalseRB;
+        private System.Windows.Forms.RadioButton DiscountTrueRB;
+        private System.Windows.Forms.RadioButton DiscountAnyRB;
+        private System.Windows.Forms.Panel CommandPanel;
+        private System.Windows.Forms.RadioButton CommandFalseRB;
+        private System.Windows.Forms.RadioButton CommandTrueRB;
+        private System.Windows.Forms.RadioButton CommandAnyRB;
+        private System.Windows.Forms.RadioButton IncomeAnyRB;
+        private System.Windows.Forms.RadioButton IncomeTrueRB;
+        private System.Windows.Forms.RadioButton IncomeFalseRB;
+        private System.Windows.Forms.Panel IncomePanel;
     }
 }

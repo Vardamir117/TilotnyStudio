@@ -67,6 +67,7 @@ namespace Holocron
             public bool Descending;
             public bool Accuracy;
             public bool complementCP;
+            public bool[] CommandCategories;
             public int DurabilityMode;
             public int fighterBomberMode;
             public int upfrontReserveMode;
@@ -288,6 +289,16 @@ namespace Holocron
             if (CommandBox.SelectedIndex < 0) CommandBox.SelectedIndex = 0;
             CommandTypeBox.SelectedIndex = sortConfig.CommandTypeMode;
             if (CommandTypeBox.SelectedIndex < 0) CommandTypeBox.SelectedIndex = 0;
+            if (!(sortConfig.CommandCategories is null))
+            {
+                DamageCheckBox.Checked = sortConfig.CommandCategories[0];
+                HPCheckBox.Checked = sortConfig.CommandCategories[1];
+                ShieldheckBox.Checked = sortConfig.CommandCategories[2];
+                DefCheckBox.Checked = sortConfig.CommandCategories[3];
+                SpeedCheckBox.Checked = sortConfig.CommandCategories[4];
+                FoWCheckBox.Checked = sortConfig.CommandCategories[5];
+            }
+            else sortConfig.CommandCategories = new bool[] { true, true, true, true, true, true };
             if (sortConfig.Descending) AscComboBox.SelectedIndex = 1;
             else AscComboBox.SelectedIndex = 0;
             ComplementCheckBox.Checked = sortConfig.complementCP;
@@ -362,6 +373,12 @@ namespace Holocron
             sortConfig.CommandMode = CommandBox.SelectedIndex;
             sortConfig.CommandTypeMode = CommandTypeBox.SelectedIndex;
             if (sortConfig.SortType == UnitSortTypes.CommandBonus) sortDocumentation += " " + CommandBox.Text + " ("+CommandTypeBox.Text+")";
+            sortConfig.CommandCategories[0] = DamageCheckBox.Checked;
+            sortConfig.CommandCategories[1] = HPCheckBox.Checked;
+            sortConfig.CommandCategories[2] = ShieldheckBox.Checked;
+            sortConfig.CommandCategories[3] = DefCheckBox.Checked;
+            sortConfig.CommandCategories[4] = SpeedCheckBox.Checked;
+            sortConfig.CommandCategories[5] = FoWCheckBox.Checked;
 
             //todo add modifiers to return string and vars
             if (AscComboBox.SelectedIndex > 0) sortConfig.Descending = true;
@@ -384,6 +401,7 @@ namespace Holocron
 
             corenne.SortType = UnitSortTypes.Name;
             corenne.denomtype = "Absolute Value";
+            corenne.CommandCategories = new bool[] { true, true, true, true, true, true };
 
             return corenne;
         }

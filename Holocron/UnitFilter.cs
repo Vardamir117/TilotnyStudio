@@ -49,6 +49,12 @@ namespace Holocron
             public int influenceMode;
             public int limitMode;
             public int complementMode;
+            public int skirmishMode;
+            public int pdMode;
+            public int healMode;
+            public int discountMode;
+            public int incomeMode;
+            public int commandMode;
         }
 
         public UnitFilter()
@@ -125,6 +131,30 @@ namespace Holocron
             if (filterConfig.complementMode == 1) ComplementTrueRB.Checked = true;
             else if (filterConfig.complementMode == 2) ComplementFalseRB.Checked = true;
             else ComplementAnyRB.Checked = true;
+
+            if (filterConfig.skirmishMode == 1) SkirmishTrueRB.Checked = true;
+            else if (filterConfig.skirmishMode == 2) SkirmishFalseRB.Checked = true;
+            else SkirmishAnyRB.Checked = true;
+
+            if (filterConfig.pdMode == 1) PDTrueRB.Checked = true;
+            else if (filterConfig.pdMode == 2) PDFalseRB.Checked = true;
+            else PDAnyRB.Checked = true;
+
+            if (filterConfig.healMode == 1) HealTrueRB.Checked = true;
+            else if (filterConfig.healMode == 2) HealFalseRB.Checked = true;
+            else HealAnyRB.Checked = true;
+
+            if (filterConfig.discountMode == 1) DiscountTrueRB.Checked = true;
+            else if (filterConfig.discountMode == 2) DiscountFalseRB.Checked = true;
+            else DiscountAnyRB.Checked = true;
+
+            if (filterConfig.incomeMode == 1) IncomeTrueRB.Checked = true;
+            else if (filterConfig.incomeMode == 2) IncomeFalseRB.Checked = true;
+            else IncomeAnyRB.Checked = true;
+
+            if (filterConfig.commandMode == 1) CommandTrueRB.Checked = true;
+            else if (filterConfig.commandMode == 2) CommandFalseRB.Checked = true;
+            else CommandAnyRB.Checked = true;
 
             foreach (faction faction in filterConfig.factions) FactionListBox.SelectedItems.Add(faction);
             foreach (string category in filterConfig.categories) CategoryListBox.SelectedItems.Add(category);
@@ -225,6 +255,78 @@ namespace Holocron
                 if (ComplementTrueRB.Visible) filterDocumentation += ", has no Complement";
             }
             else filterConfig.complementMode = 0;
+
+            if (SkirmishTrueRB.Checked)
+            {
+                filterConfig.skirmishMode = 1;
+                if (SkirmishTrueRB.Visible) filterDocumentation += ", Skirmish units";
+            }
+            else if (SkirmishFalseRB.Checked)
+            {
+                filterConfig.skirmishMode = 2;
+                if (LimitTrueRB.Visible) filterDocumentation += ", GC units";
+            }
+            else filterConfig.skirmishMode = 0;
+
+            if (PDTrueRB.Checked)
+            {
+                filterConfig.pdMode = 1;
+                if (PDTrueRB.Visible) filterDocumentation += ", has Point Defense";
+            }
+            else if (PDFalseRB.Checked)
+            {
+                filterConfig.pdMode = 2;
+                if (PDTrueRB.Visible) filterDocumentation += ", no Point Defense";
+            }
+            else filterConfig.pdMode = 0;
+
+            if (HealTrueRB.Checked)
+            {
+                filterConfig.healMode = 1;
+                if (HealTrueRB.Visible) filterDocumentation += ", has Healing";
+            }
+            else if (HealFalseRB.Checked)
+            {
+                filterConfig.healMode = 2;
+                if (HealTrueRB.Visible) filterDocumentation += ", no Healing";
+            }
+            else filterConfig.healMode = 0;
+
+            if (DiscountTrueRB.Checked)
+            {
+                filterConfig.discountMode = 1;
+                if (DiscountTrueRB.Visible) filterDocumentation += ", Discounts";
+            }
+            else if (DiscountFalseRB.Checked)
+            {
+                filterConfig.discountMode = 2;
+                if (DiscountTrueRB.Visible) filterDocumentation += ", no Discounts";
+            }
+            else filterConfig.discountMode = 0;
+
+            if (IncomeTrueRB.Checked)
+            {
+                filterConfig.incomeMode = 1;
+                if (IncomeTrueRB.Visible) filterDocumentation += ", Income";
+            }
+            else if (IncomeFalseRB.Checked)
+            {
+                filterConfig.influenceMode = 2;
+                if (IncomeTrueRB.Visible) filterDocumentation += ", no Income";
+            }
+            else filterConfig.incomeMode = 0;
+
+            if (CommandTrueRB.Checked)
+            {
+                filterConfig.commandMode = 1;
+                if (CommandTrueRB.Visible) filterDocumentation += ", Command Bonuses";
+            }
+            else if (CommandFalseRB.Checked)
+            {
+                filterConfig.commandMode = 2;
+                if (CommandTrueRB.Visible) filterDocumentation += ", no Command Bonuses";
+            }
+            else filterConfig.commandMode = 0;
 
             filterConfig.shipyardComparison = ShipyardBox.SelectedIndex;
             filterConfig.shipyardLevel = (int)ShipyardUpDown.Value;
