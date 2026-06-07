@@ -651,7 +651,7 @@ namespace TilotnyStudio
                 return;
             }
             else globals.unitsloaded = true;
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             globals.playablefactions = new List<playablefaction>();
             string[] files = Directory.GetFiles(globals.SourceMod + "XML\\Structures", "*.xml", SearchOption.AllDirectories);
             parseStructuresAndFactions(files);
@@ -1103,7 +1103,7 @@ namespace TilotnyStudio
 
         private void SaveUnitButton_Click(object sender, EventArgs e)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             if (UnitTabControl.SelectedIndex == 0)
             {
                 string affils = "";
@@ -2129,7 +2129,7 @@ namespace TilotnyStudio
 
         private void ReadFactionData()
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             while (FactionPanel.Controls.Count > 0)
             {
                 foreach (Control tokill in FactionPanel.Controls)
@@ -2337,7 +2337,7 @@ namespace TilotnyStudio
 
         private void SaveFactionButton_Click(object sender, EventArgs e)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             XmlDocument doc = new XmlDocument();
             doc.PreserveWhitespace = true;
             doc.Load(GetExtantPath(globals.SourceMod + "XML\\GameConstants.xml"));

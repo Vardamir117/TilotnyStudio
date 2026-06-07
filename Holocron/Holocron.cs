@@ -63,6 +63,8 @@ using static SharedFunctions;
  * complement CP and dps are slightly different than sheet. Stop using floats? Or does some rounding need to be forced?
  * 
  * planet preferred revolt, influence modifiers
+ * 
+ * variant of existing needs to handle case mismatch => REP_DHC vs Rep_DHC breaks skirmish version
 keep history updated whenever a tab or subtab is implemented
 there might be a bit of oddness in the history tracking when factions share a name
 Tilot - up two levels, does swfoc.exe exist? If yes enable dropdown
@@ -292,6 +294,7 @@ namespace Holocron
             Loading loadscreen = new Loading();
             loadscreen.Show();
             FactionListBox.Items.Clear();
+            ComplementFactionListBox.Items.Clear();
             GCListBox.Items.Clear();
             PlanetListBox.Items.Clear();
             UnitListBox.Items.Clear();
@@ -310,7 +313,7 @@ namespace Holocron
 
         private void LoadThread(Loading loadscreen)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             loadscreen.ChangeText("Reading text file");
             entities.Text = DatParser.ReadDat(getModFile("Text\\MasterTextFile_ENGLISH.dat"), ',', 0);
             Random rnd = new Random();
@@ -343,7 +346,12 @@ namespace Holocron
 
             loadscreen.ChangeText("Parsing faction data");
             parseFactions(entities);
-            foreach(faction faction in entities.factions) FactionListBox.BeginInvoke(new Action(() => FactionListBox.Items.Add(faction.textname)));
+            foreach (faction faction in entities.factions)
+            {
+                FactionListBox.BeginInvoke(new Action(() => FactionListBox.Items.Add(faction.textname)));
+                ComplementFactionListBox.BeginInvoke(new Action(() => ComplementFactionListBox.Items.Add(faction)));
+            }
+            ComplementFactionListBox.BeginInvoke(new Action(() => ComplementFactionListBox.SelectedIndex = 0));
 
             loadscreen.ChangeText("Parsing projectile data");
             List<string> listfiles = getModFiles("XML\\Projectiles", "*.xml");
@@ -680,14 +688,36 @@ namespace Holocron
                     break;
                 case historymaintabs.lookups:
                     LookupTabControl.SelectedIndex = secondary;
-                    switch (secondary)
+                    switch ((lookupsubtabs)secondary)
                     {
-                        case 5:
+                        case lookupsubtabs.lkSpawn:
                             for (int i = 0; i < SpawnListBox.Items.Count; i++)
                             {
                                 if (item == (string)SpawnListBox.Items[i])
                                 {
                                     SpawnListBox.SelectedItem = SpawnListBox.Items[i];
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            break;
+                        case lookupsubtabs.lkStandard:
+                            for (int i = 0; i < StandardFListBox.Items.Count; i++)
+                            {
+                                if (item == (string)StandardFListBox.Items[i])
+                                {
+                                    StandardFListBox.SelectedItem = StandardFListBox.Items[i];
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            break;
+                        case lookupsubtabs.lkRandom:
+                            for (int i = 0; i < RandomFListBox.Items.Count; i++)
+                            {
+                                if (item == (string)RandomFListBox.Items[i])
+                                {
+                                    RandomFListBox.SelectedItem = RandomFListBox.Items[i];
                                     found = true;
                                     break;
                                 }
@@ -2196,7 +2226,7 @@ namespace Holocron
             else if (FactionHeroTeamRB.Checked) src = entities.heroCompanies;
             foreach (unit unit in src)
             {
-                if (unit.username.ToLower().Contains(FactionUnitSearchTextBox.Text.ToLower()) && unit.affiliations.Contains(faction) && !IsHiddenObject(unit) && !IsSkirmishObject(unit) && !unit.unitname.Contains("Convoy") && !unit.unitname.Contains("Cheat") && !unit.unitname.Contains("Mission") && !unit.unitname.Contains("Survival_") &&  !unit.unitname.Contains("GW_") && !unit.unitname.Contains("GROUNDWAR_") && unit.influence == 0)
+                if (unit.username.ToLower().Contains(FactionUnitSearchTextBox.Text.ToLower()) && unit.affiliations.Contains(faction) && !IsHiddenObject(unit) && !IsSkirmishObject(unit) && !unit.unitname.Contains("Convoy") && !unit.unitname.Contains("Cheat") && !(unit.unitname.Contains("Mission") && !unit.unitname.Contains("_Mission")) && !unit.unitname.Contains("Survival_") &&  !unit.unitname.Contains("GW_") && !unit.unitname.Contains("GROUNDWAR_") && unit.influence == 0)
                 {
                     FactionUnitListBox.Items.Add(unit);
                 }
@@ -2576,8 +2606,9 @@ namespace Holocron
             if (!(selectedUnit.consolidatedUnits is null) && selectedUnit.consolidatedUnits.Count > 0)
             {
                 foreach (quantizedObject subunit in selectedUnit.consolidatedUnits) UnitSubunitListbox.Items.Add(subunit);
+                setSubUnitVisibility(0);
             }
-            else if (!(selectedUnit.garrison is null) && selectedUnit.garrison.Count > 0)
+            else if (selectedUnit.garrison_lua.Count > 0 || !(selectedUnit.garrison is null) && selectedUnit.garrison.Count > 0)
             {
                 float fighterUpfront = 0;
                 float fighterReserve = 0;
@@ -2589,7 +2620,6 @@ namespace Holocron
                 {
                     if (spawn.tech[1])
                     {
-                        UnitSubunitListbox.Items.Add(spawn.unitname); //Todo need to massively rethink this later
                         if (spawn.fightermode == 2)
                         {
                             bomberUpfront += spawn.squad_size * spawn.upfront[1];
@@ -2607,16 +2637,51 @@ namespace Holocron
                         }
                     }
                 }
-                if (fighterUpfront > 0) ComplementLabel.Text = "Fighters: "+ fighterUpfront.ToString("0.##") + " / " + fighterReserve.ToString("0.##");
+                if (fighterUpfront > 0) ComplementLabel.Text = "Fighters: " + fighterUpfront.ToString("0.##") + " / " + fighterReserve.ToString("0.##");
                 if (fighterUpfront > 0 && bomberUpfront > 0) ComplementLabel.Text += " | ";
                 if (bomberUpfront > 0) ComplementLabel.Text += "Bombers: " + bomberUpfront.ToString("0.##") + " / " + bomberReserve.ToString("0.##");
-                if (fighterUpfront > 0 || bomberUpfront > 0) ComplementLabel.Text += " | Other: ";
-                else ComplementLabel.Text = "Spawned Units: ";
-                if (otherUpfront > 0) ComplementLabel.Text += otherUpfront.ToString("0.##") + " / " + otherReserve.ToString("0.##");
+                if (otherUpfront > 0)
+                {
+                    if (fighterUpfront > 0 || bomberUpfront > 0) ComplementLabel.Text += " | Other: ";
+                    else ComplementLabel.Text = "Spawned Units: ";
+                    ComplementLabel.Text += otherUpfront.ToString("0.##") + " / " + otherReserve.ToString("0.##");
+                }
+
+                if (selectedUnit.garrison_lua.Count > 0)
+                {
+                    setSubUnitVisibility(2);
+                    ComplementXMLCheckBox.Checked = false;
+                    ComplementResearchListBox.Items.Clear();
+                    List<string> researches = new List<string>();
+                    foreach(garrison_lua gar in selectedUnit.garrison_lua)
+                    {
+                        foreach(string research in gar.ResearchRequired)
+                        {
+                            if (!researches.Contains(research))
+                            {
+                                researches.Add(research);
+                                ComplementResearchListBox.Items.Add(research);
+                            }
+                        }
+                        foreach (string research in gar.ResearchForbidden)
+                        {
+                            if (!researches.Contains(research))
+                            {
+                                researches.Add(research);
+                                ComplementResearchListBox.Items.Add(research);
+                            }
+                        }
+                    }
+                }
+                else setSubUnitVisibility(1);
+
+
+                populateSubUnitComplements();
             }
             else
             {
                 ComplementLabel.Text = "";
+                setSubUnitVisibility(0);
             }
             UnitSubSquadListbox.Items.Clear();
             if (!(selectedUnit.subcompanies is null) && selectedUnit.subcompanies.Count > 0)
@@ -2733,6 +2798,99 @@ namespace Holocron
             }
         }
 
+        private void setSubUnitVisibility(int mode)
+        {
+            ComplementXMLCheckBox.Visible = mode == 2;
+
+            ComplementTechLevelLabel.Visible = mode == 1;
+            ComplementTechLevelBox.Visible = mode == 1;
+            ComplementLuaTechLevelLabel.Visible = mode == 2;
+            ComplementLuaTechLevelBox.Visible = mode == 2;
+            LuaGarrisonPanel.Visible = mode == 2;
+        }
+
+        private void populateSubUnitComplements()
+        {
+            UnitSubunitListbox.Items.Clear();
+            if (UnitListBox.Tag is null) return;
+            unit unit = (unit)UnitListBox.Tag;
+            if (ComplementTechLevelBox.Visible)
+            {
+                int tech = (int)ComplementTechLevelBox.Value;
+                foreach (garrison_entry gar in unit.garrison)
+                {
+                    if (gar.tech[tech])
+                    {
+                        garrison_lua forListBox = new garrison_lua //Needs conversion from the list of counts to count, make the Lua version so Goto doesn't have to handle three distinct cases
+                        {
+                            unitname = gar.unitname,
+                            username = gar.username,
+                            upfront = gar.upfront[tech],
+                            reserve = gar.reserve[tech],
+                            squad_size = gar.squad_size,
+                        };
+                        UnitSubunitListbox.Items.Add(forListBox);
+                    }
+                }
+            }
+            else
+            {
+                string owner = ((faction)ComplementFactionListBox.SelectedItem).codename.ToUpper();
+                string alias = ((faction)ComplementFactionListBox.SelectedItem).alias.ToUpper();
+                int tech = (int)ComplementLuaTechLevelBox.Value;
+
+                foreach (garrison_lua gar in unit.garrison_lua)
+                {
+                    if(gar.tech[tech] && (gar.ownerAlias == owner || gar.ownerAlias == alias || gar.ownerAlias == "DEFAULT"))
+                    {
+                        if(gar.ResearchRequired.Count > 0)
+                        {
+                            bool match = false;
+                            foreach (string research in ComplementResearchListBox.SelectedItems)
+                            {
+                                if(gar.ResearchRequired.FindIndex(s => s == research) >= 0)
+                                {
+                                    match = true;
+                                    break;
+                                }
+                            }
+                            if (!match) continue;
+                        }
+                        if (gar.ResearchForbidden.Count > 0)
+                        {
+                            bool match = true;
+                            foreach (string research in ComplementResearchListBox.SelectedItems)
+                            {
+                                if (gar.ResearchForbidden.FindIndex(s => s == research) >= 0)
+                                {
+                                    match = false;
+                                    break;
+                                }
+                            }
+                            if (!match) continue;
+                        }
+                        UnitSubunitListbox.Items.Add(gar);
+                    }
+                }
+            }
+        }
+
+        private void populateSubUnitComplements_Wrapper(object sender, EventArgs e)
+        {
+            populateSubUnitComplements();
+        }
+
+        private void ComplementXMLCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            ComplementTechLevelLabel.Visible = ComplementXMLCheckBox.Checked;
+            ComplementTechLevelBox.Visible = ComplementXMLCheckBox.Checked;
+            ComplementLuaTechLevelLabel.Visible = !ComplementXMLCheckBox.Checked;
+            ComplementLuaTechLevelBox.Visible = !ComplementXMLCheckBox.Checked;
+            LuaGarrisonPanel.Visible = !ComplementXMLCheckBox.Checked;
+
+            populateSubUnitComplements();
+        }
+
         private unit sortUnit(unit unit)
         {
             unit.sortstring = ""; //Used for detecting if the float should be displayed
@@ -2776,10 +2934,11 @@ namespace Holocron
                         {
                             if (gar.tech[1])
                             {
-                                //float upfrontcp = gar.cp * gar.upfront[1]; //For debug purposes
-                                //float reserveratio = (float)Math.Pow(0.5, (double)gar.reserve[1] / gar.upfront[1]);
-                                //float reservecp = upfrontcp * (1 - reserveratio);
-                                unit.sortfloat += gar.cp * gar.upfront[1] * (2 - (float)Math.Pow(0.5, (double)gar.reserve[1] / gar.upfront[1]));
+                                float upfrontcp = gar.cp * gar.upfront[1]; //For debug purposes
+                                float reserveratio = (float)Math.Pow(0.5, (double)gar.reserve[1] / gar.upfront[1]);
+                                if (gar.reserve[1] == -1) reserveratio = 0;
+                                float reservecp = upfrontcp * (1 - reserveratio);
+                                unit.sortfloat += upfrontcp + reservecp;
                             }
                             
                         }
@@ -2963,7 +3122,9 @@ namespace Holocron
                                     if (globals.UnitSortConfig.upfrontReserveMode != 1) unit.sortfloat += upfrontcp;
                                     if (globals.UnitSortConfig.upfrontReserveMode != 0)
                                     {
-                                        unit.sortfloat += upfrontcp * (1 - (float)Math.Pow(0.5, (double)gar.reserve[1] / gar.upfront[1]));
+                                        float reserveratio = (float)Math.Pow(0.5, (double)gar.reserve[1] / gar.upfront[1]);
+                                        if (gar.reserve[1] == -1) reserveratio = 0;
+                                        unit.sortfloat += upfrontcp * (1 - reserveratio);
                                     }
                                 }
                                 else
@@ -3993,16 +4154,51 @@ namespace Holocron
             collapsePanels(UnitPanels.AbilityPanel);
         }
 
+        private void gotoUnitUniversal(string obj)
+        {
+            int subtype = 0;
+            if (entities.spaceUnits.FindIndex(s => s.unitname == obj) >= 0) subtype = 0;
+            if (entities.groundCompanies.FindIndex(s => s.unitname == obj) >= 0) subtype = 1;
+            if (entities.groundUnits.FindIndex(s => s.unitname == obj) >= 0) subtype = 2;
+            if (entities.fighters.FindIndex(s => s.unitname == obj) >= 0) subtype = 3;
+            if (entities.spaceHeroes.FindIndex(s => s.unitname == obj) >= 0) subtype = 4;
+            if (entities.heroCompanies.FindIndex(s => s.unitname == obj) >= 0) subtype = 5;
+            if (entities.groundHeroes.FindIndex(s => s.unitname == obj) >= 0) subtype = 6;
+            if (entities.structures.FindIndex(s => s.unitname == obj) >= 0) subtype = 7;
+            if (entities.spaceStructures.FindIndex(s => s.unitname == obj) >= 0) subtype = 8;
+            insert_history((int)historymaintabs.unit, subtype, obj, true);
+        }
+
         private void UnitSubunitGotoButton_Click(object sender, EventArgs e)
         {
-            //todo change the second argument to go to fighters and fighter squadrons appropriately
             if (UnitSubunitListbox.SelectedItems.Count > 0)
             {
-                int subtype = 2;
-                if (SpaceRadioButton.Checked) subtype = 0;
-                else if (SpaceHeroRadioButton.Checked) subtype = 3; //Todo needs to handle unit and heroes
-                else if (HeroCompaniesRadioButton.Checked) subtype = 4;
-                insert_history((int)historymaintabs.unit, subtype, ((quantizedObject)UnitSubunitListbox.SelectedItem).codename, true);
+                string obj = "";
+                if(ComplementTechLevelBox.Visible || ComplementLuaTechLevelBox.Visible)
+                {
+                    garrison_lua gar = ((garrison_lua)UnitSubunitListbox.SelectedItem);
+                    obj = gar.unitname;
+                    if(gar.standard)
+                    {
+                        insert_history((int)historymaintabs.lookups, (int)lookupsubtabs.lkStandard, obj, true);
+                        return;
+                    }
+                    if (gar.random)
+                    {
+                        insert_history((int)historymaintabs.lookups, (int)lookupsubtabs.lkRandom, obj, true);
+                        return;
+                    }
+                }
+                else
+                {
+                    obj = ((quantizedObject)UnitSubunitListbox.SelectedItem).codename;
+                    /*int subtype = 2;
+                    if (SpaceRadioButton.Checked) subtype = 0;
+                    else if (SpaceHeroRadioButton.Checked) subtype = 3; //Todo needs to handle unit and heroes
+                    else if (HeroCompaniesRadioButton.Checked) subtype = 4;
+                    insert_history((int)historymaintabs.unit, subtype, ((quantizedObject)UnitSubunitListbox.SelectedItem).codename, true);*/
+                }
+                gotoUnitUniversal(obj);
             }
         }
 
@@ -4446,7 +4642,23 @@ namespace Holocron
             if (File.Exists(missionfile))
             {
                 string filetext = File.ReadAllText(missionfile);
-                if (filetext.Contains("\"" + unit.unitname + "\"")) locks += "\nMission Reward";
+                string[] split = filetext.Split('=');
+                bool furst = true;
+                for(int i = 1; i < split.Length; i++)
+                {
+                    if(split[i].Contains("\"" + unit.unitname + "\""))
+                    {
+                        if (furst)
+                        {
+                            locks += "\nMission Reward: ";
+                            furst = false;
+                        }
+                        else locks += ", ";
+                        string last = split[i - 1];
+                        int newline = last.LastIndexOf("\n");
+                        locks += last.Substring(newline+1, last.Length - newline - 1).Trim();
+                    }
+                }
             }
             return unlocks+"\n"+locks;
         }

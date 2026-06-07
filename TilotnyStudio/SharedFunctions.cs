@@ -2604,6 +2604,18 @@ public static class SharedFunctions
                             break;
                         }
                     }
+                    newfaction.alias = newfaction.codename;
+                    for (int i = factionAliasStart; i < factionAliasStart + limit; i++)
+                    {
+                        string line = gameconstants[i];
+                        if (line.Contains("}")) break;
+                        if (CheckLuaIndex(LuaName, line))
+                        {
+                            newfaction.alias = line.Substring(line.IndexOf("\"") + 1, line.LastIndexOf("\"") - line.IndexOf("\"") - 1);
+                            break;
+                        }
+
+                    }
                     newfaction.lcolor = new int[] { 0, 0, 0, 255 };
                     for (int i = factionColorStart; i < factionColorStart + limit; i++)
                     {
@@ -3587,7 +3599,7 @@ public static class SharedFunctions
                         foreach (int cachedindex in entities.objecthashes[index]) //(unit unidad2 in entities.objects)
                         {
                             unit unidad2 = entities.objects[cachedindex];
-                            if (unidad2.unitname == unidad.variantof)
+                            if (String.Equals(unidad2.unitname, unidad.variantof, StringComparison.OrdinalIgnoreCase))
                             {
                                 if (unidad.affiliations.Count == 0) unidad.affiliations = unidad2.affiliations;
                                 if (unidad.companyunits.Count == 0) unidad.companyunits = unidad2.companyunits;
@@ -4077,6 +4089,242 @@ public static class SharedFunctions
         return corenne;
     }
 
+    public static int nextLuaLibSection(string line, int startindex)
+    {
+        int corenne = startindex;
+        for (int c = startindex; c < line.Length; c++)
+        {
+            if (line[c] == ',' || line[c] == '}') return corenne;
+                corenne++;
+        }
+        return corenne; //This is probably really bad if reached
+    }
+
+    public static List<garrison_lua> readObjectLuaLibrary(string unitname) //todo: change this to edit the unit so it can save other properties like 
+    {
+        List<garrison_lua> corenne = new List<garrison_lua>();
+        List<string> paths = new List<string>();//Check several old ways of doing this fr backwards compatibility
+        paths.Add(getModFile("Scripts\\Library\\gameobjects\\" + unitname + ".lua"));//TODO I am only guessing this is the final version after mod content loader is dead
+        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\gameobjects\\" + unitname + ".lua"));
+
+        foreach (string path in paths)
+        {
+            if (path != "") //fail return for getModFile
+            {
+                string[] UnitLib = File.ReadAllLines(path);
+                string spawn = "";
+                int initial = 0;
+                int reserve = 0;
+                int indentlevel = 0;
+                bool checkfighters = false;
+                foreach (string line in UnitLib)
+                {
+                    indentlevel += line.Count(c => c == '{') - line.Count(c => c == '}');
+                    if (checkfighters)
+                    {
+                        if (line.Contains("[\""))
+                        {//Between [" and "] is the spawn name. May need to handle the version without that in the future
+                            spawn = line.Substring(line.IndexOf("[") + 2, line.IndexOf("]") - line.IndexOf("[") - 3);
+                        } //todo the future has arrived
+                        if (spawn == "" && line.Contains("="))
+                        {
+                            spawn = line.Substring(0, line.IndexOf("=") - 1).Trim();
+                        }
+                        if (line.Contains("Initial"))
+                        {
+                            List<string> rtrue = new List<string>();
+                            List<string> rfalse = new List<string>();
+                            List<string> htrue = new List<string>();
+                            List<string> hfalse = new List<string>();
+
+                            string trimmed = fullTrim(line);
+                            string faction = line.Substring(0, line.IndexOf("=") - 1).Trim();
+
+                            int amount = trimmed.IndexOf("Initial=");                            
+                            string qty = trimmed.Substring(amount + 8, nextLuaLibSection(trimmed, amount) - amount - 8);
+                            initial = Int32.Parse(qty);
+
+                            if (line.Contains("Reserve"))
+                            {
+                                amount = trimmed.IndexOf("Reserve=");
+                                qty = trimmed.Substring(amount + 8, nextLuaLibSection(trimmed, amount) - amount - 8);
+                                reserve = Int32.Parse(qty);
+                            }
+
+                            bool[] tech = new bool[16]; //Probably enough for futureproofing. Maybe it fits into 2 bytes this way?
+                            tech = Enumerable.Repeat(true, tech.Length).ToArray(); //Assume all true
+                            if (line.Contains("TechLevel"))
+                            {
+                                tech = new bool[16]; //unless a techlevel is defined
+                                try
+                                {
+                                    if (line.Contains("(99)") ) continue; //Often used to disable a particular fighter spawn for a faction
+                                    amount = trimmed.IndexOf("TechLevel=");
+                                    string comp = trimmed.Substring(amount + 10, trimmed.IndexOf(")") - amount - 10);
+                                    if (comp.Contains("GreaterOrEqualTo"))
+                                    {
+                                        qty = comp.Substring(17, comp.Length - 17); //Length of comparator name + opening paren
+                                        amount = Int32.Parse(qty);
+                                        for (int t = amount; t < tech.Length; t++) tech[t] = true;
+                                    }
+                                    else if (comp.Contains("GreaterThan"))
+                                    {
+                                        qty = comp.Substring(12, comp.Length - 12);
+                                        amount = Int32.Parse(qty);
+                                        for (int t = amount + 1; t < tech.Length; t++) tech[t] = true;
+                                    }
+                                    else if (comp.Contains("LessThan"))
+                                    {
+                                        qty = comp.Substring(9, comp.Length - 9);
+                                        amount = Int32.Parse(qty);
+                                        for (int t = 0; t < amount; t++) tech[t] = true;
+                                    }
+                                    else if (comp.Contains("LessOrEqualTo"))
+                                    {
+                                        qty = comp.Substring(14, comp.Length - 14);
+                                        amount = Int32.Parse(qty);
+                                        for (int t = 0; t <= amount; t++) tech[t] = true;
+                                    }
+                                    else if (comp.Contains("EqualTo")) //Else is mostly a microoptimization, but it also blocks EqualTo from matching to GreaterOrEqualTo/LessOrEqualTo and triggering an exception/skip
+                                    {
+                                        qty = comp.Substring(8, comp.Length - 8);
+                                        amount = Int32.Parse(qty);
+                                        tech[amount] = true;
+                                    }
+                                    else if (comp.Contains("InInterval"))
+                                    {
+                                        qty = comp.Substring(11, comp.Length - 11);
+                                        string[] split = qty.Split(',');
+                                        amount = Int32.Parse(split[0]);
+                                        int end = Int32.Parse(split[1]);
+                                        for (int t = amount; t <= end; t++) tech[t] = true;
+                                    }
+                                    else if (comp.Contains("IsOneOf"))
+                                    {
+                                        qty = comp.Substring(9, comp.Length - 10); //Trim one extra off each side for the { }
+                                        string[] split = qty.Split(',');
+                                        foreach(string oneof in split)
+                                        {
+                                            amount = Int32.Parse(oneof);
+                                            tech[amount] = true;
+                                        }
+                                    }
+                                }
+                                catch { continue; } //Generalize the 99 clause
+                            }
+                            if (line.Contains("ResearchType"))
+                            {
+                                amount = trimmed.IndexOf("ResearchType=");
+                                qty = trimmed.Substring(amount + 13, nextLuaLibSection(trimmed, amount) - amount - 13).Replace("\"","");
+                                if (qty.Contains("{"))
+                                {
+                                    string[] split = qty.Substring(1,qty.Length - 2).Split(',');
+                                    foreach(string rtype in split)
+                                    {
+                                        if (rtype.Contains("~")) rfalse.Add(rtype.Replace("~", ""));
+                                        else rtrue.Add(rtype);
+                                    }
+                                }
+                                else
+                                {
+                                    if (qty.Contains("~")) rfalse.Add(qty.Replace("~", ""));
+                                    else rtrue.Add(qty);
+                                }
+                            }
+                            //todo hero overrides
+                            string cut = spawn;
+                            bool standard = false;
+                            bool random = false;
+
+                            float squad_size = 1;
+                            if (spawn.Contains("_DOUBLE"))
+                            {
+                                squad_size = 2;
+                                cut = spawn.Replace("_DOUBLE","");
+                            }
+                            else if (spawn.Contains("_HALF"))
+                            {
+                                squad_size = 0.5f;
+                                cut = spawn.Replace("_HALF", "");
+                            }
+                            else if (spawn.Contains("_THIRD"))
+                            {
+                                squad_size = 1f / 3;
+                                cut = spawn.Replace("_THIRD", "");
+                            }
+                            else if (spawn.Contains("_TRIPLE"))
+                            {
+                                squad_size = 3;
+                                cut = spawn.Replace("_TRIPLE", "");
+                            }
+
+                            string name = spawn.Replace("_", " ");
+                            int fightermode = 1; //Technically standard/random types should check if this is 0, but that currently only applies to Eyttyrmin Batiiv and probably has to waint if/until types are evaluated anyway
+                            float cp = 0;
+                            if (getModFile("Scripts\\Library\\standard-fighters\\" + cut + ".lua") != "") standard = true;
+                            else if (getModFile("Scripts\\Library\\random-fighters\\" + cut + ".lua") != "") random = true;
+                            else
+                            {
+                                int index = LookupUntemplateID(spawn);
+                                if (index < entities.objecthashes.Count)
+                                {
+                                    foreach (int cachedindex in entities.objecthashes[index])
+                                    {
+                                        unit spawntype = entities.objects[cachedindex];
+                                        if (spawntype.unitname.ToUpper() == spawn)
+                                        {
+                                            name = spawntype.username;
+                                            cp = spawntype.cp;
+                                        }
+                                    }
+                                }
+                            }
+                            if(cp == 0)
+                            {
+                                if (spawn.Contains("BOMBER")) fightermode = 2;
+                            }
+
+                            garrison_lua entry = new garrison_lua
+                            {
+                                unitname = spawn,
+                                username = name,
+                                ownerAlias = faction,
+                                upfront = initial,
+                                reserve = reserve,
+                                squad_size = squad_size,
+                                cp = cp,
+                                fightermode = fightermode,
+                                standard = standard,
+                                random = random,
+                                tech = tech,
+                                ResearchRequired = rtrue,
+                                ResearchForbidden = rfalse,
+                                HeroesToEnable = htrue,
+                                HeroesToDisable = hfalse,
+                            };
+                            corenne.Add(entry);
+                        }
+                        
+                        if (line.Contains("}") && indentlevel == 2)
+                        {
+                            //todo handle standard fighters, get size from name in general and in the case of them in specific
+                            
+                            spawn = "";
+                        }
+
+                        if (indentlevel == 1) break;
+                    }
+                    else
+                    {
+                        if (line.Contains("Spawn_Units")) checkfighters = true;
+                        if (line.Contains("FULLINHERIT") || line.Contains("FIGHTERINHERIT")) return readObjectLuaLibrary(line.Substring(line.IndexOf("\"") + 1, line.LastIndexOf("\"") - line.IndexOf("\"") - 1));
+                    }
+                }
+            }
+        }
+        return corenne;
+    }
+
     public static void unitToCompanyData(entities entities)
     {//todo hash units, companies, and containers. But even in TR this is ~2 seconds and a minor gain
         string limpath = getModFile("Scripts\\Library\\BuildLimitLibrary.lua");
@@ -4327,7 +4575,6 @@ public static class SharedFunctions
                         }
                     }
                 }
-                entities.objects[i] = company;
             }
             if (company.garrison.Count > 0)
             {
@@ -4431,9 +4678,11 @@ public static class SharedFunctions
                 if (lastbomber != "" && !finalBombers.Contains(lastbomber)) finalBombers.Add(lastbomber); //Save the last bomber loaded into memory if it isn't already saved from an earlier tech level
                 company.bombingRunUnit = SerializeStringArray(finalBombers);
                 company.garrison = new_garrison;
-
-                entities.objects[i] = company;
             }
+
+            company.garrison_lua = readObjectLuaLibrary(company.unitname);
+
+            entities.objects[i] = company;
         }
     }
 
@@ -4799,6 +5048,7 @@ public struct faction
     public string luaname;
     public string abbreviation;
     public string ai;
+    public string alias;
     public string BTS;
     public bool playable;
 
@@ -4916,6 +5166,7 @@ public struct unit
     public List<ability> abilities;
     public List<unitability> unitabilities;
     public List<garrison_entry> garrison;
+    public List<garrison_lua> garrison_lua;
     //public string weather;
     //public string movementclass;
     //public string lua_script;
@@ -5005,17 +5256,24 @@ public struct garrison_lua
 {
     public string unitname;
     public string username;
+    public string ownerAlias;
     public int upfront;
     public int reserve;
     public float squad_size;
     public float cp;
     public int fightermode;
     public bool standard;
+    public bool random;
     public bool[] tech;
-    public bool[] era; //also regime
     public List<string> ResearchRequired;
     public List<string> ResearchForbidden;
-    public List<string> HeroOverrides;
+    public List<string> HeroesToEnable;
+    public List<string> HeroesToDisable;
+
+    public override string ToString()
+    {
+        return username + ": " + upfront * squad_size + " / " + reserve * squad_size;
+    }
 }
 
 public struct container

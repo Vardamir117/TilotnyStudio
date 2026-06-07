@@ -150,6 +150,17 @@
             this.UnitAbilityListBox = new System.Windows.Forms.ListBox();
             this.CollapseUnitSubunitPanel = new System.Windows.Forms.Button();
             this.UnitSubunitPanel = new System.Windows.Forms.Panel();
+            this.ComplementXMLCheckBox = new System.Windows.Forms.CheckBox();
+            this.ComplementLuaTechLevelLabel = new System.Windows.Forms.Label();
+            this.ComplementTechLevelLabel = new System.Windows.Forms.Label();
+            this.ComplementLuaTechLevelBox = new System.Windows.Forms.NumericUpDown();
+            this.ComplementTechLevelBox = new System.Windows.Forms.NumericUpDown();
+            this.LuaGarrisonPanel = new System.Windows.Forms.Panel();
+            this.ComplementHeroLabel = new System.Windows.Forms.Label();
+            this.ComplementActiveResearchesLabel = new System.Windows.Forms.Label();
+            this.ComplementFactionListBox = new System.Windows.Forms.ListBox();
+            this.ComplementHeroListBox = new System.Windows.Forms.ListBox();
+            this.ComplementResearchListBox = new System.Windows.Forms.ListBox();
             this.UnitSubsquadGotoButton = new System.Windows.Forms.Button();
             this.UnitSubunitGotoButton = new System.Windows.Forms.Button();
             this.SubsquadLabel = new System.Windows.Forms.Label();
@@ -160,6 +171,12 @@
             this.CollapseUnitStatPanel = new System.Windows.Forms.Button();
             this.CollapseUnitTextPanel = new System.Windows.Forms.Button();
             this.UnitStatPanel = new System.Windows.Forms.Panel();
+            this.HealRadiusLabel = new System.Windows.Forms.Label();
+            this.HealRechargeLabel = new System.Windows.Forms.Label();
+            this.HealAmountLabel = new System.Windows.Forms.Label();
+            this.PDRechargeLabel = new System.Windows.Forms.Label();
+            this.HealScoreLabel = new System.Windows.Forms.Label();
+            this.PDRadiusLabel = new System.Windows.Forms.Label();
             this.ComplementLabel = new System.Windows.Forms.Label();
             this.AlphaCheckBox = new System.Windows.Forms.CheckBox();
             this.FlagLabel = new System.Windows.Forms.Label();
@@ -198,6 +215,7 @@
             this.UnitBTSPanel = new System.Windows.Forms.Panel();
             this.UnitBTSTextBox = new System.Windows.Forms.RichTextBox();
             this.UnitTextPanel = new System.Windows.Forms.Panel();
+            this.VariantLabel = new System.Windows.Forms.Label();
             this.MaintenanceLabel = new System.Windows.Forms.Label();
             this.ShipNameRichTextBox = new System.Windows.Forms.RichTextBox();
             this.UnitSkirmTimeLabel = new System.Windows.Forms.Label();
@@ -376,13 +394,6 @@
             this.AutoResolveBattleTypeLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.VariantLabel = new System.Windows.Forms.Label();
-            this.PDRadiusLabel = new System.Windows.Forms.Label();
-            this.HealScoreLabel = new System.Windows.Forms.Label();
-            this.PDRechargeLabel = new System.Windows.Forms.Label();
-            this.HealAmountLabel = new System.Windows.Forms.Label();
-            this.HealRechargeLabel = new System.Windows.Forms.Label();
-            this.HealRadiusLabel = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tabLookups.SuspendLayout();
             this.LookupTabControl.SuspendLayout();
@@ -401,6 +412,9 @@
             this.UnitAbilityPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AbilityPictureBox)).BeginInit();
             this.UnitSubunitPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ComplementLuaTechLevelBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ComplementTechLevelBox)).BeginInit();
+            this.LuaGarrisonPanel.SuspendLayout();
             this.UnitStatPanel.SuspendLayout();
             this.UnitBTSPanel.SuspendLayout();
             this.UnitTextPanel.SuspendLayout();
@@ -1746,6 +1760,12 @@
             // 
             // UnitSubunitPanel
             // 
+            this.UnitSubunitPanel.Controls.Add(this.ComplementXMLCheckBox);
+            this.UnitSubunitPanel.Controls.Add(this.ComplementLuaTechLevelLabel);
+            this.UnitSubunitPanel.Controls.Add(this.ComplementTechLevelLabel);
+            this.UnitSubunitPanel.Controls.Add(this.ComplementLuaTechLevelBox);
+            this.UnitSubunitPanel.Controls.Add(this.ComplementTechLevelBox);
+            this.UnitSubunitPanel.Controls.Add(this.LuaGarrisonPanel);
             this.UnitSubunitPanel.Controls.Add(this.UnitSubsquadGotoButton);
             this.UnitSubunitPanel.Controls.Add(this.UnitSubunitGotoButton);
             this.UnitSubunitPanel.Controls.Add(this.SubsquadLabel);
@@ -1758,9 +1778,141 @@
             this.UnitSubunitPanel.TabIndex = 6;
             this.UnitSubunitPanel.Tag = "";
             // 
+            // ComplementXMLCheckBox
+            // 
+            this.ComplementXMLCheckBox.AutoSize = true;
+            this.ComplementXMLCheckBox.Location = new System.Drawing.Point(120, 6);
+            this.ComplementXMLCheckBox.Name = "ComplementXMLCheckBox";
+            this.ComplementXMLCheckBox.Size = new System.Drawing.Size(144, 17);
+            this.ComplementXMLCheckBox.TabIndex = 37;
+            this.ComplementXMLCheckBox.Text = "Show XML Complements";
+            this.ComplementXMLCheckBox.UseVisualStyleBackColor = true;
+            this.ComplementXMLCheckBox.Visible = false;
+            this.ComplementXMLCheckBox.CheckedChanged += new System.EventHandler(this.ComplementXMLCheckBox_CheckedChanged);
+            // 
+            // ComplementLuaTechLevelLabel
+            // 
+            this.ComplementLuaTechLevelLabel.AutoSize = true;
+            this.ComplementLuaTechLevelLabel.Location = new System.Drawing.Point(270, 100);
+            this.ComplementLuaTechLevelLabel.Name = "ComplementLuaTechLevelLabel";
+            this.ComplementLuaTechLevelLabel.Size = new System.Drawing.Size(64, 13);
+            this.ComplementLuaTechLevelLabel.TabIndex = 36;
+            this.ComplementLuaTechLevelLabel.Text = "Tech Level:";
+            this.ComplementLuaTechLevelLabel.Visible = false;
+            // 
+            // ComplementTechLevelLabel
+            // 
+            this.ComplementTechLevelLabel.AutoSize = true;
+            this.ComplementTechLevelLabel.Location = new System.Drawing.Point(270, 56);
+            this.ComplementTechLevelLabel.Name = "ComplementTechLevelLabel";
+            this.ComplementTechLevelLabel.Size = new System.Drawing.Size(64, 13);
+            this.ComplementTechLevelLabel.TabIndex = 35;
+            this.ComplementTechLevelLabel.Text = "Tech Level:";
+            this.ComplementTechLevelLabel.Visible = false;
+            // 
+            // ComplementLuaTechLevelBox
+            // 
+            this.ComplementLuaTechLevelBox.Location = new System.Drawing.Point(270, 116);
+            this.ComplementLuaTechLevelBox.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            0});
+            this.ComplementLuaTechLevelBox.Name = "ComplementLuaTechLevelBox";
+            this.ComplementLuaTechLevelBox.Size = new System.Drawing.Size(75, 20);
+            this.ComplementLuaTechLevelBox.TabIndex = 34;
+            this.toolTip1.SetToolTip(this.ComplementLuaTechLevelBox, "Represents Regime for Imperial Factions in Thrawn\'s Revenge");
+            this.ComplementLuaTechLevelBox.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.ComplementLuaTechLevelBox.Visible = false;
+            this.ComplementLuaTechLevelBox.ValueChanged += new System.EventHandler(this.populateSubUnitComplements_Wrapper);
+            // 
+            // ComplementTechLevelBox
+            // 
+            this.ComplementTechLevelBox.Location = new System.Drawing.Point(270, 72);
+            this.ComplementTechLevelBox.Maximum = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.ComplementTechLevelBox.Name = "ComplementTechLevelBox";
+            this.ComplementTechLevelBox.Size = new System.Drawing.Size(75, 20);
+            this.ComplementTechLevelBox.TabIndex = 33;
+            this.ComplementTechLevelBox.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.ComplementTechLevelBox.Visible = false;
+            this.ComplementTechLevelBox.ValueChanged += new System.EventHandler(this.populateSubUnitComplements_Wrapper);
+            // 
+            // LuaGarrisonPanel
+            // 
+            this.LuaGarrisonPanel.Controls.Add(this.ComplementHeroLabel);
+            this.LuaGarrisonPanel.Controls.Add(this.ComplementActiveResearchesLabel);
+            this.LuaGarrisonPanel.Controls.Add(this.ComplementFactionListBox);
+            this.LuaGarrisonPanel.Controls.Add(this.ComplementHeroListBox);
+            this.LuaGarrisonPanel.Controls.Add(this.ComplementResearchListBox);
+            this.LuaGarrisonPanel.Location = new System.Drawing.Point(351, 0);
+            this.LuaGarrisonPanel.Name = "LuaGarrisonPanel";
+            this.LuaGarrisonPanel.Size = new System.Drawing.Size(344, 163);
+            this.LuaGarrisonPanel.TabIndex = 32;
+            this.LuaGarrisonPanel.Visible = false;
+            // 
+            // ComplementHeroLabel
+            // 
+            this.ComplementHeroLabel.AutoSize = true;
+            this.ComplementHeroLabel.Location = new System.Drawing.Point(239, 8);
+            this.ComplementHeroLabel.Name = "ComplementHeroLabel";
+            this.ComplementHeroLabel.Size = new System.Drawing.Size(100, 13);
+            this.ComplementHeroLabel.TabIndex = 38;
+            this.ComplementHeroLabel.Text = "Active Researches:";
+            this.ComplementHeroLabel.Visible = false;
+            // 
+            // ComplementActiveResearchesLabel
+            // 
+            this.ComplementActiveResearchesLabel.AutoSize = true;
+            this.ComplementActiveResearchesLabel.Location = new System.Drawing.Point(115, 8);
+            this.ComplementActiveResearchesLabel.Name = "ComplementActiveResearchesLabel";
+            this.ComplementActiveResearchesLabel.Size = new System.Drawing.Size(100, 13);
+            this.ComplementActiveResearchesLabel.TabIndex = 37;
+            this.ComplementActiveResearchesLabel.Text = "Active Researches:";
+            // 
+            // ComplementFactionListBox
+            // 
+            this.ComplementFactionListBox.FormattingEnabled = true;
+            this.ComplementFactionListBox.Location = new System.Drawing.Point(3, 3);
+            this.ComplementFactionListBox.Name = "ComplementFactionListBox";
+            this.ComplementFactionListBox.Size = new System.Drawing.Size(99, 160);
+            this.ComplementFactionListBox.TabIndex = 2;
+            this.ComplementFactionListBox.SelectedIndexChanged += new System.EventHandler(this.populateSubUnitComplements_Wrapper);
+            // 
+            // ComplementHeroListBox
+            // 
+            this.ComplementHeroListBox.FormattingEnabled = true;
+            this.ComplementHeroListBox.Location = new System.Drawing.Point(240, 27);
+            this.ComplementHeroListBox.Name = "ComplementHeroListBox";
+            this.ComplementHeroListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.ComplementHeroListBox.Size = new System.Drawing.Size(99, 134);
+            this.ComplementHeroListBox.TabIndex = 1;
+            this.ComplementHeroListBox.Visible = false;
+            // 
+            // ComplementResearchListBox
+            // 
+            this.ComplementResearchListBox.FormattingEnabled = true;
+            this.ComplementResearchListBox.Location = new System.Drawing.Point(118, 27);
+            this.ComplementResearchListBox.Name = "ComplementResearchListBox";
+            this.ComplementResearchListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.ComplementResearchListBox.Size = new System.Drawing.Size(99, 134);
+            this.ComplementResearchListBox.TabIndex = 0;
+            this.ComplementResearchListBox.SelectedIndexChanged += new System.EventHandler(this.populateSubUnitComplements_Wrapper);
+            // 
             // UnitSubsquadGotoButton
             // 
-            this.UnitSubsquadGotoButton.Location = new System.Drawing.Point(639, 24);
+            this.UnitSubsquadGotoButton.Location = new System.Drawing.Point(962, 24);
             this.UnitSubsquadGotoButton.Name = "UnitSubsquadGotoButton";
             this.UnitSubsquadGotoButton.Size = new System.Drawing.Size(75, 23);
             this.UnitSubsquadGotoButton.TabIndex = 31;
@@ -1782,7 +1934,7 @@
             // 
             this.SubsquadLabel.AutoSize = true;
             this.SubsquadLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SubsquadLabel.Location = new System.Drawing.Point(403, 3);
+            this.SubsquadLabel.Location = new System.Drawing.Point(726, 3);
             this.SubsquadLabel.Name = "SubsquadLabel";
             this.SubsquadLabel.Size = new System.Drawing.Size(68, 20);
             this.SubsquadLabel.TabIndex = 29;
@@ -1801,7 +1953,7 @@
             // UnitSubSquadListbox
             // 
             this.UnitSubSquadListbox.FormattingEnabled = true;
-            this.UnitSubSquadListbox.Location = new System.Drawing.Point(407, 24);
+            this.UnitSubSquadListbox.Location = new System.Drawing.Point(730, 24);
             this.UnitSubSquadListbox.Name = "UnitSubSquadListbox";
             this.UnitSubSquadListbox.Size = new System.Drawing.Size(226, 134);
             this.UnitSubSquadListbox.TabIndex = 1;
@@ -1899,6 +2051,68 @@
             this.UnitStatPanel.TabIndex = 2;
             this.UnitStatPanel.Tag = "";
             // 
+            // HealRadiusLabel
+            // 
+            this.HealRadiusLabel.AutoSize = true;
+            this.HealRadiusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HealRadiusLabel.Location = new System.Drawing.Point(585, 170);
+            this.HealRadiusLabel.Name = "HealRadiusLabel";
+            this.HealRadiusLabel.Size = new System.Drawing.Size(86, 16);
+            this.HealRadiusLabel.TabIndex = 46;
+            this.HealRadiusLabel.Text = "Heal Radius:";
+            // 
+            // HealRechargeLabel
+            // 
+            this.HealRechargeLabel.AutoSize = true;
+            this.HealRechargeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HealRechargeLabel.Location = new System.Drawing.Point(585, 154);
+            this.HealRechargeLabel.Name = "HealRechargeLabel";
+            this.HealRechargeLabel.Size = new System.Drawing.Size(103, 16);
+            this.HealRechargeLabel.TabIndex = 45;
+            this.HealRechargeLabel.Text = "Heal Recharge:";
+            // 
+            // HealAmountLabel
+            // 
+            this.HealAmountLabel.AutoSize = true;
+            this.HealAmountLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HealAmountLabel.Location = new System.Drawing.Point(585, 138);
+            this.HealAmountLabel.Name = "HealAmountLabel";
+            this.HealAmountLabel.Size = new System.Drawing.Size(88, 16);
+            this.HealAmountLabel.TabIndex = 44;
+            this.HealAmountLabel.Text = "Heal Amount:";
+            // 
+            // PDRechargeLabel
+            // 
+            this.PDRechargeLabel.AutoSize = true;
+            this.PDRechargeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.PDRechargeLabel.Location = new System.Drawing.Point(585, 89);
+            this.PDRechargeLabel.Name = "PDRechargeLabel";
+            this.PDRechargeLabel.Size = new System.Drawing.Size(97, 17);
+            this.PDRechargeLabel.TabIndex = 43;
+            this.PDRechargeLabel.Text = "PD Recharge:";
+            // 
+            // HealScoreLabel
+            // 
+            this.HealScoreLabel.AutoSize = true;
+            this.HealScoreLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HealScoreLabel.Location = new System.Drawing.Point(585, 122);
+            this.HealScoreLabel.Name = "HealScoreLabel";
+            this.HealScoreLabel.Size = new System.Drawing.Size(79, 16);
+            this.HealScoreLabel.TabIndex = 42;
+            this.HealScoreLabel.Text = "Heal Score:";
+            this.toolTip1.SetToolTip(this.HealScoreLabel, "The contribution of healing abilities to combat power caluclations\r\nAmount / rate" +
+        ", with a 20x modifier for area healing and 12x for fighter tenders");
+            // 
+            // PDRadiusLabel
+            // 
+            this.PDRadiusLabel.AutoSize = true;
+            this.PDRadiusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.PDRadiusLabel.Location = new System.Drawing.Point(585, 105);
+            this.PDRadiusLabel.Name = "PDRadiusLabel";
+            this.PDRadiusLabel.Size = new System.Drawing.Size(79, 17);
+            this.PDRadiusLabel.TabIndex = 41;
+            this.PDRadiusLabel.Text = "PD Radius:";
+            // 
             // ComplementLabel
             // 
             this.ComplementLabel.AutoSize = true;
@@ -1908,7 +2122,9 @@
             this.ComplementLabel.Size = new System.Drawing.Size(13, 20);
             this.ComplementLabel.TabIndex = 40;
             this.ComplementLabel.Text = ".";
-            this.toolTip1.SetToolTip(this.ComplementLabel, resources.GetString("ComplementLabel.ToolTip"));
+            this.toolTip1.SetToolTip(this.ComplementLabel, "Count of the XML tech 1 complement\r\nBombers are units with bombing run variants\r\n" +
+        "Squadron counts are given in whole squadrons: i.e. a double squadron will be sho" +
+        "wn as 2");
             // 
             // AlphaCheckBox
             // 
@@ -2310,6 +2526,16 @@
             this.UnitTextPanel.Size = new System.Drawing.Size(1039, 367);
             this.UnitTextPanel.TabIndex = 0;
             this.UnitTextPanel.Tag = "";
+            // 
+            // VariantLabel
+            // 
+            this.VariantLabel.AutoSize = true;
+            this.VariantLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.VariantLabel.Location = new System.Drawing.Point(3, 341);
+            this.VariantLabel.Name = "VariantLabel";
+            this.VariantLabel.Size = new System.Drawing.Size(10, 13);
+            this.VariantLabel.TabIndex = 17;
+            this.VariantLabel.Text = ".";
             // 
             // MaintenanceLabel
             // 
@@ -4387,82 +4613,6 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
-            // VariantLabel
-            // 
-            this.VariantLabel.AutoSize = true;
-            this.VariantLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.VariantLabel.Location = new System.Drawing.Point(3, 341);
-            this.VariantLabel.Name = "VariantLabel";
-            this.VariantLabel.Size = new System.Drawing.Size(10, 13);
-            this.VariantLabel.TabIndex = 17;
-            this.VariantLabel.Text = ".";
-            // 
-            // PDRadiusLabel
-            // 
-            this.PDRadiusLabel.AutoSize = true;
-            this.PDRadiusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.PDRadiusLabel.Location = new System.Drawing.Point(585, 105);
-            this.PDRadiusLabel.Name = "PDRadiusLabel";
-            this.PDRadiusLabel.Size = new System.Drawing.Size(79, 17);
-            this.PDRadiusLabel.TabIndex = 41;
-            this.PDRadiusLabel.Text = "PD Radius:";
-            this.toolTip1.SetToolTip(this.PDRadiusLabel, resources.GetString("PDRadiusLabel.ToolTip"));
-            // 
-            // HealScoreLabel
-            // 
-            this.HealScoreLabel.AutoSize = true;
-            this.HealScoreLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HealScoreLabel.Location = new System.Drawing.Point(585, 122);
-            this.HealScoreLabel.Name = "HealScoreLabel";
-            this.HealScoreLabel.Size = new System.Drawing.Size(79, 16);
-            this.HealScoreLabel.TabIndex = 42;
-            this.HealScoreLabel.Text = "Heal Score:";
-            this.toolTip1.SetToolTip(this.HealScoreLabel, resources.GetString("HealScoreLabel.ToolTip"));
-            // 
-            // PDRechargeLabel
-            // 
-            this.PDRechargeLabel.AutoSize = true;
-            this.PDRechargeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.PDRechargeLabel.Location = new System.Drawing.Point(585, 89);
-            this.PDRechargeLabel.Name = "PDRechargeLabel";
-            this.PDRechargeLabel.Size = new System.Drawing.Size(97, 17);
-            this.PDRechargeLabel.TabIndex = 43;
-            this.PDRechargeLabel.Text = "PD Recharge:";
-            this.toolTip1.SetToolTip(this.PDRechargeLabel, resources.GetString("PDRechargeLabel.ToolTip"));
-            // 
-            // HealAmountLabel
-            // 
-            this.HealAmountLabel.AutoSize = true;
-            this.HealAmountLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HealAmountLabel.Location = new System.Drawing.Point(585, 138);
-            this.HealAmountLabel.Name = "HealAmountLabel";
-            this.HealAmountLabel.Size = new System.Drawing.Size(88, 16);
-            this.HealAmountLabel.TabIndex = 44;
-            this.HealAmountLabel.Text = "Heal Amount:";
-            this.toolTip1.SetToolTip(this.HealAmountLabel, resources.GetString("HealAmountLabel.ToolTip"));
-            // 
-            // HealRechargeLabel
-            // 
-            this.HealRechargeLabel.AutoSize = true;
-            this.HealRechargeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HealRechargeLabel.Location = new System.Drawing.Point(585, 154);
-            this.HealRechargeLabel.Name = "HealRechargeLabel";
-            this.HealRechargeLabel.Size = new System.Drawing.Size(103, 16);
-            this.HealRechargeLabel.TabIndex = 45;
-            this.HealRechargeLabel.Text = "Heal Recharge:";
-            this.toolTip1.SetToolTip(this.HealRechargeLabel, resources.GetString("HealRechargeLabel.ToolTip"));
-            // 
-            // HealRadiusLabel
-            // 
-            this.HealRadiusLabel.AutoSize = true;
-            this.HealRadiusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HealRadiusLabel.Location = new System.Drawing.Point(585, 170);
-            this.HealRadiusLabel.Name = "HealRadiusLabel";
-            this.HealRadiusLabel.Size = new System.Drawing.Size(86, 16);
-            this.HealRadiusLabel.TabIndex = 46;
-            this.HealRadiusLabel.Text = "Heal Radius:";
-            this.toolTip1.SetToolTip(this.HealRadiusLabel, resources.GetString("HealRadiusLabel.ToolTip"));
-            // 
             // Holocron
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -4503,6 +4653,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.AbilityPictureBox)).EndInit();
             this.UnitSubunitPanel.ResumeLayout(false);
             this.UnitSubunitPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.ComplementLuaTechLevelBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ComplementTechLevelBox)).EndInit();
+            this.LuaGarrisonPanel.ResumeLayout(false);
+            this.LuaGarrisonPanel.PerformLayout();
             this.UnitStatPanel.ResumeLayout(false);
             this.UnitStatPanel.PerformLayout();
             this.UnitBTSPanel.ResumeLayout(false);
@@ -4890,6 +5044,17 @@
         private System.Windows.Forms.Label HealAmountLabel;
         private System.Windows.Forms.Label HealRadiusLabel;
         private System.Windows.Forms.Label HealRechargeLabel;
+        private System.Windows.Forms.Panel LuaGarrisonPanel;
+        private System.Windows.Forms.ListBox ComplementHeroListBox;
+        private System.Windows.Forms.ListBox ComplementResearchListBox;
+        private System.Windows.Forms.CheckBox ComplementXMLCheckBox;
+        private System.Windows.Forms.Label ComplementLuaTechLevelLabel;
+        private System.Windows.Forms.Label ComplementTechLevelLabel;
+        private System.Windows.Forms.NumericUpDown ComplementLuaTechLevelBox;
+        private System.Windows.Forms.NumericUpDown ComplementTechLevelBox;
+        private System.Windows.Forms.Label ComplementHeroLabel;
+        private System.Windows.Forms.Label ComplementActiveResearchesLabel;
+        private System.Windows.Forms.ListBox ComplementFactionListBox;
     }
 }
 
