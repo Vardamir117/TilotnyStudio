@@ -622,6 +622,7 @@ namespace Holocron
                         UnitFilter INeedYourFunctions = new UnitFilter();
                         globals.UnitFilterConfig = INeedYourFunctions.newFilter();
                         UnitFilterTypeLabel.Text = INeedYourFunctions.filterDocumentation;
+                        globals.UnitFilterConfig.skirmishModes.Add(1); //Jumping to skirmish units may also be required. Hopefully nothing else?
                         populateUnitListbox();
                         for (int i = 0; i < UnitListBox.Items.Count; i++)
                         {
@@ -2122,6 +2123,7 @@ namespace Holocron
                 FactionInternalLabel.Text = "Internal Name: ";
                 FactionLuaNameLabel.Text = "";
                 FactionAILabel.Text = "";
+                FactionAliasLabel.Text = "";
                 FactionAbbreviationLabel.Text = "";
                 FactionColorLabel.Text = "";
                 FactionTColorLabel.Text = "";
@@ -2142,6 +2144,8 @@ namespace Holocron
             else FactionLuaNameLabel.Text = "Lua Name: " + faction.luaname;
             if (faction.ai == "") FactionAILabel.Text = "";
             else FactionAILabel.Text = "AI Type: " + faction.ai;
+            if (faction.alias == "" || faction.alias == faction.codename) FactionAliasLabel.Text = "";
+            else FactionAliasLabel.Text = "Alias: " + faction.alias;
             if (faction.abbreviation == "") FactionAbbreviationLabel.Text = "";
             else FactionAbbreviationLabel.Text = "Abbreviation: " + faction.abbreviation;
             FactionColorLabel.Text = "Color: " + colorString(faction.color);
@@ -2226,7 +2230,7 @@ namespace Holocron
             else if (FactionHeroTeamRB.Checked) src = entities.heroCompanies;
             foreach (unit unit in src)
             {
-                if (unit.username.ToLower().Contains(FactionUnitSearchTextBox.Text.ToLower()) && unit.affiliations.Contains(faction) && !IsHiddenObject(unit) && !IsSkirmishObject(unit) && !unit.unitname.Contains("Convoy") && !unit.unitname.Contains("Cheat") && !(unit.unitname.Contains("Mission") && !unit.unitname.Contains("_Mission")) && !unit.unitname.Contains("Survival_") &&  !unit.unitname.Contains("GW_") && !unit.unitname.Contains("GROUNDWAR_") && unit.influence == 0)
+                if (unit.username.ToLower().Contains(FactionUnitSearchTextBox.Text.ToLower()) && unit.affiliations.Contains(faction) && !IsSkirmishObject(unit) && !IsMissionObject(unit) && !IsSurvivalObject(unit) && !IsGroundWar(unit) && !IsTransportObject(unit) && !unit.unitname.Contains("Cheat") && unit.influence == 0)
                 {
                     FactionUnitListBox.Items.Add(unit);
                 }
@@ -2796,6 +2800,128 @@ namespace Holocron
                     }
                 }
             }
+            UnitDiscountListBox.Items.Clear();
+            getDiscountObjects();
+            foreach (unit discounter in globals.DiscountEntities)
+            {
+                bool found = false;
+                foreach(ability able in discounter.abilities)
+                {
+                    if(able.type == "Reduce_Production_Price_Ability")
+                    {
+                        if(able.applicable_types.Length > 0)
+                        {
+                            if (able.applicable_types.Contains(selectedUnit.unitname))
+                            {
+                                UnitDiscountListBox.Items.Add(discounter);
+                                found = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (found) break;
+                }
+            }
+            populateHostListBox();
+        }
+
+        private void populateHostListBox()
+        {
+            if (UnitListBox.Tag is null) return;
+            unit selectedUnit = (unit)UnitListBox.Tag;
+            UnitHostListbox.Items.Clear();
+            List<string> standards = new List<string>();
+            List<string> randoms = new List<string>();
+            string xmlname = selectedUnit.unitname;
+            string luaname = xmlname.ToUpper();
+
+            string[] lowerSuffixes = new string[] { "" };
+            string[] upperSuffixes = new string[] { "" };
+            if (UnitAllSquadSizesCheckBox.Visible)
+            {
+                string localcut = xmlname.Replace("_Double", "").Replace("_Half", "").Replace("_Third", "").Replace("_Triple", "");
+                List<string> fighterfiles = getModFiles("Scripts\\Library\\standard-fighters", "*.lua");
+                string upper = "\"" + localcut.ToUpper() + "\"";
+                foreach (string file in fighterfiles)
+                {
+                    string contents = File.ReadAllText(file);
+                    if (contents.Contains(upper)) standards.Add(LastFolderOrFile(file).ToUpper().Replace(".LUA", ""));
+                }
+                fighterfiles = getModFiles("Scripts\\Library\\random-fighters", "*.lua");
+                foreach (string file in fighterfiles)
+                {
+                    string contents = File.ReadAllText(file);
+                    if (contents.Contains(upper)) randoms.Add(LastFolderOrFile(file).ToUpper().Replace(".LUA", ""));
+                }
+                if (UnitAllSquadSizesCheckBox.Checked)
+                {
+                    lowerSuffixes = new string[] { "", "_Double", "_Half", "_Third", "_Triple" };
+                    upperSuffixes = new string[] { "", "_DOUBLE", "_HALF", "_THIRD", "_TRIPLE" };
+
+                    xmlname = localcut;
+                    luaname = localcut.ToUpper();
+                }
+            }
+
+            foreach (unit unidad in entities.objects)
+            {
+                //bool found = false;
+                if (unidad.companyunits.Count > 0)
+                {
+                    if (unidad.companyunits.Contains(selectedUnit.unitname))
+                    {
+                        UnitHostListbox.Items.Add(unidad);
+                        continue;
+                    }
+                    if (unidad.subcompanies.FindIndex(s => s.codename == selectedUnit.unitname) >= 0)
+                    {
+                        UnitHostListbox.Items.Add(unidad);
+                        continue;
+                    }
+                }
+                if (unidad.garrison.Count > 0)
+                {
+                    /*if (unidad.garrison.FindIndex(s => s.unitname == selectedUnit.unitname) >= 0)
+                    {
+                        UnitHostListbox.Items.Add(unidad);
+                        continue;
+                    }*/
+                    foreach (string suffix in lowerSuffixes)
+                    {
+                        if (unidad.garrison.FindIndex(s => string.Equals(s.unitname, xmlname + suffix, StringComparison.OrdinalIgnoreCase)) >= 0)
+                        {
+                            UnitHostListbox.Items.Add(unidad);
+                            continue;
+                        }
+                    }
+                }
+                if (unidad.garrison_lua.Count > 0)
+                {
+                    foreach (string suffix in upperSuffixes)
+                    {
+                        if (unidad.garrison_lua.FindIndex(s => s.unitname == luaname + suffix) >= 0)
+                        {
+                            UnitHostListbox.Items.Add(unidad);
+                            continue;
+                        }
+                        if (unidad.garrison_lua.FindIndex(s => s.standard && standards.Contains(luaname + suffix)) >= 0)
+                        {
+                            UnitHostListbox.Items.Add(unidad);
+                            continue;
+                        }
+                        if (unidad.garrison_lua.FindIndex(s => s.random && randoms.Contains(luaname + suffix)) >= 0)
+                        {
+                            UnitHostListbox.Items.Add(unidad);
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void UnitAllSquadSizesCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            populateHostListBox();
         }
 
         private void setSubUnitVisibility(int mode)
@@ -3483,16 +3609,35 @@ namespace Holocron
                 }
             }
 
-            if (globals.UnitFilterConfig.skirmishMode > 0)
+            bool regular = true;
+            if (IsSkirmishObject(unit))
             {
-                if (IsSkirmishObject(unit))
-                {
-                    if (globals.UnitFilterConfig.skirmishMode == 2) return false;
-                }
-                else
-                {
-                    if (globals.UnitFilterConfig.skirmishMode == 1) return false;
-                }
+                regular = false;
+                if (!globals.UnitFilterConfig.skirmishModes.Contains(1)) return false;
+            }
+            if (IsTransportObject(unit))
+            {
+                regular = false;
+                if (!globals.UnitFilterConfig.skirmishModes.Contains(2)) return false;
+            }
+            if (IsMissionObject(unit))
+            {
+                regular = false;
+                if (!globals.UnitFilterConfig.skirmishModes.Contains(3)) return false;
+            }
+            if (IsGroundWar(unit))
+            {
+                regular = false;
+                if (!globals.UnitFilterConfig.skirmishModes.Contains(4)) return false;
+            }
+            if (IsSurvivalObject(unit))
+            {
+                regular = false;
+                if (!globals.UnitFilterConfig.skirmishModes.Contains(5)) return false;
+            }
+            if (regular)
+            {
+                if (!globals.UnitFilterConfig.skirmishModes.Contains(0)) return false;
             }
 
             if (globals.UnitFilterConfig.pdMode > 0)
@@ -3609,7 +3754,7 @@ namespace Holocron
             for (int i = 0; i< units.Count; i++)
             {
                 unit unit = units[i];
-                if (unit.variantbase != "Infantry_Dummy_Template" && unit.unitname != "Infantry_Dummy_Template" && !IsHiddenObject(unit) && !unit.unitname.Contains("_Captured") && (!StructureRadioButton.Checked || !SpaceStructureRadioButton.Checked || (unit.hp > 1 && !unit.flags.Contains("NotOpportunityTarget"))) )
+                if (unit.variantbase != "Infantry_Dummy_Template" && unit.unitname != "Infantry_Dummy_Template" && !unit.unitname.Contains("_Captured") && (!StructureRadioButton.Checked || !SpaceStructureRadioButton.Checked || (unit.hp > 1 && !unit.flags.Contains("NotOpportunityTarget"))) )
                 {
                     if ((search == "" || (unit.username).ToLower().Contains(search.ToLower())) && filterUnit(unit))
                     {
@@ -3745,6 +3890,9 @@ namespace Holocron
             bool spaceonly = mode == 0 || mode == 3 || mode == 4;
             bool companyonly = mode == 1;
             bool groundunitonly = mode == 2;
+
+            if (mode == 3) UnitAllSquadSizesCheckBox.Visible = true;
+            else UnitAllSquadSizesCheckBox.Visible = false;
 
             ArmorBoxTypeFill(spaceonly, true);
             ArmorBoxTypeFill(spaceonly, false);
@@ -4313,6 +4461,16 @@ namespace Holocron
         private void UnitGCGotoButton_Click(object sender, EventArgs e)
         {
             if (UnitGCListbox.SelectedItems.Count > 0)insert_history((int)historymaintabs.conquest, 0, ((galacticConquest)UnitGCListbox.SelectedItem).codename, true);
+        }
+
+        private void UnitDiscountGotoButton_Click(object sender, EventArgs e)
+        {
+            if (UnitDiscountListBox.SelectedItems.Count > 0) gotoUnitUniversal(((unit)UnitDiscountListBox.SelectedItem).unitname);
+        }
+
+        private void UnitGotoHostButton_Click(object sender, EventArgs e)
+        {
+            if (UnitHostListbox.SelectedItems.Count > 0) gotoUnitUniversal(((unit)UnitHostListbox.SelectedItem).unitname);
         }
 
         private void FactionAvailableListbox_SelectedIndexChanged(object sender, EventArgs e)

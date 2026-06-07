@@ -107,17 +107,21 @@ public static class SharedFunctions
 
     public static string getModFile(string corepath)
     {
-        string corenne = "";
-        foreach (string modpath in entities.modpaths)
+        try
         {
-            string test = Path.Combine(modpath, corepath);
-            if (File.Exists(test))
+            string corenne = "";
+            foreach (string modpath in entities.modpaths)
             {
-                corenne = test;
-                break;
+                string test = Path.Combine(modpath, corepath);
+                if (File.Exists(test))
+                {
+                    corenne = test;
+                    break;
+                }
             }
+            return corenne;
         }
-        return corenne;
+        catch { return ""; }
     }
 
     public static List<string> getModFiles(string corepath, string extension)
@@ -412,7 +416,7 @@ public static class SharedFunctions
         value = unit.SelectSingleNode("descendant::Text_ID");
         if (!(value is null))
         {
-            if (!(value.LastChild is null)) username = value.LastChild.Value;
+            if (!(value.LastChild is null)) username = value.InnerText.Trim();
         }
         value = unit.SelectSingleNode("descendant::Build_Cost_Credits");
         if (!(value is null))
@@ -2483,12 +2487,32 @@ public static class SharedFunctions
 
     public static bool IsHiddenObject(unit unit)
     {//Conditions that mean it should never be displayed
-        return unit.unitname.Contains("Template_") || (unit.unitname.Contains("_Dummy") || unit.unitname.Contains("_Marker") || unit.unitname.Contains("ZLayer"));
+        return unit.unitname.Contains("Template_") || (unit.unitname.Contains("_Dummy") || unit.unitname.Contains("_Marker") || unit.unitname.Contains("ZLayer") || unit.unitname.Contains("INFLUENCE_") || unit.unitname.Contains("Ship_Crew_Tier_") || unit.datafile.Contains("Mod_Id"));
     }
 
     public static bool IsSkirmishObject(unit unit)
     {
-        return unit.unitname.Contains("Skirmish_") || (unit.unitname.Contains("_MP") && !unit.unitname.Contains("_MP_"));
+        return unit.unitname.Contains("Skirmish_") || unit.unitname.Contains("_Buildable") || (unit.unitname.Contains("_MP") && !unit.unitname.Contains("_MP_"));
+    }
+
+    public static bool IsTransportObject(unit unit)
+    {
+        return unit.behaviors.Contains("TRANSPORT");
+    }
+
+    public static bool IsGroundWar(unit unit)
+    {
+        return unit.unitname.Contains("GROUNDWAR_") || unit.unitname.Contains("GW_");
+    }
+
+    public static bool IsSurvivalObject(unit unit)
+    {
+        return unit.unitname.Contains("Survival_");
+    }
+
+    public static bool IsMissionObject(unit unit)
+    {
+        return unit.unitname.Contains("Convoy_") || (unit.unitname.Contains("Mission_") && !unit.username.Contains("Mission")); //Need to catch Mission_Ajuur but not Mission_Vao
     }
 
     public static string ReadXMLElement(string line)
@@ -2501,7 +2525,7 @@ public static class SharedFunctions
 
     public static bool CheckLuaIndex(string ID, string line)
     {
-        return line.Contains(ID + " = ") || line.Contains("[\"" + ID + "\"]");
+        return (line.Contains(ID + " = ") && !line.Contains("_" + ID)) || line.Contains("[\"" + ID + "\"]"); //The second bit hopefully catches all such cases like EMPIRE matching ETERNAL_EMPIRE.
     }
 
     public static void parseFactions(entities entities)
@@ -2611,7 +2635,8 @@ public static class SharedFunctions
                         if (line.Contains("}")) break;
                         if (CheckLuaIndex(LuaName, line))
                         {
-                            newfaction.alias = line.Substring(line.IndexOf("\"") + 1, line.LastIndexOf("\"") - line.IndexOf("\"") - 1);
+                            line = line.Trim();
+                            newfaction.alias = line.Substring(line.IndexOf("=") + 3, line.LastIndexOf("\"") - line.IndexOf("=") - 3);
                             break;
                         }
 
@@ -3915,36 +3940,39 @@ public static class SharedFunctions
 
         foreach(unit entity in entities.objects) //I love consistency!
         {
-            if (entity.behaviors.Contains("DUMMY_GROUND_STRUCTURE") || entity.modebehaviors.Contains("DUMMY_GROUND_STRUCTURE"))
+            if (!IsHiddenObject(entity))
             {
-                entities.structures.Add(entity);
-            }
-            else if ((entity.behaviors.Contains("DUMMY_ORBITAL_STRUCTURE") || entity.modebehaviors.Contains("DUMMY_ORBITAL_STRUCTURE")) && (entity.elementName != "W_DummyStructure" || entity.elementName != "MiscObject"))
-            {
-                entities.spaceStructures.Add(entity);
-            }
-            else if (entity.fightermode == 0 || entity.behaviors.Contains("SIMPLE_SPACE_LOCOMOTOR") || entity.modebehaviors.Contains("SIMPLE_SPACE_LOCOMOTOR"))
-            {
-                if (entity.hero) entities.spaceHeroes.Add(entity);
-                else entities.spaceUnits.Add(entity);
-            }
-            else if (entity.fightermode > 0 || entity.behaviors.Contains("DUMMY_SPACE_FIGHTER_SQUADRON") || entity.modebehaviors.Contains("DUMMY_SPACE_FIGHTER_SQUADRON"))
-            {
-                entities.fighters.Add(entity);
-            }
-            else if (entity.percompany > 0)
-            {
-                if (entity.hero) entities.heroCompanies.Add(entity);
-                else entities.groundCompanies.Add(entity);
-            }
-            else if (entity.behaviors.Contains("LAND_TEAM_CONTAINER_LOCOMOTOR") || entity.modebehaviors.Contains("LAND_TEAM_CONTAINER_LOCOMOTOR"))
-            {
-                entities.containers.Add(entity);
-            }
-            else if (entity.behaviors.Contains("WALK_LOCOMOTOR") || entity.behaviors.Contains("LAND_TEAM_INFANTRY_LOCOMOTOR") || entity.behaviors.Contains("FLYING_LOCOMOTOR") || entity.modebehaviors.Contains("WALK_LOCOMOTOR") || entity.modebehaviors.Contains("LAND_TEAM_INFANTRY_LOCOMOTOR") || entity.modebehaviors.Contains("FLYING_LOCOMOTOR") || entity.categories.Contains("NonCombatHero"))
-            {
-                if (entity.hero) entities.groundHeroes.Add(entity);
-                else entities.groundUnits.Add(entity);
+                if (entity.behaviors.Contains("DUMMY_GROUND_STRUCTURE") || entity.modebehaviors.Contains("DUMMY_GROUND_STRUCTURE"))
+                {
+                    entities.structures.Add(entity);
+                }
+                else if ((entity.behaviors.Contains("DUMMY_ORBITAL_STRUCTURE") || entity.modebehaviors.Contains("DUMMY_ORBITAL_STRUCTURE")) && (entity.elementName != "W_DummyStructure" || entity.elementName != "MiscObject"))
+                {
+                    entities.spaceStructures.Add(entity);
+                }
+                else if (entity.fightermode == 0 || entity.behaviors.Contains("SIMPLE_SPACE_LOCOMOTOR") || entity.modebehaviors.Contains("SIMPLE_SPACE_LOCOMOTOR"))
+                {
+                    if (entity.hero) entities.spaceHeroes.Add(entity);
+                    else entities.spaceUnits.Add(entity);
+                }
+                else if (entity.fightermode > 0 || entity.behaviors.Contains("DUMMY_SPACE_FIGHTER_SQUADRON") || entity.modebehaviors.Contains("DUMMY_SPACE_FIGHTER_SQUADRON"))
+                {
+                    entities.fighters.Add(entity);
+                }
+                else if (entity.percompany > 0)
+                {
+                    if (entity.hero) entities.heroCompanies.Add(entity);
+                    else entities.groundCompanies.Add(entity);
+                }
+                else if (entity.behaviors.Contains("LAND_TEAM_CONTAINER_LOCOMOTOR") || entity.modebehaviors.Contains("LAND_TEAM_CONTAINER_LOCOMOTOR"))
+                {
+                    entities.containers.Add(entity);
+                }
+                else if (entity.behaviors.Contains("WALK_LOCOMOTOR") || entity.behaviors.Contains("LAND_TEAM_INFANTRY_LOCOMOTOR") || entity.behaviors.Contains("FLYING_LOCOMOTOR") || entity.modebehaviors.Contains("WALK_LOCOMOTOR") || entity.modebehaviors.Contains("LAND_TEAM_INFANTRY_LOCOMOTOR") || entity.modebehaviors.Contains("FLYING_LOCOMOTOR") || entity.categories.Contains("NonCombatHero"))
+                {
+                    if (entity.hero) entities.groundHeroes.Add(entity);
+                    else entities.groundUnits.Add(entity);
+                }
             }
         }
 
@@ -4317,7 +4345,12 @@ public static class SharedFunctions
                     else
                     {
                         if (line.Contains("Spawn_Units")) checkfighters = true;
-                        if (line.Contains("FULLINHERIT") || line.Contains("FIGHTERINHERIT")) return readObjectLuaLibrary(line.Substring(line.IndexOf("\"") + 1, line.LastIndexOf("\"") - line.IndexOf("\"") - 1));
+                        if (line.Contains("FULLINHERIT") || line.Contains("FIGHTERINHERIT"))
+                        {
+                            int index = line.IndexOf("\"") + 1;
+                            string inherit = line.Substring(index, nextLuaLibSection(line, index) - index - 1);
+                            return readObjectLuaLibrary(inherit);
+                        }
                     }
                 }
             }
@@ -5272,7 +5305,7 @@ public struct garrison_lua
 
     public override string ToString()
     {
-        return username + ": " + upfront * squad_size + " / " + reserve * squad_size;
+        return username + ": " + (upfront * squad_size).ToString("0.##") + " / " + (reserve * squad_size).ToString("0.##");
     }
 }
 

@@ -394,6 +394,14 @@
             this.AutoResolveBattleTypeLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.FactionAliasLabel = new System.Windows.Forms.Label();
+            this.UnitDiscountGotoButton = new System.Windows.Forms.Button();
+            this.label32 = new System.Windows.Forms.Label();
+            this.UnitDiscountListBox = new System.Windows.Forms.ListBox();
+            this.UnitGotoHostButton = new System.Windows.Forms.Button();
+            this.label33 = new System.Windows.Forms.Label();
+            this.UnitHostListbox = new System.Windows.Forms.ListBox();
+            this.UnitAllSquadSizesCheckBox = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.tabLookups.SuspendLayout();
             this.LookupTabControl.SuspendLayout();
@@ -1277,6 +1285,13 @@
             // 
             // UnitAvailPanel
             // 
+            this.UnitAvailPanel.Controls.Add(this.UnitAllSquadSizesCheckBox);
+            this.UnitAvailPanel.Controls.Add(this.UnitGotoHostButton);
+            this.UnitAvailPanel.Controls.Add(this.label33);
+            this.UnitAvailPanel.Controls.Add(this.UnitHostListbox);
+            this.UnitAvailPanel.Controls.Add(this.UnitDiscountGotoButton);
+            this.UnitAvailPanel.Controls.Add(this.label32);
+            this.UnitAvailPanel.Controls.Add(this.UnitDiscountListBox);
             this.UnitAvailPanel.Controls.Add(this.UnitGCGotoButton);
             this.UnitAvailPanel.Controls.Add(this.UnitGotoPlanetButton);
             this.UnitAvailPanel.Controls.Add(this.UnitSpawnGotoButton);
@@ -1298,7 +1313,7 @@
             this.UnitAvailPanel.Controls.Add(this.UnitSpawnSetListBox);
             this.UnitAvailPanel.Location = new System.Drawing.Point(32, 381);
             this.UnitAvailPanel.Name = "UnitAvailPanel";
-            this.UnitAvailPanel.Size = new System.Drawing.Size(1039, 231);
+            this.UnitAvailPanel.Size = new System.Drawing.Size(1039, 376);
             this.UnitAvailPanel.TabIndex = 9;
             // 
             // UnitGCGotoButton
@@ -1323,11 +1338,11 @@
             // 
             // UnitSpawnGotoButton
             // 
-            this.UnitSpawnGotoButton.Location = new System.Drawing.Point(645, 71);
+            this.UnitSpawnGotoButton.Location = new System.Drawing.Point(219, 228);
             this.UnitSpawnGotoButton.Name = "UnitSpawnGotoButton";
-            this.UnitSpawnGotoButton.Size = new System.Drawing.Size(31, 23);
+            this.UnitSpawnGotoButton.Size = new System.Drawing.Size(48, 23);
             this.UnitSpawnGotoButton.TabIndex = 43;
-            this.UnitSpawnGotoButton.Text = "Go";
+            this.UnitSpawnGotoButton.Text = "Go to";
             this.UnitSpawnGotoButton.UseVisualStyleBackColor = true;
             this.UnitSpawnGotoButton.Click += new System.EventHandler(this.UnitSpawnGotoButton_Click);
             // 
@@ -1340,14 +1355,16 @@
             this.label30.Size = new System.Drawing.Size(66, 20);
             this.label30.TabIndex = 42;
             this.label30.Text = "Planets:";
+            this.toolTip1.SetToolTip(this.label30, "Planets required to produce this unit.");
             // 
             // UnitRequiredPlanetListbox
             // 
             this.UnitRequiredPlanetListbox.FormattingEnabled = true;
             this.UnitRequiredPlanetListbox.Location = new System.Drawing.Point(682, 94);
             this.UnitRequiredPlanetListbox.Name = "UnitRequiredPlanetListbox";
-            this.UnitRequiredPlanetListbox.Size = new System.Drawing.Size(120, 121);
+            this.UnitRequiredPlanetListbox.Size = new System.Drawing.Size(120, 277);
             this.UnitRequiredPlanetListbox.TabIndex = 41;
+            this.toolTip1.SetToolTip(this.UnitRequiredPlanetListbox, "Planets required to produce this unit.\r\nWill be blank if any planet will do");
             // 
             // label29
             // 
@@ -1358,14 +1375,17 @@
             this.label29.Size = new System.Drawing.Size(152, 20);
             this.label29.TabIndex = 40;
             this.label29.Text = "Galactic Conquests:";
+            this.toolTip1.SetToolTip(this.label29, "Galactic Conquests containing any of the planets required to produce this unit.");
             // 
             // UnitGCListbox
             // 
             this.UnitGCListbox.FormattingEnabled = true;
             this.UnitGCListbox.Location = new System.Drawing.Point(808, 94);
             this.UnitGCListbox.Name = "UnitGCListbox";
-            this.UnitGCListbox.Size = new System.Drawing.Size(233, 121);
+            this.UnitGCListbox.Size = new System.Drawing.Size(233, 277);
             this.UnitGCListbox.TabIndex = 39;
+            this.toolTip1.SetToolTip(this.UnitGCListbox, "Galactic Conquests containing any of the planets required to produce this unit.\r\n" +
+        "Will be blank if any conquest will do");
             // 
             // label14
             // 
@@ -1470,19 +1490,21 @@
             // 
             this.SpawnSetLabel.AutoSize = true;
             this.SpawnSetLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SpawnSetLabel.Location = new System.Drawing.Point(552, 71);
+            this.SpawnSetLabel.Location = new System.Drawing.Point(102, 228);
             this.SpawnSetLabel.Name = "SpawnSetLabel";
             this.SpawnSetLabel.Size = new System.Drawing.Size(99, 20);
             this.SpawnSetLabel.TabIndex = 1;
             this.SpawnSetLabel.Text = "Spawn Sets:";
+            this.toolTip1.SetToolTip(this.SpawnSetLabel, "Spawn sets that contain this unit");
             // 
             // UnitSpawnSetListBox
             // 
             this.UnitSpawnSetListBox.FormattingEnabled = true;
-            this.UnitSpawnSetListBox.Location = new System.Drawing.Point(556, 95);
+            this.UnitSpawnSetListBox.Location = new System.Drawing.Point(106, 252);
             this.UnitSpawnSetListBox.Name = "UnitSpawnSetListBox";
-            this.UnitSpawnSetListBox.Size = new System.Drawing.Size(120, 121);
+            this.UnitSpawnSetListBox.Size = new System.Drawing.Size(161, 121);
             this.UnitSpawnSetListBox.TabIndex = 0;
+            this.toolTip1.SetToolTip(this.UnitSpawnSetListBox, "Spawn sets that contain this unit");
             // 
             // UnitAbilityPanel
             // 
@@ -1511,7 +1533,7 @@
             this.UnitAbilityPanel.Controls.Add(this.AbilityPictureBox);
             this.UnitAbilityPanel.Controls.Add(this.AbilityListBox);
             this.UnitAbilityPanel.Controls.Add(this.UnitAbilityListBox);
-            this.UnitAbilityPanel.Location = new System.Drawing.Point(32, 1224);
+            this.UnitAbilityPanel.Location = new System.Drawing.Point(32, 1351);
             this.UnitAbilityPanel.Name = "UnitAbilityPanel";
             this.UnitAbilityPanel.Size = new System.Drawing.Size(1039, 180);
             this.UnitAbilityPanel.TabIndex = 8;
@@ -1749,7 +1771,7 @@
             // CollapseUnitSubunitPanel
             // 
             this.CollapseUnitSubunitPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseUnitSubunitPanel.Location = new System.Drawing.Point(5, 1040);
+            this.CollapseUnitSubunitPanel.Location = new System.Drawing.Point(5, 1167);
             this.CollapseUnitSubunitPanel.Name = "CollapseUnitSubunitPanel";
             this.CollapseUnitSubunitPanel.Size = new System.Drawing.Size(24, 19);
             this.CollapseUnitSubunitPanel.TabIndex = 7;
@@ -1772,7 +1794,7 @@
             this.UnitSubunitPanel.Controls.Add(this.SubUnitLabel);
             this.UnitSubunitPanel.Controls.Add(this.UnitSubSquadListbox);
             this.UnitSubunitPanel.Controls.Add(this.UnitSubunitListbox);
-            this.UnitSubunitPanel.Location = new System.Drawing.Point(32, 1040);
+            this.UnitSubunitPanel.Location = new System.Drawing.Point(32, 1167);
             this.UnitSubunitPanel.Name = "UnitSubunitPanel";
             this.UnitSubunitPanel.Size = new System.Drawing.Size(1039, 166);
             this.UnitSubunitPanel.TabIndex = 6;
@@ -1969,7 +1991,7 @@
             // CollapseUnitAbilityPanel
             // 
             this.CollapseUnitAbilityPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseUnitAbilityPanel.Location = new System.Drawing.Point(5, 1224);
+            this.CollapseUnitAbilityPanel.Location = new System.Drawing.Point(5, 1351);
             this.CollapseUnitAbilityPanel.Name = "CollapseUnitAbilityPanel";
             this.CollapseUnitAbilityPanel.Size = new System.Drawing.Size(24, 19);
             this.CollapseUnitAbilityPanel.TabIndex = 5;
@@ -1981,7 +2003,7 @@
             // CollapseUnitStatPanel
             // 
             this.CollapseUnitStatPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseUnitStatPanel.Location = new System.Drawing.Point(5, 626);
+            this.CollapseUnitStatPanel.Location = new System.Drawing.Point(5, 753);
             this.CollapseUnitStatPanel.Name = "CollapseUnitStatPanel";
             this.CollapseUnitStatPanel.Size = new System.Drawing.Size(24, 19);
             this.CollapseUnitStatPanel.TabIndex = 4;
@@ -2045,7 +2067,7 @@
             this.UnitStatPanel.Controls.Add(this.UnitSpeedLabel);
             this.UnitStatPanel.Controls.Add(this.UnitShieldLabel);
             this.UnitStatPanel.Controls.Add(this.UnitHpLabel);
-            this.UnitStatPanel.Location = new System.Drawing.Point(32, 630);
+            this.UnitStatPanel.Location = new System.Drawing.Point(32, 757);
             this.UnitStatPanel.Name = "UnitStatPanel";
             this.UnitStatPanel.Size = new System.Drawing.Size(1039, 396);
             this.UnitStatPanel.TabIndex = 2;
@@ -2490,7 +2512,7 @@
             // UnitBTSPanel
             // 
             this.UnitBTSPanel.Controls.Add(this.UnitBTSTextBox);
-            this.UnitBTSPanel.Location = new System.Drawing.Point(32, 1415);
+            this.UnitBTSPanel.Location = new System.Drawing.Point(32, 1542);
             this.UnitBTSPanel.Name = "UnitBTSPanel";
             this.UnitBTSPanel.Size = new System.Drawing.Size(1039, 150);
             this.UnitBTSPanel.TabIndex = 1;
@@ -3757,6 +3779,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.FactionPanel.AutoScroll = true;
+            this.FactionPanel.Controls.Add(this.FactionAliasLabel);
             this.FactionPanel.Controls.Add(this.FactionGotoUnitButton);
             this.FactionPanel.Controls.Add(this.FactionGotoConquestButton);
             this.FactionPanel.Controls.Add(this.FactionGotoBuildableButton);
@@ -4007,7 +4030,7 @@
             // 
             this.FactionAILabel.AutoSize = true;
             this.FactionAILabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FactionAILabel.Location = new System.Drawing.Point(431, 54);
+            this.FactionAILabel.Location = new System.Drawing.Point(431, 34);
             this.FactionAILabel.Name = "FactionAILabel";
             this.FactionAILabel.Size = new System.Drawing.Size(67, 20);
             this.FactionAILabel.TabIndex = 84;
@@ -4020,7 +4043,7 @@
             // 
             this.FactionLuaNameLabel.AutoSize = true;
             this.FactionLuaNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FactionLuaNameLabel.Location = new System.Drawing.Point(431, 34);
+            this.FactionLuaNameLabel.Location = new System.Drawing.Point(12, 54);
             this.FactionLuaNameLabel.Name = "FactionLuaNameLabel";
             this.FactionLuaNameLabel.Size = new System.Drawing.Size(86, 20);
             this.FactionLuaNameLabel.TabIndex = 83;
@@ -4613,6 +4636,92 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
+            // FactionAliasLabel
+            // 
+            this.FactionAliasLabel.AutoSize = true;
+            this.FactionAliasLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FactionAliasLabel.Location = new System.Drawing.Point(431, 54);
+            this.FactionAliasLabel.Name = "FactionAliasLabel";
+            this.FactionAliasLabel.Size = new System.Drawing.Size(47, 20);
+            this.FactionAliasLabel.TabIndex = 108;
+            this.FactionAliasLabel.Text = "Alias:";
+            this.FactionAliasLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.toolTip1.SetToolTip(this.FactionAliasLabel, "The default AI type of the faction. \"None\" represents an inactive faction that do" +
+        "es nothing on the galactic level");
+            // 
+            // UnitDiscountGotoButton
+            // 
+            this.UnitDiscountGotoButton.Location = new System.Drawing.Point(430, 228);
+            this.UnitDiscountGotoButton.Name = "UnitDiscountGotoButton";
+            this.UnitDiscountGotoButton.Size = new System.Drawing.Size(48, 23);
+            this.UnitDiscountGotoButton.TabIndex = 48;
+            this.UnitDiscountGotoButton.Text = "Go to";
+            this.UnitDiscountGotoButton.UseVisualStyleBackColor = true;
+            this.UnitDiscountGotoButton.Click += new System.EventHandler(this.UnitDiscountGotoButton_Click);
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label32.Location = new System.Drawing.Point(269, 228);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(139, 20);
+            this.label32.TabIndex = 47;
+            this.label32.Text = "Discount Sources:";
+            this.toolTip1.SetToolTip(this.label32, "Objects that discount this unit specifically (not units in general)");
+            // 
+            // UnitDiscountListBox
+            // 
+            this.UnitDiscountListBox.FormattingEnabled = true;
+            this.UnitDiscountListBox.Location = new System.Drawing.Point(273, 252);
+            this.UnitDiscountListBox.Name = "UnitDiscountListBox";
+            this.UnitDiscountListBox.Size = new System.Drawing.Size(205, 121);
+            this.UnitDiscountListBox.TabIndex = 46;
+            this.toolTip1.SetToolTip(this.UnitDiscountListBox, "Objects that discount this unit specifically (not units in general)");
+            // 
+            // UnitGotoHostButton
+            // 
+            this.UnitGotoHostButton.Location = new System.Drawing.Point(628, 73);
+            this.UnitGotoHostButton.Name = "UnitGotoHostButton";
+            this.UnitGotoHostButton.Size = new System.Drawing.Size(48, 23);
+            this.UnitGotoHostButton.TabIndex = 51;
+            this.UnitGotoHostButton.Text = "Go to";
+            this.UnitGotoHostButton.UseVisualStyleBackColor = true;
+            this.UnitGotoHostButton.Click += new System.EventHandler(this.UnitGotoHostButton_Click);
+            // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label33.Location = new System.Drawing.Point(524, 74);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(88, 20);
+            this.label33.TabIndex = 50;
+            this.label33.Text = "Host Units:";
+            this.toolTip1.SetToolTip(this.label33, "Companies that contain this unit");
+            // 
+            // UnitHostListbox
+            // 
+            this.UnitHostListbox.FormattingEnabled = true;
+            this.UnitHostListbox.Location = new System.Drawing.Point(528, 96);
+            this.UnitHostListbox.Name = "UnitHostListbox";
+            this.UnitHostListbox.Size = new System.Drawing.Size(148, 277);
+            this.UnitHostListbox.TabIndex = 49;
+            this.toolTip1.SetToolTip(this.UnitHostListbox, "Companies that contain this unit\r\nAND/OR\r\nObjects that spawn this unit as a garri" +
+        "son");
+            // 
+            // UnitAllSquadSizesCheckBox
+            // 
+            this.UnitAllSquadSizesCheckBox.AutoSize = true;
+            this.UnitAllSquadSizesCheckBox.Location = new System.Drawing.Point(528, 56);
+            this.UnitAllSquadSizesCheckBox.Name = "UnitAllSquadSizesCheckBox";
+            this.UnitAllSquadSizesCheckBox.Size = new System.Drawing.Size(144, 17);
+            this.UnitAllSquadSizesCheckBox.TabIndex = 52;
+            this.UnitAllSquadSizesCheckBox.Text = "Show All Squadron Sizes";
+            this.UnitAllSquadSizesCheckBox.UseVisualStyleBackColor = true;
+            this.UnitAllSquadSizesCheckBox.Visible = false;
+            this.UnitAllSquadSizesCheckBox.CheckedChanged += new System.EventHandler(this.UnitAllSquadSizesCheckBox_CheckedChanged);
+            // 
             // Holocron
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -4624,7 +4733,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Holocron";
-            this.Text = "EaWX Holocron";
+            this.Text = "EaWX Holocron v0.1";
             this.Load += new System.EventHandler(this.Holocron_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -5055,6 +5164,14 @@
         private System.Windows.Forms.Label ComplementHeroLabel;
         private System.Windows.Forms.Label ComplementActiveResearchesLabel;
         private System.Windows.Forms.ListBox ComplementFactionListBox;
+        private System.Windows.Forms.Label FactionAliasLabel;
+        private System.Windows.Forms.Button UnitGotoHostButton;
+        private System.Windows.Forms.Label label33;
+        private System.Windows.Forms.ListBox UnitHostListbox;
+        private System.Windows.Forms.Button UnitDiscountGotoButton;
+        private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.ListBox UnitDiscountListBox;
+        private System.Windows.Forms.CheckBox UnitAllSquadSizesCheckBox;
     }
 }
 

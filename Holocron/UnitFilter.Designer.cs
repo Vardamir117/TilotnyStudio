@@ -74,10 +74,6 @@ namespace Holocron
             this.label11 = new System.Windows.Forms.Label();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.SkirmishPanel = new System.Windows.Forms.Panel();
-            this.SkirmishFalseRB = new System.Windows.Forms.RadioButton();
-            this.SkirmishTrueRB = new System.Windows.Forms.RadioButton();
-            this.SkirmishAnyRB = new System.Windows.Forms.RadioButton();
             this.PDPanel = new System.Windows.Forms.Panel();
             this.PDFalseRB = new System.Windows.Forms.RadioButton();
             this.PDTrueRB = new System.Windows.Forms.RadioButton();
@@ -98,13 +94,13 @@ namespace Holocron
             this.IncomeTrueRB = new System.Windows.Forms.RadioButton();
             this.IncomeFalseRB = new System.Windows.Forms.RadioButton();
             this.IncomePanel = new System.Windows.Forms.Panel();
+            this.SkirmishListBox = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.ShipyardUpDown)).BeginInit();
             this.BuildPanel.SuspendLayout();
             this.PlanetPanel.SuspendLayout();
             this.InfluencePanel.SuspendLayout();
             this.LimitPanel.SuspendLayout();
             this.ComplementPanel.SuspendLayout();
-            this.SkirmishPanel.SuspendLayout();
             this.PDPanel.SuspendLayout();
             this.HealPanel.SuspendLayout();
             this.DiscountPanel.SuspendLayout();
@@ -507,7 +503,7 @@ namespace Holocron
             this.ComplementPanel.Controls.Add(this.ComplementFalseRB);
             this.ComplementPanel.Controls.Add(this.ComplementTrueRB);
             this.ComplementPanel.Controls.Add(this.ComplementAnyRB);
-            this.ComplementPanel.Location = new System.Drawing.Point(189, 348);
+            this.ComplementPanel.Location = new System.Drawing.Point(859, 32);
             this.ComplementPanel.Name = "ComplementPanel";
             this.ComplementPanel.Size = new System.Drawing.Size(120, 72);
             this.ComplementPanel.TabIndex = 67;
@@ -558,7 +554,7 @@ namespace Holocron
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(289, 423);
+            this.checkBox1.Location = new System.Drawing.Point(863, 13);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(91, 17);
             this.checkBox1.TabIndex = 74;
@@ -576,55 +572,12 @@ namespace Holocron
             this.label3.TabIndex = 75;
             this.label3.Text = "0 is used for an undefined shipyard/fighters";
             // 
-            // SkirmishPanel
-            // 
-            this.SkirmishPanel.Controls.Add(this.SkirmishFalseRB);
-            this.SkirmishPanel.Controls.Add(this.SkirmishTrueRB);
-            this.SkirmishPanel.Controls.Add(this.SkirmishAnyRB);
-            this.SkirmishPanel.Location = new System.Drawing.Point(859, 32);
-            this.SkirmishPanel.Name = "SkirmishPanel";
-            this.SkirmishPanel.Size = new System.Drawing.Size(120, 72);
-            this.SkirmishPanel.TabIndex = 68;
-            // 
-            // SkirmishFalseRB
-            // 
-            this.SkirmishFalseRB.AutoSize = true;
-            this.SkirmishFalseRB.Location = new System.Drawing.Point(4, 51);
-            this.SkirmishFalseRB.Name = "SkirmishFalseRB";
-            this.SkirmishFalseRB.Size = new System.Drawing.Size(67, 17);
-            this.SkirmishFalseRB.TabIndex = 2;
-            this.SkirmishFalseRB.TabStop = true;
-            this.SkirmishFalseRB.Text = "GC Units";
-            this.SkirmishFalseRB.UseVisualStyleBackColor = true;
-            // 
-            // SkirmishTrueRB
-            // 
-            this.SkirmishTrueRB.AutoSize = true;
-            this.SkirmishTrueRB.Location = new System.Drawing.Point(4, 27);
-            this.SkirmishTrueRB.Name = "SkirmishTrueRB";
-            this.SkirmishTrueRB.Size = new System.Drawing.Size(91, 17);
-            this.SkirmishTrueRB.TabIndex = 1;
-            this.SkirmishTrueRB.TabStop = true;
-            this.SkirmishTrueRB.Text = "Skirmish Units";
-            this.SkirmishTrueRB.UseVisualStyleBackColor = true;
-            // 
-            // SkirmishAnyRB
-            // 
-            this.SkirmishAnyRB.AutoSize = true;
-            this.SkirmishAnyRB.Location = new System.Drawing.Point(4, 4);
-            this.SkirmishAnyRB.Name = "SkirmishAnyRB";
-            this.SkirmishAnyRB.Size = new System.Drawing.Size(63, 17);
-            this.SkirmishAnyRB.TabIndex = 0;
-            this.SkirmishAnyRB.TabStop = true;
-            this.SkirmishAnyRB.Text = "All Units";
-            this.SkirmishAnyRB.UseVisualStyleBackColor = true;
-            // 
             // PDPanel
             // 
             this.PDPanel.Controls.Add(this.PDFalseRB);
             this.PDPanel.Controls.Add(this.PDTrueRB);
             this.PDPanel.Controls.Add(this.PDAnyRB);
-            this.PDPanel.Location = new System.Drawing.Point(315, 348);
+            this.PDPanel.Location = new System.Drawing.Point(182, 345);
             this.PDPanel.Name = "PDPanel";
             this.PDPanel.Size = new System.Drawing.Size(120, 72);
             this.PDPanel.TabIndex = 68;
@@ -667,7 +620,7 @@ namespace Holocron
             this.HealPanel.Controls.Add(this.HealFalseRB);
             this.HealPanel.Controls.Add(this.HealTrueRB);
             this.HealPanel.Controls.Add(this.HealAnyRB);
-            this.HealPanel.Location = new System.Drawing.Point(441, 348);
+            this.HealPanel.Location = new System.Drawing.Point(308, 345);
             this.HealPanel.Name = "HealPanel";
             this.HealPanel.Size = new System.Drawing.Size(120, 72);
             this.HealPanel.TabIndex = 68;
@@ -834,17 +787,33 @@ namespace Holocron
             this.IncomePanel.Size = new System.Drawing.Size(120, 72);
             this.IncomePanel.TabIndex = 69;
             // 
+            // SkirmishListBox
+            // 
+            this.SkirmishListBox.FormattingEnabled = true;
+            this.SkirmishListBox.Items.AddRange(new object[] {
+            "Standard Units",
+            "Skirmish Units",
+            "Company Transports",
+            "Mission Units",
+            "Ground War Dummies",
+            "Survival Units"});
+            this.SkirmishListBox.Location = new System.Drawing.Point(428, 345);
+            this.SkirmishListBox.Name = "SkirmishListBox";
+            this.SkirmishListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.SkirmishListBox.Size = new System.Drawing.Size(120, 82);
+            this.SkirmishListBox.TabIndex = 76;
+            // 
             // UnitFilter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(991, 450);
+            this.Controls.Add(this.SkirmishListBox);
             this.Controls.Add(this.CommandPanel);
             this.Controls.Add(this.IncomePanel);
             this.Controls.Add(this.DiscountPanel);
             this.Controls.Add(this.HealPanel);
             this.Controls.Add(this.PDPanel);
-            this.Controls.Add(this.SkirmishPanel);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label11);
@@ -889,8 +858,6 @@ namespace Holocron
             this.LimitPanel.PerformLayout();
             this.ComplementPanel.ResumeLayout(false);
             this.ComplementPanel.PerformLayout();
-            this.SkirmishPanel.ResumeLayout(false);
-            this.SkirmishPanel.PerformLayout();
             this.PDPanel.ResumeLayout(false);
             this.PDPanel.PerformLayout();
             this.HealPanel.ResumeLayout(false);
@@ -952,10 +919,6 @@ namespace Holocron
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Panel SkirmishPanel;
-        private System.Windows.Forms.RadioButton SkirmishFalseRB;
-        private System.Windows.Forms.RadioButton SkirmishTrueRB;
-        private System.Windows.Forms.RadioButton SkirmishAnyRB;
         private System.Windows.Forms.Panel PDPanel;
         private System.Windows.Forms.RadioButton PDFalseRB;
         private System.Windows.Forms.RadioButton PDTrueRB;
@@ -976,5 +939,6 @@ namespace Holocron
         private System.Windows.Forms.RadioButton IncomeTrueRB;
         private System.Windows.Forms.RadioButton IncomeFalseRB;
         private System.Windows.Forms.Panel IncomePanel;
+        private System.Windows.Forms.ListBox SkirmishListBox;
     }
 }

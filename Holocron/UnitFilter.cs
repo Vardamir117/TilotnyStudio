@@ -49,7 +49,7 @@ namespace Holocron
             public int influenceMode;
             public int limitMode;
             public int complementMode;
-            public int skirmishMode;
+            public List<int> skirmishModes;
             public int pdMode;
             public int healMode;
             public int discountMode;
@@ -72,6 +72,8 @@ namespace Holocron
             filter.flags = new List<string>();
             filter.atypes = new List<string>();
             filter.stypes = new List<string>();
+            filter.skirmishModes = new List<int>();
+            filter.skirmishModes.Add(0);
 
             filterDocumentation = "Any faction";
             return filter;
@@ -132,9 +134,8 @@ namespace Holocron
             else if (filterConfig.complementMode == 2) ComplementFalseRB.Checked = true;
             else ComplementAnyRB.Checked = true;
 
-            if (filterConfig.skirmishMode == 1) SkirmishTrueRB.Checked = true;
-            else if (filterConfig.skirmishMode == 2) SkirmishFalseRB.Checked = true;
-            else SkirmishAnyRB.Checked = true;
+            SkirmishListBox.SelectedItems.Clear();
+            foreach (int mode in filterConfig.skirmishModes) SkirmishListBox.SelectedIndices.Add(mode);
 
             if (filterConfig.pdMode == 1) PDTrueRB.Checked = true;
             else if (filterConfig.pdMode == 2) PDFalseRB.Checked = true;
@@ -256,17 +257,9 @@ namespace Holocron
             }
             else filterConfig.complementMode = 0;
 
-            if (SkirmishTrueRB.Checked)
-            {
-                filterConfig.skirmishMode = 1;
-                if (SkirmishTrueRB.Visible) filterDocumentation += ", Skirmish units";
-            }
-            else if (SkirmishFalseRB.Checked)
-            {
-                filterConfig.skirmishMode = 2;
-                if (LimitTrueRB.Visible) filterDocumentation += ", GC units";
-            }
-            else filterConfig.skirmishMode = 0;
+            filterConfig.skirmishModes.Clear();
+            foreach (int mode in SkirmishListBox.SelectedIndices) filterConfig.skirmishModes.Add(mode);
+            if(!(filterConfig.skirmishModes.Count == 1 && filterConfig.skirmishModes[0] == 0)) filterDocumentation += ", has no Complement";
 
             if (PDTrueRB.Checked)
             {
