@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.ModStackButton = new System.Windows.Forms.Button();
             this.CopyModButton = new System.Windows.Forms.Button();
             this.DeleteButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
@@ -52,7 +53,7 @@
             this.label11 = new System.Windows.Forms.Label();
             this.FactionFilterClearButton = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
-            this.FactionFilerListBox = new System.Windows.Forms.ListBox();
+            this.FactionFilterListBox = new System.Windows.Forms.ListBox();
             this.AffilClearButton = new System.Windows.Forms.Button();
             this.UnitTabControl = new System.Windows.Forms.TabControl();
             this.AffilTab = new System.Windows.Forms.TabPage();
@@ -123,6 +124,10 @@
             this.VersionComboBox = new System.Windows.Forms.ComboBox();
             this.ModFilesButton = new System.Windows.Forms.Button();
             this.SuperToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.SkirmishListBox = new System.Windows.Forms.ListBox();
+            this.SpaceHeroRadioButton = new System.Windows.Forms.RadioButton();
+            this.HeroTeamRadioButton = new System.Windows.Forms.RadioButton();
+            this.GroundHeroRadioButton = new System.Windows.Forms.RadioButton();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -164,6 +169,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.ModStackButton);
             this.tabPage1.Controls.Add(this.CopyModButton);
             this.tabPage1.Controls.Add(this.DeleteButton);
             this.tabPage1.Controls.Add(this.label3);
@@ -178,6 +184,18 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Mod";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // ModStackButton
+            // 
+            this.ModStackButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ModStackButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ModStackButton.Location = new System.Drawing.Point(254, 631);
+            this.ModStackButton.Name = "ModStackButton";
+            this.ModStackButton.Size = new System.Drawing.Size(182, 35);
+            this.ModStackButton.TabIndex = 7;
+            this.ModStackButton.Text = "Change Mod Stack...";
+            this.ModStackButton.UseVisualStyleBackColor = true;
+            this.ModStackButton.Click += new System.EventHandler(this.ModStackButton_Click);
             // 
             // CopyModButton
             // 
@@ -345,12 +363,15 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.HeroTeamRadioButton);
+            this.tabPage3.Controls.Add(this.SpaceHeroRadioButton);
+            this.tabPage3.Controls.Add(this.SkirmishListBox);
             this.tabPage3.Controls.Add(this.UnitRadioButton);
             this.tabPage3.Controls.Add(this.AffilListBox);
             this.tabPage3.Controls.Add(this.label11);
             this.tabPage3.Controls.Add(this.FactionFilterClearButton);
             this.tabPage3.Controls.Add(this.label7);
-            this.tabPage3.Controls.Add(this.FactionFilerListBox);
+            this.tabPage3.Controls.Add(this.FactionFilterListBox);
             this.tabPage3.Controls.Add(this.AffilClearButton);
             this.tabPage3.Controls.Add(this.UnitTabControl);
             this.tabPage3.Controls.Add(this.label5);
@@ -358,6 +379,7 @@
             this.tabPage3.Controls.Add(this.GroundRadioButton);
             this.tabPage3.Controls.Add(this.SpaceRadioButton);
             this.tabPage3.Controls.Add(this.SaveUnitButton);
+            this.tabPage3.Controls.Add(this.GroundHeroRadioButton);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Size = new System.Drawing.Size(1318, 672);
@@ -369,7 +391,7 @@
             // 
             this.UnitRadioButton.AutoSize = true;
             this.UnitRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UnitRadioButton.Location = new System.Drawing.Point(3, 150);
+            this.UnitRadioButton.Location = new System.Drawing.Point(0, 198);
             this.UnitRadioButton.Name = "UnitRadioButton";
             this.UnitRadioButton.Size = new System.Drawing.Size(114, 22);
             this.UnitRadioButton.TabIndex = 43;
@@ -392,9 +414,10 @@
             // 
             // label11
             // 
+            this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(5, 594);
+            this.label11.Location = new System.Drawing.Point(5, 653);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(115, 12);
             this.label11.TabIndex = 42;
@@ -403,7 +426,7 @@
             // FactionFilterClearButton
             // 
             this.FactionFilterClearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FactionFilterClearButton.Location = new System.Drawing.Point(8, 268);
+            this.FactionFilterClearButton.Location = new System.Drawing.Point(11, 418);
             this.FactionFilterClearButton.Name = "FactionFilterClearButton";
             this.FactionFilterClearButton.Size = new System.Drawing.Size(97, 27);
             this.FactionFilterClearButton.TabIndex = 33;
@@ -415,26 +438,28 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(4, 249);
+            this.label7.Location = new System.Drawing.Point(7, 399);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(105, 20);
             this.label7.TabIndex = 30;
             this.label7.Text = "Faction Filter:";
             // 
-            // FactionFilerListBox
+            // FactionFilterListBox
             // 
-            this.FactionFilerListBox.FormattingEnabled = true;
-            this.FactionFilerListBox.Location = new System.Drawing.Point(3, 301);
-            this.FactionFilerListBox.Name = "FactionFilerListBox";
-            this.FactionFilerListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.FactionFilerListBox.Size = new System.Drawing.Size(120, 290);
-            this.FactionFilerListBox.TabIndex = 29;
-            this.FactionFilerListBox.SelectedIndexChanged += new System.EventHandler(this.FactionFilerListBox_SelectedIndexChanged);
+            this.FactionFilterListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.FactionFilterListBox.FormattingEnabled = true;
+            this.FactionFilterListBox.Location = new System.Drawing.Point(3, 451);
+            this.FactionFilterListBox.Name = "FactionFilterListBox";
+            this.FactionFilterListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.FactionFilterListBox.Size = new System.Drawing.Size(120, 199);
+            this.FactionFilterListBox.TabIndex = 29;
+            this.FactionFilterListBox.SelectedIndexChanged += new System.EventHandler(this.FactionFilterListBox_SelectedIndexChanged);
             // 
             // AffilClearButton
             // 
             this.AffilClearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AffilClearButton.Location = new System.Drawing.Point(16, 178);
+            this.AffilClearButton.Location = new System.Drawing.Point(17, 95);
             this.AffilClearButton.Name = "AffilClearButton";
             this.AffilClearButton.Size = new System.Drawing.Size(89, 52);
             this.AffilClearButton.TabIndex = 28;
@@ -1152,7 +1177,7 @@
             // 
             this.GroundRadioButton.AutoSize = true;
             this.GroundRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GroundRadioButton.Location = new System.Drawing.Point(3, 119);
+            this.GroundRadioButton.Location = new System.Drawing.Point(0, 173);
             this.GroundRadioButton.Name = "GroundRadioButton";
             this.GroundRadioButton.Size = new System.Drawing.Size(126, 22);
             this.GroundRadioButton.TabIndex = 12;
@@ -1164,7 +1189,7 @@
             // 
             this.SpaceRadioButton.AutoSize = true;
             this.SpaceRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SpaceRadioButton.Location = new System.Drawing.Point(3, 89);
+            this.SpaceRadioButton.Location = new System.Drawing.Point(0, 148);
             this.SpaceRadioButton.Name = "SpaceRadioButton";
             this.SpaceRadioButton.Size = new System.Drawing.Size(106, 22);
             this.SpaceRadioButton.TabIndex = 11;
@@ -1204,11 +1229,11 @@
             // LaunchOptionsIndicator
             // 
             this.LaunchOptionsIndicator.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.LaunchOptionsIndicator.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LaunchOptionsIndicator.Location = new System.Drawing.Point(569, 720);
+            this.LaunchOptionsIndicator.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LaunchOptionsIndicator.Location = new System.Drawing.Point(562, 725);
             this.LaunchOptionsIndicator.Name = "LaunchOptionsIndicator";
             this.LaunchOptionsIndicator.ReadOnly = true;
-            this.LaunchOptionsIndicator.Size = new System.Drawing.Size(401, 26);
+            this.LaunchOptionsIndicator.Size = new System.Drawing.Size(423, 20);
             this.LaunchOptionsIndicator.TabIndex = 8;
             // 
             // ModNameLabel
@@ -1269,6 +1294,60 @@
             this.ModFilesButton.UseVisualStyleBackColor = true;
             this.ModFilesButton.Click += new System.EventHandler(this.ModFilesButton_Click);
             // 
+            // SkirmishListBox
+            // 
+            this.SkirmishListBox.FormattingEnabled = true;
+            this.SkirmishListBox.Items.AddRange(new object[] {
+            "Standard Units",
+            "Skirmish Units",
+            "Company Transports",
+            "Mission Units",
+            "Ground War Dummies",
+            "Survival Units",
+            "Captured Versions"});
+            this.SkirmishListBox.Location = new System.Drawing.Point(3, 301);
+            this.SkirmishListBox.Name = "SkirmishListBox";
+            this.SkirmishListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.SkirmishListBox.Size = new System.Drawing.Size(120, 95);
+            this.SkirmishListBox.TabIndex = 77;
+            this.SkirmishListBox.SelectedIndexChanged += new System.EventHandler(this.SkirmishListBox_SelectedIndexChanged);
+            // 
+            // SpaceHeroRadioButton
+            // 
+            this.SpaceHeroRadioButton.AutoSize = true;
+            this.SpaceHeroRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SpaceHeroRadioButton.Location = new System.Drawing.Point(0, 223);
+            this.SpaceHeroRadioButton.Name = "SpaceHeroRadioButton";
+            this.SpaceHeroRadioButton.Size = new System.Drawing.Size(121, 22);
+            this.SpaceHeroRadioButton.TabIndex = 78;
+            this.SpaceHeroRadioButton.Text = "Space Heroes";
+            this.SpaceHeroRadioButton.UseVisualStyleBackColor = true;
+            this.SpaceHeroRadioButton.Visible = false;
+            // 
+            // HeroTeamRadioButton
+            // 
+            this.HeroTeamRadioButton.AutoSize = true;
+            this.HeroTeamRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HeroTeamRadioButton.Location = new System.Drawing.Point(0, 248);
+            this.HeroTeamRadioButton.Name = "HeroTeamRadioButton";
+            this.HeroTeamRadioButton.Size = new System.Drawing.Size(109, 22);
+            this.HeroTeamRadioButton.TabIndex = 79;
+            this.HeroTeamRadioButton.Text = "Hero Teams";
+            this.HeroTeamRadioButton.UseVisualStyleBackColor = true;
+            this.HeroTeamRadioButton.Visible = false;
+            // 
+            // GroundHeroRadioButton
+            // 
+            this.GroundHeroRadioButton.AutoSize = true;
+            this.GroundHeroRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GroundHeroRadioButton.Location = new System.Drawing.Point(0, 273);
+            this.GroundHeroRadioButton.Name = "GroundHeroRadioButton";
+            this.GroundHeroRadioButton.Size = new System.Drawing.Size(129, 22);
+            this.GroundHeroRadioButton.TabIndex = 80;
+            this.GroundHeroRadioButton.Text = "Ground Heroes";
+            this.GroundHeroRadioButton.UseVisualStyleBackColor = true;
+            this.GroundHeroRadioButton.Visible = false;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1284,7 +1363,7 @@
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "Tilotny Submodding Studio v0.1";
+            this.Text = "Tilotny Submodding Studio v0.2";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
@@ -1366,7 +1445,7 @@
         private System.Windows.Forms.Panel UnitAffilPanel;
         private System.Windows.Forms.Label CorpLabel;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.ListBox FactionFilerListBox;
+        private System.Windows.Forms.ListBox FactionFilterListBox;
         private System.Windows.Forms.Button FactionFilterClearButton;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label FilterLabel;
@@ -1414,6 +1493,11 @@
         private System.Windows.Forms.Button CopyModButton;
         private System.Windows.Forms.CheckBox SuperShipCheckBox;
         private System.Windows.Forms.CheckBox SuppressCheckBox;
+        private System.Windows.Forms.Button ModStackButton;
+        private System.Windows.Forms.ListBox SkirmishListBox;
+        private System.Windows.Forms.RadioButton HeroTeamRadioButton;
+        private System.Windows.Forms.RadioButton SpaceHeroRadioButton;
+        private System.Windows.Forms.RadioButton GroundHeroRadioButton;
     }
 }
 

@@ -21,6 +21,8 @@ using static SharedFunctions;
  *https://www.nuget.org/packages/HtmlAgilityPack/ handles invalid XML better
  *https://github.com/LorettaDevs/Loretta Lua parsing
  *
+ *https://dev.to/karenpayneoregon/window-forms-dark-mode-33on in program.cs, requires .Net upgrade?
+ *
  * Universal function to goto appropriate unit - find which matches and do that
  *
  * use absence of changelogs to detect EaWX versions
@@ -102,6 +104,7 @@ namespace Holocron
             public static float scale;
 
             public static bool allplanets = false; //todo make sure this is off for releases
+            public static bool devmode = false;
             public static List<unit> MoneyStructures = new List<unit>();
             public static List<unit> DiscountEntities = new List<unit>();
 
@@ -182,15 +185,15 @@ namespace Holocron
                     entities.modpaths.Add(split[i]);
                 }
             }
-            else
+            string exePath = AppContext.BaseDirectory;
+            string localmodtest = UpOneFolder(UpOneFolder(UpOneFolder(UpOneFolder(exePath))));
+            string modfolder = UpOneFolder(exePath);
+            if (File.Exists(localmodtest + "\\StarWarsG.exe"))
             {
-                string exePath = AppContext.BaseDirectory;
-                string localmodtest = UpOneFolder(UpOneFolder(UpOneFolder(UpOneFolder(exePath))));
-                string modfolder = UpOneFolder(exePath);
-                if (File.Exists(localmodtest + "\\StarWarsG.exe"))
+                globals.localmodpath = UpOneFolder(UpOneFolder(modfolder));
+                globals.steammodpath = UpOneFolder(UpOneFolder(UpOneFolder(localmodtest))) + "\\workshop\\content\\32470";
+                if(entities.modpaths.Count == 0)
                 {
-                    globals.localmodpath = UpOneFolder(UpOneFolder(modfolder));
-                    globals.steammodpath = UpOneFolder(UpOneFolder(UpOneFolder(localmodtest))) + "\\workshop\\content\\32470";
                     if (Directory.Exists(modfolder + "\\..\\TR") && Directory.Exists(modfolder + "\\..\\FotR") && Directory.Exists(modfolder + "\\..\\CoreSaga") && Directory.Exists(modfolder + "\\..\\Rev"))
                     {
                         DevChoice devChoice = new DevChoice();
@@ -199,52 +202,53 @@ namespace Holocron
 
                         entities.modpaths = devChoice.args;
                         globals.allplanets = devChoice.allplanet;
+                        globals.devmode = true;
                     }
                     else entities.modpaths.Add(modfolder);
                 }
-                else
+            }
+            else
+            {
+                localmodtest = UpOneFolder(UpOneFolder(localmodtest)) + "\\common\\Star Wars Empire at War\\corruption";
+                if (File.Exists(localmodtest + "\\StarWarsG.exe"))
                 {
-                    localmodtest = UpOneFolder(UpOneFolder(localmodtest)) + "\\common\\Star Wars Empire at War\\corruption";
-                    if (File.Exists(localmodtest + "\\StarWarsG.exe"))
+                    if (entities.modpaths.Count == 0) entities.modpaths.Add(modfolder);
+                    globals.steammodpath = UpOneFolder(UpOneFolder(modfolder));
+                    globals.localmodpath = localmodtest + "\\Mods";
+                }
+                else
+                {//Run on real mod data from the debugger
+                    if (File.Exists("debugpaths.cfg"))
                     {
-                        entities.modpaths.Add(modfolder);
-                        globals.steammodpath = UpOneFolder(UpOneFolder(modfolder));
-                        globals.localmodpath = localmodtest + "\\Mods";
+                        string[] lines = File.ReadAllLines("debugpaths.cfg");
+                        globals.localmodpath = lines[0];
+                        globals.steammodpath = lines[1];
+
+                        for (int i = 2; i < lines.Length; i++) entities.modpaths.Add(lines[i]);
                     }
                     else
-                    {//Run on real mod data from the debugger
-                        if (File.Exists("debugpaths.cfg"))
-                        {
-                            string[] lines = File.ReadAllLines("debugpaths.cfg");
-                            globals.localmodpath = lines[0];
-                            globals.steammodpath = lines[1];
-
-                            for (int i = 2; i < lines.Length; i++) entities.modpaths.Add(lines[i]);
-                        }
-                        else
-                        {
-                            MessageBox.Show("Could not locate data files. Please place in the data folder of a Steam Workshop or local mod for Empire at War");
-                            this.Close();
-                        }
-                        //globals.localmodpath = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods";
-                        //globals.steammodpath = "C:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470";
-                        //1125571106 1976399102 3417277973
-                        //Workshop
-                        // entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470\\3417277973\\Data");
-
-                        //Dev build
-                        
-                        //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\Rev\\Data");
-                        //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\TR\\Data");
-                        //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\FotR\\Data");
-                        //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\CoreSaga\\Data");
-                        //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\Data");
-                        
-
-                        //Vanillua
-                        //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Data");
-                        //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\GameData\\Data");
+                    {
+                        MessageBox.Show("Could not locate data files. Please place in the data folder of a Steam Workshop or local mod for Empire at War");
+                        this.Close();
                     }
+                    //globals.localmodpath = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods";
+                    //globals.steammodpath = "C:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470";
+                    //1125571106 1976399102 3417277973
+                    //Workshop
+                    // entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470\\3417277973\\Data");
+
+                    //Dev build
+                        
+                    //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\Rev\\Data");
+                    //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\TR\\Data");
+                    //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\FotR\\Data");
+                    //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\CoreSaga\\Data");
+                    //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\Data");
+                        
+
+                    //Vanillua
+                    //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Data");
+                    //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\GameData\\Data");
                 }
             }
             load_mods();
@@ -315,19 +319,10 @@ namespace Holocron
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             loadscreen.ChangeText("Reading text file");
-            entities.Text = DatParser.ReadDat(getModFile("Text\\MasterTextFile_ENGLISH.dat"), ',', 0);
-            Random rnd = new Random();
-            for(int i = 0; i < 1000; i++) //Don't search too long
-            {
-                string quote = entities.Text[rnd.Next(0, entities.Text.Count-1)].entry;
-                if (quote.Length > 149)
-                {//any filtering based on id or entry goes in this if
-                    loadscreen.SetQuote(quote);
-                    break;
-                }
-            }
+            entities.Text = DatParser.ReadDat(getModFile("Text\\MasterTextFile_ENGLISH.dat", entities), ',', 0);
+            loadscreen.SetQuote(getLoadQuote(entities));
 
-            parsemodid(getModFile("XML\\Mod_Id.xml"), entities);
+            parsemodid(entities);
 
             loadscreen.ChangeText("Reading MEG files");
             parseMEGs(entities);
@@ -336,7 +331,7 @@ namespace Holocron
             entities.IconData = DatParser.ReadMTD(entities);
             try
             {
-                entities.MTmaster = (Bitmap)Image.FromFile(getModFile("Art\\Textures\\MT_CommandBar.tga"));
+                entities.MTmaster = (Bitmap)Image.FromFile(getModFile("Art\\Textures\\MT_CommandBar.tga", entities));
             }
             catch
             {
@@ -354,7 +349,7 @@ namespace Holocron
             ComplementFactionListBox.BeginInvoke(new Action(() => ComplementFactionListBox.SelectedIndex = 0));
 
             loadscreen.ChangeText("Parsing projectile data");
-            List<string> listfiles = getModFiles("XML\\Projectiles", "*.xml");
+            List<string> listfiles = getModFiles("XML\\Projectiles", "*.xml", entities);
             parseProjectiles(entities);
 
             loadscreen.ChangeText("Parsing hardpoint data");
@@ -431,7 +426,7 @@ namespace Holocron
             contrastValues.friendlyTypeLists = new List<weighted_type_list>();
             contrastValues.typeScale = new Dictionary<string, float>();
 
-            string[] lines = File.ReadAllLines(getModFile("Scripts\\Library\\PGAICommands.lua"));
+            string[] lines = readModTextLinesOrMeg("Scripts\\Library\\PGAICommands.lua", entities);
             bool inContrastFunction = false;
 
             ulong currentEnemyCategoryMask = 0UL;
@@ -538,6 +533,7 @@ namespace Holocron
         private void insert_history(int main, int secondary, string entity, bool go_to = false)
         {
             if (nav.suppresshistory) return;
+            if (nav.navindex > 0 && nav.item[nav.navindex] == entity) return; //Don't duplicate entries when e.g. sorting reselects the same index. Technically should care if the others are the same too, but it's not often names should overlap
             if(nav.navindex < nav.maintab.Count-1)
             {
                 for(int i = nav.maintab.Count - 1; i > nav.navindex; i--)
@@ -814,7 +810,7 @@ namespace Holocron
                                     if (!Checked.Contains(file))
                                     {
                                         Checked.Add(file);
-                                        string namefile = getModFile(RemoveTopLevelFolder(file));
+                                        string namefile = getModFile(RemoveTopLevelFolder(file), entities);
                                         if (File.Exists(namefile))
                                         {
                                             string[] monikers = File.ReadAllLines(namefile);
@@ -907,7 +903,7 @@ namespace Holocron
                         }
 
                         Checked = new List<string>();
-                        List<string> unuseds = getModFiles("..\\Unused\\Unused ShipNames", "*.txt");
+                        List<string> unuseds = getModFiles("..\\Unused\\Unused ShipNames", "*.txt", entities);
                         foreach (string unused in unuseds)
                         {
                             string file = unused;
@@ -949,7 +945,7 @@ namespace Holocron
                 case 3:
                     if (NameListBox.Items.Count == 0) //todo ensure other histories have such conditions cleared by load_mods
                     {
-                        List<string> namefiles = getModFiles("ShipNames", "*.txt");
+                        List<string> namefiles = getModFiles("ShipNames", "*.txt", entities);
                         foreach (string file in namefiles)
                         {
                             string shortfile = LastFolderOrFile(file);
@@ -961,7 +957,7 @@ namespace Holocron
                 case 4:
                     if (MissionListBox.Items.Count == 0)
                     {
-                        List<string> missionfiles = getModFiles("Scripts\\Library\\eawx-plugins\\intervention-missions\\rewards", "*.lua");
+                        List<string> missionfiles = getModFiles("Scripts\\Library\\eawx-plugins\\intervention-missions\\rewards", "*.lua", entities);
                         foreach (string file in missionfiles)
                         {
                             MissionListBox.Items.Add(LastFolderOrFile(file).Replace("RewardTables_","").ToUpper().Replace(".LUA",""));
@@ -971,7 +967,7 @@ namespace Holocron
                 case 5:
                     if (SpawnListBox.Items.Count == 0) //todo may have to check a new location after modcontent loader dies
                     {
-                        List<string> missionfiles = getModFiles("Scripts\\Library\\spawn-sets", "*.lua");
+                        List<string> missionfiles = getModFiles("Scripts\\Library\\spawn-sets", "*.lua", entities);
                         foreach (string file in missionfiles)
                         {
                             if (!file.Contains("DEBUG")) SpawnListBox.Items.Add(LastFolderOrFile(file).ToUpper().Replace(".LUA", ""));
@@ -981,7 +977,7 @@ namespace Holocron
                 case 8:
                     if (StandardFListBox.Items.Count == 0)
                     {
-                        List<string> missionfiles = getModFiles("Scripts\\Library\\standard-fighters", "*.lua");
+                        List<string> missionfiles = getModFiles("Scripts\\Library\\standard-fighters", "*.lua", entities);
                         foreach (string file in missionfiles)
                         {
                             StandardFListBox.Items.Add(LastFolderOrFile(file).ToUpper().Replace(".LUA", ""));
@@ -991,7 +987,7 @@ namespace Holocron
                 case 9:
                     if (RandomFListBox.Items.Count == 0)
                     {
-                        List<string> missionfiles = getModFiles("Scripts\\Library\\random-fighters", "*.lua");
+                        List<string> missionfiles = getModFiles("Scripts\\Library\\random-fighters", "*.lua", entities);
                         foreach (string file in missionfiles)
                         {
                             RandomFListBox.Items.Add(LastFolderOrFile(file).ToUpper().Replace(".LUA", ""));
@@ -2038,12 +2034,12 @@ namespace Holocron
 
         private void MissionListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            MissionText.Text = File.ReadAllText(getModFile("Scripts\\Library\\eawx-plugins\\intervention-missions\\rewards\\RewardTables_" + MissionListBox.SelectedItem + ".lua"));
+            MissionText.Text = File.ReadAllText(getModFile("Scripts\\Library\\eawx-plugins\\intervention-missions\\rewards\\RewardTables_" + MissionListBox.SelectedItem + ".lua", entities));
         }
 
         private void NameListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            NameText.Text = File.ReadAllText(getModFile("Shipnames\\" + NameListBox.SelectedItem + ".txt"));
+            NameText.Text = File.ReadAllText(getModFile("Shipnames\\" + NameListBox.SelectedItem + ".txt", entities));
         }
 
         public struct shipname
@@ -2061,7 +2057,7 @@ namespace Holocron
 
         private void SpawnListBox_SelectedIndexChanged(object sender, EventArgs e)
         {//Todo list planets where used
-            SpawnText.Text = File.ReadAllText(getModFile("Scripts\\Library\\spawn-sets\\" + SpawnListBox.SelectedItem + ".lua"));
+            SpawnText.Text = File.ReadAllText(getModFile("Scripts\\Library\\spawn-sets\\" + SpawnListBox.SelectedItem + ".lua", entities));
             SpawnPlanetListBox.Items.Clear();
             spawnSet set = entities.spawnSets.FirstOrDefault(s => String.Equals(s.name, (string)SpawnListBox.SelectedItem, StringComparison.OrdinalIgnoreCase));
             if(!(set.name is null))
@@ -2084,12 +2080,12 @@ namespace Holocron
 
         private void StandardFListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            StandardFText.Text = File.ReadAllText(getModFile("Scripts\\Library\\standard-fighters\\" + StandardFListBox.SelectedItem + ".lua"));
+            StandardFText.Text = File.ReadAllText(getModFile("Scripts\\Library\\standard-fighters\\" + StandardFListBox.SelectedItem + ".lua", entities));
         }
 
         private void RandomFListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            RandomFText.Text = File.ReadAllText(getModFile("Scripts\\Library\\random-fighters\\" + RandomFListBox.SelectedItem + ".lua"));
+            RandomFText.Text = File.ReadAllText(getModFile("Scripts\\Library\\random-fighters\\" + RandomFListBox.SelectedItem + ".lua", entities));
         }
 
         private string colorString(int[] color)
@@ -2156,7 +2152,7 @@ namespace Holocron
             else FactionLColorLabel.Text = "Lua Color: " + colorString(faction.lcolor);
             FactionLColorLabel.BackColor = factioncolor(faction.lcolor);
 
-            string Luapath =  getModFile("Scripts\\Story\\GCMenu_DescriptionText.lua");
+            string Luapath =  getModFile("Scripts\\Story\\GCMenu_DescriptionText.lua", entities);
             FactionDescLabel.Text = "";
             if (Luapath != "")
             {
@@ -2342,7 +2338,7 @@ namespace Holocron
             FactionUnitInternalLabel.Text = "Internal Name: " + unit.unitname;
             FactionUnitAvailabilityLabel.Text = checkUnitAvailibility(unit, faction);
 
-            string spawnsetlib = getModFile("Scripts\\Library\\spawn-sets\\"+ faction.codename.ToUpper()+".lua"); //TODO make sure this is still correct when modcontentloader is cut
+            string spawnsetlib = getModFile("Scripts\\Library\\spawn-sets\\"+ faction.codename.ToUpper()+".lua", entities); //TODO make sure this is still correct when modcontentloader is cut
             if(spawnsetlib != "")
             {
                 string filetext = File.ReadAllText(spawnsetlib);
@@ -2773,7 +2769,7 @@ namespace Holocron
             if (selectedUnit.reqorbit != "") ReqUnitLabel.Text = "Required Units: " + selectedUnit.reqorbit;
             else ReqUnitLabel.Text = "";
 
-            List<string> spawnsets = getModFiles("Scripts\\Library\\spawn-sets", "*.lua"); //TODO make sure this is still correct when modcontentloader is cut
+            List<string> spawnsets = getModFiles("Scripts\\Library\\spawn-sets", "*.lua", entities); //TODO make sure this is still correct when modcontentloader is cut
             UnitSpawnSetListBox.Items.Clear();
             foreach (string file in spawnsets)
             {
@@ -2840,14 +2836,14 @@ namespace Holocron
             if (UnitAllSquadSizesCheckBox.Visible)
             {
                 string localcut = xmlname.Replace("_Double", "").Replace("_Half", "").Replace("_Third", "").Replace("_Triple", "");
-                List<string> fighterfiles = getModFiles("Scripts\\Library\\standard-fighters", "*.lua");
+                List<string> fighterfiles = getModFiles("Scripts\\Library\\standard-fighters", "*.lua", entities);
                 string upper = "\"" + localcut.ToUpper() + "\"";
                 foreach (string file in fighterfiles)
                 {
                     string contents = File.ReadAllText(file);
                     if (contents.Contains(upper)) standards.Add(LastFolderOrFile(file).ToUpper().Replace(".LUA", ""));
                 }
-                fighterfiles = getModFiles("Scripts\\Library\\random-fighters", "*.lua");
+                fighterfiles = getModFiles("Scripts\\Library\\random-fighters", "*.lua", entities);
                 foreach (string file in fighterfiles)
                 {
                     string contents = File.ReadAllText(file);
@@ -2863,6 +2859,14 @@ namespace Holocron
                 }
             }
 
+            bool singlemode = false;
+            string singlefaction = "";
+            if(FactionAvailableListbox.SelectedItems.Count > 0)
+            {
+                singlemode = true;
+                singlefaction = ((faction)FactionAvailableListbox.SelectedItem).codename;
+            }
+
             foreach (unit unidad in entities.objects)
             {
                 //bool found = false;
@@ -2873,10 +2877,13 @@ namespace Holocron
                         UnitHostListbox.Items.Add(unidad);
                         continue;
                     }
-                    if (unidad.subcompanies.FindIndex(s => s.codename == selectedUnit.unitname) >= 0)
+                    if(!(unidad.subcompanies is null))
                     {
-                        UnitHostListbox.Items.Add(unidad);
-                        continue;
+                        if (unidad.subcompanies.FindIndex(s => s.codename == selectedUnit.unitname) >= 0)
+                        {
+                            UnitHostListbox.Items.Add(unidad);
+                            continue;
+                        }
                     }
                 }
                 if (unidad.garrison.Count > 0)
@@ -2895,7 +2902,7 @@ namespace Holocron
                         }
                     }
                 }
-                if (unidad.garrison_lua.Count > 0)
+                if (unidad.garrison_lua.Count > 0 && !singlemode || unidad.affiliations.Contains(singlefaction))
                 {
                     foreach (string suffix in upperSuffixes)
                     {
@@ -3053,7 +3060,7 @@ namespace Holocron
                     unit.sortfloat = unit.level;
                     break;
                 case UnitSortTypes.CP:
-                    unit.sortfloat = unit.cp; //todo include complement cp
+                    unit.sortfloat = unit.cp;
                     if (globals.UnitSortConfig.complementCP)
                     {
                         foreach(garrison_entry gar in unit.garrison)
@@ -3609,36 +3616,7 @@ namespace Holocron
                 }
             }
 
-            bool regular = true;
-            if (IsSkirmishObject(unit))
-            {
-                regular = false;
-                if (!globals.UnitFilterConfig.skirmishModes.Contains(1)) return false;
-            }
-            if (IsTransportObject(unit))
-            {
-                regular = false;
-                if (!globals.UnitFilterConfig.skirmishModes.Contains(2)) return false;
-            }
-            if (IsMissionObject(unit))
-            {
-                regular = false;
-                if (!globals.UnitFilterConfig.skirmishModes.Contains(3)) return false;
-            }
-            if (IsGroundWar(unit))
-            {
-                regular = false;
-                if (!globals.UnitFilterConfig.skirmishModes.Contains(4)) return false;
-            }
-            if (IsSurvivalObject(unit))
-            {
-                regular = false;
-                if (!globals.UnitFilterConfig.skirmishModes.Contains(5)) return false;
-            }
-            if (regular)
-            {
-                if (!globals.UnitFilterConfig.skirmishModes.Contains(0)) return false;
-            }
+            if (!categoryFilter(unit, globals.UnitFilterConfig.skirmishModes)) return false;
 
             if (globals.UnitFilterConfig.pdMode > 0)
             {
@@ -3754,7 +3732,7 @@ namespace Holocron
             for (int i = 0; i< units.Count; i++)
             {
                 unit unit = units[i];
-                if (unit.variantbase != "Infantry_Dummy_Template" && unit.unitname != "Infantry_Dummy_Template" && !unit.unitname.Contains("_Captured") && (!StructureRadioButton.Checked || !SpaceStructureRadioButton.Checked || (unit.hp > 1 && !unit.flags.Contains("NotOpportunityTarget"))) )
+                if (unit.variantbase != "Infantry_Dummy_Template" && unit.unitname != "Infantry_Dummy_Template" && (!StructureRadioButton.Checked || !SpaceStructureRadioButton.Checked || (unit.hp > 1 && !unit.flags.Contains("NotOpportunityTarget"))) )
                 {
                     if ((search == "" || (unit.username).ToLower().Contains(search.ToLower())) && filterUnit(unit))
                     {
@@ -3966,6 +3944,7 @@ namespace Holocron
             float reload = hardpoint.recharge + (hardpoint.pulseCount - 1) * hardpoint.pulseDelay;
             if (AlphaCheckBox.Checked) reload = (float)Math.Log10(reload);
             float corenne = hardpoint.damageAmount * hardpoint.pulseCount / reload;
+            if (hardpoint.blastRadius > 0) corenne *= (float)UnitAoEBox.Value;
             if (!suppressQty) corenne *= hardpoint.quantity;
             return corenne;
         }
@@ -4109,6 +4088,16 @@ namespace Holocron
             setTargetDPS();
             if(UnitListBox.SelectedItems.Count > 0) setDPSBreakdown();
             UnitHPListbox_SelectedIndexChanged(UnitHPListbox.SelectedItem, e);
+            UnitSortTypes[] redo = { UnitSortTypes.dpsRaw, UnitSortTypes.dpsAvg, UnitSortTypes.dpsArmor, UnitSortTypes.dpsShield };
+            if (redo.Contains(globals.UnitSortConfig.SortType)) populateUnitListbox();
+        }
+
+        private void UnitAoEBox_ValueChanged(object sender, EventArgs e)
+        {
+            setTargetDPS();
+            if (UnitListBox.SelectedItems.Count > 0) setDPSBreakdown();
+            UnitSortTypes[] redo = { UnitSortTypes.dpsRaw, UnitSortTypes.dpsAvg, UnitSortTypes.dpsArmor, UnitSortTypes.dpsShield };
+            if (redo.Contains(globals.UnitSortConfig.SortType)) populateUnitListbox();
         }
 
         private void IncomingDamageBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -4489,6 +4478,8 @@ namespace Holocron
                 else AvailabilityLabel.Text = ""; //Structures could get something?
             }
             else AvailabilityLabel.Text = "";
+
+            populateHostListBox();
         }
 
         private string readstatearray(bool[] statearray)
@@ -4545,7 +4536,7 @@ namespace Holocron
                 string unitlower = "\""+unit.unitname.ToLower()+"\"";
 
                 //Tech states
-                List<string> statefiles = getModFiles("Scripts\\Library\\eawx-states\\tech", "*.lua");
+                List<string> statefiles = getModFiles("Scripts\\Library\\eawx-states\\tech", "*.lua", entities);
                 bool[] lockarray = new bool[statefiles.Count];
                 bool[] unlockarray = new bool[statefiles.Count];
                 foreach (string statefile in statefiles)
@@ -4649,7 +4640,7 @@ namespace Holocron
                 }
 
                 //Research
-                string research = getModFile("Scripts\\Library\\eawx-plugins\\tech-handler\\TechHandler.lua");
+                string research = getModFile("Scripts\\Library\\eawx-plugins\\tech-handler\\TechHandler.lua", entities);
                 if(research != "")
                 {
                     string[] statedata = File.ReadAllText(research).Replace('(', ')').Split(')');
@@ -4745,7 +4736,7 @@ namespace Holocron
                         {
                             if(!(Lua.InnerText is null))
                             {
-                                string statefile = getModFile("Scripts\\Story\\" + Lua.InnerText.Trim() + ".lua");
+                                string statefile = getModFile("Scripts\\Story\\" + Lua.InnerText.Trim() + ".lua", entities);
                                 if(statefile != "")
                                 {
                                     string[] lines = File.ReadAllLines(statefile);
@@ -4796,7 +4787,7 @@ namespace Holocron
                 //Unit is capable of being unlocked
             }
 
-            string missionfile = getModFile("Scripts\\Library\\eawx-plugins\\intervention-missions\\rewards\\RewardTables_" + faction.codename.ToUpper() + ".lua");
+            string missionfile = getModFile("Scripts\\Library\\eawx-plugins\\intervention-missions\\rewards\\RewardTables_" + faction.codename.ToUpper() + ".lua", entities);
             if (File.Exists(missionfile))
             {
                 string filetext = File.ReadAllText(missionfile);
@@ -5171,7 +5162,7 @@ namespace Holocron
                 if (planet.has_ground)
                 {
                     GroundMapLabel.Text = "Ground Map: " + planet.groundMap;
-                    TerrainTypeLabel.Text = "Terrain Type: " + getTerrainType(planet.groundMap);
+                    TerrainTypeLabel.Text = "Terrain Type: " + getTerrainType(planet.groundMap, entities);
                 }
                 else
                 {
@@ -5236,13 +5227,13 @@ namespace Holocron
 
                 PlanetBTSTextBox.Text = "";
                 string BTS = "";
-                string path = getModFile("Text\\BTSPlanet.txt");
+                string path = getModFile("Text\\BTSPlanet.txt", entities);
 
                 if (path != "") BTS = readBTS(path, planet.codename);
                 if (BTS != "") PlanetBTSTextBox.Text = "Behind the scenes\n\n" + BTS + "\n";
 
                 BTS = "";
-                path = getModFile("Text\\BTSMap.txt");
+                path = getModFile("Text\\BTSMap.txt", entities);
 
                 if (path != "") BTS = readBTS(path, planet.groundMap);
                 if (BTS != "") PlanetBTSTextBox.Text += "Ground map information\n\n" + BTS + "\n";
@@ -5250,6 +5241,32 @@ namespace Holocron
                 BTS = "";
                 if (path != "") BTS = readBTS(path, planet.spaceMap);
                 if (BTS != "") PlanetBTSTextBox.Text += "Space map information\n\n" + BTS + "\n";
+            }
+        }
+
+        private void PlanetPictureBox_Click(object sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+            float x = (me.Location.X - globals.origin) / globals.scale;
+            float y = (me.Location.Y - globals.origin) / globals.scale;
+
+            float close = float.PositiveInfinity;
+            int closest = -1;
+
+            for (int i = 0; i < PlanetListBox.Items.Count; i++)
+            {
+                planet planet = (planet)PlanetListBox.Items[i];
+                float prox = (planet.x_coord - x) * (planet.x_coord - x) + (planet.y_coord - y) * (planet.y_coord - y);
+                if (prox < close)
+                {
+                    close = prox;
+                    closest = i;
+                }
+            }
+
+            if (closest >= 0)
+            {
+                PlanetListBox.SelectedIndex = closest;
             }
         }
 
@@ -5559,7 +5576,7 @@ namespace Holocron
                     int terraintype = planet.terrain_id;
                     if (terraintype < 0)
                     {//Save changes on the fly so the user who isn't trying to use every planet terrain can skip the long load
-                        terraintype = getTerrainIndex(planet.groundMap);
+                        terraintype = getTerrainIndex(planet.groundMap, entities);
                         int planetindex = entities.Planets.FindIndex(s => s.codename == planet.codename);
                         planet update = entities.Planets[planetindex];
                         update.terrain_id = terraintype;
@@ -5606,7 +5623,7 @@ namespace Holocron
                         int terraintype = planet.terrain_id;
                         if (terraintype < 0)
                         {//Save changes on the fly so the user who isn't trying to use every planet terrain can skip the long load
-                            terraintype = getTerrainIndex(planet.groundMap);
+                            terraintype = getTerrainIndex(planet.groundMap, entities);
                             int planetindex = entities.Planets.FindIndex(s => s.codename == planet.codename);
                             planet update = entities.Planets[planetindex];
                             update.terrain_id = terraintype;
@@ -5903,7 +5920,7 @@ namespace Holocron
 
         private string getDialogPath(string filename)
         {
-            return getModFile("Scripts\\Story\\" + filename + ".txt");
+            return getModFile("Scripts\\Story\\" + filename + ".txt", entities);
         }
 
         public struct speechevent
@@ -5949,7 +5966,7 @@ namespace Holocron
 
                 ConquestBTSTextBox.Text = "";
                 string BTS = "";
-                string path = getModFile("Text\\BTSConquest.txt");
+                string path = getModFile("Text\\BTSConquest.txt", entities);
                 string id = Campaign.campaign_set.Replace("_CCoGM", "");
                 if (id.Contains("_Era_")) id = id.Remove(id.IndexOf("_Era_"));
 
@@ -6038,7 +6055,7 @@ namespace Holocron
             populateGCListbox();
         }
 
-        private void GCActiveListBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void drawGC()
         {
             GCPresentListbox.SelectedItems.Clear();
             GCPlanetListBox.SelectedItems.Clear();
@@ -6053,9 +6070,9 @@ namespace Holocron
                     planet planet = selected.planetObjects[i];
                     total_income += planet.credits;
                     bool notfound = true;
-                    for(int j = 0; j < selected.forceLocation[factionindex].Count; j++)
+                    for (int j = 0; j < selected.forceLocation[factionindex].Count; j++)
                     {
-                        if(selected.forceLocation[factionindex][j] == planet.codename)
+                        if (selected.forceLocation[factionindex][j] == planet.codename)
                         {
                             planet.owner = FactionFromCodeName(selected.forceOwner[factionindex][j], entities);
                             if (planet.owner.codename == "" || planet.owner.codename is null) planet.owner = FactionFromCodeName("Neutral", entities);
@@ -6063,7 +6080,7 @@ namespace Holocron
                             break;
                         }
                     }
-                    if(notfound) planet.owner = FactionFromCodeName("Neutral", entities);
+                    if (notfound) planet.owner = FactionFromCodeName("Neutral", entities);
                     affiled.Add(planet);
                 }
                 GCPlanetLabel.Text = "Planets: " + GCPlanetListBox.Items.Count;
@@ -6073,6 +6090,37 @@ namespace Holocron
                 Bitmap Starfield = new Bitmap(GCPictureBox.Width, GCPictureBox.Height);
                 Graphics g = Graphics.FromImage(Starfield);
                 g.FillRectangle(new SolidBrush(Color.Black), 0, 0, GCPictureBox.Width, GCPictureBox.Height);
+
+                List<string> bads = new List<string>();
+
+                if (GCTradeRouterCheckBox.Checked)
+                {
+                    foreach (tradeRoute route in selected.traderouteObjects)
+                    {
+                        planet A = affiled.FirstOrDefault(s => s.codename == route.planets[0]);
+                        planet B = affiled.FirstOrDefault(s => s.codename == route.planets[1]);
+
+                        if (!(A.codename is null || B.codename is null)) //TODO handle one being nil and drawing a route to 0, 0 better
+                        {
+                            if (A.owner.codename == B.owner.codename)
+                            {
+                                Pen drawPen = new Pen(Color.FromArgb(255, A.owner.color[0], A.owner.color[1], A.owner.color[2]), 1);
+                                g.DrawLine(drawPen, A.x_coord * globals.scale + globals.origin, A.y_coord * globals.scale + globals.origin, B.x_coord * globals.scale + globals.origin, B.y_coord * globals.scale + globals.origin);
+                            }
+                            else
+                            {
+                                Pen drawPen = new Pen(Color.Gray, 1);
+                                g.DrawLine(drawPen, A.x_coord * globals.scale + globals.origin, A.y_coord * globals.scale + globals.origin, B.x_coord * globals.scale + globals.origin, B.y_coord * globals.scale + globals.origin);
+                            }
+                        }
+                        else
+                        {
+                            bads.Add(route.name);
+                        }
+                    }
+                }
+
+                if(globals.devmode && bads.Count > 0) MessageBox.Show("Routes referencing nonexistent planets:\n" + SerializeStringArray(bads));
 
                 foreach (planet planet in affiled)
                 {
@@ -6085,6 +6133,41 @@ namespace Holocron
                 GCPictureBox.Tag = Starfield;
 
                 populateGCPlanetListBox();
+            }
+        }
+        private void GCActiveListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            drawGC();
+        }
+
+        private void GCTradeRouterCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            drawGC();
+        }
+
+        private void GCPictureBox_Click(object sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+            float x = (me.Location.X - globals.origin) / globals.scale;
+            float y = (me.Location.Y - globals.origin) / globals.scale;
+
+            float close = float.PositiveInfinity;
+            int closest = -1;
+
+            for(int i = 0; i< GCPlanetListBox.Items.Count; i++)
+            {
+                planet planet = (planet)GCPlanetListBox.Items[i];
+                float prox = (planet.x_coord - x) * (planet.x_coord - x) + (planet.y_coord - y) * (planet.y_coord - y);
+                if (prox < close)
+                {
+                    close = prox;
+                    closest = i;
+                }
+            }
+
+            if(closest >= 0)
+            {
+                GCPlanetListBox.SelectedIndex = closest;
             }
         }
 

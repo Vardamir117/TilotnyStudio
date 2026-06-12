@@ -12,7 +12,6 @@ using System.Xml;
 using static SharedFunctions;
 using System.Globalization;
 using System.Threading;
-
 //only add to spawns sets if the object has a lua file
 //Removing units from Yevetha breaks things
 
@@ -21,7 +20,7 @@ using System.Threading;
 //todo *path for a unit's source file means it's in the megs. Might want to do something with that eventually
 
 //todo used shared modfiles functions for mods, update to be able to handle local mod as well as workshop,
-    //Handle a mod stack as a source instead of a single mod only
+//Handle a mod stack as a source instead of a single mod only
 //consolidate reading functions better now that the conversion to which submod's files can be in the shared library
 //TODO - generalize lua reading functions a lot
 //tooltips everywhere
@@ -68,64 +67,153 @@ namespace TilotnyStudio
             Console.WriteLine("Runtime terminating: {0}", args.IsTerminating);
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private void populateModPage()
         {
-            //tabPage2.Enabled = false;
-            tabHidePanel.Size = new System.Drawing.Size(1000, tabHidePanel.Size.Height);
-
-            string exePath = AppContext.BaseDirectory;
-            if (File.Exists(UpOneFolder(UpOneFolder(exePath)) + "\\config.meg"))
+            ModListBox.Items.Clear();
+            if (!Directory.Exists(globals.localmodpath))
             {
-                globals.SourceMod = UpOneFolder(UpOneFolder(exePath));
-                string uptwo = UpOneFolder(globals.SourceMod);
-                globals.SourceModName = LastFolderOrFile(uptwo);
+                Directory.CreateDirectory(globals.localmodpath);
             }
+            var directories = Directory.GetDirectories(globals.localmodpath);
+            globals.SourceModName = LastFolderOrFile(UpOneFolder(globals.modpaths[0]));
 
-            globals.ModFolder = UpOneFolder(UpOneFolder(UpOneFolder(UpOneFolder(UpOneFolder(UpOneFolder(globals.SourceMod)))))) + "\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\";
-            globals.SourceMod += "\\";
-
-            if (!Directory.Exists(globals.ModFolder))
-            {
-                Directory.CreateDirectory(globals.ModFolder);
-            }
-            var directories = Directory.GetDirectories(globals.ModFolder);
             foreach (string directory in directories)
             {
                 if (File.Exists(directory + "\\Tilotny"))
                 {
                     string modid = File.ReadAllLines(directory + "\\Tilotny")[0];
-                    if (modid == LastFolderOrFile(UpOneFolder(UpOneFolder(globals.SourceMod))))
+                    if (modid == globals.SourceModName)
                     {
                         ModListBox.Items.Add(LastFolderOrFile(directory));
                     }
                 }
-            }            
+            }
 
-            if (globals.SourceMod.Contains("1125571106"))
+            if (!globals.devmode)
+            {
+                entities.modpaths.Clear();
+                foreach (string modpath in globals.modpaths) entities.modpaths.Add(modpath);
+            }
+            parsemodid(entities);
+
+            if (entities.modid == "icw")
             {
                 VersionComboBox.SelectedIndex = 0;
             }
-            else if (globals.SourceMod.Contains("1976399102"))
+            else if (entities.modid == "fotr")
             {
                 VersionComboBox.SelectedIndex = 1;
             }
-            else if (globals.SourceMod.Contains("3417277973"))
+            else if (entities.modid == "rev")
             {
                 VersionComboBox.SelectedIndex = 2;
             }
+            //todo IR
+            else
+            {
+                VersionComboBox.Enabled = true;
+                MessageBox.Show("Warning: Tilotny is intended for use with Empire at War Expanded. Unexpected behavior may result if you use it with these arguments");
+            }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            //tabPage2.Enabled = false;
+            tabHidePanel.Size = new System.Drawing.Size(1000, tabHidePanel.Size.Height);
+            string exePath = AppContext.BaseDirectory;
+            //For debugging dev mode
+            //exePath = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\Data\\Tilotny\\";
+
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Length > 1)
+            {
+                string[] split = args[1].Split(';');
+                for (int i = 0; i < split.Length; i++)
+                { //First arg is exe, second is semicolon delimited mod args
+                    globals.modpaths.Add(split[i]);
+                }
+            }
+            string localmodtest = UpOneFolder(UpOneFolder(UpOneFolder(UpOneFolder(UpOneFolder(exePath)))));
+            string modfolder = UpOneFolder(UpOneFolder(exePath));
+            if (File.Exists(localmodtest + "\\StarWarsG.exe"))
+            {
+                globals.localmodpath = UpOneFolder(UpOneFolder(modfolder));
+                globals.steammodpath = UpOneFolder(UpOneFolder(UpOneFolder(localmodtest))) + "\\workshop\\content\\32470";
+                if (globals.modpaths.Count == 0)
+                {
+                    if (Directory.Exists(modfolder + "\\..\\TR") && Directory.Exists(modfolder + "\\..\\FotR") && Directory.Exists(modfolder + "\\..\\CoreSaga") && Directory.Exists(modfolder + "\\..\\Rev"))
+                    {
+                        DevChoice devChoice = new DevChoice();
+                        devChoice.basepath = UpOneFolder(modfolder);
+                        devChoice.ShowDialog();
+
+                        globals.modpaths = devChoice.args;
+                        globals.devmode = true;
+                        //globals.allplanets = devChoice.allplanet;
+                        tabHidePanel.Visible = false;
+                        ModListBox.Enabled = false;
+                        button1.Enabled = false;
+                        CopyModButton.Enabled = false;
+                        DeleteButton.Enabled = false;
+                        ModStackButton.Enabled = false;
+
+                        LaunchModButton.Enabled = true;
+                        for (int i = 0; i < globals.modpaths.Count - 1; i++) LaunchOptionsIndicator.Text += "Modpath=Mods\\" + LastFolderOrFile(UpOneFolder(UpOneFolder(globals.modpaths[i]))) + "\\" + LastFolderOrFile(UpOneFolder(globals.modpaths[i])) + " ";
+                        LaunchOptionsIndicator.Text += "Modpath=Mods\\" + LastFolderOrFile(UpOneFolder(globals.modpaths[globals.modpaths.Count - 1]));
+                        ModNameLabel.Text = "Dev Mode: " + LastFolderOrFile(UpOneFolder(globals.modpaths[0]));
+
+                        entities.modpaths = globals.modpaths;
+                        globals.LocalMod = entities.modpaths[0];
+                    }
+                    else globals.modpaths.Add(modfolder);
+                }
+            }
+            else
+            {
+                localmodtest = UpOneFolder(UpOneFolder(localmodtest)) + "\\common\\Star Wars Empire at War\\corruption";
+                if (File.Exists(localmodtest + "\\StarWarsG.exe"))
+                {
+                    if (globals.modpaths.Count == 0) globals.modpaths.Add(modfolder);
+                    globals.steammodpath = UpOneFolder(UpOneFolder(modfolder));
+                    globals.localmodpath = localmodtest + "\\Mods";
+                }
+                else
+                {//Run on real mod data from the debugger
+                    if (File.Exists("debugpaths.cfg"))
+                    {
+                        string[] lines = File.ReadAllLines("debugpaths.cfg");
+                        globals.localmodpath = lines[0];
+                        globals.steammodpath = lines[1];
+
+                        for (int i = 2; i < lines.Length; i++) globals.modpaths.Add(lines[i]);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Could not locate data files. Please place in the data folder of a Steam Workshop or local mod for Empire at War");
+                        this.Close();
+                    }
+                }
+            }
+
+            SkirmishListBox.SelectedIndex = 0;
+            populateModPage();
         }
 
         public static entities entities = new entities();
 
         public static class globals
         {
+            public static List<string> modpaths = new List<string>(); //Almost the same as entities.modpaths, but the part held constant while the local mod being edited changes
+            public static string localmodpath = "";
+            public static string steammodpath = "";
             //1125571106 1976399102 3417277973 TR FotR Rev if it isn't really obvious
-            public static string SourceMod = "C:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470\\1976399102\\Data";
+            //public static string SourceMod = "C:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470\\1976399102\\Data";
             public static string SourceModName = "1976399102";
             public static string ModFolder = "";
             public static string LocalMod = "";
             public static string LocalModName = "";
             public static bool unitsloaded = false;
+            public static bool devmode = false;
 
             public static List<playablefaction> playablefactions = new List<playablefaction>(); //Playable factions only
             public static List<string> allfactories = new List<string>();
@@ -134,6 +222,8 @@ namespace TilotnyStudio
 
             public static string ContentLoaderPath = "";
             public static CultureInfo UIculture = Thread.CurrentThread.CurrentCulture;
+
+            public static List<int> categories = new List<int>();
         }
 
         public static class algorithm_data
@@ -146,7 +236,7 @@ namespace TilotnyStudio
             public static int level4shield = 0;
         }
 
-        private string GetExtantPath(string MainPath)
+        private string GetExtantPath(string MainPath) //todo these all need to be replaced with submod stacking support
         {
             string ModPath = ConvertMainPathToMod(MainPath, true);
             if (File.Exists(ModPath))
@@ -167,41 +257,6 @@ namespace TilotnyStudio
                 System.IO.Directory.CreateDirectory(UpOneFolder(ModPath));
             }
             return ModPath;
-        }
-
-        private List<string> getModFiles(string corepath, string extension)
-        {
-            List<string> corenne = new List<string>();
-            List<string> prefound = new List<string>();
-            string test = Path.Combine(globals.LocalMod, corepath);
-            string[] tests = new string[0];
-            try
-            {
-                tests = Directory.GetFiles(test, extension, SearchOption.AllDirectories);
-            }
-            catch { } //There's probably a cleaner way to do this
-            foreach (string file in tests)
-            {
-                string truncated = file.Replace(globals.LocalMod + "\\", "");
-                prefound.Add(truncated);
-                corenne.Add(file);
-            }
-            test = Path.Combine(globals.SourceMod, corepath);
-            try
-            {
-                tests = Directory.GetFiles(test, extension, SearchOption.AllDirectories);
-            }
-            catch { }
-            foreach (string file in tests)
-            {
-                string truncated = file.Replace(globals.SourceMod, "");
-                if (!prefound.Contains(truncated))
-                {
-                    prefound.Add(truncated);
-                    corenne.Add(file);
-                }
-            }
-            return corenne;
         }
 
         private string[] LoadText()
@@ -248,7 +303,7 @@ namespace TilotnyStudio
             public int rank;
         }
 
-        private void parseStructuresAndFactions(string[] files)
+        private void parseStructuresAndFactions(List<string> files)
         {
             List<string> HapanOffices = new List<string>();
             foreach (string file in files)
@@ -258,7 +313,7 @@ namespace TilotnyStudio
                 doc.Load(GetExtantPath(file));
                 XmlNode root = doc.DocumentElement;
 
-                XmlNodeList structures = root.SelectNodes("descendant::SpecialStructure");
+                XmlNodeList structures = root.SelectNodes("*");
 
                 foreach (XmlNode unit in structures)
                 {
@@ -307,7 +362,7 @@ namespace TilotnyStudio
                                     faction.shipyards = new List<string>();
                                     faction.offices = new List<string>();
                                 }
-                                if (name.Contains("_Barracks") || name.Contains("_Vehicle_Factory"))
+                                if (!name.Contains("Template") && !name.Contains("GroundWar") && (name.Contains("_Barracks") && !name.Contains("Secondary_Barracks") || name.Contains("_Vehicle_Factory")))
                                 {
                                     faction.factories.Add(name);
                                     newinfo = true;
@@ -351,13 +406,13 @@ namespace TilotnyStudio
             //Sort faction to match xml list, though do not add in nonplayables
             XmlDocument facs = new XmlDocument();
             facs.PreserveWhitespace = true;
-            facs.Load(GetExtantPath(globals.SourceMod + "XML\\Factions.xml"));
+            facs.Load(getModFile("XML\\Factions.xml", entities));
             XmlNode facroot = facs.DocumentElement;
 
             var factions = facroot.SelectNodes("descendant::Faction");
             int rank = 0;
 
-            FactionFilerListBox.Items.Clear();
+            FactionFilterListBox.BeginInvoke(new Action(() => FactionFilterListBox.Items.Clear()));
             foreach (XmlElement faction in factions)
             {
                 rank += 1;
@@ -372,7 +427,7 @@ namespace TilotnyStudio
                         break;
                     }
                 }
-                FactionFilerListBox.Items.Add(facname);
+                FactionFilterListBox.BeginInvoke(new Action(() => FactionFilterListBox.Items.Add(facname)));
             }
             globals.playablefactions.Sort((s1, s2) => s1.rank.CompareTo(s2.rank));
 
@@ -382,7 +437,7 @@ namespace TilotnyStudio
             {
                 foreach (Control tokill in UnitAffilPanel.Controls)
                 {
-                    UnitAffilPanel.Controls.Remove(tokill);
+                    UnitAffilPanel.BeginInvoke(new Action(() => UnitAffilPanel.Controls.Remove(tokill)));
                 }
             }
 
@@ -397,7 +452,7 @@ namespace TilotnyStudio
                 check.Text = faction.facingname;
                 check.Tag = name;
                 check.Width = 220;
-                UnitAffilPanel.Controls.Add(check);
+                UnitAffilPanel.BeginInvoke(new Action(() => UnitAffilPanel.Controls.Add(check)));
 
                 var list = new ListBox();
                 list.Location = new Point(250, basey);
@@ -409,7 +464,7 @@ namespace TilotnyStudio
                 {
                     list.Items.Add(shipyard);
                 }
-                UnitAffilPanel.Controls.Add(list);
+                UnitAffilPanel.BeginInvoke(new Action(() => UnitAffilPanel.Controls.Add(list)));
             }
         }
 
@@ -651,23 +706,17 @@ namespace TilotnyStudio
                 return;
             }
             else globals.unitsloaded = true;
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            globals.playablefactions = new List<playablefaction>();
-            string[] files = Directory.GetFiles(globals.SourceMod + "XML\\Structures", "*.xml", SearchOption.AllDirectories);
-            parseStructuresAndFactions(files);
+
+            Loading loadscreen = new Loading();
+            loadscreen.Show();
+
+            System.Threading.Thread t = new System.Threading.Thread(() => LoadThread(loadscreen));
+            t.Start();
+
             CorpLabel.Text = "";
 
-            List<string> listfiles = getModFiles("XML\\Projectiles", "*.xml");
-            parseProjectiles(entities);
-            listfiles = getModFiles("XML\\Hardpoints", "*.xml");
-            parseHardpoints(entities, globals.Text); //todo add Tilotny new hp file
-
-            entities.spaceUnits = new List<unit>();
-            entities.groundCompanies = new List<unit>();
-            entities.groundUnits = new List<unit>();
-
-            listfiles = getModFiles("XML\\Units", "*.xml");
-            /*
+            /*listfiles = getModFiles("XML\\Units", "*.xml", entities);
+            
             parseUnitFolder(listfiles, entities);
             parseGameConstants(GetExtantPath(globals.SourceMod + "XML\\GameConstants.xml"), entities);
             entities.groundCompanies.Sort((s1, s2) => s1.unitname.CompareTo(s2.unitname));
@@ -677,47 +726,109 @@ namespace TilotnyStudio
             untemplate(entities.spaceUnits, entities.spaceUnits, globals.Text);
             untemplate(entities.groundUnits, entities.groundUnits, globals.Text);
             entities.groundCompanies = unitToCompanyData(entities.groundCompanies, entities.groundUnits, entities.containers);*/
+
+            //populateAffilUnits();
+        }
+
+        private void LoadThread(Loading loadscreen)
+        {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
+            loadscreen.ChangeText("Reading text file");
+            entities.Text = DatParser.ReadDat(getModFile("Text\\MasterTextFile_ENGLISH.dat", entities), ',', 0);
+            loadscreen.SetQuote(getLoadQuote(entities));
+
+            loadscreen.ChangeText("Reading MEG files");
+            parseMEGs(entities);
+
+            loadscreen.ChangeText("Reading icon file");
+            entities.IconData = DatParser.ReadMTD(entities);
+            try
+            {
+                entities.MTmaster = (Bitmap)Image.FromFile(getModFile("Art\\Textures\\MT_CommandBar.tga", entities));
+            }
+            catch
+            {
+                entities.MTmaster = new Bitmap(50, 50);
+            };
+            entities.readerrors = "";
+
+            loadscreen.ChangeText("Reading factions and structures");
+            globals.playablefactions = new List<playablefaction>();
+            List<string> files = getModFiles("XML\\Structures", "*.xml", entities);
+            parseStructuresAndFactions(files);
+
+            loadscreen.ChangeText("Parsing projectile data");
+            List<string> listfiles = getModFiles("XML\\Projectiles", "*.xml", entities);
+            parseProjectiles(entities);
+
+            loadscreen.ChangeText("Parsing hardpoint data");
+            listfiles = getModFiles("XML\\Hardpoints", "*.xml", entities);
+            parseHardpoints(entities, globals.Text); //todo add Tilotny new hp file
+
+            entities.spaceUnits = new List<unit>();
+            entities.groundCompanies = new List<unit>();
+            entities.groundUnits = new List<unit>();
+            entities.spaceHeroes = new List<unit>();
+            entities.groundCompanies = new List<unit>();
+            entities.groundHeroes = new List<unit>();
+
+            loadscreen.ChangeText("Parsing object data");
             parseObjects(entities);
+            loadscreen.ChangeText("Resolving object dependencies");
             untemplate(entities);
-            categorizeObjects(entities);
+            loadscreen.ChangeText("Assembing company unit lists");
             unitToCompanyData(entities);
-            parsePrereqs(entities.groundCompanies,false);
+            loadscreen.ChangeText("Categorizing object types");
+            categorizeObjects(entities);
+
+            loadscreen.ChangeText("Parsing Prerequisites");
+            parsePrereqs(entities.groundCompanies, false);
             parsePrereqs(entities.spaceUnits, true);
 
             Thread.CurrentThread.CurrentCulture = globals.UIculture;
-            populateAffilUnits();
+            loadscreen.CloseLoadScreen();
+
+            populateAffilUnits(true);
         }
 
-        private void populateAffilUnits()
+        private void populateAffilUnits(bool furst = false)
         {
-            AffilListBox.Items.Clear();
+            AffilListBox.BeginInvoke(new Action(() => AffilListBox.Items.Clear()));
             string search = AffilSearchTextBox.Text;
             List<unit> units;
 
             if (SpaceRadioButton.Checked) units = entities.spaceUnits;
             else if (UnitRadioButton.Checked) units = entities.groundUnits;
+            else if (SpaceHeroRadioButton.Checked) units = entities.spaceHeroes;
+            else if (HeroTeamRadioButton.Checked) units = entities.heroCompanies;
+            else if (GroundHeroRadioButton.Checked) units = entities.groundHeroes;
             else units = entities.groundCompanies;
 
             foreach (unit unit in units)
             {//Todo this can probably be cleaned up. Also you can't see gunships right now
-                if (!unit.unitname.Contains("Template_") && !unit.unitname.Contains("Skirmish") && !unit.unitname.Contains("IA_") && !unit.unitname.Contains("Squadron") && !unit.unitname.Contains("Era_") && (UnitRadioButton.Checked && !unit.unitname.Contains("_Dummy") || (unit.cost > 1 && unit.pop > 0 && unit.fightermode <= 0 && !unit.shield_type.Contains("ShieldS_Gunship"))))
+                if(categoryFilter(unit, globals.categories) && !unit.unitname.Contains("Cheat"))
+                //if (!unit.unitname.Contains("Template_") && !unit.unitname.Contains("Skirmish") && !unit.unitname.Contains("IA_") && !unit.unitname.Contains("Squadron") && !unit.unitname.Contains("Era_") && (UnitRadioButton.Checked && !unit.unitname.Contains("_Dummy") || (unit.cost > 1 && unit.pop > 0 && unit.fightermode <= 0 && !unit.shield_type.Contains("ShieldS_Gunship"))))
                 {
                     bool affil_ok = true;
-                    if (FactionFilerListBox.SelectedItems.Count > 0)
+                    if (!furst) //avoid trying to read cross thread objects on init
                     {
-                        affil_ok = false;
-                        foreach (string filter in FactionFilerListBox.SelectedItems)
+                        if (FactionFilterListBox.SelectedItems.Count > 0)
                         {
-                            if (unit.affiliations.Contains(filter))
+                            affil_ok = false;
+                            foreach (string filter in FactionFilterListBox.SelectedItems)
                             {
-                                affil_ok = true;
-                                break;
+                                if (unit.affiliations.Contains(filter))
+                                {
+                                    affil_ok = true;
+                                    break;
+                                }
                             }
                         }
                     }
                     if (affil_ok && (search == "" || (unit.unitname).ToLower().Contains(search.ToLower())))
                     {
-                        AffilListBox.Items.Add(unit.unitname);
+                        AffilListBox.BeginInvoke(new Action(() => AffilListBox.Items.Add(unit.unitname)));
                     }
                 }
             }
@@ -836,14 +947,21 @@ namespace TilotnyStudio
             populateAffilUnits();
         }
 
-        private void FactionFilerListBox_SelectedIndexChanged(object sender, EventArgs e)
+        private void FactionFilterListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            populateAffilUnits();
+        }
+
+        private void SkirmishListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            globals.categories.Clear();
+            foreach (int id in SkirmishListBox.SelectedIndices) globals.categories.Add(id);
             populateAffilUnits();
         }
 
         private void FactionFilterClearButton_Click(object sender, EventArgs e)
         {
-            FactionFilerListBox.SelectedItems.Clear();
+            FactionFilterListBox.SelectedItems.Clear();
         }
 
         private void InfluenceCheckBox_CheckedChanged(object sender, EventArgs e)
@@ -1110,7 +1228,7 @@ namespace TilotnyStudio
                 List<string> affilist = new List<string>();
                 bool first = true;
 
-                string[] CustomLib = File.ReadAllLines(GetExtantPath(globals.SourceMod + "Scripts\\Library\\CustomLibrary.lua"));
+                string[] CustomLib = File.ReadAllLines(getModFile("Scripts\\Library\\CustomLibrary.lua", entities));
                 List<int> CustomStartIndexes = new List<int>();
                 List<int> CustomEndIndexes = new List<int>();
 
@@ -1153,7 +1271,7 @@ namespace TilotnyStudio
                 List<unit> unitlist = entities.spaceUnits;
                 XmlDocument factiondoc = new XmlDocument();
                 factiondoc.PreserveWhitespace = true;
-                factiondoc.Load(GetExtantPath(globals.SourceMod + "XML\\Factions.xml"));
+                factiondoc.Load(getModFile("XML\\Factions.xml", entities));
                 XmlNode facroot = factiondoc.DocumentElement;
                 var docfactions = facroot.SelectNodes("descendant::Faction");
                 if (GroundRadioButton.Checked)
@@ -1307,7 +1425,7 @@ namespace TilotnyStudio
 
                                 bool has_crew = false;
                                 string checkval = "[\"" + unit.unitname.ToUpper() + "\"]";
-                                string[] rosterset = File.ReadAllLines(GetExtantPath(globals.SourceMod + "Scripts\\Library\\roster-sets\\INFLUENCE.lua"));
+                                string[] rosterset = File.ReadAllLines(getModFile("Scripts\\Library\\roster-sets\\INFLUENCE.lua", entities));
                                 foreach (string line in rosterset)
                                 {
                                     if (line.Contains(checkval))
@@ -1321,7 +1439,7 @@ namespace TilotnyStudio
                                     foreach (string faction in affilist)
                                     {
                                         has_crew = false;
-                                        string rosterpath = globals.SourceMod + "Scripts\\Library\\roster-sets\\" + faction.ToUpper() + ".lua";
+                                        string rosterpath = getModFile("Scripts\\Library\\roster-sets\\" + faction.ToUpper() + ".lua", entities);
                                         if (File.Exists(rosterpath)) //Actives but nonplayable do not have or need this
                                         {
                                             rosterset = File.ReadAllLines(GetExtantPath(rosterpath));
@@ -1489,12 +1607,12 @@ namespace TilotnyStudio
                         }
                     }
                 }
-                factiondoc.Save(ConvertMainPathToMod(globals.SourceMod + "XML\\Factions.xml")); //save bombard changes
-                File.WriteAllLines(ConvertMainPathToMod(globals.SourceMod + "Scripts\\Library\\CustomLibrary.lua"), CustomLib);
+                factiondoc.Save(ConvertMainPathToMod(getModFile("XML\\Factions.xml", entities))); //save bombard changes
+                File.WriteAllLines(ConvertMainPathToMod(getModFile("Scripts\\Library\\CustomLibrary.lua", entities)), CustomLib);
 
                 factiondoc = new XmlDocument();
                 factiondoc.PreserveWhitespace = true;
-                factiondoc.Load(GetExtantPath(globals.SourceMod + "XML\\Structures\\GalacticCorporations.xml"));
+                factiondoc.Load(getModFile("XML\\Structures\\GalacticCorporations.xml", entities));
                 facroot = factiondoc.DocumentElement;
                 List<string> CheapNames = new List<string>();
                 List<List<string>> CheapAffils = new List<List<string>>();
@@ -1587,7 +1705,7 @@ namespace TilotnyStudio
                         }
                     }
                 }
-                factiondoc.Save(ConvertMainPathToMod(globals.SourceMod + "XML\\Structures\\GalacticCorporations.xml"));
+                factiondoc.Save(ConvertMainPathToMod(getModFile("XML\\Structures\\GalacticCorporations.xml", entities)));
             }
             else // unit stats section
             {
@@ -2008,12 +2126,24 @@ namespace TilotnyStudio
             {
                 case 0:
                     UnitRadioButton.Visible = false;
+                    SpaceHeroRadioButton.Visible = false;
+                    HeroTeamRadioButton.Visible = false;
+                    GroundHeroRadioButton.Visible = false;
                     AffilListBox.SelectionMode = SelectionMode.MultiExtended;
-                    if (UnitRadioButton.Checked) GroundRadioButton.Checked = true;
+                    if (UnitRadioButton.Checked || SpaceHeroRadioButton.Checked || HeroTeamRadioButton.Checked || GroundHeroRadioButton.Checked) GroundRadioButton.Checked = true;
                     break;
                 case 1:
                     UnitRadioButton.Visible = true;
+                    SpaceHeroRadioButton.Visible = true;
+                    HeroTeamRadioButton.Visible = true;
+                    GroundHeroRadioButton.Visible = true;
                     AffilListBox.SelectionMode = SelectionMode.One;
+                    int save = AffilListBox.SelectedIndex;
+                    if(save >= 0)
+                    {
+                        AffilListBox.SelectedItems.Clear();
+                        AffilListBox.SelectedIndex = save;
+                    }
                     break;
                     //default:
                     // code block
@@ -2039,15 +2169,15 @@ namespace TilotnyStudio
                 return;
             }
 
-            globals.LocalMod = globals.ModFolder + newmod;
+            globals.LocalMod = globals.localmodpath + "\\" + newmod;
             System.IO.Directory.CreateDirectory(globals.LocalMod);
-            File.WriteAllText(globals.LocalMod + "\\Tilotny", LastFolderOrFile(UpOneFolder(UpOneFolder(globals.SourceMod))));
-            string[] files = Directory.GetFiles(globals.SourceMod + "Text", "*.txt", SearchOption.AllDirectories);
+            File.WriteAllText(globals.LocalMod + "\\Tilotny", LastFolderOrFile(UpOneFolder(globals.modpaths[0])));
+            List<string> files = getModFiles("Text", "*.txt", entities);
 
-            CopyMainToMod(globals.SourceMod + "Text\\MasterTextFile_ENGLISH.dat");
-            CopyMainToMod(globals.SourceMod + "Text\\datassembler.exe");
+            CopyMainToMod(getModFile("Text\\MasterTextFile_ENGLISH.dat", entities));
+            CopyMainToMod(getModFile("Text\\datassembler.exe", entities)); //todo kiilit and use dat functions directly
             System.Diagnostics.Process.Start("\"" + globals.LocalMod + "\\Data\\Text\\datassembler.exe\"", "/e \"" + globals.LocalMod + "\\Data\\Text\\MasterTextFile_ENGLISH.dat\" \"" + globals.LocalMod + "\\Data\\Text\\MasterTextFile_ENGLISH.txt\"");
-            CopyMainToMod(globals.SourceMod + "Text\\Submod_text.txt");
+            CopyMainToMod(getModFile("Text\\Submod_text.txt", entities));
 
             ModListBox.Items.Add(newmod);
             ModListBox.SelectedItem = newmod;
@@ -2083,6 +2213,18 @@ namespace TilotnyStudio
             //copying folders recursively is apparently quite hard
         }
 
+        private void setModUnselected()
+        {
+            ModNameLabel.Text = "Active Submod: None";
+            LaunchOptionsIndicator.Text = "";
+            globals.LocalMod = "";
+            globals.LocalModName = "";
+            tabHidePanel.Visible = true;
+            LaunchModButton.Enabled = false;
+            ModFilesButton.Enabled = false;
+            CopyModButton.Enabled = false;
+        }
+
         private void ModListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (ModListBox.SelectedItem != null)
@@ -2092,14 +2234,7 @@ namespace TilotnyStudio
             }
             else
             {
-                ModNameLabel.Text = "Active Submod: None";
-                LaunchOptionsIndicator.Text = "";
-                globals.LocalMod = "";
-                globals.LocalModName = "";
-                tabHidePanel.Visible = true;
-                LaunchModButton.Enabled = false;
-                ModFilesButton.Enabled = false;
-                CopyModButton.Enabled = false;
+                setModUnselected();
             }
             globals.unitsloaded = false;
         }
@@ -2107,9 +2242,15 @@ namespace TilotnyStudio
         private void setLocalMod(string mod)
         {
             ModNameLabel.Text = "Active Mod: " + mod;
-            LaunchOptionsIndicator.Text = "Modpath=Mods\\" + mod + " STEAMMOD=" + globals.SourceModName;
+            LaunchOptionsIndicator.Text = "Modpath=Mods\\" + mod;
+            foreach(string modpath in globals.modpaths)
+            {
+                if(modpath.Contains("content\\32470\\")) LaunchOptionsIndicator.Text += " STEAMMOD=" + LastFolderOrFile(UpOneFolder(modpath));
+                else LaunchOptionsIndicator.Text += " Modpath=Mods\\" + LastFolderOrFile(UpOneFolder(modpath));
+            }
+                //" STEAMMOD=" + globals.SourceModName; //todo replace with entities.modpaths
 
-            globals.LocalMod = globals.ModFolder + mod + "\\Data";
+            globals.LocalMod = globals.localmodpath +"\\" + mod + "\\Data";
             globals.LocalModName = mod;
 
             tabHidePanel.Visible = false;
@@ -2119,7 +2260,7 @@ namespace TilotnyStudio
             entities.modpaths.Clear();
             //Todo full custom mod stacks properly
             entities.modpaths.Add(globals.LocalMod);
-            entities.modpaths.Add(globals.SourceMod);
+            foreach(string modpath in globals.modpaths) entities.modpaths.Add(modpath);
         }
 
         private void CopyMainToMod(string MainPath)
@@ -2139,12 +2280,12 @@ namespace TilotnyStudio
             }
             XmlDocument doc = new XmlDocument();
             doc.PreserveWhitespace = true;
-            doc.Load(GetExtantPath(globals.SourceMod + "XML\\Factions.xml"));
+            doc.Load(getModFile("XML\\Factions.xml", entities));
             XmlNode root = doc.DocumentElement;
             XmlNode cap = root.SelectSingleNode("descendant::Faction").SelectSingleNode("descendant::Space_Tactical_Unit_Cap");
             PopulationBox.Value = Convert.ToInt32(cap.LastChild.Value);
             var factions = root.SelectNodes("descendant::Faction");
-            string[] gameconstants = File.ReadAllLines(GetExtantPath(globals.SourceMod+"Scripts\\Library"+globals.ContentLoaderPath+ "\\GameConstants.lua"));
+            string[] gameconstants = File.ReadAllLines(getModFile("Scripts\\Library"+globals.ContentLoaderPath+ "\\GameConstants.lua", entities));
             int factionnamestart = 0;
             for (int i = 0; i < gameconstants.Length; i++)
             {
@@ -2326,7 +2467,7 @@ namespace TilotnyStudio
 
                 doc = new XmlDocument();
                 doc.PreserveWhitespace = true;
-                doc.Load(GetExtantPath(globals.SourceMod + "XML\\GameConstants.xml"));
+                doc.Load(getModFile("XML\\GameConstants.xml", entities));
                 root = doc.DocumentElement;
                 string predict = root.SelectSingleNode("descendant::ShouldDisplayPredictionPaths").InnerText.Trim();
                 if (predict.ToUpper().Contains("TRUE")) PathfindCheckBox.Checked = true;
@@ -2340,7 +2481,7 @@ namespace TilotnyStudio
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             XmlDocument doc = new XmlDocument();
             doc.PreserveWhitespace = true;
-            doc.Load(GetExtantPath(globals.SourceMod + "XML\\GameConstants.xml"));
+            doc.Load(getModFile("XML\\GameConstants.xml", entities));
             XmlNode constroot = doc.DocumentElement;
             string good = constroot.SelectSingleNode("descendant::Good_Side_Name").InnerText.Trim();
             string evil = constroot.SelectSingleNode("descendant::Evil_Side_Name").InnerText.Trim();
@@ -2355,17 +2496,17 @@ namespace TilotnyStudio
 
             XmlDocument trades = new XmlDocument();
             trades.PreserveWhitespace = true;
-            trades.Load(GetExtantPath(globals.SourceMod + "XML\\TradeRouteLines.xml"));
+            trades.Load(getModFile("XML\\TradeRouteLines.xml", entities));
             XmlNode traderoot = trades.DocumentElement.SelectSingleNode("descendant::TradeRouteLine");
             XmlNodeList traderoutes = traderoot.SelectNodes("descendant::Settings_For_Faction");
 
             doc = new XmlDocument();
             doc.PreserveWhitespace = true;
-            doc.Load(GetExtantPath(globals.SourceMod + "XML\\Factions.xml"));
+            doc.Load(getModFile("XML\\Factions.xml", entities));
             XmlNode root = doc.DocumentElement;
             XmlNodeList factions = root.SelectNodes("descendant::Faction");
 
-            string constantsPath = globals.SourceMod + "Scripts\\Library" + globals.ContentLoaderPath + "\\GameConstants.lua";
+            string constantsPath = getModFile("Scripts\\Library" + globals.ContentLoaderPath + "\\GameConstants.lua", entities);
             string[] gameconstants = File.ReadAllLines(GetExtantPath(constantsPath));
             int factionnamestart = 0;
             int factioncolorstart = 0;
@@ -2531,7 +2672,7 @@ namespace TilotnyStudio
 
         private void LaunchModButton_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(globals.ModFolder + "..\\StarWarsG.exe", LaunchOptionsIndicator.Text);
+            System.Diagnostics.Process.Start(globals.localmodpath + "\\..\\StarWarsG.exe", LaunchOptionsIndicator.Text);
         }
 
         private void ModFilesButton_Click(object sender, EventArgs e)
@@ -2733,7 +2874,7 @@ namespace TilotnyStudio
 
         private void SetAffilMods()
         {
-            if (VersionComboBox.SelectedItem.ToString().Contains("Thrawn's Revenge"))
+            if (entities.modid == "icw")
             {
                 for (int i = 0; i < globals.playablefactions.Count; i++)
                 {
@@ -2767,7 +2908,7 @@ namespace TilotnyStudio
                     globals.playablefactions[i] = faction;
                 }
             }
-            else if (VersionComboBox.SelectedItem.ToString().Contains("Fall of the Republic"))
+            else if (entities.modid == "fotr")
             {
                 for (int i = 0; i < globals.playablefactions.Count; i++)
                 {
@@ -2798,7 +2939,7 @@ namespace TilotnyStudio
                     globals.playablefactions[i] = faction;
                 }
             }
-            else if (VersionComboBox.SelectedItem.ToString().Contains("Revan's Revenge"))
+            else if (entities.modid == "rev")
             {
                 for (int i = 0; i < globals.playablefactions.Count; i++)
                 {
@@ -2820,6 +2961,7 @@ namespace TilotnyStudio
                     globals.playablefactions[i] = faction;
                 }
             }
+            //else todo IR
 
             globals.allfactories = new List<string>();
             foreach (playablefaction faction in globals.playablefactions)
@@ -2863,5 +3005,23 @@ namespace TilotnyStudio
                 }
             }
         }
+
+        private void ModStackButton_Click(object sender, EventArgs e)
+        {
+            SubmodSetup subs = new SubmodSetup();
+            subs.localmodpath = globals.localmodpath;
+            subs.steammodpath = globals.steammodpath;
+            subs.ShowDialog();
+
+            if (subs.reload)
+            {
+                globals.modpaths = subs.Args;
+                tabControl1.SelectedIndex = 0;
+                populateModPage();
+                setModUnselected();
+            }
+        }
+
+        //leave below thos point alone
     }
 }

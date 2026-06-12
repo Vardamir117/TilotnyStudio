@@ -103,6 +103,13 @@
             this.Unitpanel = new System.Windows.Forms.Panel();
             this.CollapseUnitAvailPanel = new System.Windows.Forms.Button();
             this.UnitAvailPanel = new System.Windows.Forms.Panel();
+            this.UnitAllSquadSizesCheckBox = new System.Windows.Forms.CheckBox();
+            this.UnitGotoHostButton = new System.Windows.Forms.Button();
+            this.label33 = new System.Windows.Forms.Label();
+            this.UnitHostListbox = new System.Windows.Forms.ListBox();
+            this.UnitDiscountGotoButton = new System.Windows.Forms.Button();
+            this.label32 = new System.Windows.Forms.Label();
+            this.UnitDiscountListBox = new System.Windows.Forms.ListBox();
             this.UnitGCGotoButton = new System.Windows.Forms.Button();
             this.UnitGotoPlanetButton = new System.Windows.Forms.Button();
             this.UnitSpawnGotoButton = new System.Windows.Forms.Button();
@@ -288,6 +295,7 @@
             this.tabGCs = new System.Windows.Forms.TabPage();
             this.GCListBox = new System.Windows.Forms.ListBox();
             this.GCPanel = new System.Windows.Forms.Panel();
+            this.GCTradeRouterCheckBox = new System.Windows.Forms.CheckBox();
             this.SpeechCheckBox = new System.Windows.Forms.CheckBox();
             this.GCChapterLabel = new System.Windows.Forms.Label();
             this.label31 = new System.Windows.Forms.Label();
@@ -326,6 +334,7 @@
             this.GCSpeechListBox = new System.Windows.Forms.ListBox();
             this.tabFactions = new System.Windows.Forms.TabPage();
             this.FactionPanel = new System.Windows.Forms.Panel();
+            this.FactionAliasLabel = new System.Windows.Forms.Label();
             this.FactionGotoUnitButton = new System.Windows.Forms.Button();
             this.FactionGotoConquestButton = new System.Windows.Forms.Button();
             this.FactionGotoBuildableButton = new System.Windows.Forms.Button();
@@ -394,14 +403,8 @@
             this.AutoResolveBattleTypeLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.FactionAliasLabel = new System.Windows.Forms.Label();
-            this.UnitDiscountGotoButton = new System.Windows.Forms.Button();
-            this.label32 = new System.Windows.Forms.Label();
-            this.UnitDiscountListBox = new System.Windows.Forms.ListBox();
-            this.UnitGotoHostButton = new System.Windows.Forms.Button();
-            this.label33 = new System.Windows.Forms.Label();
-            this.UnitHostListbox = new System.Windows.Forms.ListBox();
-            this.UnitAllSquadSizesCheckBox = new System.Windows.Forms.CheckBox();
+            this.UnitAoEBox = new System.Windows.Forms.NumericUpDown();
+            this.label34 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tabLookups.SuspendLayout();
             this.LookupTabControl.SuspendLayout();
@@ -444,6 +447,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveWinnerAttritionNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveLoserAttritionNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveAttritionAllowanceNumeric)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.UnitAoEBox)).BeginInit();
             this.SuspendLayout();
             // 
             // contextMenuStrip1
@@ -1316,6 +1320,80 @@
             this.UnitAvailPanel.Size = new System.Drawing.Size(1039, 376);
             this.UnitAvailPanel.TabIndex = 9;
             // 
+            // UnitAllSquadSizesCheckBox
+            // 
+            this.UnitAllSquadSizesCheckBox.AutoSize = true;
+            this.UnitAllSquadSizesCheckBox.Location = new System.Drawing.Point(528, 56);
+            this.UnitAllSquadSizesCheckBox.Name = "UnitAllSquadSizesCheckBox";
+            this.UnitAllSquadSizesCheckBox.Size = new System.Drawing.Size(144, 17);
+            this.UnitAllSquadSizesCheckBox.TabIndex = 52;
+            this.UnitAllSquadSizesCheckBox.Text = "Show All Squadron Sizes";
+            this.UnitAllSquadSizesCheckBox.UseVisualStyleBackColor = true;
+            this.UnitAllSquadSizesCheckBox.Visible = false;
+            this.UnitAllSquadSizesCheckBox.CheckedChanged += new System.EventHandler(this.UnitAllSquadSizesCheckBox_CheckedChanged);
+            // 
+            // UnitGotoHostButton
+            // 
+            this.UnitGotoHostButton.Location = new System.Drawing.Point(628, 73);
+            this.UnitGotoHostButton.Name = "UnitGotoHostButton";
+            this.UnitGotoHostButton.Size = new System.Drawing.Size(48, 23);
+            this.UnitGotoHostButton.TabIndex = 51;
+            this.UnitGotoHostButton.Text = "Go to";
+            this.UnitGotoHostButton.UseVisualStyleBackColor = true;
+            this.UnitGotoHostButton.Click += new System.EventHandler(this.UnitGotoHostButton_Click);
+            // 
+            // label33
+            // 
+            this.label33.AutoSize = true;
+            this.label33.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label33.Location = new System.Drawing.Point(524, 74);
+            this.label33.Name = "label33";
+            this.label33.Size = new System.Drawing.Size(88, 20);
+            this.label33.TabIndex = 50;
+            this.label33.Text = "Host Units:";
+            this.toolTip1.SetToolTip(this.label33, "Companies that contain this unit");
+            // 
+            // UnitHostListbox
+            // 
+            this.UnitHostListbox.FormattingEnabled = true;
+            this.UnitHostListbox.Location = new System.Drawing.Point(528, 96);
+            this.UnitHostListbox.Name = "UnitHostListbox";
+            this.UnitHostListbox.Size = new System.Drawing.Size(148, 277);
+            this.UnitHostListbox.TabIndex = 49;
+            this.toolTip1.SetToolTip(this.UnitHostListbox, "Companies that contain this unit\r\nAND/OR\r\nObjects that spawn this unit as a garri" +
+        "son\r\n\r\nLua fighter spawn hosts will be limited to the selected faction if one is" +
+        " selected");
+            // 
+            // UnitDiscountGotoButton
+            // 
+            this.UnitDiscountGotoButton.Location = new System.Drawing.Point(430, 228);
+            this.UnitDiscountGotoButton.Name = "UnitDiscountGotoButton";
+            this.UnitDiscountGotoButton.Size = new System.Drawing.Size(48, 23);
+            this.UnitDiscountGotoButton.TabIndex = 48;
+            this.UnitDiscountGotoButton.Text = "Go to";
+            this.UnitDiscountGotoButton.UseVisualStyleBackColor = true;
+            this.UnitDiscountGotoButton.Click += new System.EventHandler(this.UnitDiscountGotoButton_Click);
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label32.Location = new System.Drawing.Point(269, 228);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(139, 20);
+            this.label32.TabIndex = 47;
+            this.label32.Text = "Discount Sources:";
+            this.toolTip1.SetToolTip(this.label32, "Objects that discount this unit specifically (not units in general)");
+            // 
+            // UnitDiscountListBox
+            // 
+            this.UnitDiscountListBox.FormattingEnabled = true;
+            this.UnitDiscountListBox.Location = new System.Drawing.Point(273, 252);
+            this.UnitDiscountListBox.Name = "UnitDiscountListBox";
+            this.UnitDiscountListBox.Size = new System.Drawing.Size(205, 121);
+            this.UnitDiscountListBox.TabIndex = 46;
+            this.toolTip1.SetToolTip(this.UnitDiscountListBox, "Objects that discount this unit specifically (not units in general)");
+            // 
             // UnitGCGotoButton
             // 
             this.UnitGCGotoButton.Location = new System.Drawing.Point(993, 71);
@@ -2026,6 +2104,8 @@
             // 
             // UnitStatPanel
             // 
+            this.UnitStatPanel.Controls.Add(this.label34);
+            this.UnitStatPanel.Controls.Add(this.UnitAoEBox);
             this.UnitStatPanel.Controls.Add(this.HealRadiusLabel);
             this.UnitStatPanel.Controls.Add(this.HealRechargeLabel);
             this.UnitStatPanel.Controls.Add(this.HealAmountLabel);
@@ -2077,7 +2157,7 @@
             // 
             this.HealRadiusLabel.AutoSize = true;
             this.HealRadiusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HealRadiusLabel.Location = new System.Drawing.Point(585, 170);
+            this.HealRadiusLabel.Location = new System.Drawing.Point(909, 183);
             this.HealRadiusLabel.Name = "HealRadiusLabel";
             this.HealRadiusLabel.Size = new System.Drawing.Size(86, 16);
             this.HealRadiusLabel.TabIndex = 46;
@@ -2087,7 +2167,7 @@
             // 
             this.HealRechargeLabel.AutoSize = true;
             this.HealRechargeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HealRechargeLabel.Location = new System.Drawing.Point(585, 154);
+            this.HealRechargeLabel.Location = new System.Drawing.Point(909, 167);
             this.HealRechargeLabel.Name = "HealRechargeLabel";
             this.HealRechargeLabel.Size = new System.Drawing.Size(103, 16);
             this.HealRechargeLabel.TabIndex = 45;
@@ -2097,7 +2177,7 @@
             // 
             this.HealAmountLabel.AutoSize = true;
             this.HealAmountLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HealAmountLabel.Location = new System.Drawing.Point(585, 138);
+            this.HealAmountLabel.Location = new System.Drawing.Point(909, 151);
             this.HealAmountLabel.Name = "HealAmountLabel";
             this.HealAmountLabel.Size = new System.Drawing.Size(88, 16);
             this.HealAmountLabel.TabIndex = 44;
@@ -2107,7 +2187,7 @@
             // 
             this.PDRechargeLabel.AutoSize = true;
             this.PDRechargeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.PDRechargeLabel.Location = new System.Drawing.Point(585, 89);
+            this.PDRechargeLabel.Location = new System.Drawing.Point(909, 102);
             this.PDRechargeLabel.Name = "PDRechargeLabel";
             this.PDRechargeLabel.Size = new System.Drawing.Size(97, 17);
             this.PDRechargeLabel.TabIndex = 43;
@@ -2117,7 +2197,7 @@
             // 
             this.HealScoreLabel.AutoSize = true;
             this.HealScoreLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HealScoreLabel.Location = new System.Drawing.Point(585, 122);
+            this.HealScoreLabel.Location = new System.Drawing.Point(909, 135);
             this.HealScoreLabel.Name = "HealScoreLabel";
             this.HealScoreLabel.Size = new System.Drawing.Size(79, 16);
             this.HealScoreLabel.TabIndex = 42;
@@ -2129,7 +2209,7 @@
             // 
             this.PDRadiusLabel.AutoSize = true;
             this.PDRadiusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
-            this.PDRadiusLabel.Location = new System.Drawing.Point(585, 105);
+            this.PDRadiusLabel.Location = new System.Drawing.Point(909, 118);
             this.PDRadiusLabel.Name = "PDRadiusLabel";
             this.PDRadiusLabel.Size = new System.Drawing.Size(79, 17);
             this.PDRadiusLabel.TabIndex = 41;
@@ -2151,7 +2231,7 @@
             // AlphaCheckBox
             // 
             this.AlphaCheckBox.AutoSize = true;
-            this.AlphaCheckBox.Location = new System.Drawing.Point(3, 224);
+            this.AlphaCheckBox.Location = new System.Drawing.Point(3, 221);
             this.AlphaCheckBox.Name = "AlphaCheckBox";
             this.AlphaCheckBox.Size = new System.Drawing.Size(113, 17);
             this.AlphaCheckBox.TabIndex = 39;
@@ -3299,6 +3379,7 @@
             this.PlanetPictureBox.Size = new System.Drawing.Size(501, 501);
             this.PlanetPictureBox.TabIndex = 63;
             this.PlanetPictureBox.TabStop = false;
+            this.PlanetPictureBox.Click += new System.EventHandler(this.PlanetPictureBox_Click);
             // 
             // PlanetBTSTextBox
             // 
@@ -3337,6 +3418,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.GCPanel.AutoScroll = true;
+            this.GCPanel.Controls.Add(this.GCTradeRouterCheckBox);
             this.GCPanel.Controls.Add(this.SpeechCheckBox);
             this.GCPanel.Controls.Add(this.GCChapterLabel);
             this.GCPanel.Controls.Add(this.label31);
@@ -3377,6 +3459,20 @@
             this.GCPanel.Name = "GCPanel";
             this.GCPanel.Size = new System.Drawing.Size(1081, 769);
             this.GCPanel.TabIndex = 64;
+            // 
+            // GCTradeRouterCheckBox
+            // 
+            this.GCTradeRouterCheckBox.AutoSize = true;
+            this.GCTradeRouterCheckBox.Checked = true;
+            this.GCTradeRouterCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.GCTradeRouterCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCTradeRouterCheckBox.Location = new System.Drawing.Point(451, 507);
+            this.GCTradeRouterCheckBox.Name = "GCTradeRouterCheckBox";
+            this.GCTradeRouterCheckBox.Size = new System.Drawing.Size(169, 24);
+            this.GCTradeRouterCheckBox.TabIndex = 103;
+            this.GCTradeRouterCheckBox.Text = "Show Trade Routes";
+            this.GCTradeRouterCheckBox.UseVisualStyleBackColor = true;
+            this.GCTradeRouterCheckBox.CheckedChanged += new System.EventHandler(this.GCTradeRouterCheckBox_CheckedChanged);
             // 
             // SpeechCheckBox
             // 
@@ -3750,6 +3846,7 @@
             this.GCPictureBox.Size = new System.Drawing.Size(501, 501);
             this.GCPictureBox.TabIndex = 64;
             this.GCPictureBox.TabStop = false;
+            this.GCPictureBox.Click += new System.EventHandler(this.GCPictureBox_Click);
             // 
             // GCSpeechListBox
             // 
@@ -3820,6 +3917,19 @@
             this.FactionPanel.Name = "FactionPanel";
             this.FactionPanel.Size = new System.Drawing.Size(1203, 775);
             this.FactionPanel.TabIndex = 1;
+            // 
+            // FactionAliasLabel
+            // 
+            this.FactionAliasLabel.AutoSize = true;
+            this.FactionAliasLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FactionAliasLabel.Location = new System.Drawing.Point(431, 54);
+            this.FactionAliasLabel.Name = "FactionAliasLabel";
+            this.FactionAliasLabel.Size = new System.Drawing.Size(47, 20);
+            this.FactionAliasLabel.TabIndex = 108;
+            this.FactionAliasLabel.Text = "Alias:";
+            this.FactionAliasLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.toolTip1.SetToolTip(this.FactionAliasLabel, "The default AI type of the faction. \"None\" represents an inactive faction that do" +
+        "es nothing on the galactic level");
             // 
             // FactionGotoUnitButton
             // 
@@ -4636,91 +4746,45 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
-            // FactionAliasLabel
+            // UnitAoEBox
             // 
-            this.FactionAliasLabel.AutoSize = true;
-            this.FactionAliasLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FactionAliasLabel.Location = new System.Drawing.Point(431, 54);
-            this.FactionAliasLabel.Name = "FactionAliasLabel";
-            this.FactionAliasLabel.Size = new System.Drawing.Size(47, 20);
-            this.FactionAliasLabel.TabIndex = 108;
-            this.FactionAliasLabel.Text = "Alias:";
-            this.FactionAliasLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
-            this.toolTip1.SetToolTip(this.FactionAliasLabel, "The default AI type of the faction. \"None\" represents an inactive faction that do" +
-        "es nothing on the galactic level");
+            this.UnitAoEBox.DecimalPlaces = 2;
+            this.UnitAoEBox.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            65536});
+            this.UnitAoEBox.Location = new System.Drawing.Point(113, 220);
+            this.UnitAoEBox.Maximum = new decimal(new int[] {
+            25,
+            0,
+            0,
+            0});
+            this.UnitAoEBox.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.UnitAoEBox.Name = "UnitAoEBox";
+            this.UnitAoEBox.Size = new System.Drawing.Size(42, 20);
+            this.UnitAoEBox.TabIndex = 47;
+            this.toolTip1.SetToolTip(this.UnitAoEBox, "Multiply the damage of all DPS calculations for weapons with area damage by this " +
+        "value");
+            this.UnitAoEBox.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.UnitAoEBox.ValueChanged += new System.EventHandler(this.UnitAoEBox_ValueChanged);
             // 
-            // UnitDiscountGotoButton
+            // label34
             // 
-            this.UnitDiscountGotoButton.Location = new System.Drawing.Point(430, 228);
-            this.UnitDiscountGotoButton.Name = "UnitDiscountGotoButton";
-            this.UnitDiscountGotoButton.Size = new System.Drawing.Size(48, 23);
-            this.UnitDiscountGotoButton.TabIndex = 48;
-            this.UnitDiscountGotoButton.Text = "Go to";
-            this.UnitDiscountGotoButton.UseVisualStyleBackColor = true;
-            this.UnitDiscountGotoButton.Click += new System.EventHandler(this.UnitDiscountGotoButton_Click);
-            // 
-            // label32
-            // 
-            this.label32.AutoSize = true;
-            this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label32.Location = new System.Drawing.Point(269, 228);
-            this.label32.Name = "label32";
-            this.label32.Size = new System.Drawing.Size(139, 20);
-            this.label32.TabIndex = 47;
-            this.label32.Text = "Discount Sources:";
-            this.toolTip1.SetToolTip(this.label32, "Objects that discount this unit specifically (not units in general)");
-            // 
-            // UnitDiscountListBox
-            // 
-            this.UnitDiscountListBox.FormattingEnabled = true;
-            this.UnitDiscountListBox.Location = new System.Drawing.Point(273, 252);
-            this.UnitDiscountListBox.Name = "UnitDiscountListBox";
-            this.UnitDiscountListBox.Size = new System.Drawing.Size(205, 121);
-            this.UnitDiscountListBox.TabIndex = 46;
-            this.toolTip1.SetToolTip(this.UnitDiscountListBox, "Objects that discount this unit specifically (not units in general)");
-            // 
-            // UnitGotoHostButton
-            // 
-            this.UnitGotoHostButton.Location = new System.Drawing.Point(628, 73);
-            this.UnitGotoHostButton.Name = "UnitGotoHostButton";
-            this.UnitGotoHostButton.Size = new System.Drawing.Size(48, 23);
-            this.UnitGotoHostButton.TabIndex = 51;
-            this.UnitGotoHostButton.Text = "Go to";
-            this.UnitGotoHostButton.UseVisualStyleBackColor = true;
-            this.UnitGotoHostButton.Click += new System.EventHandler(this.UnitGotoHostButton_Click);
-            // 
-            // label33
-            // 
-            this.label33.AutoSize = true;
-            this.label33.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label33.Location = new System.Drawing.Point(524, 74);
-            this.label33.Name = "label33";
-            this.label33.Size = new System.Drawing.Size(88, 20);
-            this.label33.TabIndex = 50;
-            this.label33.Text = "Host Units:";
-            this.toolTip1.SetToolTip(this.label33, "Companies that contain this unit");
-            // 
-            // UnitHostListbox
-            // 
-            this.UnitHostListbox.FormattingEnabled = true;
-            this.UnitHostListbox.Location = new System.Drawing.Point(528, 96);
-            this.UnitHostListbox.Name = "UnitHostListbox";
-            this.UnitHostListbox.Size = new System.Drawing.Size(148, 277);
-            this.UnitHostListbox.TabIndex = 49;
-            this.toolTip1.SetToolTip(this.UnitHostListbox, "Companies that contain this unit\r\nAND/OR\r\nObjects that spawn this unit as a garri" +
-        "son");
-            // 
-            // UnitAllSquadSizesCheckBox
-            // 
-            this.UnitAllSquadSizesCheckBox.AutoSize = true;
-            this.UnitAllSquadSizesCheckBox.Location = new System.Drawing.Point(528, 56);
-            this.UnitAllSquadSizesCheckBox.Name = "UnitAllSquadSizesCheckBox";
-            this.UnitAllSquadSizesCheckBox.Size = new System.Drawing.Size(144, 17);
-            this.UnitAllSquadSizesCheckBox.TabIndex = 52;
-            this.UnitAllSquadSizesCheckBox.Text = "Show All Squadron Sizes";
-            this.UnitAllSquadSizesCheckBox.UseVisualStyleBackColor = true;
-            this.UnitAllSquadSizesCheckBox.Visible = false;
-            this.UnitAllSquadSizesCheckBox.CheckedChanged += new System.EventHandler(this.UnitAllSquadSizesCheckBox_CheckedChanged);
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(156, 222);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(71, 13);
+            this.label34.TabIndex = 48;
+            this.label34.Text = "AoE Multiplier";
             // 
             // Holocron
             // 
@@ -4733,7 +4797,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Holocron";
-            this.Text = "EaWX Holocron v0.1";
+            this.Text = "EaWX Holocron v0.2";
             this.Load += new System.EventHandler(this.Holocron_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -4793,6 +4857,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveWinnerAttritionNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveLoserAttritionNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveAttritionAllowanceNumeric)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.UnitAoEBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -5172,6 +5237,9 @@
         private System.Windows.Forms.Label label32;
         private System.Windows.Forms.ListBox UnitDiscountListBox;
         private System.Windows.Forms.CheckBox UnitAllSquadSizesCheckBox;
+        private System.Windows.Forms.CheckBox GCTradeRouterCheckBox;
+        private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.NumericUpDown UnitAoEBox;
     }
 }
 

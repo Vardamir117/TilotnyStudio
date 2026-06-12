@@ -56,6 +56,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DevChoice.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DevChoice.Designer.cs">
+      <DependentUpon>DevChoice.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -77,6 +83,9 @@
     <Compile Include="SubmodSetup.designer.cs">
       <DependentUpon>SubmodSetup.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="DevChoice.resx">
+      <DependentUpon>DevChoice.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

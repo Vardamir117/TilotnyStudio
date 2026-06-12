@@ -107,7 +107,7 @@
             this.ReloadButton.Name = "ReloadButton";
             this.ReloadButton.Size = new System.Drawing.Size(204, 30);
             this.ReloadButton.TabIndex = 6;
-            this.ReloadButton.Text = "Reload Holocron Data";
+            this.ReloadButton.Text = "Save Mod Stack";
             this.ReloadButton.UseVisualStyleBackColor = true;
             this.ReloadButton.Click += new System.EventHandler(this.ReloadButton_Click);
             // 
@@ -139,7 +139,7 @@
             this.CloseButton.Name = "CloseButton";
             this.CloseButton.Size = new System.Drawing.Size(111, 30);
             this.CloseButton.TabIndex = 9;
-            this.CloseButton.Text = "Close";
+            this.CloseButton.Text = "Cancel";
             this.CloseButton.UseVisualStyleBackColor = true;
             this.CloseButton.Click += new System.EventHandler(this.CloseButton_Click);
             // 

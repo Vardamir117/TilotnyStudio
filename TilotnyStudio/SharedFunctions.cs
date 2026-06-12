@@ -83,11 +83,54 @@ public static class SharedFunctions
         return corenne;
     }
 
+    public static string readModTextOrMeg(string corepath, entities entities)
+    {
+        string corenne = "";
+
+        string filepath = getModFile(corepath, entities);
+        if (filepath != "") corenne = File.ReadAllText(filepath);
+        else {
+            byte[] megfile = SharedFunctions.getFileFromMegs(corepath, entities);
+            if (megfile.Length > 0)
+            {
+                corenne = System.Text.Encoding.Default.GetString(megfile);
+            }
+            else
+            {
+                entities.readerrors += "\n" + corepath + "cannot be found in loose files or megs";
+            }
+        }
+
+        return corenne;
+    }
+
+    public static string[] readModTextLinesOrMeg(string corepath, entities entities)
+    {
+        string[] corenne = new string[0];
+
+        string filepath = getModFile(corepath, entities);
+        if (filepath != "") corenne = File.ReadAllLines(filepath);
+        else
+        {
+            byte[] megfile = SharedFunctions.getFileFromMegs(corepath, entities);
+            if (megfile.Length > 0)
+            {
+                corenne = System.Text.Encoding.Default.GetString(megfile).Split('\n');
+            }
+            else
+            {
+                entities.readerrors += "\n" + corepath + "cannot be found in loose files or megs";
+            }
+        }
+
+        return corenne;
+    }
+
     public static XmlDocument readModXmlOrMeg(string corepath, entities entities) //todo probably want a Lua/txt version eventually
     {
         XmlDocument doc = new XmlDocument();
 
-        string filepath = getModFile(corepath);
+        string filepath = getModFile(corepath, entities);
         if (filepath != "") doc.Load(filepath);
         else
         {
@@ -105,7 +148,7 @@ public static class SharedFunctions
         return doc;
     }
 
-    public static string getModFile(string corepath)
+    public static string getModFile(string corepath, entities entities)
     {
         try
         {
@@ -124,7 +167,7 @@ public static class SharedFunctions
         catch { return ""; }
     }
 
-    public static List<string> getModFiles(string corepath, string extension)
+    public static List<string> getModFiles(string corepath, string extension, entities entities)
     {
         List<string> corenne = new List<string>();
         List<string> prefound = new List<string>();
@@ -250,6 +293,20 @@ public static class SharedFunctions
         if (codename == "CCoGM") return codename;
         faction fac = entities.factions.FirstOrDefault(s => s.codename == codename);
         return fac.textname;
+    }
+
+    public static string getLoadQuote(entities entities)
+    {
+        Random rnd = new Random();
+        for (int i = 0; i < 1000; i++) //Don't search too long
+        {
+            string quote = entities.Text[rnd.Next(0, entities.Text.Count - 1)].entry;
+            if (quote.Length > 149)
+            {//any filtering based on id or entry goes in this if
+                return quote;
+            }
+        }
+        return "Sorry, you got really unlucky when trying to find an interesting text from the mod";
     }
 
     public static float getWeapMultiplier(string type, WeaponMods weap, bool shield)
@@ -906,6 +963,7 @@ public static class SharedFunctions
             {
                 builtin.pulseCount = Single.Parse(value.LastChild.Value);
             }
+            else builtin.pulseCount = 1;
             value = unit.SelectSingleNode("descendant::Projectile_Fire_Pulse_Delay_Seconds");
             if (!(value is null))
             {
@@ -1547,7 +1605,7 @@ public static class SharedFunctions
 
     public static void parseObjectFile(string objectfile, entities entities)
     {
-        string path = getModFile(objectfile);
+        string path = getModFile(objectfile, entities);
         if (path == "") path = "*" + objectfile;
 
         XmlDocument doc = readModXmlOrMeg(objectfile, entities);
@@ -1582,10 +1640,10 @@ public static class SharedFunctions
             {
                 if (!(file.LastChild is null))
                 {
-                    string filepath = file.LastChild.Value.Trim().ToUpper();
+                    string filepath = file.InnerText.Trim().ToUpper();
                     if (!(filepath.Contains("DEBUG_DUMMIES") || filepath.Contains("PROPS\\") || filepath.Contains("\\DEATH_CLONES") || filepath.Contains("PLANET") || filepath.Contains("PROJECTILE")))
                     {//Further effiency gains can probably be made. But segregating hardpoints might not be ok in the general case
-                        parseObjectFile("XML\\" + filepath, entities);
+                        parseObjectFile("XML\\" + file.InnerText.Trim(), entities);
                     }
                 }
             }
@@ -1669,7 +1727,7 @@ public static class SharedFunctions
 
     public static void parseHeroFolder(entities entities)
     {
-        List<string> files = getModFiles("XML\\Heroes", "*.xml");
+        List<string> files = getModFiles("XML\\Heroes", "*.xml", entities);
         foreach (string file in files)
         {
             XmlDocument doc = new XmlDocument();
@@ -1718,7 +1776,7 @@ public static class SharedFunctions
 
     public static void parseStructureFolder(entities entities)
     {
-        List<string> files = getModFiles("XML\\Structures", "*.xml");
+        List<string> files = getModFiles("XML\\Structures", "*.xml", entities);
         foreach (string file in files)
         {
             XmlDocument doc = new XmlDocument();
@@ -1742,7 +1800,7 @@ public static class SharedFunctions
         entities.MEGdata.Clear();
         entities.MEGentries.Clear();
         entities.MEGhashes.Clear();
-        string path = getModFile("Megafiles.xml");
+        string path = getModFile("Megafiles.xml", entities);
         XmlDocument doc = new XmlDocument();
         doc.PreserveWhitespace = true;
         doc.Load(path);
@@ -1754,7 +1812,7 @@ public static class SharedFunctions
         {
             if(!(meg is null))
             {
-                string megpath = getModFile(LastFolderOrFile(meg.InnerText));
+                string megpath = getModFile(LastFolderOrFile(meg.InnerText), entities);
                 if (File.Exists(megpath))
                 {
                     bool saveMeg = false;
@@ -2056,9 +2114,10 @@ public static class SharedFunctions
         }
     }
 
-    public static void parsemodid(string path, entities entities)
+    public static void parsemodid(entities entities)
     {
-        if(path == "")
+        string path = getModFile("XML\\Mod_Id.xml", entities);
+        if (path == "")
         {
             entities.modid = "";
             return;
@@ -2141,7 +2200,7 @@ public static class SharedFunctions
                             if (!(value.LastChild is null))
                             {//Overrides Projectile_Damage if nonzero
                                 float amount = float.Parse(value.LastChild.Value);
-                                if(amount > 0) damageAmount = amount;
+                                if(damageAmount <= 0) damageAmount = amount;
                             }
                         }
                         value = proj.SelectSingleNode("descendant::Projectile_Blast_Area_Range");
@@ -2487,7 +2546,7 @@ public static class SharedFunctions
 
     public static bool IsHiddenObject(unit unit)
     {//Conditions that mean it should never be displayed
-        return unit.unitname.Contains("Template_") || (unit.unitname.Contains("_Dummy") || unit.unitname.Contains("_Marker") || unit.unitname.Contains("ZLayer") || unit.unitname.Contains("INFLUENCE_") || unit.unitname.Contains("Ship_Crew_Tier_") || unit.datafile.Contains("Mod_Id"));
+        return unit.unitname.Contains("Template_") || (unit.unitname.Contains("_Dummy") || unit.unitname.Contains("_Marker") || unit.unitname.Contains("ZLayer") || unit.unitname.Contains("INFLUENCE_") || unit.unitname.Contains("Ship_Crew_Tier_") || unit.unitname.Contains("Cinematic_") || unit.datafile.Contains("Mod_Id"));
     }
 
     public static bool IsSkirmishObject(unit unit)
@@ -2515,6 +2574,51 @@ public static class SharedFunctions
         return unit.unitname.Contains("Convoy_") || (unit.unitname.Contains("Mission_") && !unit.username.Contains("Mission")); //Need to catch Mission_Ajuur but not Mission_Vao
     }
 
+    public static bool IsCapturedObject(unit unit)
+    {
+        return unit.unitname.Contains("_Captured");
+    }
+
+    public static bool categoryFilter(unit unit, List<int> categories)
+    {
+        bool regular = true;
+        if (IsSkirmishObject(unit))
+        {
+            regular = false;
+            if (!categories.Contains(1)) return false;
+        }
+        if (IsTransportObject(unit))
+        {
+            regular = false;
+            if (!categories.Contains(2)) return false;
+        }
+        if (IsMissionObject(unit))
+        {
+            regular = false;
+            if (!categories.Contains(3)) return false;
+        }
+        if (IsGroundWar(unit))
+        {
+            regular = false;
+            if (!categories.Contains(4)) return false;
+        }
+        if (IsSurvivalObject(unit))
+        {
+            regular = false;
+            if (!categories.Contains(5)) return false;
+        }
+        if (IsCapturedObject(unit))
+        {
+            regular = false;
+            if (!categories.Contains(6)) return false;
+        }
+        if (regular)
+        {
+            if (!categories.Contains(0)) return false;
+        }
+        return true;
+    }
+
     public static string ReadXMLElement(string line)
     {
         int start = line.IndexOf(">") + 1;
@@ -2539,8 +2643,8 @@ public static class SharedFunctions
 
         string[] gameconstants = new string[0];
         List<string> paths = new List<string>();//Check several old ways of doing this fr backwards compatibility
-        paths.Add(getModFile("Scripts\\Library\\GameConstants.lua"));//TODO I am only guessing this is the final version after mod content loader is dead
-        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\GameConstants.lua"));
+        paths.Add(getModFile("Scripts\\Library\\GameConstants.lua", entities));//TODO I am only guessing this is the final version after mod content loader is dead
+        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\GameConstants.lua", entities));
 
         foreach (string path in paths)
         {
@@ -2670,7 +2774,7 @@ public static class SharedFunctions
     {//beating builtin functions for efficiency turns out to be quite difficult
         string path;
         if (allplanets) path = entities.modpaths[entities.modpaths.Count - 1] + "\\XML\\Planets.xml";
-        else path = getModFile("XML\\Planets.xml");
+        else path = getModFile("XML\\Planets.xml", entities);
         entities.Planets.Clear();
         entities.PlanetBounds = 0;
         string[] lines = File.ReadAllLines(path);
@@ -2762,7 +2866,7 @@ public static class SharedFunctions
                 groundMap = ReadXMLElement(line);
                 if (groundMap != "")
                 {
-                    string mappath = getModFile("Art\\Maps\\" + groundMap);
+                    string mappath = getModFile("Art\\Maps\\" + groundMap, entities);
                     if (mappath != "")
                     {
                         byte[] data = File.ReadAllBytes(mappath); //byte 46 is terrain type
@@ -2806,7 +2910,7 @@ public static class SharedFunctions
     {//If there were any gains, they were modest
         string path;
         if (allplanets) path = entities.modpaths[entities.modpaths.Count-1] + "\\XML\\Planets.xml";
-        else path = getModFile("XML\\Planets.xml");
+        else path = getModFile("XML\\Planets.xml", entities);
         entities.Planets.Clear();
         entities.PlanetBounds = 0;
         XmlDocument doc = new XmlDocument();
@@ -2880,7 +2984,7 @@ public static class SharedFunctions
                         groundMap = value.InnerText;
                         if (groundMap != "")
                         {
-                            string mappath = getModFile("Art\\Maps\\" + groundMap);
+                            string mappath = getModFile("Art\\Maps\\" + groundMap, entities);
                             if (mappath != "")
                             {
                                 byte[] data = File.ReadAllBytes(mappath); //byte 46 is terrain type
@@ -2941,9 +3045,9 @@ public static class SharedFunctions
         entities.Planets.Sort((s1, s2) => s1.codename.CompareTo(s2.codename));
     }
 
-    public static string getTerrainType(string map)
+    public static string getTerrainType(string map, entities entities)
     {
-        int terraintype = getTerrainIndex(map);
+        int terraintype = getTerrainIndex(map, entities);
 
         return getTerrainName(terraintype); ;
     }
@@ -2981,7 +3085,7 @@ public static class SharedFunctions
         return mapTerrain;
     }
 
-    public static int getTerrainIndex(string map)
+    public static int getTerrainIndex(string map, entities entities)
     {
         int terraintype = -1;
         
@@ -2989,7 +3093,7 @@ public static class SharedFunctions
         if (presaved >= 0) terraintype = entities.terraincache[presaved];
         else
         {
-            string mappath = getModFile("Art\\Maps\\" + map); //todo get preread value from meg
+            string mappath = getModFile("Art\\Maps\\" + map, entities); //todo get preread value from meg
             if (mappath != "")
             {
                 byte[] data = File.ReadAllBytes(mappath); //byte 46 is terrain type
@@ -4080,13 +4184,13 @@ public static class SharedFunctions
         return corenne;
     }
 
-    public static List<String> getGroundUnitLibrary(string unitname)
+    public static List<String> getGroundUnitLibrary(string unitname, entities entities)
     {
         List<string> corenne = new List<string>();
         List<string> paths = new List<string>();//Check several old ways of doing this fr backwards compatibility
-        paths.Add(getModFile("Scripts\\Library\\gameobjects\\ground\\company-objects\\" + unitname + ".lua"));//TODO I am only guessing this is the final version after mod content loader is dead
-        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\gameobjects\\ground\\company-objects\\" + unitname + ".lua"));
-        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\gameobjects\\company-objects\\" + unitname + ".lua"));
+        paths.Add(getModFile("Scripts\\Library\\gameobjects\\ground\\company-objects\\" + unitname + ".lua", entities));//TODO I am only guessing this is the final version after mod content loader is dead
+        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\gameobjects\\ground\\company-objects\\" + unitname + ".lua", entities));
+        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\gameobjects\\company-objects\\" + unitname + ".lua", entities));
 
         foreach(string path in paths)
         {
@@ -4099,12 +4203,12 @@ public static class SharedFunctions
         return corenne;
     }
 
-    public static List<String> getSpaceUnitLibrary(string unitname)
+    public static List<String> getSpaceUnitLibrary(string unitname, entities entities)
     {
         List<string> corenne = new List<string>();
         List<string> paths = new List<string>();//Check several old ways of doing this fr backwards compatibility
-        paths.Add(getModFile("Scripts\\Library\\gameobjects\\" + unitname + ".lua"));//TODO I am only guessing this is the final version after mod content loader is dead
-        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\gameobjects\\" + unitname + ".lua"));
+        paths.Add(getModFile("Scripts\\Library\\gameobjects\\" + unitname + ".lua", entities));//TODO I am only guessing this is the final version after mod content loader is dead
+        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\gameobjects\\" + unitname + ".lua", entities));
 
         foreach (string path in paths)
         {
@@ -4128,12 +4232,12 @@ public static class SharedFunctions
         return corenne; //This is probably really bad if reached
     }
 
-    public static List<garrison_lua> readObjectLuaLibrary(string unitname) //todo: change this to edit the unit so it can save other properties like 
+    public static List<garrison_lua> readObjectLuaLibrary(string unitname, entities entities) //todo: change this to edit the unit so it can save other properties like 
     {
         List<garrison_lua> corenne = new List<garrison_lua>();
         List<string> paths = new List<string>();//Check several old ways of doing this fr backwards compatibility
-        paths.Add(getModFile("Scripts\\Library\\gameobjects\\" + unitname + ".lua"));//TODO I am only guessing this is the final version after mod content loader is dead
-        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\gameobjects\\" + unitname + ".lua"));
+        paths.Add(getModFile("Scripts\\Library\\gameobjects\\" + unitname + ".lua", entities));//TODO I am only guessing this is the final version after mod content loader is dead
+        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\gameobjects\\" + unitname + ".lua", entities));
 
         foreach (string path in paths)
         {
@@ -4289,8 +4393,8 @@ public static class SharedFunctions
                             string name = spawn.Replace("_", " ");
                             int fightermode = 1; //Technically standard/random types should check if this is 0, but that currently only applies to Eyttyrmin Batiiv and probably has to waint if/until types are evaluated anyway
                             float cp = 0;
-                            if (getModFile("Scripts\\Library\\standard-fighters\\" + cut + ".lua") != "") standard = true;
-                            else if (getModFile("Scripts\\Library\\random-fighters\\" + cut + ".lua") != "") random = true;
+                            if (getModFile("Scripts\\Library\\standard-fighters\\" + cut + ".lua", entities) != "") standard = true;
+                            else if (getModFile("Scripts\\Library\\random-fighters\\" + cut + ".lua", entities) != "") random = true;
                             else
                             {
                                 int index = LookupUntemplateID(spawn);
@@ -4349,7 +4453,7 @@ public static class SharedFunctions
                         {
                             int index = line.IndexOf("\"") + 1;
                             string inherit = line.Substring(index, nextLuaLibSection(line, index) - index - 1);
-                            return readObjectLuaLibrary(inherit);
+                            return readObjectLuaLibrary(inherit, entities);
                         }
                     }
                 }
@@ -4360,7 +4464,7 @@ public static class SharedFunctions
 
     public static void unitToCompanyData(entities entities)
     {//todo hash units, companies, and containers. But even in TR this is ~2 seconds and a minor gain
-        string limpath = getModFile("Scripts\\Library\\BuildLimitLibrary.lua");
+        string limpath = getModFile("Scripts\\Library\\BuildLimitLibrary.lua", entities);
         string[] luabuild = new string[0];
         if (limpath != "") luabuild = File.ReadAllLines(limpath);
         for (int i = 0; i < entities.objects.Count; i++)
@@ -4415,7 +4519,7 @@ public static class SharedFunctions
                 {
                     if (target.Contains("_Dummy"))
                     {
-                        List<string> returned = getGroundUnitLibrary(target);
+                        List<string> returned = getGroundUnitLibrary(target, entities);
                         foreach (string unit in returned) newcompanyunits.Add(unit);
                     }
                     //else newcompanyunits.Add(target); //Will need this if spawners are ever mixed with regular units
@@ -4423,7 +4527,7 @@ public static class SharedFunctions
                 }
                 if (company.unitname.Contains("_Group"))
                 {
-                    List<string> returned = getSpaceUnitLibrary(company.unitname);
+                    List<string> returned = getSpaceUnitLibrary(company.unitname, entities);
                     foreach (string unit in returned) newcompanyunits.Add(unit);
                     if (newcompanyunits.Count > 0)
                     {
@@ -4713,15 +4817,15 @@ public static class SharedFunctions
                 company.garrison = new_garrison;
             }
 
-            company.garrison_lua = readObjectLuaLibrary(company.unitname);
+            company.garrison_lua = readObjectLuaLibrary(company.unitname, entities);
 
             entities.objects[i] = company;
         }
     }
 
-    public static List<unit> unitToCompanyDataForSorted(List<unit> companies, List<unit> units, List<unit> containers, bool skip_step2 = false)
+    public static List<unit> unitToCompanyDataForSorted(List<unit> companies, List<unit> units, List<unit> containers, entities entities, bool skip_step2 = false)
     {//todo hash units, companies, and containers. But even in TR this is ~2 seconds and a minor gain
-        string limpath = getModFile("Scripts\\Library\\BuildLimitLibrary.lua");
+        string limpath = getModFile("Scripts\\Library\\BuildLimitLibrary.lua", entities);
         string[] luabuild = new string[0];
         if (limpath != "") luabuild = File.ReadAllLines(limpath);
         for (int i = 0; i < companies.Count; i++)
@@ -4774,7 +4878,7 @@ public static class SharedFunctions
                 {
                     if (target.Contains("_Dummy"))
                     {
-                        List<string> returned = getGroundUnitLibrary(target);
+                        List<string> returned = getGroundUnitLibrary(target, entities);
                         foreach (string unit in returned) newcompanyunits.Add(unit);
                     }
                     //else newcompanyunits.Add(target); //Will need this if spawners are ever mixed with regular units
@@ -4950,7 +5054,7 @@ public static class SharedFunctions
 
         string lowername = unit.unitname.ToLower();
         string transport = unit.transport.ToLower();
-        string path = getModFile("XML\\GameConstants.xml");
+        string path = getModFile("XML\\GameConstants.xml", entities);
         XmlDocument consts = readModXmlOrMeg("XML\\GameConstants.xml", entities);
         XmlNodeList listsets = consts.DocumentElement.SelectNodes("descendant::ShipNameTextFiles");
         foreach (XmlNode listset in listsets)
@@ -4963,7 +5067,7 @@ public static class SharedFunctions
                     string low = types[i].ToLower();
                     if (low == lowername || low == transport)
                     {
-                        string namepath = getModFile(RemoveTopLevelFolder(types[i + 1]));
+                        string namepath = getModFile(RemoveTopLevelFolder(types[i + 1]), entities);
                         if (File.Exists(namepath)) return File.ReadAllLines(namepath);
                     }
                 }
@@ -4975,7 +5079,7 @@ public static class SharedFunctions
     public static void readPlanetSpawnTables(entities entities)
     {
         entities.spawnSets.Clear();
-        string namepath = getModFile("Scripts\\Library\\UnitSpawnerTables.lua");
+        string namepath = getModFile("Scripts\\Library\\UnitSpawnerTables.lua", entities);
         if (namepath != "")
         {
             string[] Lib = File.ReadAllLines(namepath);
@@ -5665,7 +5769,7 @@ public static class DatParser
         List<IconData> corenne = new List<IconData>();
         string source = "Art\\Textures\\MT_CommandBar.mtd";
         byte[] mtdfile;
-        string filesource = SharedFunctions.getModFile("Art\\Textures\\MT_CommandBar.mtd");
+        string filesource = SharedFunctions.getModFile("Art\\Textures\\MT_CommandBar.mtd", entities);
         if(filesource != "") mtdfile = System.IO.File.ReadAllBytes(filesource);
         else mtdfile = SharedFunctions.getFileFromMegs(source, entities);
 

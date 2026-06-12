@@ -796,11 +796,12 @@ namespace Holocron
             "Company Transports",
             "Mission Units",
             "Ground War Dummies",
-            "Survival Units"});
+            "Survival Units",
+            "Captured Versions"});
             this.SkirmishListBox.Location = new System.Drawing.Point(428, 345);
             this.SkirmishListBox.Name = "SkirmishListBox";
             this.SkirmishListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.SkirmishListBox.Size = new System.Drawing.Size(120, 82);
+            this.SkirmishListBox.Size = new System.Drawing.Size(120, 95);
             this.SkirmishListBox.TabIndex = 76;
             // 
             // UnitFilter
