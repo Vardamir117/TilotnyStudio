@@ -749,7 +749,14 @@ namespace TilotnyStudio
             }
             catch
             {
-                entities.MTmaster = new Bitmap(50, 50);
+                try
+                {
+                    entities.MTmaster = (Bitmap)(new TGA(readModBytesOrMeg("Art\\Textures\\MT_CommandBar.tga", entities)));
+                }
+                catch
+                {
+                    entities.MTmaster = new Bitmap(50, 50);
+                }
             };
             entities.readerrors = "";
 

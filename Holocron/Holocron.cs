@@ -335,7 +335,14 @@ namespace Holocron
             }
             catch
             {
-                entities.MTmaster = new Bitmap(50, 50);
+                try
+                {
+                    entities.MTmaster = (Bitmap)(new TGA(readModBytesOrMeg("Art\\Textures\\MT_CommandBar.tga", entities)));
+                }
+                catch
+                {
+                    entities.MTmaster = new Bitmap(50, 50);
+                }
             };
             entities.readerrors = "";
 
@@ -5950,9 +5957,13 @@ namespace Holocron
                 {
                     if (faction == "CCoGM")
                     {
-                        if(!Campaign.factionsPlayable.Contains("Empire")) GCActiveListBox.Items.Add(FactionFromCodeName("Empire", entities));
+                        if (!Campaign.factionsPlayable.Contains("Empire")) GCActiveListBox.Items.Add(FactionFromCodeName("Empire", entities));
                     }
-                    else GCActiveListBox.Items.Add(FactionFromCodeName(faction, entities));
+                    else
+                    {
+                        if (faction is null || faction == "") GCActiveListBox.Items.Add("");
+                        else GCActiveListBox.Items.Add(FactionFromCodeName(faction, entities));
+                    }
                 }
                 GCActiveListBox.SelectedIndex = 0;
 

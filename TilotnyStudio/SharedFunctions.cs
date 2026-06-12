@@ -126,6 +126,28 @@ public static class SharedFunctions
         return corenne;
     }
 
+    public static byte[] readModBytesOrMeg(string corepath, entities entities)
+    {
+        byte[] corenne = new byte[0];
+
+        string filepath = getModFile(corepath, entities);
+        if (filepath != "") corenne = File.ReadAllBytes(filepath);
+        else
+        {
+            byte[] megfile = SharedFunctions.getFileFromMegs(corepath, entities);
+            if (megfile.Length > 0)
+            {
+                corenne = megfile;
+            }
+            else
+            {
+                entities.readerrors += "\n" + corepath + "cannot be found in loose files or megs";
+            }
+        }
+
+        return corenne;
+    }
+
     public static XmlDocument readModXmlOrMeg(string corepath, entities entities) //todo probably want a Lua/txt version eventually
     {
         XmlDocument doc = new XmlDocument();

@@ -83,6 +83,7 @@
     <Compile Include="SubmodSetup.designer.cs">
       <DependentUpon>SubmodSetup.cs</DependentUpon>
     </Compile>
+    <Compile Include="TGASharpLib.cs" />
     <EmbeddedResource Include="DevChoice.resx">
       <DependentUpon>DevChoice.cs</DependentUpon>
     </EmbeddedResource>
