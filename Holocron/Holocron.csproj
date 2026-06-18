@@ -114,6 +114,12 @@
     </Compile>
     <Compile Include="TargetContrastPort.cs" />
     <Compile Include="TargetResult.cs" />
+    <Compile Include="TextDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TextDetail.Designer.cs">
+      <DependentUpon>TextDetail.cs</DependentUpon>
+    </Compile>
     <Compile Include="TGASharpLib.cs" />
     <Compile Include="UnitFilter.cs">
       <SubType>Form</SubType>
@@ -150,6 +156,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SubmodSetup.resx">
       <DependentUpon>SubmodSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextDetail.resx">
+      <DependentUpon>TextDetail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UnitFilter.resx">
       <DependentUpon>UnitFilter.cs</DependentUpon>

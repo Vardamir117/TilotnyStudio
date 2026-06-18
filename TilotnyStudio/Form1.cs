@@ -771,7 +771,7 @@ namespace TilotnyStudio
 
             loadscreen.ChangeText("Parsing hardpoint data");
             listfiles = getModFiles("XML\\Hardpoints", "*.xml", entities);
-            parseHardpoints(entities, globals.Text); //todo add Tilotny new hp file
+            parseHardpoints(entities); //todo add Tilotny new hp file
 
             entities.spaceUnits = new List<unit>();
             entities.groundCompanies = new List<unit>();

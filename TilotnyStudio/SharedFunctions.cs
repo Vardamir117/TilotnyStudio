@@ -215,7 +215,7 @@ public static class SharedFunctions
         return corenne;
     }
 
-    public static string Find_Text_Entry(string textid)
+    public static string Find_Text_Entry(string textid, entities entities)
     {
         foreach (Text_Entry entry in entities.Text)
         {
@@ -477,6 +477,19 @@ public static class SharedFunctions
         List<ability> abilities = new List<ability>();
         List<unitability> unitabilities = new List<unitability>();
         List<garrison_entry> garrison = new List<garrison_entry>();
+        string[] basicSFXEvents = new string[(int)basicSoundTypes.Max];
+        int[] basicSFXEvents_baseID = new int[(int)basicSoundTypes.Max];
+        for (int sfxid = 0; sfxid < basicSFXEvents.Length; sfxid++)
+        {
+            basicSFXEvents[sfxid] = "";
+            basicSFXEvents_baseID[sfxid] = -1;
+        }
+        List<string> SFXEvent_Attack_Hardpoint = new List<string>();
+        List<string> SFXEvent_Attack_Hardpoint_Type = new List<string>();
+        List<string> SFXEvent_Hardpoint_Destroyed = new List<string>();
+        List<string> SFXEvent_Hardpoint_Destroyed_Type = new List<string>();
+        List<int> SFXEvent_Attack_Hardpoint_BaseID = new List<int>();
+        List<int> SFXEvent_Hardpoint_Destroyed_BaseID = new List<int>();
 
         System.Xml.XmlNode value = unit.SelectSingleNode("descendant::Tech_Level");
         if (!(value is null))
@@ -1051,7 +1064,7 @@ public static class SharedFunctions
                         {//These seem to be consistent, unlike icon names
                             forlist.username = "TEXT_TOOLTIP_ABILITY_" + forlist.type + "_NAME";
                         }
-                        forlist.username = Find_Text_Entry(forlist.username);
+                        forlist.username = Find_Text_Entry(forlist.username, entities);
                         abdata = able.SelectSingleNode("descendant::Alternate_Description_Text");
                         if (!(abdata is null) && !(abdata.LastChild is null)) forlist.desc = abdata.LastChild.Value;
                         else
@@ -1468,7 +1481,100 @@ public static class SharedFunctions
                 abilities.Add(forlist);
             }
         }
-
+        value = unit.SelectSingleNode("descendant::SFXEvent_Build_Started");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Started] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Build_Cancelled");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Cancelled] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Build_Complete");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Complete] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Bombard_Select_Target");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Bombard_Select_Target] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Bombard_Incoming");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Bombard_Incoming] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Tactical_Build_Started");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Started] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Tactical_Build_Complete");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Complete] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Tactical_Build_Cancelled");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Cancelled] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Fire");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Fire] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Select");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Select] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Move");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Fleet_Move");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Fleet_Move] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Attack");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Attack] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Guard");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Move] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Assist_Move");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Guard] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Assist_Attack");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Attack] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Health_Low_Warning");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Low_Warning] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Health_Critical_Warning");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Critical_Warning] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Move_Into_Nebula");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Nebula] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Move_Into_Asteroid_Field");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Asteroid_Field] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Engine_Idle_Loop");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Idle_Loop] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Engine_Moving_Loop");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Moving_Loop] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Engine_Cinematic_Focus_Loop");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Cinematic_Focus_Loop] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::SFXEvent_Damaged_By_Asteroid");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Damaged_By_Asteroid] = value.InnerText;
+        value = unit.SelectSingleNode("descendant::Death_SFXEvent_Start_Die");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.Death_SFXEvent_Start_Die] = value.InnerText;
+        values = unit.SelectNodes("descendant::SFXEvent_Attack_Hardpoint");
+        if (values.Count > 0)
+        {
+            foreach (XmlNode effect in values)
+            {
+                {
+                    if (!(effect.LastChild is null))
+                    {
+                        string[] types = ReadWhiteSpaceAsCommas(effect.InnerText);
+                        if(types.Length > 1)
+                        {
+                            if (!SFXEvent_Attack_Hardpoint_Type.Contains(types[0]))
+                            {
+                                SFXEvent_Attack_Hardpoint.Add(types[1]);
+                                SFXEvent_Attack_Hardpoint_Type.Add(types[0]);
+                                SFXEvent_Attack_Hardpoint_BaseID.Add(-1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        values = unit.SelectNodes("descendant::SFXEvent_Hardpoint_Destroyed");
+        if (values.Count > 0)
+        {
+            foreach (XmlNode effect in values)
+            {
+                {
+                    if (!(effect.LastChild is null))
+                    {
+                        string[] types = ReadWhiteSpaceAsCommas(effect.InnerText);
+                        if (types.Length > 1)
+                        {
+                            if (!SFXEvent_Hardpoint_Destroyed_Type.Contains(types[0]))
+                            {
+                                SFXEvent_Hardpoint_Destroyed.Add(types[1]);
+                                SFXEvent_Hardpoint_Destroyed_Type.Add(types[0]);
+                                SFXEvent_Hardpoint_Destroyed_BaseID.Add(-1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         value = unit.SelectSingleNode("descendant::Variant_Of_Existing_Type");
         if (!(value is null))
@@ -1569,6 +1675,14 @@ public static class SharedFunctions
             hero = hero,
             builtin = builtin,
             garrison = garrison,
+            BasicSFXEvents = basicSFXEvents,
+            BasicSFXEvents_baseID = basicSFXEvents_baseID,
+            SFXEvent_Attack_Hardpoint = SFXEvent_Attack_Hardpoint,
+            SFXEvent_Attack_Hardpoint_Type = SFXEvent_Attack_Hardpoint_Type,
+            SFXEvent_Attack_Hardpoint_BaseID = SFXEvent_Attack_Hardpoint_BaseID,
+            SFXEvent_Hardpoint_Destroyed = SFXEvent_Hardpoint_Destroyed,
+            SFXEvent_Hardpoint_Destroyed_Type = SFXEvent_Hardpoint_Destroyed_Type,
+            SFXEvent_Hardpoint_Destroyed_BaseID = SFXEvent_Hardpoint_Destroyed_BaseID,
         };
 
         entities.objects.Add(unidad);
@@ -1822,7 +1936,7 @@ public static class SharedFunctions
         entities.MEGdata.Clear();
         entities.MEGentries.Clear();
         entities.MEGhashes.Clear();
-        string path = getModFile("Megafiles.xml", entities);
+        string path = getModFile("Megafiles.xml", entities); //todo add optional third arg to alway use vanilla? But get sound files working on vanilla first
         XmlDocument doc = new XmlDocument();
         doc.PreserveWhitespace = true;
         doc.Load(path);
@@ -2320,7 +2434,7 @@ public static class SharedFunctions
         }
     }
 
-    public static void parseHardpoints(entities entities, List<Text_Entry> Text)
+    public static void parseHardpoints(entities entities)
     {//Must parse after projectiles
         entities.hardpoints.Clear();
         XmlDocument hpdoc = readModXmlOrMeg("XML\\HardPointDataFiles.xml", entities);
@@ -2529,7 +2643,7 @@ public static class SharedFunctions
                         hardpoint hard = new hardpoint
                         {
                             name = name,
-                            projectile = Find_Text_Entry(text),
+                            projectile = Find_Text_Entry(text, entities),
                             quantity = 1,
                             damageType = damageType,
                             hpType = hpType,
@@ -2563,6 +2677,65 @@ public static class SharedFunctions
                 for (int j = entities.hardpointhashes.Count; j <= index; j++) entities.hardpointhashes.Add(new List<int>());
             }
             entities.hardpointhashes[index].Add(i);
+        }
+    }
+
+    public static void parseSFX(entities entities)
+    {
+        entities.sfx.Clear();
+        XmlDocument hpdoc = readModXmlOrMeg("XML\\SFXEventFiles.xml", entities);
+        XmlNode hproot = hpdoc.DocumentElement;
+
+        XmlNodeList files = hproot.SelectNodes("*");
+
+        foreach (XmlNode file in files)
+        {
+            if (!(file is null))
+            {
+                if (!(file.LastChild is null))
+                {
+                    string sourcefile = file.InnerText.Trim();
+                    XmlDocument doc = readModXmlOrMeg("XML\\" + sourcefile, entities);
+
+                    XmlNode root = doc.DocumentElement;
+                    if (root is null) continue; //Skip files that don't exist
+                    XmlNodeList effects = root.SelectNodes("*");
+
+                    foreach (XmlNode effect in effects)
+                    {
+                        string name = effect.Attributes[0].Value;
+                        int minpitch = -1;
+                        int maxpitch = -1;
+                        string[] samples = new string[0];
+                        XmlNode value = effect.SelectSingleNode("descendant::Samples");
+                        try
+                        {
+                            if (!(value is null))
+                            {
+                                samples = ReadWhiteSpaceAsCommas(value.InnerText);
+                            }
+                            value = effect.SelectSingleNode("descendant::Min_Pitch");
+                            if (!(value is null))
+                            {
+                                minpitch = int.Parse(value.InnerText);
+                            }
+                            value = effect.SelectSingleNode("descendant::Max_Pitch");
+                            if (!(value is null))
+                            {
+                                maxpitch = int.Parse(value.InnerText);
+                            }
+                        }
+                        catch { }
+                        sfx sfx = new sfx
+                        {
+                            name = name,
+                            sourcefile = sourcefile,
+                            samples = samples,
+                        };
+                        entities.sfx.Add(sfx);
+                    }
+                }
+            }
         }
     }
 
@@ -2713,7 +2886,7 @@ public static class SharedFunctions
                     int[] tcol = ReadXMLCSV(taccolor);
 
                     newfaction.codename = name;
-                    newfaction.textname = Find_Text_Entry(id);
+                    newfaction.textname = Find_Text_Entry(id, entities);
                     newfaction.color = col;
                     newfaction.tcolor = tcol;
                     newfaction.playable = playable;
@@ -2852,7 +3025,7 @@ public static class SharedFunctions
                 };
                 entities.Planets.Add(planet_obj);
             }
-            else if (line.Contains("<Text_ID>")) username = Find_Text_Entry(ReadXMLElement(line));
+            else if (line.Contains("<Text_ID>")) username = Find_Text_Entry(ReadXMLElement(line), entities);
             else if (line.Contains("<Galactic_Position>"))
             {
                 string[] split = ReadWhiteSpaceAsCommas(ReadXMLElement(line));
@@ -2962,7 +3135,7 @@ public static class SharedFunctions
                 switch (value.Name)
                 {
                     case "Text_ID":
-                        username = Find_Text_Entry(value.InnerText);
+                        username = Find_Text_Entry(value.InnerText, entities);
                         break;
                     case "Galactic_Position":
                         string[] split = ReadWhiteSpaceAsCommas(value.InnerText);
@@ -3160,7 +3333,7 @@ public static class SharedFunctions
             XmlNode value = planet.SelectSingleNode("descendant::Text_ID");
             if (!(value is null))
             {
-                username = Find_Text_Entry(value.InnerText);
+                username = Find_Text_Entry(value.InnerText, entities);
             }
             value = planet.SelectSingleNode("descendant::Galactic_Position");
             if (!(value is null))
@@ -3351,7 +3524,7 @@ public static class SharedFunctions
                                 {
                                     if (!(value.LastChild is null))
                                     {
-                                        username = Find_Text_Entry(fullTrim(value.LastChild.Value));
+                                        username = Find_Text_Entry(fullTrim(value.LastChild.Value), entities);
                                     }
                                 }
                             }
@@ -3576,7 +3749,7 @@ public static class SharedFunctions
                                 username = username,
                                 factionsPlayable = new List<string> { faction },
                                 campaign_set = set,
-                                desc = Find_Text_Entry(desc),
+                                desc = Find_Text_Entry(desc, entities),
                                 factionsPresent = factionsPresent,
                                 planets = planets,
                                 traderoutes = routes,
@@ -3915,6 +4088,35 @@ public static class SharedFunctions
                                 if (unidad.unitabilities.Count == 0) unidad.unitabilities = unidad2.unitabilities;
                                 if (unidad.builtin.hpType is null) unidad.builtin = unidad2.builtin;
                                 if (unidad.garrison.Count == 0) unidad.garrison = unidad2.garrison; //todo track id of variant in case editing of this field is someday enabled
+                                for(int sfxid = 0; sfxid < unidad.BasicSFXEvents.Length; sfxid++)
+                                {
+                                    if (unidad.BasicSFXEvents[sfxid] == "")
+                                    {
+                                        unidad.BasicSFXEvents[sfxid] = unidad2.BasicSFXEvents[sfxid];
+                                        unidad.BasicSFXEvents_baseID[sfxid] = unidad2.BasicSFXEvents_baseID[sfxid] + 1;
+                                    }
+                                }
+                                for (int sfxid = 0; sfxid < unidad2.SFXEvent_Attack_Hardpoint.Count; sfxid++)
+                                {
+                                    int unidad1id = unidad.SFXEvent_Attack_Hardpoint_Type.FindIndex(s => s == unidad2.SFXEvent_Attack_Hardpoint_Type[sfxid]);
+                                    if (unidad1id < 0)
+                                    {
+                                        unidad.SFXEvent_Attack_Hardpoint.Add(unidad2.SFXEvent_Attack_Hardpoint[sfxid]);
+                                        unidad.SFXEvent_Attack_Hardpoint_Type.Add(unidad2.SFXEvent_Attack_Hardpoint_Type[sfxid]);
+                                        unidad.SFXEvent_Attack_Hardpoint_BaseID.Add(unidad2.SFXEvent_Attack_Hardpoint_BaseID[sfxid]+1);
+                                    }
+                                }
+                                for (int sfxid = 0; sfxid < unidad2.SFXEvent_Hardpoint_Destroyed.Count; sfxid++)
+                                {
+                                    int unidad1id = unidad.SFXEvent_Hardpoint_Destroyed_Type.FindIndex(s => s == unidad2.SFXEvent_Hardpoint_Destroyed_Type[sfxid]);
+                                    if (unidad1id < 0)
+                                    {
+                                        unidad.SFXEvent_Hardpoint_Destroyed.Add(unidad2.SFXEvent_Hardpoint_Destroyed[sfxid]);
+                                        unidad.SFXEvent_Hardpoint_Destroyed_Type.Add(unidad2.SFXEvent_Hardpoint_Destroyed_Type[sfxid]);
+                                        unidad.SFXEvent_Hardpoint_Destroyed_BaseID.Add(unidad2.SFXEvent_Hardpoint_Destroyed_BaseID[sfxid] + 1);
+                                    }
+                                }
+
                                 entities.objects[i] = unidad;
                                 break;
                             }
@@ -3930,7 +4132,7 @@ public static class SharedFunctions
             if (unidad.reqstructures == null) unidad.reqstructures = "";
             if (unidad.locked < 0) unidad.locked = 0; //undefined evaluates to not locked
             unidad.structid = i;
-            unidad.username = Find_Text_Entry(unidad.username);
+            unidad.username = Find_Text_Entry(unidad.username, entities);
             unidad.sortstring = unidad.username; //Default to no extra sort value display
 
             //can't create the variant chain in the main detemplating loop because the order is undefined:
@@ -3988,9 +4190,13 @@ public static class SharedFunctions
             if (unidad.accel < 0) unidad.accel_baseID = -1;
             if (unidad.turn < 0) unidad.turn_baseID = -1;
             if (unidad.range < 0) unidad.range_baseID = -1;
-            if (unidad.garrisonSlots_baseID < 0) unidad.garrisonSlots_baseID = -1;
-            if (unidad.garrisonType_baseID < 0) unidad.garrisonType_baseID = -1;
-            if (unidad.garrisonValue_baseID < 0) unidad.garrisonValue_baseID = -1;
+            if (unidad.garrison_slots < 0) unidad.garrisonSlots_baseID = -1;
+            if (unidad.garrison_type == "") unidad.garrisonType_baseID = -1;
+            if (unidad.garrison_value < 0) unidad.garrisonValue_baseID = -1;
+            for (int sfxid = 0; sfxid < unidad.BasicSFXEvents.Length; sfxid++)
+            {
+                if (unidad.BasicSFXEvents[sfxid] == "") unidad.BasicSFXEvents_baseID[sfxid] = -1;
+            }
 
             unidad.targetablehps = false;
             List<hardpoint> hps = new List<hardpoint>();
@@ -5221,6 +5427,36 @@ public struct faction
     }
 }
 
+public enum basicSoundTypes {
+    SFXEvent_Build_Started,
+    SFXEvent_Build_Cancelled,
+    SFXEvent_Build_Complete,
+    SFXEvent_Bombard_Select_Target,
+    SFXEvent_Bombard_Incoming,
+    SFXEvent_Tactical_Build_Started,
+    SFXEvent_Tactical_Build_Complete,
+    SFXEvent_Tactical_Build_Cancelled,
+    SFXEvent_Fire,
+    SFXEvent_Select,
+    SFXEvent_Move,
+    SFXEvent_Fleet_Move,
+    SFXEvent_Attack,
+    SFXEvent_Guard,
+    SFXEvent_Assist_Move,
+    SFXEvent_Assist_Attack,
+    SFXEvent_Health_Low_Warning,
+    SFXEvent_Health_Critical_Warning,
+    SFXEvent_Move_Into_Nebula,
+    SFXEvent_Move_Into_Asteroid_Field,
+    SFXEvent_Engine_Idle_Loop,
+    SFXEvent_Engine_Moving_Loop,
+    SFXEvent_Engine_Cinematic_Focus_Loop,
+    SFXEvent_Damaged_By_Asteroid,
+    Death_SFXEvent_Start_Die,
+    
+    Max //Keep this last 
+}
+
 public struct unit
 {
     public string variantof;
@@ -5326,6 +5562,15 @@ public struct unit
     public List<unitability> unitabilities;
     public List<garrison_entry> garrison;
     public List<garrison_lua> garrison_lua;
+    public string[] BasicSFXEvents;
+    public List<string> SFXEvent_Attack_Hardpoint;
+    public List<string> SFXEvent_Attack_Hardpoint_Type;
+    public List<string> SFXEvent_Hardpoint_Destroyed;
+    public List<string> SFXEvent_Hardpoint_Destroyed_Type;
+    public int[] BasicSFXEvents_baseID;
+    public List<int> SFXEvent_Attack_Hardpoint_BaseID;
+    public List<int> SFXEvent_Hardpoint_Destroyed_BaseID;
+    //public string Land_Damage_SFX; Saving until I understand it better
     //public string weather;
     //public string movementclass;
     //public string lua_script;
@@ -5335,6 +5580,21 @@ public struct unit
         if (sortstring == username) return username;
         else if (sortstring != "") return "(" + sortstring + ") " + username;
         else return "(" + sortfloat.ToString("0.###") + ") " + username;
+    }
+}
+
+public struct sfx
+{
+    public string name;
+    public string displayname;
+    public string sourcefile;
+    public string[] samples;
+    public int minpitch;
+    public int maxpitch;
+
+    public override string ToString()
+    {
+        return displayname;
     }
 }
 
@@ -5576,6 +5836,8 @@ public struct entities {
     public static List<List<int>> groundHerohashes = new List<List<int>>();*/
 
     public static List<unit> containers = new List<unit>();
+
+    public static List<sfx> sfx = new List<sfx>();
 
     //public static List<List<int>> containerhashes = new List<List<int>>();
 

@@ -101,6 +101,14 @@
             this.UnitSearchTextBox = new System.Windows.Forms.TextBox();
             this.UnitRadioButton = new System.Windows.Forms.RadioButton();
             this.Unitpanel = new System.Windows.Forms.Panel();
+            this.UnitSFXPanel = new System.Windows.Forms.Panel();
+            this.UnitSFXDestroyedRB = new System.Windows.Forms.RadioButton();
+            this.UnitSFXAttackRB = new System.Windows.Forms.RadioButton();
+            this.UnitSFXBasicRB = new System.Windows.Forms.RadioButton();
+            this.UnitPlaySoundButton = new System.Windows.Forms.Button();
+            this.UnitSampleListBox = new System.Windows.Forms.ListBox();
+            this.UnitSFXListbox = new System.Windows.Forms.ListBox();
+            this.CollapseUnitSFXPanel = new System.Windows.Forms.Button();
             this.CollapseUnitAvailPanel = new System.Windows.Forms.Button();
             this.UnitAvailPanel = new System.Windows.Forms.Panel();
             this.UnitAllSquadSizesCheckBox = new System.Windows.Forms.CheckBox();
@@ -178,6 +186,8 @@
             this.CollapseUnitStatPanel = new System.Windows.Forms.Button();
             this.CollapseUnitTextPanel = new System.Windows.Forms.Button();
             this.UnitStatPanel = new System.Windows.Forms.Panel();
+            this.label34 = new System.Windows.Forms.Label();
+            this.UnitAoEBox = new System.Windows.Forms.NumericUpDown();
             this.HealRadiusLabel = new System.Windows.Forms.Label();
             this.HealRechargeLabel = new System.Windows.Forms.Label();
             this.HealAmountLabel = new System.Windows.Forms.Label();
@@ -242,6 +252,7 @@
             this.tabPlanets = new System.Windows.Forms.TabPage();
             this.PlanetListBox = new System.Windows.Forms.ListBox();
             this.PlanetPanel = new System.Windows.Forms.Panel();
+            this.PlanetMissingTextButton = new System.Windows.Forms.Button();
             this.PlanetConnectionsLabel = new System.Windows.Forms.Label();
             this.PlanetSortLabel = new System.Windows.Forms.Label();
             this.PlanetSpawnSetLabel = new System.Windows.Forms.Label();
@@ -403,8 +414,7 @@
             this.AutoResolveBattleTypeLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.UnitAoEBox = new System.Windows.Forms.NumericUpDown();
-            this.label34 = new System.Windows.Forms.Label();
+            this.UnitSFXNameLabel = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tabLookups.SuspendLayout();
             this.LookupTabControl.SuspendLayout();
@@ -419,6 +429,7 @@
             this.RandomFTab.SuspendLayout();
             this.tabUnits.SuspendLayout();
             this.Unitpanel.SuspendLayout();
+            this.UnitSFXPanel.SuspendLayout();
             this.UnitAvailPanel.SuspendLayout();
             this.UnitAbilityPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AbilityPictureBox)).BeginInit();
@@ -427,6 +438,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.ComplementTechLevelBox)).BeginInit();
             this.LuaGarrisonPanel.SuspendLayout();
             this.UnitStatPanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.UnitAoEBox)).BeginInit();
             this.UnitBTSPanel.SuspendLayout();
             this.UnitTextPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.IconPictureBox)).BeginInit();
@@ -447,7 +459,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveWinnerAttritionNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveLoserAttritionNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveAttritionAllowanceNumeric)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.UnitAoEBox)).BeginInit();
             this.SuspendLayout();
             // 
             // contextMenuStrip1
@@ -1259,6 +1270,8 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.Unitpanel.AutoScroll = true;
+            this.Unitpanel.Controls.Add(this.UnitSFXPanel);
+            this.Unitpanel.Controls.Add(this.CollapseUnitSFXPanel);
             this.Unitpanel.Controls.Add(this.CollapseUnitAvailPanel);
             this.Unitpanel.Controls.Add(this.UnitAvailPanel);
             this.Unitpanel.Controls.Add(this.UnitAbilityPanel);
@@ -1274,6 +1287,99 @@
             this.Unitpanel.Name = "Unitpanel";
             this.Unitpanel.Size = new System.Drawing.Size(1091, 775);
             this.Unitpanel.TabIndex = 2;
+            // 
+            // UnitSFXPanel
+            // 
+            this.UnitSFXPanel.Controls.Add(this.UnitSFXNameLabel);
+            this.UnitSFXPanel.Controls.Add(this.UnitSFXDestroyedRB);
+            this.UnitSFXPanel.Controls.Add(this.UnitSFXAttackRB);
+            this.UnitSFXPanel.Controls.Add(this.UnitSFXBasicRB);
+            this.UnitSFXPanel.Controls.Add(this.UnitPlaySoundButton);
+            this.UnitSFXPanel.Controls.Add(this.UnitSampleListBox);
+            this.UnitSFXPanel.Controls.Add(this.UnitSFXListbox);
+            this.UnitSFXPanel.Location = new System.Drawing.Point(32, 1547);
+            this.UnitSFXPanel.Name = "UnitSFXPanel";
+            this.UnitSFXPanel.Size = new System.Drawing.Size(1039, 298);
+            this.UnitSFXPanel.TabIndex = 12;
+            // 
+            // UnitSFXDestroyedRB
+            // 
+            this.UnitSFXDestroyedRB.AutoSize = true;
+            this.UnitSFXDestroyedRB.Location = new System.Drawing.Point(538, 109);
+            this.UnitSFXDestroyedRB.Name = "UnitSFXDestroyedRB";
+            this.UnitSFXDestroyedRB.Size = new System.Drawing.Size(127, 17);
+            this.UnitSFXDestroyedRB.TabIndex = 6;
+            this.UnitSFXDestroyedRB.Text = "Hardpoints Destroyed";
+            this.UnitSFXDestroyedRB.UseVisualStyleBackColor = true;
+            this.UnitSFXDestroyedRB.CheckedChanged += new System.EventHandler(this.UnitSFXRB_CheckedChanged);
+            // 
+            // UnitSFXAttackRB
+            // 
+            this.UnitSFXAttackRB.AutoSize = true;
+            this.UnitSFXAttackRB.Location = new System.Drawing.Point(538, 86);
+            this.UnitSFXAttackRB.Name = "UnitSFXAttackRB";
+            this.UnitSFXAttackRB.Size = new System.Drawing.Size(110, 17);
+            this.UnitSFXAttackRB.TabIndex = 5;
+            this.UnitSFXAttackRB.Text = "Attack Hardpoints";
+            this.UnitSFXAttackRB.UseVisualStyleBackColor = true;
+            this.UnitSFXAttackRB.CheckedChanged += new System.EventHandler(this.UnitSFXRB_CheckedChanged);
+            // 
+            // UnitSFXBasicRB
+            // 
+            this.UnitSFXBasicRB.AutoSize = true;
+            this.UnitSFXBasicRB.Checked = true;
+            this.UnitSFXBasicRB.Location = new System.Drawing.Point(538, 63);
+            this.UnitSFXBasicRB.Name = "UnitSFXBasicRB";
+            this.UnitSFXBasicRB.Size = new System.Drawing.Size(101, 17);
+            this.UnitSFXBasicRB.TabIndex = 4;
+            this.UnitSFXBasicRB.TabStop = true;
+            this.UnitSFXBasicRB.Text = "General Sounds";
+            this.UnitSFXBasicRB.UseVisualStyleBackColor = true;
+            this.UnitSFXBasicRB.CheckedChanged += new System.EventHandler(this.UnitSFXRB_CheckedChanged);
+            // 
+            // UnitPlaySoundButton
+            // 
+            this.UnitPlaySoundButton.Location = new System.Drawing.Point(538, 34);
+            this.UnitPlaySoundButton.Name = "UnitPlaySoundButton";
+            this.UnitPlaySoundButton.Size = new System.Drawing.Size(110, 23);
+            this.UnitPlaySoundButton.TabIndex = 3;
+            this.UnitPlaySoundButton.Text = "Play Sound";
+            this.UnitPlaySoundButton.UseVisualStyleBackColor = true;
+            this.UnitPlaySoundButton.Click += new System.EventHandler(this.UnitPlaySoundButton_Click);
+            // 
+            // UnitSampleListBox
+            // 
+            this.UnitSampleListBox.FormattingEnabled = true;
+            this.UnitSampleListBox.Location = new System.Drawing.Point(273, 11);
+            this.UnitSampleListBox.Name = "UnitSampleListBox";
+            this.UnitSampleListBox.Size = new System.Drawing.Size(259, 277);
+            this.UnitSampleListBox.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.UnitSampleListBox, "The activated abiltiies on teh unit. Selecting one that affects stats will change" +
+        " them accordingly");
+            this.UnitSampleListBox.SelectedIndexChanged += new System.EventHandler(this.UnitSampleListBox_SelectedIndexChanged);
+            // 
+            // UnitSFXListbox
+            // 
+            this.UnitSFXListbox.FormattingEnabled = true;
+            this.UnitSFXListbox.Location = new System.Drawing.Point(5, 11);
+            this.UnitSFXListbox.Name = "UnitSFXListbox";
+            this.UnitSFXListbox.Size = new System.Drawing.Size(259, 277);
+            this.UnitSFXListbox.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.UnitSFXListbox, "The activated abiltiies on teh unit. Selecting one that affects stats will change" +
+        " them accordingly");
+            this.UnitSFXListbox.SelectedIndexChanged += new System.EventHandler(this.UnitSFXListbox_SelectedIndexChanged);
+            // 
+            // CollapseUnitSFXPanel
+            // 
+            this.CollapseUnitSFXPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CollapseUnitSFXPanel.Location = new System.Drawing.Point(5, 1547);
+            this.CollapseUnitSFXPanel.Name = "CollapseUnitSFXPanel";
+            this.CollapseUnitSFXPanel.Size = new System.Drawing.Size(24, 19);
+            this.CollapseUnitSFXPanel.TabIndex = 11;
+            this.CollapseUnitSFXPanel.Tag = "";
+            this.CollapseUnitSFXPanel.Text = "/\\";
+            this.CollapseUnitSFXPanel.UseVisualStyleBackColor = true;
+            this.CollapseUnitSFXPanel.Click += new System.EventHandler(this.CollapseUnitSFXPanel_Click);
             // 
             // CollapseUnitAvailPanel
             // 
@@ -2153,6 +2259,46 @@
             this.UnitStatPanel.TabIndex = 2;
             this.UnitStatPanel.Tag = "";
             // 
+            // label34
+            // 
+            this.label34.AutoSize = true;
+            this.label34.Location = new System.Drawing.Point(156, 222);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(71, 13);
+            this.label34.TabIndex = 48;
+            this.label34.Text = "AoE Multiplier";
+            // 
+            // UnitAoEBox
+            // 
+            this.UnitAoEBox.DecimalPlaces = 2;
+            this.UnitAoEBox.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            65536});
+            this.UnitAoEBox.Location = new System.Drawing.Point(113, 220);
+            this.UnitAoEBox.Maximum = new decimal(new int[] {
+            25,
+            0,
+            0,
+            0});
+            this.UnitAoEBox.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.UnitAoEBox.Name = "UnitAoEBox";
+            this.UnitAoEBox.Size = new System.Drawing.Size(42, 20);
+            this.UnitAoEBox.TabIndex = 47;
+            this.toolTip1.SetToolTip(this.UnitAoEBox, "Multiply the damage of all DPS calculations for weapons with area damage by this " +
+        "value");
+            this.UnitAoEBox.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.UnitAoEBox.ValueChanged += new System.EventHandler(this.UnitAoEBox_ValueChanged);
+            // 
             // HealRadiusLabel
             // 
             this.HealRadiusLabel.AutoSize = true;
@@ -2592,7 +2738,7 @@
             // UnitBTSPanel
             // 
             this.UnitBTSPanel.Controls.Add(this.UnitBTSTextBox);
-            this.UnitBTSPanel.Location = new System.Drawing.Point(32, 1542);
+            this.UnitBTSPanel.Location = new System.Drawing.Point(32, 1851);
             this.UnitBTSPanel.Name = "UnitBTSPanel";
             this.UnitBTSPanel.Size = new System.Drawing.Size(1039, 150);
             this.UnitBTSPanel.TabIndex = 1;
@@ -2835,6 +2981,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.PlanetPanel.AutoScroll = true;
+            this.PlanetPanel.Controls.Add(this.PlanetMissingTextButton);
             this.PlanetPanel.Controls.Add(this.PlanetConnectionsLabel);
             this.PlanetPanel.Controls.Add(this.PlanetSortLabel);
             this.PlanetPanel.Controls.Add(this.PlanetSpawnSetLabel);
@@ -2889,6 +3036,18 @@
             this.PlanetPanel.Name = "PlanetPanel";
             this.PlanetPanel.Size = new System.Drawing.Size(1288, 775);
             this.PlanetPanel.TabIndex = 63;
+            // 
+            // PlanetMissingTextButton
+            // 
+            this.PlanetMissingTextButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PlanetMissingTextButton.Location = new System.Drawing.Point(15, 638);
+            this.PlanetMissingTextButton.Name = "PlanetMissingTextButton";
+            this.PlanetMissingTextButton.Size = new System.Drawing.Size(97, 27);
+            this.PlanetMissingTextButton.TabIndex = 115;
+            this.PlanetMissingTextButton.Text = "Missing Text...";
+            this.toolTip1.SetToolTip(this.PlanetMissingTextButton, "Save the sort values and names of the unit list to a text file");
+            this.PlanetMissingTextButton.UseVisualStyleBackColor = true;
+            this.PlanetMissingTextButton.Click += new System.EventHandler(this.PlanetMissingTextButton_Click);
             // 
             // PlanetConnectionsLabel
             // 
@@ -4746,45 +4905,15 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
-            // UnitAoEBox
+            // UnitSFXNameLabel
             // 
-            this.UnitAoEBox.DecimalPlaces = 2;
-            this.UnitAoEBox.Increment = new decimal(new int[] {
-            5,
-            0,
-            0,
-            65536});
-            this.UnitAoEBox.Location = new System.Drawing.Point(113, 220);
-            this.UnitAoEBox.Maximum = new decimal(new int[] {
-            25,
-            0,
-            0,
-            0});
-            this.UnitAoEBox.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.UnitAoEBox.Name = "UnitAoEBox";
-            this.UnitAoEBox.Size = new System.Drawing.Size(42, 20);
-            this.UnitAoEBox.TabIndex = 47;
-            this.toolTip1.SetToolTip(this.UnitAoEBox, "Multiply the damage of all DPS calculations for weapons with area damage by this " +
-        "value");
-            this.UnitAoEBox.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.UnitAoEBox.ValueChanged += new System.EventHandler(this.UnitAoEBox_ValueChanged);
-            // 
-            // label34
-            // 
-            this.label34.AutoSize = true;
-            this.label34.Location = new System.Drawing.Point(156, 222);
-            this.label34.Name = "label34";
-            this.label34.Size = new System.Drawing.Size(71, 13);
-            this.label34.TabIndex = 48;
-            this.label34.Text = "AoE Multiplier";
+            this.UnitSFXNameLabel.AutoSize = true;
+            this.UnitSFXNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitSFXNameLabel.Location = new System.Drawing.Point(541, 11);
+            this.UnitSFXNameLabel.Name = "UnitSFXNameLabel";
+            this.UnitSFXNameLabel.Size = new System.Drawing.Size(13, 20);
+            this.UnitSFXNameLabel.TabIndex = 22;
+            this.UnitSFXNameLabel.Text = ".";
             // 
             // Holocron
             // 
@@ -4819,6 +4948,8 @@
             this.tabUnits.ResumeLayout(false);
             this.tabUnits.PerformLayout();
             this.Unitpanel.ResumeLayout(false);
+            this.UnitSFXPanel.ResumeLayout(false);
+            this.UnitSFXPanel.PerformLayout();
             this.UnitAvailPanel.ResumeLayout(false);
             this.UnitAvailPanel.PerformLayout();
             this.UnitAbilityPanel.ResumeLayout(false);
@@ -4832,6 +4963,7 @@
             this.LuaGarrisonPanel.PerformLayout();
             this.UnitStatPanel.ResumeLayout(false);
             this.UnitStatPanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.UnitAoEBox)).EndInit();
             this.UnitBTSPanel.ResumeLayout(false);
             this.UnitTextPanel.ResumeLayout(false);
             this.UnitTextPanel.PerformLayout();
@@ -4857,7 +4989,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveWinnerAttritionNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveLoserAttritionNumeric)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveAttritionAllowanceNumeric)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.UnitAoEBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -5240,6 +5371,16 @@
         private System.Windows.Forms.CheckBox GCTradeRouterCheckBox;
         private System.Windows.Forms.Label label34;
         private System.Windows.Forms.NumericUpDown UnitAoEBox;
+        private System.Windows.Forms.Button PlanetMissingTextButton;
+        private System.Windows.Forms.Panel UnitSFXPanel;
+        private System.Windows.Forms.ListBox UnitSFXListbox;
+        private System.Windows.Forms.Button CollapseUnitSFXPanel;
+        private System.Windows.Forms.ListBox UnitSampleListBox;
+        private System.Windows.Forms.Button UnitPlaySoundButton;
+        private System.Windows.Forms.RadioButton UnitSFXDestroyedRB;
+        private System.Windows.Forms.RadioButton UnitSFXAttackRB;
+        private System.Windows.Forms.RadioButton UnitSFXBasicRB;
+        private System.Windows.Forms.Label UnitSFXNameLabel;
     }
 }
 

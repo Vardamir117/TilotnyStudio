@@ -23,35 +23,28 @@ using static SharedFunctions;
  *
  *https://dev.to/karenpayneoregon/window-forms-dark-mode-33on in program.cs, requires .Net upgrade?
  *
- * Universal function to goto appropriate unit - find which matches and do that
+ *parse sfx on abilities - selecting an ability with sfx enters a special mode for sfx
  *
  * use absence of changelogs to detect EaWX versions
  * 
- * sort with xml complements. CP of reserves = initcp*(1 - (0.5^(init/reserve)))
+ * missing text buttons for units. Campaigns? missions?
+ * unused text button - see how bad the false positives are after doing
+ * 
+ * filter by fighter vs bomber
+ * sort by fighter or bomber?
  *
  * Why are FotR skirmish infantry companies claiming to have infinite hp in the sort?
  * 
  * lock controls during load
- * 
- * read -1 pop as 0 or 1 so the values don't go negative
- *
- *add box containing things that spawn the unit as a garrison/in company units, another box for structures/heroes that discount it
- *
- * todo - subunits on ground units/fighters tells you which companies spawn it? Or new fields
- * 
- * Add required planets, GCs with required planets, corporate discounts (structures and heroes), planets with corporate discounts... the latter renders a corporations lookup tab obsolete, if you also sextend the discount filter to structures
- * 
+
  * more right clicks with function - save images on conquest and planet maps, save/detail accuracy table?...
  * Don't use messagebox - create dedicated listbox popup
  * 
- * filter units by skirmish/_MP
  * 
  * add all space categories to filter page, not just targeting ones. Or just all categories and let them sort out ground?
  * 
- * sort/filter by abilities: has admin, PD reload and range, has command bonus, has specialized bonus?. Sort by average and max command percent?...
  * 
  * armor matrix is broken in vanilla
- * Got an out of memory exception when opening one of the vanilla campaigns
  * 
  * 
  * sound section for units - parse sourcing information, play sounds?
@@ -66,10 +59,8 @@ using static SharedFunctions;
  * 
  * planet preferred revolt, influence modifiers
  * 
- * variant of existing needs to handle case mismatch => REP_DHC vs Rep_DHC breaks skirmish version
 keep history updated whenever a tab or subtab is implemented
 there might be a bit of oddness in the history tracking when factions share a name
-Tilot - up two levels, does swfoc.exe exist? If yes enable dropdown
 
 
 
@@ -360,7 +351,10 @@ namespace Holocron
             parseProjectiles(entities);
 
             loadscreen.ChangeText("Parsing hardpoint data");
-            parseHardpoints(entities, entities.Text);
+            parseHardpoints(entities);
+
+            loadscreen.ChangeText("Parsing sound entries");
+            parseSFX(entities);
 
             entities.spaceUnits = new List<unit>();
             entities.groundCompanies = new List<unit>();
@@ -861,10 +855,10 @@ namespace Holocron
                                     string namestring = "";
                                     if (entry.Contains("TEXT_TOOLTIP_COMMAND_"))
                                     {
-                                        namestring = Find_Text_Entry(entry);
+                                        namestring = Find_Text_Entry(entry, entities);
                                         if (namestring.Contains(", "))
                                         {//This pattern should be consistent among commands. Close enough, probably
-                                            string heroname = Find_Text_Entry(hero.username) + " (" + namestring.Substring(0, namestring.LastIndexOf(",")) + ")";
+                                            string heroname = Find_Text_Entry(hero.username, entities) + " (" + namestring.Substring(0, namestring.LastIndexOf(",")) + ")";
                                             namestring = namestring.Substring(namestring.LastIndexOf(",") + 2, namestring.Length - namestring.LastIndexOf(",") - 2);
                                             int index = globals.shipnames.FindIndex(s => s.name == namestring);
                                             if (index >= 0)
@@ -2562,7 +2556,7 @@ namespace Holocron
 
             UnitNameLabel.Text = "Name: " + selectedUnit.username;
             UnitInternalLabel.Text = "Internal Name: " + selectedUnit.unitname;
-            foreach (string entry in SplitXMLWhitespaceList(selectedUnit.tooltip)) UnitTooltipLabelRichTextBox.Text += Find_Text_Entry(entry) + "\n";
+            foreach (string entry in SplitXMLWhitespaceList(selectedUnit.tooltip)) UnitTooltipLabelRichTextBox.Text += Find_Text_Entry(entry, entities) + "\n";
             if (selectedUnit.BTS != "") UnitBTSTextBox.Text = "Behind the scenes:\n" + selectedUnit.BTS;
             else UnitBTSTextBox.Text = "";
             setAbilityDependentStats();
@@ -2826,6 +2820,7 @@ namespace Holocron
                 }
             }
             populateHostListBox();
+            populateUnitSFXList();
         }
 
         private void populateHostListBox()
@@ -3046,7 +3041,7 @@ namespace Holocron
                     unit.sortstring = unit.unitname;
                     break;
                 case UnitSortTypes.Class:
-                    unit.sortstring = Find_Text_Entry(unit.unitclass);
+                    unit.sortstring = Find_Text_Entry(unit.unitclass, entities);
                     break;
                 case UnitSortTypes.Price:
                     unit.sortfloat = unit.cost;
@@ -4138,6 +4133,7 @@ namespace Holocron
             StatPanel,
             SubunitPanel,
             AbilityPanel,
+            SFXPanel,
             BTSPanel
         }
 
@@ -4173,7 +4169,9 @@ namespace Holocron
                 CollapseUnitSubunitPanel.Tag = UnitSubunitPanel.Location.Y - UnitStatPanel.Location.Y - UnitStatPanel.Height;
                 UnitAbilityPanel.Tag = UnitAbilityPanel.Height;
                 CollapseUnitAbilityPanel.Tag = UnitAbilityPanel.Location.Y - UnitSubunitPanel.Location.Y - UnitSubunitPanel.Height;
-                UnitBTSPanel.Tag = UnitBTSPanel.Location.Y - UnitAbilityPanel.Location.Y - UnitAbilityPanel.Height; //Last is also a special case//UnitBTSPanel.Height;
+                UnitSFXPanel.Tag = UnitSFXPanel.Height;
+                CollapseUnitSFXPanel.Tag = UnitSFXPanel.Location.Y - UnitAbilityPanel.Location.Y - UnitAbilityPanel.Height;
+                UnitBTSPanel.Tag = UnitBTSPanel.Location.Y - UnitSFXPanel.Location.Y - UnitSFXPanel.Height; //Last is also a special case//UnitBTSPanel.Height;
             }
 
             int StatSize = (int)UnitStatPanel.Tag;
@@ -4184,6 +4182,8 @@ namespace Holocron
             int SubunitInterval = (int)CollapseUnitSubunitPanel.Tag;
             int AbilitySize = (int)UnitAbilityPanel.Tag;
             int AbilityInterval = (int)CollapseUnitAbilityPanel.Tag;
+            int SFXSize = (int)UnitSFXPanel.Tag;
+            int SFXInterval = (int)CollapseUnitSFXPanel.Tag;
             int BTSInterval = (int)UnitBTSPanel.Tag;
 
             switch (toggleID) //toggle panel and associated buttons
@@ -4248,6 +4248,18 @@ namespace Holocron
                         setCollapsedButton(CollapseUnitAbilityPanel, "Abilities");
                     }
                     break;
+                case UnitPanels.SFXPanel:
+                    if (UnitSFXPanel.Height == 0)
+                    {
+                        UnitSFXPanel.Height = SFXSize;
+                        setExpandedButton(CollapseUnitSFXPanel);
+                    }
+                    else
+                    {
+                        UnitSFXPanel.Height = 0;
+                        setCollapsedButton(CollapseUnitSFXPanel, "Sounds");
+                    }
+                    break;
                 default:
                     break;
             }
@@ -4269,7 +4281,11 @@ namespace Holocron
             UnitAbilityPanel.Location = new Point(UnitAbilityPanel.Location.X, Yvalue);
             CollapseUnitAbilityPanel.Location = new Point(CollapseUnitAbilityPanel.Location.X, Yvalue);
 
-            Yvalue = UnitAbilityPanel.Location.Y + Math.Max(UnitAbilityPanel.Height, CollapseUnitAbilityPanel.Height) + BTSInterval;
+            Yvalue = UnitAbilityPanel.Location.Y + Math.Max(UnitAbilityPanel.Height, CollapseUnitAbilityPanel.Height) + AbilityInterval;
+            UnitSFXPanel.Location = new Point(UnitSFXPanel.Location.X, Yvalue);
+            CollapseUnitSFXPanel.Location = new Point(CollapseUnitSFXPanel.Location.X, Yvalue);
+
+            Yvalue = UnitSFXPanel.Location.Y + Math.Max(UnitSFXPanel.Height, CollapseUnitSFXPanel.Height) + BTSInterval;
             UnitBTSPanel.Location = new Point(UnitBTSPanel.Location.X, Yvalue);
         }
 
@@ -4296,6 +4312,11 @@ namespace Holocron
         private void CollapseUnitAbilityPanel_Click(object sender, EventArgs e)
         {
             collapsePanels(UnitPanels.AbilityPanel);
+        }
+
+        private void CollapseUnitSFXPanel_Click(object sender, EventArgs e)
+        {
+            collapsePanels(UnitPanels.SFXPanel);
         }
 
         private void gotoUnitUniversal(string obj)
@@ -4835,7 +4856,7 @@ namespace Holocron
                     }
                 }
                 UnitAbilityNameLabel.Text = able.username;
-                UnitAbilityDescLabel.Text = Find_Text_Entry(able.desc);
+                UnitAbilityDescLabel.Text = Find_Text_Entry(able.desc, entities);
 
                 UATimeLabel.Text = "";
                 if (able.expiration > 0) UATimeLabel.Text = "Duration: " + able.expiration.ToString("0")+" ";
@@ -5028,6 +5049,91 @@ namespace Holocron
             }
         }
 
+        private void populateUnitSFXList()
+        {
+            UnitSFXListbox.Items.Clear();
+            UnitSampleListBox.Items.Clear();
+            if (UnitListBox.Tag is null) return;
+            unit unit = (unit)UnitListBox.Tag;
+            if (UnitSFXBasicRB.Checked)
+            {
+                for (int i = 0; i < unit.BasicSFXEvents.Length; i++)
+                {
+                    if(unit.BasicSFXEvents[i] != "")
+                    {
+                        sfx sfx = entities.sfx.FirstOrDefault(s => s.name == unit.BasicSFXEvents[i]);
+                        if(!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
+                        {
+                            sfx.displayname = Enum.GetName(typeof(basicSoundTypes), i);
+                            sfx.displayname = sfx.displayname.Replace("SFXEvent_", "").Replace("_", " ");
+                            UnitSFXListbox.Items.Add(sfx);
+                        }
+                    }
+                }
+            }
+            else if (UnitSFXAttackRB.Checked)
+            {
+                for (int i = 0; i < unit.SFXEvent_Attack_Hardpoint.Count; i++)
+                {
+                    sfx sfx = entities.sfx.FirstOrDefault(s => s.name == unit.SFXEvent_Attack_Hardpoint[i]);
+                    if (!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
+                    {
+                        sfx.displayname = unit.SFXEvent_Attack_Hardpoint_Type[i];
+                        UnitSFXListbox.Items.Add(sfx);
+                    }
+                }
+            }
+            else if (UnitSFXDestroyedRB.Checked)
+            {
+                for (int i = 0; i < unit.SFXEvent_Hardpoint_Destroyed.Count; i++)
+                {
+                    sfx sfx = entities.sfx.FirstOrDefault(s => s.name == unit.SFXEvent_Hardpoint_Destroyed[i]);
+                    if (!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
+                    {
+                        sfx.displayname = unit.SFXEvent_Hardpoint_Destroyed_Type[i];
+                        UnitSFXListbox.Items.Add(sfx);
+                    }
+                }
+            }
+            //else block for selected event
+        }
+
+        private void UnitSFXListbox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UnitSampleListBox.Items.Clear();
+            sfx sfx = (sfx)UnitSFXListbox.SelectedItem;
+            if(!(sfx.samples is null))
+            {
+                foreach (string sample in sfx.samples) UnitSampleListBox.Items.Add(sample);
+                UnitSampleListBox.SelectedIndex = 0;
+            }
+            UnitSFXNameLabel.Text = sfx.name;
+        }
+
+        private void UnitSampleListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void UnitPlaySoundButton_Click(object sender, EventArgs e)
+        {
+           if(UnitSampleListBox.SelectedItems.Count > 0)
+            {
+                string path = (string)UnitSampleListBox.SelectedItem;
+                path = getModFile(path.ToLower().Replace("data\\",""), entities);
+                if (File.Exists(path))
+                {
+                    System.Media.SoundPlayer player = new System.Media.SoundPlayer(@path); //Todo handle vanilla sounds from the meg
+                    player.Play();
+                }
+            }
+        }
+
+        private void UnitSFXRB_CheckedChanged(object sender, EventArgs e)
+        {
+            populateUnitSFXList();
+        }
+
         private void getMoneyStructures()
         {
             if (globals.MoneyStructures.Count == 0)
@@ -5109,7 +5215,7 @@ namespace Holocron
                 insert_history((int)historymaintabs.planet, 0, planet.codename);
                 PlanetNameLabel.Text = planet.username;
                 PlanetCodeLabel.Text = "Internal Name: " + planet.codename;
-                PlanetHistoryTextBox.Text = "Population: " + Find_Text_Entry(planet.desc_pop).Replace("\\n", "\n") + "\n\n" + "Fauna: " + Find_Text_Entry(planet.desc_fauna) + "\n\n" + Find_Text_Entry(planet.desc_history);
+                PlanetHistoryTextBox.Text = "Population: " + Find_Text_Entry(planet.desc_pop, entities).Replace("\\n", "\n") + "\n\n" + "Fauna: " + Find_Text_Entry(planet.desc_fauna, entities) + "\n\n" + Find_Text_Entry(planet.desc_history, entities);
                 PlanetCreditLabel.Text = "Income: " + planet.credits.ToString();
                 PlanetShipyardLabel.Text = "Shipyard: " + planet.shipyard.ToString();
                 PlanetStarbaseLabel.Text = "Starbase: " + planet.max_starbase.ToString();
@@ -5911,6 +6017,25 @@ namespace Holocron
             }
         }
 
+        private void PlanetMissingTextButton_Click(object sender, EventArgs e)
+        {
+            string corenne = "";
+            foreach(planet planet in PlanetListBox.Items)
+            {
+                if (planet.username.Contains("TEXT_OBJECT_STAR_SYSTEM_")) corenne += planet.username + ",\n";
+                if (entities.Text.FindIndex(s => s.identifier == planet.desc_fauna) < 0) corenne += planet.desc_fauna + ",\n";
+                if (entities.Text.FindIndex(s => s.identifier == planet.desc_history) < 0) corenne += planet.desc_history + ",\n";
+                if (entities.Text.FindIndex(s => s.identifier == planet.desc_pop) < 0) corenne += planet.desc_pop + ",\n";
+            }
+            if(corenne == "") MessageBox.Show("No missing text detected");
+            else
+            {
+                TextDetail deets = new TextDetail();
+                deets.detail = corenne;
+                deets.Show();
+            }
+        }
+
         private void populateGCListbox()
         {
             GCListBox.Items.Clear();
@@ -6021,7 +6146,7 @@ namespace Holocron
                                                 speechevent entry = new speechevent
                                                 {
                                                     title = title.Replace("_", " "),
-                                                    speech = Find_Text_Entry(text),
+                                                    speech = Find_Text_Entry(text, entities),
                                                 };
                                                 speechevents.Add(entry);
                                             }
@@ -6392,7 +6517,7 @@ namespace Holocron
                     if(line.Length > 6)
                     {
                         //if (line.Substring(0, 5) == "TITLE") dialogtext += Find_Text_Entry(line.Substring(6, line.Length - 6)) + "\n"; Theoretically valid, but tends to be duplicated in the first line anyway
-                        if (line.Substring(0, 5) == "TEXT ") dialogtext += Find_Text_Entry(line.Substring(5, line.Length - 5)) + "\n";
+                        if (line.Substring(0, 5) == "TEXT ") dialogtext += Find_Text_Entry(line.Substring(5, line.Length - 5), entities) + "\n";
                         else if (line.Substring(0, 7) == "NEWLINE") dialogtext += "\n";
                     }
                 }

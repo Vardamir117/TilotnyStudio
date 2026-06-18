@@ -117,45 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="contextMenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>172, 17</value>
-  </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>442, 17</value>
-  </metadata>
-  <data name="UnitShieldAvgLabel.ToolTip" xml:space="preserve">
-    <value>Shield value divided by the mean damage modifier across key damage types to the unit's armor type
-Combat power calulations use the closely related shield*average damage absorption or shield*(1 - mean modifier)</value>
-  </data>
-  <data name="UnitHpAvgLabel.ToolTip" xml:space="preserve">
-    <value>Health value divided by the mean damage modifier across key damage types to the unit's armor type
-Combat power calulations use the closely related hp*average damage absorption or hp*(1 - mean modifier)</value>
-  </data>
-  <data name="TargetAccuracyLabel.ToolTip" xml:space="preserve">
-    <value>DPS lowered by the inaccuracy of each weapon toward the selected category. Also includes range and armor/shield type modifers
-The collision system in EaW means "missed" shots can still hit the target, especially for larger units, and "hits" can miss accelerating/turning targets.
-The end value is only an approximation of how many of the shots fired should land.</value>
-  </data>
-  <data name="PlanetPotentialabel.ToolTip" xml:space="preserve">
-    <value>Base planet income plus structures with income modifiers.
-Structures with a galactic build limit (e.g., faction capitals) are excluded
-EaWX Trade Port income is dependent on layout and excluded unless a filter for a single galactic conquest is on</value>
-  </data>
-  <data name="GCPlanetForceLabel.ToolTip" xml:space="preserve">
-    <value>The forces set on the planet in the campaign file. Does not reflect heroes or units spawned from scripts.
-Multiple factions with units on the same planet is rare and Holocron will not mark this
-
-EaWX often uses a "Generate_Force" placeholder that will be replaced with randomly generated forces</value>
-  </data>
-  <metadata name="contextMenuStrip2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>287, 17</value>
-  </metadata>
-  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>66</value>
-  </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
