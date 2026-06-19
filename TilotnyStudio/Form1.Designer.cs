@@ -48,6 +48,9 @@
             this.PopulationBox = new System.Windows.Forms.NumericUpDown();
             this.SaveFactionButton = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.HeroTeamRadioButton = new System.Windows.Forms.RadioButton();
+            this.SpaceHeroRadioButton = new System.Windows.Forms.RadioButton();
+            this.SkirmishListBox = new System.Windows.Forms.ListBox();
             this.UnitRadioButton = new System.Windows.Forms.RadioButton();
             this.AffilListBox = new System.Windows.Forms.ListBox();
             this.label11 = new System.Windows.Forms.Label();
@@ -115,6 +118,7 @@
             this.GroundRadioButton = new System.Windows.Forms.RadioButton();
             this.SpaceRadioButton = new System.Windows.Forms.RadioButton();
             this.SaveUnitButton = new System.Windows.Forms.Button();
+            this.GroundHeroRadioButton = new System.Windows.Forms.RadioButton();
             this.tabHidePanel = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.LaunchOptionsIndicator = new System.Windows.Forms.TextBox();
@@ -124,10 +128,7 @@
             this.VersionComboBox = new System.Windows.Forms.ComboBox();
             this.ModFilesButton = new System.Windows.Forms.Button();
             this.SuperToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.SkirmishListBox = new System.Windows.Forms.ListBox();
-            this.SpaceHeroRadioButton = new System.Windows.Forms.RadioButton();
-            this.HeroTeamRadioButton = new System.Windows.Forms.RadioButton();
-            this.GroundHeroRadioButton = new System.Windows.Forms.RadioButton();
+            this.ShowAllModsCheckBox = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -169,6 +170,7 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.ShowAllModsCheckBox);
             this.tabPage1.Controls.Add(this.ModStackButton);
             this.tabPage1.Controls.Add(this.CopyModButton);
             this.tabPage1.Controls.Add(this.DeleteButton);
@@ -386,6 +388,48 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Units";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // HeroTeamRadioButton
+            // 
+            this.HeroTeamRadioButton.AutoSize = true;
+            this.HeroTeamRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HeroTeamRadioButton.Location = new System.Drawing.Point(0, 248);
+            this.HeroTeamRadioButton.Name = "HeroTeamRadioButton";
+            this.HeroTeamRadioButton.Size = new System.Drawing.Size(109, 22);
+            this.HeroTeamRadioButton.TabIndex = 79;
+            this.HeroTeamRadioButton.Text = "Hero Teams";
+            this.HeroTeamRadioButton.UseVisualStyleBackColor = true;
+            this.HeroTeamRadioButton.Visible = false;
+            // 
+            // SpaceHeroRadioButton
+            // 
+            this.SpaceHeroRadioButton.AutoSize = true;
+            this.SpaceHeroRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SpaceHeroRadioButton.Location = new System.Drawing.Point(0, 223);
+            this.SpaceHeroRadioButton.Name = "SpaceHeroRadioButton";
+            this.SpaceHeroRadioButton.Size = new System.Drawing.Size(121, 22);
+            this.SpaceHeroRadioButton.TabIndex = 78;
+            this.SpaceHeroRadioButton.Text = "Space Heroes";
+            this.SpaceHeroRadioButton.UseVisualStyleBackColor = true;
+            this.SpaceHeroRadioButton.Visible = false;
+            // 
+            // SkirmishListBox
+            // 
+            this.SkirmishListBox.FormattingEnabled = true;
+            this.SkirmishListBox.Items.AddRange(new object[] {
+            "Standard Units",
+            "Skirmish Units",
+            "Company Transports",
+            "Mission Units",
+            "Ground War Dummies",
+            "Survival Units",
+            "Captured Versions"});
+            this.SkirmishListBox.Location = new System.Drawing.Point(3, 301);
+            this.SkirmishListBox.Name = "SkirmishListBox";
+            this.SkirmishListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.SkirmishListBox.Size = new System.Drawing.Size(120, 95);
+            this.SkirmishListBox.TabIndex = 77;
+            this.SkirmishListBox.SelectedIndexChanged += new System.EventHandler(this.SkirmishListBox_SelectedIndexChanged);
             // 
             // UnitRadioButton
             // 
@@ -1208,6 +1252,18 @@
             this.SaveUnitButton.UseVisualStyleBackColor = true;
             this.SaveUnitButton.Click += new System.EventHandler(this.SaveUnitButton_Click);
             // 
+            // GroundHeroRadioButton
+            // 
+            this.GroundHeroRadioButton.AutoSize = true;
+            this.GroundHeroRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GroundHeroRadioButton.Location = new System.Drawing.Point(0, 273);
+            this.GroundHeroRadioButton.Name = "GroundHeroRadioButton";
+            this.GroundHeroRadioButton.Size = new System.Drawing.Size(129, 22);
+            this.GroundHeroRadioButton.TabIndex = 80;
+            this.GroundHeroRadioButton.Text = "Ground Heroes";
+            this.GroundHeroRadioButton.UseVisualStyleBackColor = true;
+            this.GroundHeroRadioButton.Visible = false;
+            // 
             // tabHidePanel
             // 
             this.tabHidePanel.Location = new System.Drawing.Point(57, 11);
@@ -1294,59 +1350,19 @@
             this.ModFilesButton.UseVisualStyleBackColor = true;
             this.ModFilesButton.Click += new System.EventHandler(this.ModFilesButton_Click);
             // 
-            // SkirmishListBox
+            // ShowAllModsCheckBox
             // 
-            this.SkirmishListBox.FormattingEnabled = true;
-            this.SkirmishListBox.Items.AddRange(new object[] {
-            "Standard Units",
-            "Skirmish Units",
-            "Company Transports",
-            "Mission Units",
-            "Ground War Dummies",
-            "Survival Units",
-            "Captured Versions"});
-            this.SkirmishListBox.Location = new System.Drawing.Point(3, 301);
-            this.SkirmishListBox.Name = "SkirmishListBox";
-            this.SkirmishListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.SkirmishListBox.Size = new System.Drawing.Size(120, 95);
-            this.SkirmishListBox.TabIndex = 77;
-            this.SkirmishListBox.SelectedIndexChanged += new System.EventHandler(this.SkirmishListBox_SelectedIndexChanged);
-            // 
-            // SpaceHeroRadioButton
-            // 
-            this.SpaceHeroRadioButton.AutoSize = true;
-            this.SpaceHeroRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SpaceHeroRadioButton.Location = new System.Drawing.Point(0, 223);
-            this.SpaceHeroRadioButton.Name = "SpaceHeroRadioButton";
-            this.SpaceHeroRadioButton.Size = new System.Drawing.Size(121, 22);
-            this.SpaceHeroRadioButton.TabIndex = 78;
-            this.SpaceHeroRadioButton.Text = "Space Heroes";
-            this.SpaceHeroRadioButton.UseVisualStyleBackColor = true;
-            this.SpaceHeroRadioButton.Visible = false;
-            // 
-            // HeroTeamRadioButton
-            // 
-            this.HeroTeamRadioButton.AutoSize = true;
-            this.HeroTeamRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HeroTeamRadioButton.Location = new System.Drawing.Point(0, 248);
-            this.HeroTeamRadioButton.Name = "HeroTeamRadioButton";
-            this.HeroTeamRadioButton.Size = new System.Drawing.Size(109, 22);
-            this.HeroTeamRadioButton.TabIndex = 79;
-            this.HeroTeamRadioButton.Text = "Hero Teams";
-            this.HeroTeamRadioButton.UseVisualStyleBackColor = true;
-            this.HeroTeamRadioButton.Visible = false;
-            // 
-            // GroundHeroRadioButton
-            // 
-            this.GroundHeroRadioButton.AutoSize = true;
-            this.GroundHeroRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GroundHeroRadioButton.Location = new System.Drawing.Point(0, 273);
-            this.GroundHeroRadioButton.Name = "GroundHeroRadioButton";
-            this.GroundHeroRadioButton.Size = new System.Drawing.Size(129, 22);
-            this.GroundHeroRadioButton.TabIndex = 80;
-            this.GroundHeroRadioButton.Text = "Ground Heroes";
-            this.GroundHeroRadioButton.UseVisualStyleBackColor = true;
-            this.GroundHeroRadioButton.Visible = false;
+            this.ShowAllModsCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ShowAllModsCheckBox.AutoSize = true;
+            this.ShowAllModsCheckBox.Location = new System.Drawing.Point(3, 631);
+            this.ShowAllModsCheckBox.Name = "ShowAllModsCheckBox";
+            this.ShowAllModsCheckBox.Size = new System.Drawing.Size(130, 17);
+            this.ShowAllModsCheckBox.TabIndex = 8;
+            this.ShowAllModsCheckBox.Text = "Show All Tilotny Mods";
+            this.SuperToolTip.SetToolTip(this.ShowAllModsCheckBox, "Wthout this checked, only Tilotny mods made with the same highest priority mod st" +
+        "ack entry will be shown");
+            this.ShowAllModsCheckBox.UseVisualStyleBackColor = true;
+            this.ShowAllModsCheckBox.CheckedChanged += new System.EventHandler(this.ShowAllModsCheckBox_CheckedChanged);
             // 
             // Form1
             // 
@@ -1498,6 +1514,7 @@
         private System.Windows.Forms.RadioButton HeroTeamRadioButton;
         private System.Windows.Forms.RadioButton SpaceHeroRadioButton;
         private System.Windows.Forms.RadioButton GroundHeroRadioButton;
+        private System.Windows.Forms.CheckBox ShowAllModsCheckBox;
     }
 }
 

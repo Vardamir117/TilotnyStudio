@@ -102,6 +102,11 @@
             this.UnitRadioButton = new System.Windows.Forms.RadioButton();
             this.Unitpanel = new System.Windows.Forms.Panel();
             this.UnitSFXPanel = new System.Windows.Forms.Panel();
+            this.CheckWeaponMismatchButton = new System.Windows.Forms.Button();
+            this.label35 = new System.Windows.Forms.Label();
+            this.UnitSFXWeaponRB = new System.Windows.Forms.RadioButton();
+            this.UnitSFXAbilityRB = new System.Windows.Forms.RadioButton();
+            this.UnitSFXNameLabel = new System.Windows.Forms.Label();
             this.UnitSFXDestroyedRB = new System.Windows.Forms.RadioButton();
             this.UnitSFXAttackRB = new System.Windows.Forms.RadioButton();
             this.UnitSFXBasicRB = new System.Windows.Forms.RadioButton();
@@ -414,7 +419,8 @@
             this.AutoResolveBattleTypeLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.UnitSFXNameLabel = new System.Windows.Forms.Label();
+            this.UnitSFXMinPitchLabel = new System.Windows.Forms.Label();
+            this.UnitSFXMaxPitchLabel = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tabLookups.SuspendLayout();
             this.LookupTabControl.SuspendLayout();
@@ -1290,6 +1296,12 @@
             // 
             // UnitSFXPanel
             // 
+            this.UnitSFXPanel.Controls.Add(this.UnitSFXMaxPitchLabel);
+            this.UnitSFXPanel.Controls.Add(this.UnitSFXMinPitchLabel);
+            this.UnitSFXPanel.Controls.Add(this.CheckWeaponMismatchButton);
+            this.UnitSFXPanel.Controls.Add(this.label35);
+            this.UnitSFXPanel.Controls.Add(this.UnitSFXWeaponRB);
+            this.UnitSFXPanel.Controls.Add(this.UnitSFXAbilityRB);
             this.UnitSFXPanel.Controls.Add(this.UnitSFXNameLabel);
             this.UnitSFXPanel.Controls.Add(this.UnitSFXDestroyedRB);
             this.UnitSFXPanel.Controls.Add(this.UnitSFXAttackRB);
@@ -1301,6 +1313,58 @@
             this.UnitSFXPanel.Name = "UnitSFXPanel";
             this.UnitSFXPanel.Size = new System.Drawing.Size(1039, 298);
             this.UnitSFXPanel.TabIndex = 12;
+            // 
+            // CheckWeaponMismatchButton
+            // 
+            this.CheckWeaponMismatchButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CheckWeaponMismatchButton.Location = new System.Drawing.Point(538, 173);
+            this.CheckWeaponMismatchButton.Name = "CheckWeaponMismatchButton";
+            this.CheckWeaponMismatchButton.Size = new System.Drawing.Size(134, 23);
+            this.CheckWeaponMismatchButton.TabIndex = 48;
+            this.CheckWeaponMismatchButton.Text = "Check Weapon Mismatches";
+            this.CheckWeaponMismatchButton.UseVisualStyleBackColor = true;
+            this.CheckWeaponMismatchButton.Click += new System.EventHandler(this.CheckWeaponMismatchButton_Click);
+            // 
+            // label35
+            // 
+            this.label35.AutoSize = true;
+            this.label35.Location = new System.Drawing.Point(542, 275);
+            this.label35.Name = "label35";
+            this.label35.Size = new System.Drawing.Size(303, 13);
+            this.label35.TabIndex = 47;
+            this.label35.Text = "Selecting an ability or hardpoint will show its associated sounds";
+            // 
+            // UnitSFXWeaponRB
+            // 
+            this.UnitSFXWeaponRB.AutoSize = true;
+            this.UnitSFXWeaponRB.Location = new System.Drawing.Point(538, 153);
+            this.UnitSFXWeaponRB.Name = "UnitSFXWeaponRB";
+            this.UnitSFXWeaponRB.Size = new System.Drawing.Size(105, 17);
+            this.UnitSFXWeaponRB.TabIndex = 24;
+            this.UnitSFXWeaponRB.Text = "Weapon Sounds";
+            this.UnitSFXWeaponRB.UseVisualStyleBackColor = true;
+            this.UnitSFXWeaponRB.CheckedChanged += new System.EventHandler(this.UnitSFXRB_CheckedChanged);
+            // 
+            // UnitSFXAbilityRB
+            // 
+            this.UnitSFXAbilityRB.AutoSize = true;
+            this.UnitSFXAbilityRB.Location = new System.Drawing.Point(538, 132);
+            this.UnitSFXAbilityRB.Name = "UnitSFXAbilityRB";
+            this.UnitSFXAbilityRB.Size = new System.Drawing.Size(91, 17);
+            this.UnitSFXAbilityRB.TabIndex = 23;
+            this.UnitSFXAbilityRB.Text = "Ability Sounds";
+            this.UnitSFXAbilityRB.UseVisualStyleBackColor = true;
+            this.UnitSFXAbilityRB.CheckedChanged += new System.EventHandler(this.UnitSFXRB_CheckedChanged);
+            // 
+            // UnitSFXNameLabel
+            // 
+            this.UnitSFXNameLabel.AutoSize = true;
+            this.UnitSFXNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitSFXNameLabel.Location = new System.Drawing.Point(541, 11);
+            this.UnitSFXNameLabel.Name = "UnitSFXNameLabel";
+            this.UnitSFXNameLabel.Size = new System.Drawing.Size(13, 20);
+            this.UnitSFXNameLabel.TabIndex = 22;
+            this.UnitSFXNameLabel.Text = ".";
             // 
             // UnitSFXDestroyedRB
             // 
@@ -1339,6 +1403,7 @@
             // 
             // UnitPlaySoundButton
             // 
+            this.UnitPlaySoundButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.UnitPlaySoundButton.Location = new System.Drawing.Point(538, 34);
             this.UnitPlaySoundButton.Name = "UnitPlaySoundButton";
             this.UnitPlaySoundButton.Size = new System.Drawing.Size(110, 23);
@@ -4905,15 +4970,25 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
-            // UnitSFXNameLabel
+            // UnitSFXMinPitchLabel
             // 
-            this.UnitSFXNameLabel.AutoSize = true;
-            this.UnitSFXNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UnitSFXNameLabel.Location = new System.Drawing.Point(541, 11);
-            this.UnitSFXNameLabel.Name = "UnitSFXNameLabel";
-            this.UnitSFXNameLabel.Size = new System.Drawing.Size(13, 20);
-            this.UnitSFXNameLabel.TabIndex = 22;
-            this.UnitSFXNameLabel.Text = ".";
+            this.UnitSFXMinPitchLabel.AutoSize = true;
+            this.UnitSFXMinPitchLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitSFXMinPitchLabel.Location = new System.Drawing.Point(707, 11);
+            this.UnitSFXMinPitchLabel.Name = "UnitSFXMinPitchLabel";
+            this.UnitSFXMinPitchLabel.Size = new System.Drawing.Size(11, 16);
+            this.UnitSFXMinPitchLabel.TabIndex = 49;
+            this.UnitSFXMinPitchLabel.Text = ".";
+            // 
+            // UnitSFXMaxPitchLabel
+            // 
+            this.UnitSFXMaxPitchLabel.AutoSize = true;
+            this.UnitSFXMaxPitchLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitSFXMaxPitchLabel.Location = new System.Drawing.Point(707, 34);
+            this.UnitSFXMaxPitchLabel.Name = "UnitSFXMaxPitchLabel";
+            this.UnitSFXMaxPitchLabel.Size = new System.Drawing.Size(11, 16);
+            this.UnitSFXMaxPitchLabel.TabIndex = 50;
+            this.UnitSFXMaxPitchLabel.Text = ".";
             // 
             // Holocron
             // 
@@ -5381,6 +5456,12 @@
         private System.Windows.Forms.RadioButton UnitSFXAttackRB;
         private System.Windows.Forms.RadioButton UnitSFXBasicRB;
         private System.Windows.Forms.Label UnitSFXNameLabel;
+        private System.Windows.Forms.Label label35;
+        private System.Windows.Forms.RadioButton UnitSFXWeaponRB;
+        private System.Windows.Forms.RadioButton UnitSFXAbilityRB;
+        private System.Windows.Forms.Button CheckWeaponMismatchButton;
+        private System.Windows.Forms.Label UnitSFXMaxPitchLabel;
+        private System.Windows.Forms.Label UnitSFXMinPitchLabel;
     }
 }
 

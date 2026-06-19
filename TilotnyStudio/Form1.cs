@@ -81,11 +81,19 @@ namespace TilotnyStudio
             {
                 if (File.Exists(directory + "\\Tilotny"))
                 {
-                    string modid = File.ReadAllLines(directory + "\\Tilotny")[0];
-                    if (modid == globals.SourceModName)
+                    if (ShowAllModsCheckBox.Checked)
                     {
                         ModListBox.Items.Add(LastFolderOrFile(directory));
                     }
+                    else
+                    {
+                        string modid = File.ReadAllLines(directory + "\\Tilotny")[0];
+                        if (modid == globals.SourceModName)
+                        {
+                            ModListBox.Items.Add(LastFolderOrFile(directory));
+                        }
+                    }
+                    
                 }
             }
 
@@ -739,7 +747,7 @@ namespace TilotnyStudio
             loadscreen.SetQuote(getLoadQuote(entities));
 
             loadscreen.ChangeText("Reading MEG files");
-            parseMEGs(entities);
+            parseMEGs(entities, UpOneFolder(UpOneFolder(globals.localmodpath)));
 
             loadscreen.ChangeText("Reading icon file");
             entities.IconData = DatParser.ReadMTD(entities);
@@ -3027,6 +3035,11 @@ namespace TilotnyStudio
                 populateModPage();
                 setModUnselected();
             }
+        }
+
+        private void ShowAllModsCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            populateModPage();
         }
 
         //leave below thos point alone

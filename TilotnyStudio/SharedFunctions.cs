@@ -968,6 +968,8 @@ public static class SharedFunctions
                 builtin.range = 250; //Todo: read gravity tags properly instead of hardcoding
             }
             builtin.projectile = proj;
+            builtin.firesound = "";
+            builtin.diesound = "";
             builtin.inaccuracyAmounts = new List<float>();
             builtin.inaccuracyTypes = new List<string>();
             bool notfound = true;
@@ -1018,6 +1020,8 @@ public static class SharedFunctions
                     }
                 }
             }
+            value = unit.SelectSingleNode("descendant::SFXEvent_Fire");
+            if (!(value is null)) builtin.firesound = value.InnerText.Trim();
             XmlNodeList inaccs = unit.SelectNodes("descendant::Targeting_Fire_Inaccuracy");
             foreach (XmlNode inacc in inaccs)
             {
@@ -1046,6 +1050,7 @@ public static class SharedFunctions
                 forlist.username = "";
                 forlist.ability = "";
                 forlist.desc = "";
+                forlist.sound = "";
                 forlist.damageMod = 1;
                 forlist.defenseMod = 1;
                 forlist.reloadMod = 1;
@@ -1081,6 +1086,15 @@ public static class SharedFunctions
                         if (!(abdata is null) && !(abdata.LastChild is null)) forlist.radius = Single.Parse(abdata.LastChild.Value.Replace("f", "").Replace("F", ""));
                         abdata = able.SelectSingleNode("descendant::Damage_Percent_When_Activated");
                         if (!(abdata is null) && !(abdata.LastChild is null)) forlist.selfdamage = Single.Parse(abdata.LastChild.Value.Replace("f", "").Replace("F", ""));
+                        abdata = able.SelectSingleNode("descendant::SFXEvent_Target_Ability");
+                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
+                        if(forlist.sound == "") //Todo check if these are all the sound fields and if they can ever exist simultaneously
+                        {
+                            abdata = able.SelectSingleNode("descendant::SFXEvent_GUI_Unit_Ability_Activated");
+                            if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
+                        }
+                        abdata = able.SelectSingleNode("descendant::SFXEvent_GUI_Unit_Ability_Deactivated");
+                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.deactivatesound = abdata.InnerText.Trim();
                         XmlNodeList mods = able.SelectNodes("descendant::Mod_Multiplier");
                         foreach (XmlNode mod in mods)
                         {
@@ -1355,6 +1369,7 @@ public static class SharedFunctions
                     applicable_categories = new string[0],
                     excluded_types = new string[0],
                     linkedEntity = "",
+                    sound = "",
                     recharge = -1,
                     radius = -1,
                     minradius = -1,
@@ -1397,6 +1412,19 @@ public static class SharedFunctions
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.maxradius = Single.Parse(abdata.LastChild.Value);
                 abdata = able.SelectSingleNode("descendant::Spawned_Object_Type");
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.linkedEntity = abdata.LastChild.Value.Trim();
+
+                abdata = able.SelectSingleNode("descendant::SFXEvent_Target_Affected");
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
+                if (forlist.sound == "") //Todo check if these are all the sound fields and if they can ever exist simultaneously
+                {
+                    abdata = able.SelectSingleNode("descendant::SFXEvent_Activate");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
+                }
+                if (forlist.sound == "") //Todo check if these are all the sound fields and if they can ever exist simultaneously
+                {
+                    abdata = able.SelectSingleNode("descendant::Activate_SFX");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
+                }
 
                 //command bonus
                 abdata = able.SelectSingleNode("descendant::Damage_Bonus_Percentage");
@@ -1482,55 +1510,57 @@ public static class SharedFunctions
             }
         }
         value = unit.SelectSingleNode("descendant::SFXEvent_Build_Started");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Started] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Started] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Build_Cancelled");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Cancelled] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Cancelled] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Build_Complete");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Complete] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Complete] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Bombard_Select_Target");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Bombard_Select_Target] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Bombard_Select_Target] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Bombard_Incoming");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Bombard_Incoming] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Bombard_Incoming] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Tactical_Build_Started");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Started] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Started] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Tactical_Build_Complete");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Complete] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Complete] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Tactical_Build_Cancelled");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Cancelled] = value.InnerText;
-        value = unit.SelectSingleNode("descendant::SFXEvent_Fire");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Fire] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Cancelled] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Select");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Select] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Select] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Move");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Fleet_Move");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Fleet_Move] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Fleet_Move] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Attack");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Attack] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Attack] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Guard");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Move] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Move] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Assist_Move");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Guard] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Guard] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Assist_Attack");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Attack] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Attack] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Health_Low_Warning");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Low_Warning] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Low_Warning] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Health_Critical_Warning");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Critical_Warning] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Critical_Warning] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Move_Into_Nebula");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Nebula] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Nebula] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Move_Into_Asteroid_Field");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Asteroid_Field] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Asteroid_Field] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Engine_Idle_Loop");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Idle_Loop] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Idle_Loop] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Engine_Moving_Loop");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Moving_Loop] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Moving_Loop] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Engine_Cinematic_Focus_Loop");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Cinematic_Focus_Loop] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Cinematic_Focus_Loop] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Damaged_By_Asteroid");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Damaged_By_Asteroid] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Damaged_By_Asteroid] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::Death_SFXEvent_Start_Die");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.Death_SFXEvent_Start_Die] = value.InnerText;
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.Death_SFXEvent_Start_Die] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Ambient_Moving");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Ambient_Moving] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::Spin_Away_On_Death_SFXEvent_Start_Die");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.Spin_Away_On_Death_SFXEvent_Start_Die] = value.InnerText.Trim();
         values = unit.SelectNodes("descendant::SFXEvent_Attack_Hardpoint");
         if (values.Count > 0)
         {
@@ -1931,7 +1961,7 @@ public static class SharedFunctions
         entities.structures.Sort((s1, s2) => s1.unitname.CompareTo(s2.unitname));
     }
 
-    public static void parseMEGs(entities entities)
+    public static void parseMEGs(entities entities, string vanillapath)
     {
         entities.MEGdata.Clear();
         entities.MEGentries.Clear();
@@ -1944,108 +1974,118 @@ public static class SharedFunctions
         XmlNode root = doc.DocumentElement;
         XmlNodeList megs = root.SelectNodes("*");
         int megindex = 0;
+        List<string> megfiles = new List<string>();
         foreach (XmlNode meg in megs)
         {
-            if(!(meg is null))
+            if (!(meg is null))
             {
                 string megpath = getModFile(LastFolderOrFile(meg.InnerText), entities);
                 if (File.Exists(megpath))
                 {
-                    bool saveMeg = false;
-                    int overwriteindex = -1;
-                    List<MEGentry> entriesinFile = new List<MEGentry>(); //Store new files separately until completion to catch new megs overwriting old
-                    byte[] megbytes = File.ReadAllBytes(megpath);
-                    int filenamecount = DatParser.make32(megbytes, 0);
-                    bool[] saveFiles = new bool[filenamecount];
-                    int[] finalindices = new int[filenamecount];
-                    int filecount = DatParser.make32(megbytes, 0);
-                    int byteid = 8;
-                    int finalindex = 0;
-                    for (int file = 0; file < filenamecount; file++)
-                    {
-                        int strlen = DatParser.make16(megbytes, byteid);
-                        byteid += 2;
-                        byte[] dest = new byte[strlen];
-                        Buffer.BlockCopy(megbytes, byteid,dest,0, strlen);
-                        string str = RemoveTopLevelFolder(System.Text.Encoding.Default.GetString(dest)).ToUpper();
-                        byteid += strlen;
-
-                        string ext = Extension(str);
-                        if (ext == "XML" || ext == "LUA" || ext == "MTD" || ext == "TED" || ext == "TGA") //todo ignore TGA except for MTCommandbar, don't save the whole meg for teds
-                        {
-                            saveMeg = true; //Don't set for TED eventually
-                            int hash = LookupUntemplateID(str);
-                            overwriteindex = entities.MEGentries.FindIndex(x => x.hash == hash);
-                            if (overwriteindex > -1)
-                            {
-                                bool loopit = true;
-                                while(loopit)
-                                {
-                                    int readhash = entities.MEGentries[overwriteindex].hash;
-                                    if (hash == readhash)
-                                    {
-                                        if (str == entities.MEGentries[overwriteindex].filename) loopit = false; //found matching hash and string
-                                        else overwriteindex++; //Hash collision, see if the next matches
-                                    }
-                                    else
-                                    {
-                                        loopit = false;
-                                        overwriteindex = -1; //there were only collisions
-                                    }
-                                }
-                            }
-
-                            if (overwriteindex < 0)
-                            {
-                                finalindices[file] = finalindex;
-                                finalindex++;
-                                saveFiles[file] = true;
-                                MEGentry entry = new MEGentry
-                                {
-                                    filename = str,
-                                    hash = hash,
-                                    MEGid = megindex,
-                                };
-                                entriesinFile.Add(entry);
-                            }
-                            //handled in the loop for file size data
-                        }
-                    }
-                    for (int file = 0; file < filecount; file++)
-                    {
-                        byteid += 8;
-                        int len = DatParser.make32(megbytes, byteid);
-                        byteid += 4;
-                        int start = DatParser.make32(megbytes, byteid);
-                        byteid += 4;
-                        int nameindex = DatParser.make32(megbytes, byteid);
-                        byteid += 4;
-                        if (saveFiles[nameindex])
-                        {//todo read ted terrain byte here
-                            int final = finalindices[nameindex]; //Used vs total in the file
-                            MEGentry entry = entriesinFile[final];
-                            entry.startindex = start;
-                            entry.length = len;
-                            entriesinFile[final] = entry;
-                        }
-                        if(overwriteindex > -1)
-                        {
-                            MEGentry entry = entities.MEGentries[overwriteindex];
-                            entry.MEGid = megindex;
-                            entry.startindex = start;
-                            entry.length = len;
-                            entities.MEGentries[overwriteindex] = entry;
-                        }
-                    }
-
-                    if (saveMeg)
-                    {
-                        foreach (MEGentry entry in entriesinFile) entities.MEGentries.Add(entry);
-                        entities.MEGdata.Add(megbytes);
-                        megindex++;
-                        entities.MEGentries.Sort((s1, s2) => s1.hash.CompareTo(s2.hash));
-                    }
+                    megfiles.Add(megpath);
                 }
+            }
+        }
+        string[] soundmegs = Directory.GetFiles(vanillapath + "\\corruption\\Data\\Audio\\SFX");
+        foreach(string megpath in soundmegs) megfiles.Add(megpath);
+        soundmegs = Directory.GetFiles(vanillapath + "\\gamedata\\Data\\Audio\\SFX");
+        foreach (string megpath in soundmegs) megfiles.Add(megpath);
+
+        foreach (string megpath in megfiles)
+        {
+            bool saveMeg = false;
+            int overwriteindex = -1;
+            List<MEGentry> entriesinFile = new List<MEGentry>(); //Store new files separately until completion to catch new megs overwriting old
+            byte[] megbytes = File.ReadAllBytes(megpath);
+            int filenamecount = DatParser.make32(megbytes, 0);
+            bool[] saveFiles = new bool[filenamecount];
+            int[] finalindices = new int[filenamecount];
+            int filecount = DatParser.make32(megbytes, 0);
+            int byteid = 8;
+            int finalindex = 0;
+            for (int file = 0; file < filenamecount; file++)
+            {
+                int strlen = DatParser.make16(megbytes, byteid);
+                byteid += 2;
+                byte[] dest = new byte[strlen];
+                Buffer.BlockCopy(megbytes, byteid, dest, 0, strlen);
+                string str = RemoveTopLevelFolder(System.Text.Encoding.Default.GetString(dest)).ToUpper();
+                byteid += strlen;
+
+                string ext = Extension(str);
+                if (ext == "XML" || ext == "LUA" || ext == "MTD" || ext == "TED" || ext == "TGA" || ext == "WAV") //todo ignore TGA except for MTCommandbar, don't save the whole meg for teds
+                {
+                    saveMeg = true; //Don't set for TED eventually
+                    int hash = LookupUntemplateID(str);
+                    overwriteindex = entities.MEGentries.FindIndex(x => x.hash == hash);
+                    if (overwriteindex > -1)
+                    {
+                        bool loopit = true;
+                        while (loopit)
+                        {
+                            int readhash = entities.MEGentries[overwriteindex].hash;
+                            if (hash == readhash)
+                            {
+                                if (str == entities.MEGentries[overwriteindex].filename) loopit = false; //found matching hash and string
+                                else overwriteindex++; //Hash collision, see if the next matches
+                            }
+                            else
+                            {
+                                loopit = false;
+                                overwriteindex = -1; //there were only collisions
+                            }
+                        }
+                    }
+
+                    if (overwriteindex < 0)
+                    {
+                        finalindices[file] = finalindex;
+                        finalindex++;
+                        saveFiles[file] = true;
+                        MEGentry entry = new MEGentry
+                        {
+                            filename = str,
+                            hash = hash,
+                            MEGid = megindex,
+                        };
+                        entriesinFile.Add(entry);
+                    }
+                    //handled in the loop for file size data
+                }
+            }
+            for (int file = 0; file < filecount; file++)
+            {
+                byteid += 8;
+                int len = DatParser.make32(megbytes, byteid);
+                byteid += 4;
+                int start = DatParser.make32(megbytes, byteid);
+                byteid += 4;
+                int nameindex = DatParser.make32(megbytes, byteid);
+                byteid += 4;
+                if (saveFiles[nameindex])
+                {//todo read ted terrain byte here
+                    int final = finalindices[nameindex]; //Used vs total in the file
+                    MEGentry entry = entriesinFile[final];
+                    entry.startindex = start;
+                    entry.length = len;
+                    entriesinFile[final] = entry;
+                }
+                if (overwriteindex > -1)
+                {
+                    MEGentry entry = entities.MEGentries[overwriteindex];
+                    entry.MEGid = megindex;
+                    entry.startindex = start;
+                    entry.length = len;
+                    entities.MEGentries[overwriteindex] = entry;
+                }
+            }
+
+            if (saveMeg)
+            {
+                foreach (MEGentry entry in entriesinFile) entities.MEGentries.Add(entry);
+                entities.MEGdata.Add(megbytes);
+                megindex++;
+                entities.MEGentries.Sort((s1, s2) => s1.hash.CompareTo(s2.hash));
             }
         }
     }
@@ -2461,6 +2501,8 @@ public static class SharedFunctions
                         string text = "";
                         string damageType = "Damage_Default";
                         string hpType = "";
+                        string firesound = "";
+                        string diesound = "";
                         float health = -1;
                         float damageAmount = -1;
                         float blastRadius = -1;
@@ -2622,6 +2664,16 @@ public static class SharedFunctions
                                     }
                                 }
                             }
+                            value = hp.SelectSingleNode("descendant::Fire_SFXEvent");
+                            if (!(value is null))
+                            {
+                                if (!(value.LastChild is null)) firesound = value.InnerText.Trim();
+                            }
+                            value = hp.SelectSingleNode("descendant::Death_Explosion_SFXEvent");
+                            if (!(value is null))
+                            {
+                                if (!(value.LastChild is null)) diesound = value.InnerText.Trim();
+                            }
                             XmlNodeList inaccs = hp.SelectNodes("descendant::Fire_Inaccuracy_Distance");
                             foreach (XmlNode inacc in inaccs)
                             {
@@ -2660,6 +2712,8 @@ public static class SharedFunctions
                             inaccuracyTypes = inaccuracyTypes,
                             inaccuracyAmounts = inaccuracyAmounts,
                             fullsalvomod = fullsalvomod,
+                            firesound = firesound,
+                            diesound = diesound,
                         };
                         entities.hardpoints.Add(hard);
                     }
@@ -2741,7 +2795,7 @@ public static class SharedFunctions
 
     public static bool IsHiddenObject(unit unit)
     {//Conditions that mean it should never be displayed
-        return unit.unitname.Contains("Template_") || (unit.unitname.Contains("_Dummy") || unit.unitname.Contains("_Marker") || unit.unitname.Contains("ZLayer") || unit.unitname.Contains("INFLUENCE_") || unit.unitname.Contains("Ship_Crew_Tier_") || unit.unitname.Contains("Cinematic_") || unit.datafile.Contains("Mod_Id"));
+        return unit.unitname.Contains("Template_") || unit.unitname.Contains("_Template") || (unit.unitname.Contains("_Dummy") || unit.unitname.Contains("_Marker") || unit.unitname.Contains("ZLayer") || unit.unitname.Contains("INFLUENCE_") || unit.unitname.Contains("Ship_Crew_Tier_") || unit.unitname.Contains("Cinematic_") || unit.datafile.Contains("Mod_Id"));
     }
 
     public static bool IsSkirmishObject(unit unit)
@@ -4096,8 +4150,8 @@ public static class SharedFunctions
                                         unidad.BasicSFXEvents_baseID[sfxid] = unidad2.BasicSFXEvents_baseID[sfxid] + 1;
                                     }
                                 }
-                                for (int sfxid = 0; sfxid < unidad2.SFXEvent_Attack_Hardpoint.Count; sfxid++)
-                                {
+                                for (int sfxid = 0; sfxid < unidad2.SFXEvent_Attack_Hardpoint.Count; sfxid++) //Since what should exist is unknown, check if the template has any hardpoint types the variant doesn't and inherit any such cases.
+                                {//Note that null sounds are left intact so they prevent inheritance
                                     int unidad1id = unidad.SFXEvent_Attack_Hardpoint_Type.FindIndex(s => s == unidad2.SFXEvent_Attack_Hardpoint_Type[sfxid]);
                                     if (unidad1id < 0)
                                     {
@@ -5338,6 +5392,19 @@ public static class SharedFunctions
         }
     }
 
+    public static string convertProjectileToName(string projectile)
+    {
+        string proj = projectile.Replace("Proj_", "").Replace("proj_", "").Replace("ship_", ""); //TODO I'm sure I've missed some colors
+        proj = proj.Replace("_Blue", "").Replace("_blue", "");
+        proj = proj.Replace("_Red", "").Replace("_red", "");
+        proj = proj.Replace("_Green", "").Replace("_green", "");
+        proj = proj.Replace("_Yellow", "").Replace("_yellow", "");
+        proj = proj.Replace("_Purple", "").Replace("_purple", "");
+        proj = proj.Replace("_Silver", "").Replace("_silver", "");
+
+        return proj;
+    }
+
 }
 
 public struct MEGentry
@@ -5365,6 +5432,8 @@ public struct hardpoint
     public string projectile;
     public string damageType;
     public string hpType;
+    public string firesound;
+    public string diesound;
     public int quantity;
     public bool targetable;
     public float hp;
@@ -5383,13 +5452,7 @@ public struct hardpoint
     public override string ToString()
     {
         if (range < 0) return quantity.ToString() + "x " + projectile;
-        string proj = projectile.Replace("Proj_", "").Replace("proj_", "").Replace("ship_", ""); //TODO I'm sure I've missed some colors
-        proj = proj.Replace("_Blue", "").Replace("_blue", "");
-        proj = proj.Replace("_Red", "").Replace("_red", "");
-        proj = proj.Replace("_Green", "").Replace("_green", "");
-        proj = proj.Replace("_Yellow", "").Replace("_yellow", "");
-        proj = proj.Replace("_Purple", "").Replace("_purple", "");
-        proj = proj.Replace("_Silver", "").Replace("_silver", "");
+        string proj = SharedFunctions.convertProjectileToName(projectile);
         return quantity.ToString() + "x " + proj.Replace("_", " ") + ": " + pulseCount.ToString() + " / " + recharge.ToString("0.0") + "s / " + range.ToString();
     }
 }
@@ -5436,7 +5499,6 @@ public enum basicSoundTypes {
     SFXEvent_Tactical_Build_Started,
     SFXEvent_Tactical_Build_Complete,
     SFXEvent_Tactical_Build_Cancelled,
-    SFXEvent_Fire,
     SFXEvent_Select,
     SFXEvent_Move,
     SFXEvent_Fleet_Move,
@@ -5453,7 +5515,8 @@ public enum basicSoundTypes {
     SFXEvent_Engine_Cinematic_Focus_Loop,
     SFXEvent_Damaged_By_Asteroid,
     Death_SFXEvent_Start_Die,
-    
+    SFXEvent_Ambient_Moving,
+    Spin_Away_On_Death_SFXEvent_Start_Die,
     Max //Keep this last 
 }
 
@@ -5604,6 +5667,7 @@ public struct ability
     public string type;
     public string activation;
     public string linkedEntity;
+    public string sound;
     public string[] applicable_categories;
     public string[] applicable_types;
     public string[] excluded_types;
@@ -5639,6 +5703,8 @@ public struct unitability
     public string desc; //Alternate_Description_Text
     public string icon; //Alternate_Icon_Name
     public string ability; //GUI_Activated_Ability_Name
+    public string sound;
+    public string deactivatesound;
 
     public float recharge;
     public float expiration;

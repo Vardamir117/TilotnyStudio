@@ -316,7 +316,7 @@ namespace Holocron
             parsemodid(entities);
 
             loadscreen.ChangeText("Reading MEG files");
-            parseMEGs(entities);
+            parseMEGs(entities, UpOneFolder(UpOneFolder(globals.localmodpath)));
 
             loadscreen.ChangeText("Reading icon file");
             entities.IconData = DatParser.ReadMTD(entities);
@@ -415,8 +415,8 @@ namespace Holocron
             //Assume picturebox is a square of odd pixel count
             globals.origin = (PlanetPictureBox.Width - 1) / 2;
             globals.scale = globals.origin/(entities.PlanetBounds + 25);
-            entities.hardpointhashes.Clear(); //No reason to keep these around after parsing
-            entities.projectilehashes.Clear();
+            //entities.hardpointhashes.Clear(); //No reason to keep these around after parsing. I found a reason
+            //entities.projectilehashes.Clear();
 
             loadscreen.CloseLoadScreen();
         }
@@ -2820,6 +2820,8 @@ namespace Holocron
                 }
             }
             populateHostListBox();
+            //Ability and weapon sounds don't have handy auto select features
+            if (!UnitSFXBasicRB.Checked && !UnitSFXAttackRB.Checked && !UnitSFXDestroyedRB.Checked && !UnitSFXAbilityRB.Checked && !UnitSFXWeaponRB.Checked) UnitSFXBasicRB.Checked = true;
             populateUnitSFXList();
         }
 
@@ -4052,6 +4054,35 @@ namespace Holocron
                 {
                     HPAccuracyLabel.Text += "\n" + selected.inaccuracyTypes[i] + ": " + selected.inaccuracyAmounts[i].ToString() + "%";
                 }
+
+                if (selected.firesound != "" || selected.diesound != "")
+                {
+                    UnitSFXBasicRB.Checked = false;
+                    UnitSFXAttackRB.Checked = false;
+                    UnitSFXDestroyedRB.Checked = false;
+                    UnitSFXAbilityRB.Checked = false;
+                    UnitSFXWeaponRB.Checked = false;
+                    UnitSFXListbox.Items.Clear();
+                    UnitSampleListBox.Items.Clear();
+                    if(selected.firesound != "")
+                    {
+                        sfx sfx = entities.sfx.FirstOrDefault(s => s.name == selected.firesound);
+                        if (!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
+                        {
+                            sfx.displayname = "Fire Sound";
+                            UnitSFXListbox.Items.Add(sfx);
+                        }
+                    }
+                    if (selected.diesound != "")
+                    {
+                        sfx sfx = entities.sfx.FirstOrDefault(s => s.name == selected.diesound);
+                        if (!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
+                        {
+                            sfx.displayname = "Hardpoint Death";
+                            UnitSFXListbox.Items.Add(sfx);
+                        }
+                    }
+                }
             }
             else
             {
@@ -4898,6 +4929,34 @@ namespace Holocron
                     }
                 }
 
+                if(able.sound != "" || able.deactivatesound != "")
+                {
+                    UnitSFXBasicRB.Checked = false;
+                    UnitSFXAttackRB.Checked = false;
+                    UnitSFXDestroyedRB.Checked = false;
+                    UnitSFXAbilityRB.Checked = false;
+                    UnitSFXWeaponRB.Checked = false;
+                    UnitSFXListbox.Items.Clear();
+                    UnitSampleListBox.Items.Clear();
+                    if (able.sound != "")
+                    {
+                        sfx sfx = entities.sfx.FirstOrDefault(s => s.name == able.sound);
+                        if (!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
+                        {
+                            sfx.displayname = "Unit Ability Sound";
+                            UnitSFXListbox.Items.Add(sfx);
+                        }
+                    }
+                    if (able.deactivatesound != "")
+                    {
+                        sfx sfx = entities.sfx.FirstOrDefault(s => s.name == able.deactivatesound);
+                        if (!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
+                        {
+                            sfx.displayname = "Deactivation Sound";
+                            UnitSFXListbox.Items.Add(sfx);
+                        }
+                    }
+                }
             }
         }
 
@@ -4963,6 +5022,23 @@ namespace Holocron
                 }
                 if (able.stacking >= 0) AbilityStackingLabel.Text = "Stacking Category: " + able.stacking;
                 else AbilityStackingLabel.Text = "";
+
+                if (able.sound != "")
+                {
+                    UnitSFXBasicRB.Checked = false;
+                    UnitSFXAttackRB.Checked = false;
+                    UnitSFXDestroyedRB.Checked = false;
+                    UnitSFXAbilityRB.Checked = false;
+                    UnitSFXWeaponRB.Checked = false;
+                    UnitSFXListbox.Items.Clear();
+                    UnitSampleListBox.Items.Clear();
+                    sfx sfx = entities.sfx.FirstOrDefault(s => s.name == able.sound);
+                    if (!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
+                    {
+                        sfx.displayname = "Ability Sound";
+                        UnitSFXListbox.Items.Add(sfx);
+                    }
+                }
             }
         }
 
@@ -5095,19 +5171,89 @@ namespace Holocron
                     }
                 }
             }
-            //else block for selected event
+            else if (UnitSFXAbilityRB.Checked)
+            {
+                for (int i = 0; i < unit.unitabilities.Count; i++)
+                {
+                    unitability able = unit.unitabilities[i];
+                    if (able.sound != "")
+                    {
+                        sfx sfx = entities.sfx.FirstOrDefault(s => s.name == able.sound);
+                        if (!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
+                        {
+                            sfx.displayname = able.ToString();
+                            UnitSFXListbox.Items.Add(sfx);
+                        }
+                    }
+                    if (able.deactivatesound != "")
+                    {
+                        sfx sfx = entities.sfx.FirstOrDefault(s => s.name == able.deactivatesound);
+                        if (!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
+                        {
+                            sfx.displayname = able.ToString() + " deactivate";
+                            UnitSFXListbox.Items.Add(sfx);
+                        }
+                    }
+                }
+                for (int i = 0; i < unit.abilities.Count; i++)
+                {
+                    ability able = unit.abilities[i];
+                    if (able.sound != "")
+                    {
+                        sfx sfx = entities.sfx.FirstOrDefault(s => s.name == able.sound);
+                        if (!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
+                        {
+                            sfx.displayname = able.ToString();
+                            UnitSFXListbox.Items.Add(sfx);
+                        }
+                    }
+                }
+            }
+            else if (UnitSFXWeaponRB.Checked)
+            {
+                for (int i = 0; i < unit.consolidatedhps.Count; i++)
+                {
+                    hardpoint hp = unit.consolidatedhps[i];
+                    if (hp.firesound != "")
+                    {
+                        sfx sfx = entities.sfx.FirstOrDefault(s => s.name == hp.firesound);
+                        if (!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
+                        {
+                            sfx.displayname = convertProjectileToName(hp.projectile) + " Fire";
+                            UnitSFXListbox.Items.Add(sfx);
+                        }
+                    }
+                    if (hp.diesound != "")
+                    {
+                        sfx sfx = entities.sfx.FirstOrDefault(s => s.name == hp.diesound);
+                        if (!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
+                        {
+                            sfx.displayname = convertProjectileToName(hp.projectile) + " Death";
+                            UnitSFXListbox.Items.Add(sfx);
+                        }
+                    }
+                }
+            }
+
         }
 
         private void UnitSFXListbox_SelectedIndexChanged(object sender, EventArgs e)
         {
             UnitSampleListBox.Items.Clear();
-            sfx sfx = (sfx)UnitSFXListbox.SelectedItem;
-            if(!(sfx.samples is null))
+            if (UnitSFXListbox.SelectedItems.Count > 0)
             {
-                foreach (string sample in sfx.samples) UnitSampleListBox.Items.Add(sample);
-                UnitSampleListBox.SelectedIndex = 0;
-            }
-            UnitSFXNameLabel.Text = sfx.name;
+                sfx sfx = (sfx)UnitSFXListbox.SelectedItem;
+                if (!(sfx.samples is null))
+                {
+                    foreach (string sample in sfx.samples) UnitSampleListBox.Items.Add(sample);
+                    UnitSampleListBox.SelectedIndex = 0;
+                }
+                UnitSFXNameLabel.Text = sfx.name;
+                if (sfx.minpitch > 0) UnitSFXMinPitchLabel.Text = "Minimum Pitch: " + sfx.minpitch.ToString();
+                else UnitSFXMinPitchLabel.Text = "";
+                if (sfx.maxpitch > 0) UnitSFXMaxPitchLabel.Text = "Maximum Pitch: " + sfx.maxpitch.ToString();
+                else UnitSFXMaxPitchLabel.Text = "";
+            }  
         }
 
         private void UnitSampleListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -5120,11 +5266,12 @@ namespace Holocron
            if(UnitSampleListBox.SelectedItems.Count > 0)
             {
                 string path = (string)UnitSampleListBox.SelectedItem;
-                path = getModFile(path.ToLower().Replace("data\\",""), entities);
-                if (File.Exists(path))
+                byte[] byteArray = readModBytesOrMeg(path.ToLower().Replace("data\\", ""), entities);
+                if (byteArray.Length > 0)
                 {
-                    System.Media.SoundPlayer player = new System.Media.SoundPlayer(@path); //Todo handle vanilla sounds from the meg
-                    player.Play();
+                    Stream stream = new MemoryStream(byteArray);
+                    System.Media.SoundPlayer player = new System.Media.SoundPlayer(@stream);
+                    player.Play(); //todo implement pitch shifts
                 }
             }
         }
@@ -6546,6 +6693,43 @@ namespace Holocron
             GCDialogListBox.Visible = !SpeechCheckBox.Checked;
             GCChapterListBox.Visible = !SpeechCheckBox.Checked;
             GCChapterLabel.Visible = !SpeechCheckBox.Checked;
+        }
+
+        private void CheckWeaponMismatchButton_Click(object sender, EventArgs e)
+        {
+            if (UnitListBox.Tag is null) return;
+            unit unit = (unit)UnitListBox.Tag;
+            string corenne = "";
+            List<hardpoint> hps = unit.consolidatedhps;
+            foreach (string hardpoint in unit.Hardpoints)
+            {
+                int index = LookupUntemplateID(hardpoint);
+                for (int j = 0; j < entities.hardpointhashes[index].Count; j++)
+                {
+                    hardpoint hp2 = entities.hardpoints[entities.hardpointhashes[index][j]];
+                    if (hp2.name == hardpoint)
+                    {
+                        for (int k = 0; k < hps.Count; k++)
+                        {
+                            if (hpEquality(hp2, hps[k]))
+                            {
+                                if (hp2.firesound != hps[k].firesound) corenne += hp2.name + " fire: " + hp2.firesound + "\n";
+                                if (hp2.diesound != hps[k].diesound) corenne += hp2.name + " die: " + hp2.diesound + "\n";
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+
+            if (corenne == "") MessageBox.Show("All hard points of the same type have matching sounds");
+            else
+            {
+                TextDetail deets = new TextDetail();
+                deets.detail = "The following hardpoint sounds do not match others of the same type\n\n" + corenne;
+                deets.Show();
+            }
         }
 
         //Don't put any functions below here if you want it to still compile
