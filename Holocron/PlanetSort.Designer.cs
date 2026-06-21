@@ -53,6 +53,14 @@ namespace Holocron
             this.YRB = new System.Windows.Forms.RadioButton();
             this.RRB = new System.Windows.Forms.RadioButton();
             this.AscComboBox = new System.Windows.Forms.ComboBox();
+            this.SharingSpaceRB = new System.Windows.Forms.RadioButton();
+            this.SharingGroundRB = new System.Windows.Forms.RadioButton();
+            this.NearestSpaceRB = new System.Windows.Forms.RadioButton();
+            this.NearestGroundRB = new System.Windows.Forms.RadioButton();
+            this.SpaceUsageRB = new System.Windows.Forms.RadioButton();
+            this.GroundUsageRB = new System.Windows.Forms.RadioButton();
+            this.SharedMapModeBox = new System.Windows.Forms.ComboBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
             // ShipyardRB
@@ -178,7 +186,7 @@ namespace Holocron
             // SpaceRB
             // 
             this.SpaceRB.AutoSize = true;
-            this.SpaceRB.Location = new System.Drawing.Point(16, 256);
+            this.SpaceRB.Location = new System.Drawing.Point(252, 55);
             this.SpaceRB.Name = "SpaceRB";
             this.SpaceRB.Size = new System.Drawing.Size(80, 17);
             this.SpaceRB.TabIndex = 52;
@@ -189,7 +197,7 @@ namespace Holocron
             // InternalRB
             // 
             this.InternalRB.AutoSize = true;
-            this.InternalRB.Location = new System.Drawing.Point(16, 300);
+            this.InternalRB.Location = new System.Drawing.Point(16, 256);
             this.InternalRB.Name = "InternalRB";
             this.InternalRB.Size = new System.Drawing.Size(91, 17);
             this.InternalRB.TabIndex = 51;
@@ -200,7 +208,7 @@ namespace Holocron
             // GroundRB
             // 
             this.GroundRB.AutoSize = true;
-            this.GroundRB.Location = new System.Drawing.Point(16, 277);
+            this.GroundRB.Location = new System.Drawing.Point(252, 32);
             this.GroundRB.Name = "GroundRB";
             this.GroundRB.Size = new System.Drawing.Size(84, 17);
             this.GroundRB.TabIndex = 50;
@@ -243,7 +251,7 @@ namespace Holocron
             // ClearButton
             // 
             this.ClearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ClearButton.Location = new System.Drawing.Point(12, 389);
+            this.ClearButton.Location = new System.Drawing.Point(12, 345);
             this.ClearButton.Name = "ClearButton";
             this.ClearButton.Size = new System.Drawing.Size(104, 29);
             this.ClearButton.TabIndex = 59;
@@ -254,7 +262,7 @@ namespace Holocron
             // UnitSortCancelButton
             // 
             this.UnitSortCancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UnitSortCancelButton.Location = new System.Drawing.Point(268, 389);
+            this.UnitSortCancelButton.Location = new System.Drawing.Point(268, 345);
             this.UnitSortCancelButton.Name = "UnitSortCancelButton";
             this.UnitSortCancelButton.Size = new System.Drawing.Size(104, 29);
             this.UnitSortCancelButton.TabIndex = 58;
@@ -265,7 +273,7 @@ namespace Holocron
             // UnitSortAcceptButton
             // 
             this.UnitSortAcceptButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UnitSortAcceptButton.Location = new System.Drawing.Point(143, 389);
+            this.UnitSortAcceptButton.Location = new System.Drawing.Point(143, 345);
             this.UnitSortAcceptButton.Name = "UnitSortAcceptButton";
             this.UnitSortAcceptButton.Size = new System.Drawing.Size(104, 29);
             this.UnitSortAcceptButton.TabIndex = 57;
@@ -276,7 +284,7 @@ namespace Holocron
             // XRB
             // 
             this.XRB.AutoSize = true;
-            this.XRB.Location = new System.Drawing.Point(16, 323);
+            this.XRB.Location = new System.Drawing.Point(16, 279);
             this.XRB.Name = "XRB";
             this.XRB.Size = new System.Drawing.Size(86, 17);
             this.XRB.TabIndex = 60;
@@ -287,7 +295,7 @@ namespace Holocron
             // YRB
             // 
             this.YRB.AutoSize = true;
-            this.YRB.Location = new System.Drawing.Point(16, 346);
+            this.YRB.Location = new System.Drawing.Point(16, 302);
             this.YRB.Name = "YRB";
             this.YRB.Size = new System.Drawing.Size(86, 17);
             this.YRB.TabIndex = 61;
@@ -298,7 +306,7 @@ namespace Holocron
             // RRB
             // 
             this.RRB.AutoSize = true;
-            this.RRB.Location = new System.Drawing.Point(16, 366);
+            this.RRB.Location = new System.Drawing.Point(16, 322);
             this.RRB.Name = "RRB";
             this.RRB.Size = new System.Drawing.Size(157, 17);
             this.RRB.TabIndex = 62;
@@ -318,11 +326,104 @@ namespace Holocron
             this.AscComboBox.Size = new System.Drawing.Size(121, 21);
             this.AscComboBox.TabIndex = 63;
             // 
+            // SharingSpaceRB
+            // 
+            this.SharingSpaceRB.AutoSize = true;
+            this.SharingSpaceRB.Location = new System.Drawing.Point(252, 100);
+            this.SharingSpaceRB.Name = "SharingSpaceRB";
+            this.SharingSpaceRB.Size = new System.Drawing.Size(157, 17);
+            this.SharingSpaceRB.TabIndex = 67;
+            this.SharingSpaceRB.TabStop = true;
+            this.SharingSpaceRB.Text = "Planets Sharing Space Map";
+            this.SharingSpaceRB.UseVisualStyleBackColor = true;
+            // 
+            // SharingGroundRB
+            // 
+            this.SharingGroundRB.AutoSize = true;
+            this.SharingGroundRB.Location = new System.Drawing.Point(252, 77);
+            this.SharingGroundRB.Name = "SharingGroundRB";
+            this.SharingGroundRB.Size = new System.Drawing.Size(161, 17);
+            this.SharingGroundRB.TabIndex = 66;
+            this.SharingGroundRB.TabStop = true;
+            this.SharingGroundRB.Text = "Planets Sharing Ground Map";
+            this.SharingGroundRB.UseVisualStyleBackColor = true;
+            // 
+            // NearestSpaceRB
+            // 
+            this.NearestSpaceRB.AutoSize = true;
+            this.NearestSpaceRB.Location = new System.Drawing.Point(252, 143);
+            this.NearestSpaceRB.Name = "NearestSpaceRB";
+            this.NearestSpaceRB.Size = new System.Drawing.Size(157, 17);
+            this.NearestSpaceRB.TabIndex = 69;
+            this.NearestSpaceRB.TabStop = true;
+            this.NearestSpaceRB.Text = "Nearest Shared Space Map";
+            this.NearestSpaceRB.UseVisualStyleBackColor = true;
+            // 
+            // NearestGroundRB
+            // 
+            this.NearestGroundRB.AutoSize = true;
+            this.NearestGroundRB.Location = new System.Drawing.Point(252, 121);
+            this.NearestGroundRB.Name = "NearestGroundRB";
+            this.NearestGroundRB.Size = new System.Drawing.Size(161, 17);
+            this.NearestGroundRB.TabIndex = 68;
+            this.NearestGroundRB.TabStop = true;
+            this.NearestGroundRB.Text = "Nearest Shared Ground Map";
+            this.NearestGroundRB.UseVisualStyleBackColor = true;
+            // 
+            // SpaceUsageRB
+            // 
+            this.SpaceUsageRB.AutoSize = true;
+            this.SpaceUsageRB.Location = new System.Drawing.Point(252, 187);
+            this.SpaceUsageRB.Name = "SpaceUsageRB";
+            this.SpaceUsageRB.Size = new System.Drawing.Size(132, 17);
+            this.SpaceUsageRB.TabIndex = 71;
+            this.SpaceUsageRB.TabStop = true;
+            this.SpaceUsageRB.Text = "Space Map GC Usage";
+            this.SpaceUsageRB.UseVisualStyleBackColor = true;
+            // 
+            // GroundUsageRB
+            // 
+            this.GroundUsageRB.AutoSize = true;
+            this.GroundUsageRB.Location = new System.Drawing.Point(252, 165);
+            this.GroundUsageRB.Name = "GroundUsageRB";
+            this.GroundUsageRB.Size = new System.Drawing.Size(136, 17);
+            this.GroundUsageRB.TabIndex = 70;
+            this.GroundUsageRB.TabStop = true;
+            this.GroundUsageRB.Text = "Ground Map GC Usage";
+            this.GroundUsageRB.UseVisualStyleBackColor = true;
+            // 
+            // SharedMapModeBox
+            // 
+            this.SharedMapModeBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SharedMapModeBox.FormattingEnabled = true;
+            this.SharedMapModeBox.Items.AddRange(new object[] {
+            "All Planets",
+            "Shared GC"});
+            this.SharedMapModeBox.Location = new System.Drawing.Point(153, 121);
+            this.SharedMapModeBox.Name = "SharedMapModeBox";
+            this.SharedMapModeBox.Size = new System.Drawing.Size(94, 21);
+            this.SharedMapModeBox.TabIndex = 72;
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.SystemColors.InactiveCaption;
+            this.panel1.Location = new System.Drawing.Point(247, 121);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(4, 84);
+            this.panel1.TabIndex = 73;
+            // 
             // PlanetSort
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(390, 430);
+            this.ClientSize = new System.Drawing.Size(420, 385);
+            this.Controls.Add(this.SharedMapModeBox);
+            this.Controls.Add(this.NearestSpaceRB);
+            this.Controls.Add(this.SpaceUsageRB);
+            this.Controls.Add(this.NearestGroundRB);
+            this.Controls.Add(this.GroundUsageRB);
+            this.Controls.Add(this.SharingSpaceRB);
+            this.Controls.Add(this.SharingGroundRB);
             this.Controls.Add(this.AscComboBox);
             this.Controls.Add(this.RRB);
             this.Controls.Add(this.YRB);
@@ -346,6 +447,7 @@ namespace Holocron
             this.Controls.Add(this.IncomeRB);
             this.Controls.Add(this.SlotsRB);
             this.Controls.Add(this.NameRB);
+            this.Controls.Add(this.panel1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "PlanetSort";
             this.Text = "Planet Sort Configuration";
@@ -380,5 +482,13 @@ namespace Holocron
         private System.Windows.Forms.RadioButton YRB;
         private System.Windows.Forms.RadioButton RRB;
         private System.Windows.Forms.ComboBox AscComboBox;
+        private System.Windows.Forms.RadioButton SharingSpaceRB;
+        private System.Windows.Forms.RadioButton SharingGroundRB;
+        private System.Windows.Forms.RadioButton NearestSpaceRB;
+        private System.Windows.Forms.RadioButton NearestGroundRB;
+        private System.Windows.Forms.RadioButton SpaceUsageRB;
+        private System.Windows.Forms.RadioButton GroundUsageRB;
+        private System.Windows.Forms.ComboBox SharedMapModeBox;
+        private System.Windows.Forms.Panel panel1;
     }
 }

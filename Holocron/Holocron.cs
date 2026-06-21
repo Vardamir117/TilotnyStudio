@@ -23,6 +23,11 @@ using static SharedFunctions;
  *
  *https://dev.to/karenpayneoregon/window-forms-dark-mode-33on in program.cs, requires .Net upgrade?
  *
+ * 
+ * Buick hardpoints are not being found - innertext?
+ *
+ *
+ *
  *parse sfx on abilities - selecting an ability with sfx enters a special mode for sfx
  *
  * use absence of changelogs to detect EaWX versions
@@ -253,7 +258,7 @@ namespace Holocron
 
             //todo stop right aligned? controls from resizing in stupid ways when the design tab is reopened
             //In lieu of a proper fix, make things right aligned at runtime...
-            PlanetGCListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
+            //PlanetGCListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
             PlanetBTSTextBox.Anchor = AnchorStyles.Top |  AnchorStyles.Right | AnchorStyles.Left;
             GCPresentListbox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             GCPlanetListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
@@ -262,8 +267,8 @@ namespace Holocron
             FactionBTSTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             MapsInPlanetsListbox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
             MapSearchBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            PlanetCampaignLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            PlanetGoToGCButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            //PlanetCampaignLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            //PlanetGoToGCButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             PlanetMapLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             PlanetMapSearchLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             PlanetSpaceMapRB.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -2821,7 +2826,7 @@ namespace Holocron
             }
             populateHostListBox();
             //Ability and weapon sounds don't have handy auto select features
-            if (!UnitSFXBasicRB.Checked && !UnitSFXAttackRB.Checked && !UnitSFXDestroyedRB.Checked && !UnitSFXAbilityRB.Checked && !UnitSFXWeaponRB.Checked) UnitSFXBasicRB.Checked = true;
+            if (!UnitSFXBasicRB.Checked && !UnitSFXAmbientRB.Checked && !UnitSFXAttackRB.Checked && !UnitSFXDestroyedRB.Checked && !UnitSFXAbilityRB.Checked && !UnitSFXWeaponRB.Checked) UnitSFXBasicRB.Checked = true;
             populateUnitSFXList();
         }
 
@@ -3083,7 +3088,7 @@ namespace Holocron
                     break;
                 case UnitSortTypes.Durability: //TODO modifiers for reflect/absorb
                     float shield = unit.shield;
-                    if (shield < 0 || !unit.behaviors.Contains("SHIELDED")) shield = 0;
+                    if (shield < 0 || !(unit.behaviors.Contains("SHIELDED") || unit.modebehaviors.Contains("SHIELDED"))) shield = 0;
                     if (globals.UnitSortConfig.DurabilityMode == 2)
                     {
                         ArmorMods mods = GetArmorMods(unit.armor_type);
@@ -3123,7 +3128,7 @@ namespace Holocron
                     break;
                 case UnitSortTypes.Shield:
                     unit.sortfloat = unit.shield;
-                    if (unit.sortfloat < 0 || !unit.behaviors.Contains("SHIELDED")) unit.sortfloat = 0;
+                    if (unit.sortfloat < 0 || !(unit.behaviors.Contains("SHIELDED") || unit.modebehaviors.Contains("SHIELDED"))) unit.sortfloat = 0;
                     if (globals.UnitSortConfig.DurabilityMode == 2)
                     {
                         ArmorMods mods = GetArmorMods(unit.shield_type);
@@ -3449,7 +3454,7 @@ namespace Holocron
                     break;
             }
 
-            //TODO remove bad sort conditions on rb change
+            //TODO remove invalid sort conditions on rb change
             if(globals.UnitSortConfig.SortType > UnitSortTypes.Name) //Numerical
             {
                 float denom = 1;
@@ -4058,6 +4063,7 @@ namespace Holocron
                 if (selected.firesound != "" || selected.diesound != "")
                 {
                     UnitSFXBasicRB.Checked = false;
+                    UnitSFXAmbientRB.Checked = false;
                     UnitSFXAttackRB.Checked = false;
                     UnitSFXDestroyedRB.Checked = false;
                     UnitSFXAbilityRB.Checked = false;
@@ -4165,7 +4171,8 @@ namespace Holocron
             SubunitPanel,
             AbilityPanel,
             SFXPanel,
-            BTSPanel
+            BTSPanel,
+            All,
         }
 
         void setExpandedButton(Button button)
@@ -4175,11 +4182,38 @@ namespace Holocron
             button.TextAlign = ContentAlignment.MiddleCenter;
         }
 
-        void setCollapsedButton(Button button, string label)
+        void setCollapsedButton(Button button, UnitPanels toggleID)
         {
+            string label = "";
+            switch (toggleID) //toggle panel and associated buttons
+            {
+                case UnitPanels.TextPanel:
+                    label = "Unit Card";
+                    break;
+                case UnitPanels.AvailPanel:
+                    label = "Availability";
+                    break;
+                case UnitPanels.StatPanel:
+                    label = "Stats";
+                    break;
+                case UnitPanels.SubunitPanel:
+                    label = "Subunits";
+                    break;
+                case UnitPanels.AbilityPanel:
+                    label = "Abilities";
+                    break;
+                case UnitPanels.SFXPanel:
+                    label = "Sounds";
+                    break;
+            }
             button.Width = 90;
             button.Text = "\\/ " + label;
             button.TextAlign = ContentAlignment.MiddleLeft;
+        }
+
+        private void CollapseAllButton_Click(object sender, EventArgs e)
+        {
+            collapsePanels(UnitPanels.All);
         }
 
         private void collapsePanels(UnitPanels toggleID)
@@ -4228,7 +4262,7 @@ namespace Holocron
                     else
                     {
                         UnitTextPanel.Height = 0;
-                        setCollapsedButton(CollapseUnitTextPanel, "Unit Card");
+                        setCollapsedButton(CollapseUnitTextPanel, UnitPanels.TextPanel);
                     }
                     break;
                 case UnitPanels.AvailPanel:
@@ -4240,7 +4274,7 @@ namespace Holocron
                     else
                     {
                         UnitAvailPanel.Height = 0;
-                        setCollapsedButton(CollapseUnitAvailPanel, "Availability");
+                        setCollapsedButton(CollapseUnitAvailPanel, UnitPanels.AvailPanel);
                     }
                     break;
                 case UnitPanels.StatPanel:
@@ -4252,7 +4286,7 @@ namespace Holocron
                     else
                     {
                         UnitStatPanel.Height = 0;
-                        setCollapsedButton(CollapseUnitStatPanel, "Stats");
+                        setCollapsedButton(CollapseUnitStatPanel, UnitPanels.StatPanel);
                     }
                     break;
                 case UnitPanels.SubunitPanel:
@@ -4264,7 +4298,7 @@ namespace Holocron
                     else
                     {
                         UnitSubunitPanel.Height = 0;
-                        setCollapsedButton(CollapseUnitSubunitPanel, "Subunits");
+                        setCollapsedButton(CollapseUnitSubunitPanel, UnitPanels.SubunitPanel);
                     }
                     break;
                 case UnitPanels.AbilityPanel:
@@ -4276,7 +4310,7 @@ namespace Holocron
                     else
                     {
                         UnitAbilityPanel.Height = 0;
-                        setCollapsedButton(CollapseUnitAbilityPanel, "Abilities");
+                        setCollapsedButton(CollapseUnitAbilityPanel, UnitPanels.AbilityPanel);
                     }
                     break;
                 case UnitPanels.SFXPanel:
@@ -4288,7 +4322,45 @@ namespace Holocron
                     else
                     {
                         UnitSFXPanel.Height = 0;
-                        setCollapsedButton(CollapseUnitSFXPanel, "Sounds");
+                        setCollapsedButton(CollapseUnitSFXPanel, UnitPanels.SFXPanel);
+                    }
+                    break;
+                case UnitPanels.All:
+                    if(CollapseAllButton.Tag != null)
+                    {
+                        CollapseAllButton.Tag = null;
+                        CollapseAllButton.Text = "Expand All";
+
+                        UnitTextPanel.Height = 0;
+                        setCollapsedButton(CollapseUnitTextPanel, UnitPanels.TextPanel);
+                        UnitAvailPanel.Height = 0;
+                        setCollapsedButton(CollapseUnitAvailPanel, UnitPanels.AvailPanel);
+                        UnitStatPanel.Height = 0;
+                        setCollapsedButton(CollapseUnitStatPanel, UnitPanels.StatPanel);
+                        UnitSubunitPanel.Height = 0;
+                        setCollapsedButton(CollapseUnitSubunitPanel, UnitPanels.SubunitPanel);
+                        UnitAbilityPanel.Height = 0;
+                        setCollapsedButton(CollapseUnitAbilityPanel, UnitPanels.AbilityPanel);
+                        UnitSFXPanel.Height = 0;
+                        setCollapsedButton(CollapseUnitSFXPanel, UnitPanels.SFXPanel);
+                    }
+                    else
+                    {
+                        CollapseAllButton.Tag = true;
+                        CollapseAllButton.Text = "Collapse All";
+
+                        UnitTextPanel.Height = TextSize;
+                        setExpandedButton(CollapseUnitTextPanel);
+                        UnitAvailPanel.Height = AvailSize;
+                        setExpandedButton(CollapseUnitAvailPanel);
+                        UnitStatPanel.Height = StatSize;
+                        setExpandedButton(CollapseUnitStatPanel);
+                        UnitSubunitPanel.Height = SubunitSize;
+                        setExpandedButton(CollapseUnitSubunitPanel);
+                        UnitAbilityPanel.Height = AbilitySize;
+                        setExpandedButton(CollapseUnitAbilityPanel);
+                        UnitSFXPanel.Height = SFXSize;
+                        setExpandedButton(CollapseUnitSFXPanel);
                     }
                     break;
                 default:
@@ -4932,6 +5004,7 @@ namespace Holocron
                 if(able.sound != "" || able.deactivatesound != "")
                 {
                     UnitSFXBasicRB.Checked = false;
+                    UnitSFXAmbientRB.Checked = false;
                     UnitSFXAttackRB.Checked = false;
                     UnitSFXDestroyedRB.Checked = false;
                     UnitSFXAbilityRB.Checked = false;
@@ -5026,6 +5099,7 @@ namespace Holocron
                 if (able.sound != "")
                 {
                     UnitSFXBasicRB.Checked = false;
+                    UnitSFXAmbientRB.Checked = false;
                     UnitSFXAttackRB.Checked = false;
                     UnitSFXDestroyedRB.Checked = false;
                     UnitSFXAbilityRB.Checked = false;
@@ -5131,12 +5205,22 @@ namespace Holocron
             UnitSampleListBox.Items.Clear();
             if (UnitListBox.Tag is null) return;
             unit unit = (unit)UnitListBox.Tag;
-            if (UnitSFXBasicRB.Checked)
+            basicSoundTypes[] ambients = new basicSoundTypes[] { basicSoundTypes.SFXEvent_Engine_Idle_Loop, basicSoundTypes.SFXEvent_Engine_Moving_Loop, basicSoundTypes.SFXEvent_Turret_Rotating_Loop, basicSoundTypes.SFXEvent_Ambient_Moving, basicSoundTypes.SFXEvent_Engine_Cinematic_Focus_Loop, basicSoundTypes.SFXEvent_Damaged_By_Asteroid, basicSoundTypes.Spin_Away_On_Death_SFXEvent_Start_Die };
+            if (UnitSFXBasicRB.Checked || UnitSFXAmbientRB.Checked)
             {
                 for (int i = 0; i < unit.BasicSFXEvents.Length; i++)
                 {
                     if(unit.BasicSFXEvents[i] != "")
                     {
+                        if((basicSoundTypes)i != basicSoundTypes.Death_SFXEvent_Start_Die) //Can be dialog or ambient, keep in both
+                        {
+                            bool isambient = ambients.Contains((basicSoundTypes)i);
+                            if (UnitSFXAmbientRB.Checked ^ isambient)
+                            {
+                                continue;
+                            }
+                        }
+                        
                         sfx sfx = entities.sfx.FirstOrDefault(s => s.name == unit.BasicSFXEvents[i]);
                         if(!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
                         {
@@ -5850,6 +5934,20 @@ namespace Holocron
             return true;
         }
 
+        private int mapCountinGCType(planet primaryplanet, List<planet> mapUsers, List<galacticConquest> GCList)
+        {
+            int corenne = 0;
+            foreach(planet planet in mapUsers)
+            {
+                if(globals.PlanetSortConfig.sharedMapMode == 0) corenne += GCList.Count(x => x.planets.Contains(planet.codename));
+                else
+                {
+                    if (planet.codename != primaryplanet.codename) corenne += GCList.Count(x => x.planets.Contains(planet.codename) && x.planets.Contains(primaryplanet.codename));
+                }
+            }
+            return corenne;
+        }
+
         private planet sortPlanet(planet planet)
         {
             planet.sortstring = ""; //Used for detecting if the int should be displayed
@@ -5910,6 +6008,28 @@ namespace Holocron
                     if (mood == 0 || mood == 5 || mood == 6) planet.sortint += entities.Conquests.Count(x => x.planets.Contains(planet.codename) && x.Type == GCType.Infinity);
                     if (mood == 6) planet.sortint += entities.Conquests.Count(x => x.planets.Contains(planet.codename) && x.Type == GCType.InfinityLayoutCopy);
                     break;
+                case PlanetSortTypes.UsageGround:
+                    int gmood = globals.PlanetSortConfig.usageMode;
+                    List<planet> sharedground = entities.Planets.FindAll(s => s.groundMap == planet.groundMap && s.groundMap != "");
+                    planet.sortint = 0;
+                    if (gmood == 1) planet.sortint = mapCountinGCType(planet, sharedground, globals.PlanetFilterConfig.GCs);
+                    if (gmood == 0 || gmood == 2 || gmood == 6) planet.sortint += mapCountinGCType(planet, sharedground, entities.Conquests.FindAll(x => x.Type == GCType.Progressive));
+                    if (gmood == 0 || gmood == 3 || gmood == 6) planet.sortint += mapCountinGCType(planet, sharedground, entities.Conquests.FindAll(x => x.Type == GCType.Regional));
+                    if (gmood == 0 || gmood == 4 || gmood == 6) planet.sortint += mapCountinGCType(planet, sharedground, entities.Conquests.FindAll(x => x.Type == GCType.Historical));
+                    if (gmood == 0 || gmood == 5 || gmood == 6) planet.sortint += mapCountinGCType(planet, sharedground, entities.Conquests.FindAll(x => x.Type == GCType.Infinity));
+                    if (gmood == 6) planet.sortint += mapCountinGCType(planet, sharedground, entities.Conquests.FindAll(x => x.Type == GCType.InfinityLayoutCopy));
+                    break;
+                case PlanetSortTypes.UsageSpace:
+                    int smood = globals.PlanetSortConfig.usageMode;
+                    List<planet> sharedspace = entities.Planets.FindAll(s => s.spaceMap == planet.spaceMap);
+                    planet.sortint = 0;
+                    if (smood == 1) planet.sortint = mapCountinGCType(planet, sharedspace, globals.PlanetFilterConfig.GCs);
+                    if (smood == 0 || smood == 2 || smood == 6) planet.sortint += mapCountinGCType(planet, sharedspace, entities.Conquests.FindAll(x => x.Type == GCType.Progressive));
+                    if (smood == 0 || smood == 3 || smood == 6) planet.sortint += mapCountinGCType(planet, sharedspace, entities.Conquests.FindAll(x => x.Type == GCType.Regional));
+                    if (smood == 0 || smood == 4 || smood == 6) planet.sortint += mapCountinGCType(planet, sharedspace, entities.Conquests.FindAll(x => x.Type == GCType.Historical));
+                    if (smood == 0 || smood == 5 || smood == 6) planet.sortint += mapCountinGCType(planet, sharedspace, entities.Conquests.FindAll(x => x.Type == GCType.Infinity));
+                    if (smood == 6) planet.sortint += mapCountinGCType(planet, sharedspace, entities.Conquests.FindAll(x => x.Type == GCType.InfinityLayoutCopy));
+                    break;
                 case PlanetSortTypes.SpaceMap:
                     planet.sortstring = planet.spaceMap;
                     break;
@@ -5927,6 +6047,80 @@ namespace Holocron
                     break;
                 case PlanetSortTypes.R:
                     planet.sortint = (int)Math.Sqrt((planet.x_coord * planet.x_coord + planet.y_coord * planet.y_coord));
+                    break;
+                case PlanetSortTypes.SharingGround:
+                    planet.sortint = entities.Planets.Count(s => s.groundMap == planet.groundMap)-1; //Don't count the planet itself
+                    break;
+                case PlanetSortTypes.SharingSpace:
+                    planet.sortint = entities.Planets.Count(s => s.spaceMap == planet.spaceMap)-1;
+                    break;
+                case PlanetSortTypes.NearestGround:
+                    //List<planet> source = entities.Planets; //todo implement sortign across filtered planets? But that largely means recreating filter
+                    //if(globals.PlanetSortConfig.sharedMapMode == 2) source =
+                    List<planet> sharing = entities.Planets.FindAll(s => s.groundMap == planet.groundMap && s.groundMap != "");
+                    if(sharing.Count == 1) planet.sortint = int.MaxValue;
+                    else
+                    {
+                        int min = int.MaxValue;
+                        foreach(planet shared in sharing)
+                        {
+                            if(planet.codename != shared.codename)
+                            {
+                                bool docheck = true;
+                                if(globals.PlanetSortConfig.sharedMapMode == 1)
+                                {
+                                    docheck = false;
+                                    foreach (galacticConquest conquest in entities.Conquests)
+                                    {
+                                        if(conquest.planets.Contains(planet.codename) && conquest.planets.Contains(shared.codename))
+                                        {
+                                            docheck = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (docheck)
+                                {
+                                    int dist = (int)Math.Sqrt(((planet.x_coord - shared.x_coord) * (planet.x_coord - shared.x_coord) + (planet.y_coord - shared.y_coord) * (planet.y_coord - shared.y_coord)));
+                                    if (dist < min) min = dist;
+                                }
+                            }
+                        }
+                        planet.sortint = min;
+                    }
+                    break;
+                case PlanetSortTypes.NearestSpace:
+                    List<planet> sharing2 = entities.Planets.FindAll(s => s.spaceMap == planet.spaceMap);
+                    if (sharing2.Count == 1) planet.sortint = int.MaxValue;
+                    else
+                    {
+                        int min = int.MaxValue;
+                        foreach (planet shared in sharing2)
+                        {
+                            if (planet.codename != shared.codename)
+                            {
+                                bool docheck = true;
+                                if (globals.PlanetSortConfig.sharedMapMode == 1)
+                                {
+                                    docheck = false;
+                                    foreach (galacticConquest conquest in entities.Conquests)
+                                    {
+                                        if (conquest.planets.Contains(planet.codename) && conquest.planets.Contains(shared.codename))
+                                        {
+                                            docheck = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (docheck)
+                                {
+                                    int dist = (int)Math.Sqrt(((planet.x_coord - shared.x_coord) * (planet.x_coord - shared.x_coord) + (planet.y_coord - shared.y_coord) * (planet.y_coord - shared.y_coord)));
+                                    if (dist < min) min = dist;
+                                }
+                            }
+                        }
+                        planet.sortint = min;
+                    }
                     break;
             }
 
@@ -6112,6 +6306,22 @@ namespace Holocron
             if (PlanetGroundListBox.SelectedItems.Count > 0)
             {
                 insert_history((int)historymaintabs.unit, 1, ((unit)PlanetGroundListBox.SelectedItem).unitname, true);
+            }
+        }
+
+        private void PlanetSharedSpaceGoToButton_Click(object sender, EventArgs e)
+        {
+            if (SharedSpaceMapListBox.SelectedItems.Count > 0)
+            {
+                insert_history((int)historymaintabs.planet, 0, ((planet)SharedSpaceMapListBox.SelectedItem).codename, true);
+            }
+        }
+
+        private void PlanetSharedGroundGoToButton_Click(object sender, EventArgs e)
+        {
+            if (SharedMapListBox.SelectedItems.Count > 0)
+            {
+                insert_history((int)historymaintabs.planet, 0, ((planet)SharedMapListBox.SelectedItem).codename, true);
             }
         }
 

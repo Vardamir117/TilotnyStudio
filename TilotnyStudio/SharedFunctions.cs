@@ -1555,6 +1555,8 @@ public static class SharedFunctions
         if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Cinematic_Focus_Loop] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Damaged_By_Asteroid");
         if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Damaged_By_Asteroid] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Turret_Rotating_Loop");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Turret_Rotating_Loop] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::Death_SFXEvent_Start_Die");
         if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.Death_SFXEvent_Start_Die] = value.InnerText.Trim();
         value = unit.SelectSingleNode("descendant::SFXEvent_Ambient_Moving");
@@ -5514,6 +5516,7 @@ public enum basicSoundTypes {
     SFXEvent_Engine_Moving_Loop,
     SFXEvent_Engine_Cinematic_Focus_Loop,
     SFXEvent_Damaged_By_Asteroid,
+    SFXEvent_Turret_Rotating_Loop,
     Death_SFXEvent_Start_Die,
     SFXEvent_Ambient_Moving,
     Spin_Away_On_Death_SFXEvent_Start_Die,

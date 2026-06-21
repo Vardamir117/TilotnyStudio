@@ -85,6 +85,7 @@
             this.RandomFListBox = new System.Windows.Forms.ListBox();
             this.RegionalTab = new System.Windows.Forms.TabPage();
             this.tabUnits = new System.Windows.Forms.TabPage();
+            this.CollapseAllButton = new System.Windows.Forms.Button();
             this.UnitListBox = new System.Windows.Forms.ListBox();
             this.SpaceStructureRadioButton = new System.Windows.Forms.RadioButton();
             this.FighterRadioButton = new System.Windows.Forms.RadioButton();
@@ -102,6 +103,9 @@
             this.UnitRadioButton = new System.Windows.Forms.RadioButton();
             this.Unitpanel = new System.Windows.Forms.Panel();
             this.UnitSFXPanel = new System.Windows.Forms.Panel();
+            this.UnitSFXAmbientRB = new System.Windows.Forms.RadioButton();
+            this.UnitSFXMaxPitchLabel = new System.Windows.Forms.Label();
+            this.UnitSFXMinPitchLabel = new System.Windows.Forms.Label();
             this.CheckWeaponMismatchButton = new System.Windows.Forms.Button();
             this.label35 = new System.Windows.Forms.Label();
             this.UnitSFXWeaponRB = new System.Windows.Forms.RadioButton();
@@ -257,6 +261,8 @@
             this.tabPlanets = new System.Windows.Forms.TabPage();
             this.PlanetListBox = new System.Windows.Forms.ListBox();
             this.PlanetPanel = new System.Windows.Forms.Panel();
+            this.PlanetSharedGroundGoToButton = new System.Windows.Forms.Button();
+            this.PlanetSharedSpaceGoToButton = new System.Windows.Forms.Button();
             this.PlanetMissingTextButton = new System.Windows.Forms.Button();
             this.PlanetConnectionsLabel = new System.Windows.Forms.Label();
             this.PlanetSortLabel = new System.Windows.Forms.Label();
@@ -419,8 +425,6 @@
             this.AutoResolveBattleTypeLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.UnitSFXMinPitchLabel = new System.Windows.Forms.Label();
-            this.UnitSFXMaxPitchLabel = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tabLookups.SuspendLayout();
             this.LookupTabControl.SuspendLayout();
@@ -1075,6 +1079,7 @@
             // 
             // tabUnits
             // 
+            this.tabUnits.Controls.Add(this.CollapseAllButton);
             this.tabUnits.Controls.Add(this.UnitListBox);
             this.tabUnits.Controls.Add(this.SpaceStructureRadioButton);
             this.tabUnits.Controls.Add(this.FighterRadioButton);
@@ -1099,6 +1104,18 @@
             this.tabUnits.TabIndex = 2;
             this.tabUnits.Text = "Units/Heroes";
             this.tabUnits.UseVisualStyleBackColor = true;
+            // 
+            // CollapseAllButton
+            // 
+            this.CollapseAllButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CollapseAllButton.Location = new System.Drawing.Point(328, 11);
+            this.CollapseAllButton.Name = "CollapseAllButton";
+            this.CollapseAllButton.Size = new System.Drawing.Size(62, 27);
+            this.CollapseAllButton.TabIndex = 13;
+            this.CollapseAllButton.Tag = "";
+            this.CollapseAllButton.Text = "Collapse All";
+            this.CollapseAllButton.UseVisualStyleBackColor = true;
+            this.CollapseAllButton.Click += new System.EventHandler(this.CollapseAllButton_Click);
             // 
             // UnitListBox
             // 
@@ -1254,7 +1271,7 @@
             this.UnitSearchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.UnitSearchTextBox.Location = new System.Drawing.Point(72, 12);
             this.UnitSearchTextBox.Name = "UnitSearchTextBox";
-            this.UnitSearchTextBox.Size = new System.Drawing.Size(318, 26);
+            this.UnitSearchTextBox.Size = new System.Drawing.Size(250, 26);
             this.UnitSearchTextBox.TabIndex = 51;
             this.UnitSearchTextBox.TextChanged += new System.EventHandler(this.UnitSearchTextBox_TextChanged);
             // 
@@ -1296,6 +1313,7 @@
             // 
             // UnitSFXPanel
             // 
+            this.UnitSFXPanel.Controls.Add(this.UnitSFXAmbientRB);
             this.UnitSFXPanel.Controls.Add(this.UnitSFXMaxPitchLabel);
             this.UnitSFXPanel.Controls.Add(this.UnitSFXMinPitchLabel);
             this.UnitSFXPanel.Controls.Add(this.CheckWeaponMismatchButton);
@@ -1314,14 +1332,48 @@
             this.UnitSFXPanel.Size = new System.Drawing.Size(1039, 298);
             this.UnitSFXPanel.TabIndex = 12;
             // 
+            // UnitSFXAmbientRB
+            // 
+            this.UnitSFXAmbientRB.AutoSize = true;
+            this.UnitSFXAmbientRB.Location = new System.Drawing.Point(538, 86);
+            this.UnitSFXAmbientRB.Name = "UnitSFXAmbientRB";
+            this.UnitSFXAmbientRB.Size = new System.Drawing.Size(102, 17);
+            this.UnitSFXAmbientRB.TabIndex = 51;
+            this.UnitSFXAmbientRB.Text = "Ambient Sounds";
+            this.toolTip1.SetToolTip(this.UnitSFXAmbientRB, "A subset sounds defined by dedicated fields on a unit that includes enigine noise" +
+        "s, footprints, etc...");
+            this.UnitSFXAmbientRB.UseVisualStyleBackColor = true;
+            this.UnitSFXAmbientRB.CheckedChanged += new System.EventHandler(this.UnitSFXRB_CheckedChanged);
+            // 
+            // UnitSFXMaxPitchLabel
+            // 
+            this.UnitSFXMaxPitchLabel.AutoSize = true;
+            this.UnitSFXMaxPitchLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitSFXMaxPitchLabel.Location = new System.Drawing.Point(707, 34);
+            this.UnitSFXMaxPitchLabel.Name = "UnitSFXMaxPitchLabel";
+            this.UnitSFXMaxPitchLabel.Size = new System.Drawing.Size(11, 16);
+            this.UnitSFXMaxPitchLabel.TabIndex = 50;
+            this.UnitSFXMaxPitchLabel.Text = ".";
+            // 
+            // UnitSFXMinPitchLabel
+            // 
+            this.UnitSFXMinPitchLabel.AutoSize = true;
+            this.UnitSFXMinPitchLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitSFXMinPitchLabel.Location = new System.Drawing.Point(707, 11);
+            this.UnitSFXMinPitchLabel.Name = "UnitSFXMinPitchLabel";
+            this.UnitSFXMinPitchLabel.Size = new System.Drawing.Size(11, 16);
+            this.UnitSFXMinPitchLabel.TabIndex = 49;
+            this.UnitSFXMinPitchLabel.Text = ".";
+            // 
             // CheckWeaponMismatchButton
             // 
             this.CheckWeaponMismatchButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CheckWeaponMismatchButton.Location = new System.Drawing.Point(538, 173);
+            this.CheckWeaponMismatchButton.Location = new System.Drawing.Point(538, 200);
             this.CheckWeaponMismatchButton.Name = "CheckWeaponMismatchButton";
             this.CheckWeaponMismatchButton.Size = new System.Drawing.Size(134, 23);
             this.CheckWeaponMismatchButton.TabIndex = 48;
             this.CheckWeaponMismatchButton.Text = "Check Weapon Mismatches";
+            this.toolTip1.SetToolTip(this.CheckWeaponMismatchButton, "Verify that all individual hardpoints grouped together have the same sounds");
             this.CheckWeaponMismatchButton.UseVisualStyleBackColor = true;
             this.CheckWeaponMismatchButton.Click += new System.EventHandler(this.CheckWeaponMismatchButton_Click);
             // 
@@ -1337,22 +1389,25 @@
             // UnitSFXWeaponRB
             // 
             this.UnitSFXWeaponRB.AutoSize = true;
-            this.UnitSFXWeaponRB.Location = new System.Drawing.Point(538, 153);
+            this.UnitSFXWeaponRB.Location = new System.Drawing.Point(538, 176);
             this.UnitSFXWeaponRB.Name = "UnitSFXWeaponRB";
             this.UnitSFXWeaponRB.Size = new System.Drawing.Size(105, 17);
             this.UnitSFXWeaponRB.TabIndex = 24;
             this.UnitSFXWeaponRB.Text = "Weapon Sounds";
+            this.toolTip1.SetToolTip(this.UnitSFXWeaponRB, "Firing sounds for weapons and the explosions played when hardpoints are destroyed" +
+        "");
             this.UnitSFXWeaponRB.UseVisualStyleBackColor = true;
             this.UnitSFXWeaponRB.CheckedChanged += new System.EventHandler(this.UnitSFXRB_CheckedChanged);
             // 
             // UnitSFXAbilityRB
             // 
             this.UnitSFXAbilityRB.AutoSize = true;
-            this.UnitSFXAbilityRB.Location = new System.Drawing.Point(538, 132);
+            this.UnitSFXAbilityRB.Location = new System.Drawing.Point(538, 155);
             this.UnitSFXAbilityRB.Name = "UnitSFXAbilityRB";
             this.UnitSFXAbilityRB.Size = new System.Drawing.Size(91, 17);
             this.UnitSFXAbilityRB.TabIndex = 23;
             this.UnitSFXAbilityRB.Text = "Ability Sounds";
+            this.toolTip1.SetToolTip(this.UnitSFXAbilityRB, "Assorted sounds associated with abilities and unit abilities");
             this.UnitSFXAbilityRB.UseVisualStyleBackColor = true;
             this.UnitSFXAbilityRB.CheckedChanged += new System.EventHandler(this.UnitSFXRB_CheckedChanged);
             // 
@@ -1369,22 +1424,26 @@
             // UnitSFXDestroyedRB
             // 
             this.UnitSFXDestroyedRB.AutoSize = true;
-            this.UnitSFXDestroyedRB.Location = new System.Drawing.Point(538, 109);
+            this.UnitSFXDestroyedRB.Location = new System.Drawing.Point(538, 132);
             this.UnitSFXDestroyedRB.Name = "UnitSFXDestroyedRB";
             this.UnitSFXDestroyedRB.Size = new System.Drawing.Size(127, 17);
             this.UnitSFXDestroyedRB.TabIndex = 6;
             this.UnitSFXDestroyedRB.Text = "Hardpoints Destroyed";
+            this.toolTip1.SetToolTip(this.UnitSFXDestroyedRB, "Sounds on specific hardpoint types of the unit being destroyed: SFXEvent_Hardpoin" +
+        "t_Destroyed fields, sorted by hardpoint type.");
             this.UnitSFXDestroyedRB.UseVisualStyleBackColor = true;
             this.UnitSFXDestroyedRB.CheckedChanged += new System.EventHandler(this.UnitSFXRB_CheckedChanged);
             // 
             // UnitSFXAttackRB
             // 
             this.UnitSFXAttackRB.AutoSize = true;
-            this.UnitSFXAttackRB.Location = new System.Drawing.Point(538, 86);
+            this.UnitSFXAttackRB.Location = new System.Drawing.Point(538, 109);
             this.UnitSFXAttackRB.Name = "UnitSFXAttackRB";
             this.UnitSFXAttackRB.Size = new System.Drawing.Size(110, 17);
             this.UnitSFXAttackRB.TabIndex = 5;
             this.UnitSFXAttackRB.Text = "Attack Hardpoints";
+            this.toolTip1.SetToolTip(this.UnitSFXAttackRB, "Sounds on ordering attacks on specific hardpoint type: SFXEvent_Attack_Hardpoint " +
+        "fields, sorted by hardpoint type.");
             this.UnitSFXAttackRB.UseVisualStyleBackColor = true;
             this.UnitSFXAttackRB.CheckedChanged += new System.EventHandler(this.UnitSFXRB_CheckedChanged);
             // 
@@ -1398,6 +1457,7 @@
             this.UnitSFXBasicRB.TabIndex = 4;
             this.UnitSFXBasicRB.TabStop = true;
             this.UnitSFXBasicRB.Text = "General Sounds";
+            this.toolTip1.SetToolTip(this.UnitSFXBasicRB, "A subset of sounds defined by dedicated fields on a unit, usually dialog");
             this.UnitSFXBasicRB.UseVisualStyleBackColor = true;
             this.UnitSFXBasicRB.CheckedChanged += new System.EventHandler(this.UnitSFXRB_CheckedChanged);
             // 
@@ -1449,7 +1509,7 @@
             // CollapseUnitAvailPanel
             // 
             this.CollapseUnitAvailPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseUnitAvailPanel.Location = new System.Drawing.Point(5, 381);
+            this.CollapseUnitAvailPanel.Location = new System.Drawing.Point(5, 386);
             this.CollapseUnitAvailPanel.Name = "CollapseUnitAvailPanel";
             this.CollapseUnitAvailPanel.Size = new System.Drawing.Size(24, 19);
             this.CollapseUnitAvailPanel.TabIndex = 10;
@@ -1486,7 +1546,7 @@
             this.UnitAvailPanel.Controls.Add(this.ReqStructuresListBox);
             this.UnitAvailPanel.Controls.Add(this.SpawnSetLabel);
             this.UnitAvailPanel.Controls.Add(this.UnitSpawnSetListBox);
-            this.UnitAvailPanel.Location = new System.Drawing.Point(32, 381);
+            this.UnitAvailPanel.Location = new System.Drawing.Point(32, 386);
             this.UnitAvailPanel.Name = "UnitAvailPanel";
             this.UnitAvailPanel.Size = new System.Drawing.Size(1039, 376);
             this.UnitAvailPanel.TabIndex = 9;
@@ -1782,7 +1842,7 @@
             this.UnitAbilityPanel.Controls.Add(this.AbilityPictureBox);
             this.UnitAbilityPanel.Controls.Add(this.AbilityListBox);
             this.UnitAbilityPanel.Controls.Add(this.UnitAbilityListBox);
-            this.UnitAbilityPanel.Location = new System.Drawing.Point(32, 1351);
+            this.UnitAbilityPanel.Location = new System.Drawing.Point(32, 1356);
             this.UnitAbilityPanel.Name = "UnitAbilityPanel";
             this.UnitAbilityPanel.Size = new System.Drawing.Size(1039, 180);
             this.UnitAbilityPanel.TabIndex = 8;
@@ -2020,7 +2080,7 @@
             // CollapseUnitSubunitPanel
             // 
             this.CollapseUnitSubunitPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseUnitSubunitPanel.Location = new System.Drawing.Point(5, 1167);
+            this.CollapseUnitSubunitPanel.Location = new System.Drawing.Point(5, 1177);
             this.CollapseUnitSubunitPanel.Name = "CollapseUnitSubunitPanel";
             this.CollapseUnitSubunitPanel.Size = new System.Drawing.Size(24, 19);
             this.CollapseUnitSubunitPanel.TabIndex = 7;
@@ -2043,7 +2103,7 @@
             this.UnitSubunitPanel.Controls.Add(this.SubUnitLabel);
             this.UnitSubunitPanel.Controls.Add(this.UnitSubSquadListbox);
             this.UnitSubunitPanel.Controls.Add(this.UnitSubunitListbox);
-            this.UnitSubunitPanel.Location = new System.Drawing.Point(32, 1167);
+            this.UnitSubunitPanel.Location = new System.Drawing.Point(32, 1177);
             this.UnitSubunitPanel.Name = "UnitSubunitPanel";
             this.UnitSubunitPanel.Size = new System.Drawing.Size(1039, 166);
             this.UnitSubunitPanel.TabIndex = 6;
@@ -2240,7 +2300,7 @@
             // CollapseUnitAbilityPanel
             // 
             this.CollapseUnitAbilityPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseUnitAbilityPanel.Location = new System.Drawing.Point(5, 1351);
+            this.CollapseUnitAbilityPanel.Location = new System.Drawing.Point(5, 1356);
             this.CollapseUnitAbilityPanel.Name = "CollapseUnitAbilityPanel";
             this.CollapseUnitAbilityPanel.Size = new System.Drawing.Size(24, 19);
             this.CollapseUnitAbilityPanel.TabIndex = 5;
@@ -2252,7 +2312,7 @@
             // CollapseUnitStatPanel
             // 
             this.CollapseUnitStatPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseUnitStatPanel.Location = new System.Drawing.Point(5, 753);
+            this.CollapseUnitStatPanel.Location = new System.Drawing.Point(5, 768);
             this.CollapseUnitStatPanel.Name = "CollapseUnitStatPanel";
             this.CollapseUnitStatPanel.Size = new System.Drawing.Size(24, 19);
             this.CollapseUnitStatPanel.TabIndex = 4;
@@ -2318,7 +2378,7 @@
             this.UnitStatPanel.Controls.Add(this.UnitSpeedLabel);
             this.UnitStatPanel.Controls.Add(this.UnitShieldLabel);
             this.UnitStatPanel.Controls.Add(this.UnitHpLabel);
-            this.UnitStatPanel.Location = new System.Drawing.Point(32, 757);
+            this.UnitStatPanel.Location = new System.Drawing.Point(32, 772);
             this.UnitStatPanel.Name = "UnitStatPanel";
             this.UnitStatPanel.Size = new System.Drawing.Size(1039, 396);
             this.UnitStatPanel.TabIndex = 2;
@@ -3046,6 +3106,8 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.PlanetPanel.AutoScroll = true;
+            this.PlanetPanel.Controls.Add(this.PlanetSharedGroundGoToButton);
+            this.PlanetPanel.Controls.Add(this.PlanetSharedSpaceGoToButton);
             this.PlanetPanel.Controls.Add(this.PlanetMissingTextButton);
             this.PlanetPanel.Controls.Add(this.PlanetConnectionsLabel);
             this.PlanetPanel.Controls.Add(this.PlanetSortLabel);
@@ -3101,6 +3163,26 @@
             this.PlanetPanel.Name = "PlanetPanel";
             this.PlanetPanel.Size = new System.Drawing.Size(1288, 775);
             this.PlanetPanel.TabIndex = 63;
+            // 
+            // PlanetSharedGroundGoToButton
+            // 
+            this.PlanetSharedGroundGoToButton.Location = new System.Drawing.Point(194, 1070);
+            this.PlanetSharedGroundGoToButton.Name = "PlanetSharedGroundGoToButton";
+            this.PlanetSharedGroundGoToButton.Size = new System.Drawing.Size(43, 23);
+            this.PlanetSharedGroundGoToButton.TabIndex = 117;
+            this.PlanetSharedGroundGoToButton.Text = "Go to";
+            this.PlanetSharedGroundGoToButton.UseVisualStyleBackColor = true;
+            this.PlanetSharedGroundGoToButton.Click += new System.EventHandler(this.PlanetSharedGroundGoToButton_Click);
+            // 
+            // PlanetSharedSpaceGoToButton
+            // 
+            this.PlanetSharedSpaceGoToButton.Location = new System.Drawing.Point(17, 1070);
+            this.PlanetSharedSpaceGoToButton.Name = "PlanetSharedSpaceGoToButton";
+            this.PlanetSharedSpaceGoToButton.Size = new System.Drawing.Size(43, 23);
+            this.PlanetSharedSpaceGoToButton.TabIndex = 116;
+            this.PlanetSharedSpaceGoToButton.Text = "Go to";
+            this.PlanetSharedSpaceGoToButton.UseVisualStyleBackColor = true;
+            this.PlanetSharedSpaceGoToButton.Click += new System.EventHandler(this.PlanetSharedSpaceGoToButton_Click);
             // 
             // PlanetMissingTextButton
             // 
@@ -3357,7 +3439,7 @@
             // 
             // PlanetGoToGCButton
             // 
-            this.PlanetGoToGCButton.Location = new System.Drawing.Point(895, 3);
+            this.PlanetGoToGCButton.Location = new System.Drawing.Point(496, 619);
             this.PlanetGoToGCButton.Name = "PlanetGoToGCButton";
             this.PlanetGoToGCButton.Size = new System.Drawing.Size(43, 23);
             this.PlanetGoToGCButton.TabIndex = 91;
@@ -3369,18 +3451,18 @@
             // 
             this.PlanetCampaignLabel.AutoSize = true;
             this.PlanetCampaignLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PlanetCampaignLabel.Location = new System.Drawing.Point(713, 3);
+            this.PlanetCampaignLabel.Location = new System.Drawing.Point(394, 600);
             this.PlanetCampaignLabel.Name = "PlanetCampaignLabel";
-            this.PlanetCampaignLabel.Size = new System.Drawing.Size(184, 16);
+            this.PlanetCampaignLabel.Size = new System.Drawing.Size(145, 16);
             this.PlanetCampaignLabel.TabIndex = 90;
-            this.PlanetCampaignLabel.Text = "Campaigns containing planet:";
+            this.PlanetCampaignLabel.Text = "Campaigns with planet:";
             // 
             // PlanetGCListBox
             // 
             this.PlanetGCListBox.FormattingEnabled = true;
-            this.PlanetGCListBox.Location = new System.Drawing.Point(897, 32);
+            this.PlanetGCListBox.Location = new System.Drawing.Point(545, 600);
             this.PlanetGCListBox.Name = "PlanetGCListBox";
-            this.PlanetGCListBox.Size = new System.Drawing.Size(44, 901);
+            this.PlanetGCListBox.Size = new System.Drawing.Size(396, 550);
             this.PlanetGCListBox.TabIndex = 89;
             // 
             // PlanetMapLabel
@@ -3399,7 +3481,7 @@
             this.MapsInPlanetsListbox.FormattingEnabled = true;
             this.MapsInPlanetsListbox.Location = new System.Drawing.Point(947, 73);
             this.MapsInPlanetsListbox.Name = "MapsInPlanetsListbox";
-            this.MapsInPlanetsListbox.Size = new System.Drawing.Size(321, 1005);
+            this.MapsInPlanetsListbox.Size = new System.Drawing.Size(321, 1239);
             this.MapsInPlanetsListbox.TabIndex = 87;
             this.MapsInPlanetsListbox.SelectedIndexChanged += new System.EventHandler(this.MapsInPlanetsListbox_SelectedIndexChanged);
             // 
@@ -3407,7 +3489,7 @@
             // 
             this.label20.AutoSize = true;
             this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label20.Location = new System.Drawing.Point(542, 689);
+            this.label20.Location = new System.Drawing.Point(13, 902);
             this.label20.Name = "label20";
             this.label20.Size = new System.Drawing.Size(154, 20);
             this.label20.TabIndex = 86;
@@ -3416,7 +3498,7 @@
             // SharedSpaceMapListBox
             // 
             this.SharedSpaceMapListBox.FormattingEnabled = true;
-            this.SharedSpaceMapListBox.Location = new System.Drawing.Point(545, 717);
+            this.SharedSpaceMapListBox.Location = new System.Drawing.Point(16, 930);
             this.SharedSpaceMapListBox.Name = "SharedSpaceMapListBox";
             this.SharedSpaceMapListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.SharedSpaceMapListBox.Size = new System.Drawing.Size(170, 134);
@@ -3481,7 +3563,7 @@
             // 
             this.label16.AutoSize = true;
             this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.Location = new System.Drawing.Point(718, 689);
+            this.label16.Location = new System.Drawing.Point(189, 902);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(162, 20);
             this.label16.TabIndex = 77;
@@ -3509,7 +3591,7 @@
             // SharedMapListBox
             // 
             this.SharedMapListBox.FormattingEnabled = true;
-            this.SharedMapListBox.Location = new System.Drawing.Point(721, 717);
+            this.SharedMapListBox.Location = new System.Drawing.Point(192, 930);
             this.SharedMapListBox.Name = "SharedMapListBox";
             this.SharedMapListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.SharedMapListBox.Size = new System.Drawing.Size(170, 134);
@@ -3607,7 +3689,7 @@
             // 
             // PlanetBTSTextBox
             // 
-            this.PlanetBTSTextBox.Location = new System.Drawing.Point(7, 934);
+            this.PlanetBTSTextBox.Location = new System.Drawing.Point(7, 1164);
             this.PlanetBTSTextBox.Name = "PlanetBTSTextBox";
             this.PlanetBTSTextBox.Size = new System.Drawing.Size(934, 148);
             this.PlanetBTSTextBox.TabIndex = 78;
@@ -4970,26 +5052,6 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
-            // UnitSFXMinPitchLabel
-            // 
-            this.UnitSFXMinPitchLabel.AutoSize = true;
-            this.UnitSFXMinPitchLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UnitSFXMinPitchLabel.Location = new System.Drawing.Point(707, 11);
-            this.UnitSFXMinPitchLabel.Name = "UnitSFXMinPitchLabel";
-            this.UnitSFXMinPitchLabel.Size = new System.Drawing.Size(11, 16);
-            this.UnitSFXMinPitchLabel.TabIndex = 49;
-            this.UnitSFXMinPitchLabel.Text = ".";
-            // 
-            // UnitSFXMaxPitchLabel
-            // 
-            this.UnitSFXMaxPitchLabel.AutoSize = true;
-            this.UnitSFXMaxPitchLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UnitSFXMaxPitchLabel.Location = new System.Drawing.Point(707, 34);
-            this.UnitSFXMaxPitchLabel.Name = "UnitSFXMaxPitchLabel";
-            this.UnitSFXMaxPitchLabel.Size = new System.Drawing.Size(11, 16);
-            this.UnitSFXMaxPitchLabel.TabIndex = 50;
-            this.UnitSFXMaxPitchLabel.Text = ".";
-            // 
             // Holocron
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -5462,6 +5524,10 @@
         private System.Windows.Forms.Button CheckWeaponMismatchButton;
         private System.Windows.Forms.Label UnitSFXMaxPitchLabel;
         private System.Windows.Forms.Label UnitSFXMinPitchLabel;
+        private System.Windows.Forms.RadioButton UnitSFXAmbientRB;
+        private System.Windows.Forms.Button CollapseAllButton;
+        private System.Windows.Forms.Button PlanetSharedGroundGoToButton;
+        private System.Windows.Forms.Button PlanetSharedSpaceGoToButton;
     }
 }
 

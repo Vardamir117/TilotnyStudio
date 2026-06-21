@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.ShowAllModsCheckBox = new System.Windows.Forms.CheckBox();
             this.ModStackButton = new System.Windows.Forms.Button();
             this.CopyModButton = new System.Windows.Forms.Button();
             this.DeleteButton = new System.Windows.Forms.Button();
@@ -128,7 +129,7 @@
             this.VersionComboBox = new System.Windows.Forms.ComboBox();
             this.ModFilesButton = new System.Windows.Forms.Button();
             this.SuperToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.ShowAllModsCheckBox = new System.Windows.Forms.CheckBox();
+            this.UnitCopyTab = new System.Windows.Forms.TabPage();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -186,6 +187,20 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Mod";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // ShowAllModsCheckBox
+            // 
+            this.ShowAllModsCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ShowAllModsCheckBox.AutoSize = true;
+            this.ShowAllModsCheckBox.Location = new System.Drawing.Point(3, 631);
+            this.ShowAllModsCheckBox.Name = "ShowAllModsCheckBox";
+            this.ShowAllModsCheckBox.Size = new System.Drawing.Size(130, 17);
+            this.ShowAllModsCheckBox.TabIndex = 8;
+            this.ShowAllModsCheckBox.Text = "Show All Tilotny Mods";
+            this.SuperToolTip.SetToolTip(this.ShowAllModsCheckBox, "Wthout this checked, only Tilotny mods made with the same highest priority mod st" +
+        "ack entry will be shown");
+            this.ShowAllModsCheckBox.UseVisualStyleBackColor = true;
+            this.ShowAllModsCheckBox.CheckedChanged += new System.EventHandler(this.ShowAllModsCheckBox_CheckedChanged);
             // 
             // ModStackButton
             // 
@@ -518,6 +533,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.UnitTabControl.Controls.Add(this.AffilTab);
             this.UnitTabControl.Controls.Add(this.StatsTab);
+            this.UnitTabControl.Controls.Add(this.UnitCopyTab);
             this.UnitTabControl.Location = new System.Drawing.Point(387, 3);
             this.UnitTabControl.Name = "UnitTabControl";
             this.UnitTabControl.SelectedIndex = 0;
@@ -1350,19 +1366,14 @@
             this.ModFilesButton.UseVisualStyleBackColor = true;
             this.ModFilesButton.Click += new System.EventHandler(this.ModFilesButton_Click);
             // 
-            // ShowAllModsCheckBox
+            // UnitCopyTab
             // 
-            this.ShowAllModsCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.ShowAllModsCheckBox.AutoSize = true;
-            this.ShowAllModsCheckBox.Location = new System.Drawing.Point(3, 631);
-            this.ShowAllModsCheckBox.Name = "ShowAllModsCheckBox";
-            this.ShowAllModsCheckBox.Size = new System.Drawing.Size(130, 17);
-            this.ShowAllModsCheckBox.TabIndex = 8;
-            this.ShowAllModsCheckBox.Text = "Show All Tilotny Mods";
-            this.SuperToolTip.SetToolTip(this.ShowAllModsCheckBox, "Wthout this checked, only Tilotny mods made with the same highest priority mod st" +
-        "ack entry will be shown");
-            this.ShowAllModsCheckBox.UseVisualStyleBackColor = true;
-            this.ShowAllModsCheckBox.CheckedChanged += new System.EventHandler(this.ShowAllModsCheckBox_CheckedChanged);
+            this.UnitCopyTab.Location = new System.Drawing.Point(4, 22);
+            this.UnitCopyTab.Name = "UnitCopyTab";
+            this.UnitCopyTab.Size = new System.Drawing.Size(920, 634);
+            this.UnitCopyTab.TabIndex = 2;
+            this.UnitCopyTab.Text = "Copy";
+            this.UnitCopyTab.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -1515,6 +1526,7 @@
         private System.Windows.Forms.RadioButton SpaceHeroRadioButton;
         private System.Windows.Forms.RadioButton GroundHeroRadioButton;
         private System.Windows.Forms.CheckBox ShowAllModsCheckBox;
+        private System.Windows.Forms.TabPage UnitCopyTab;
     }
 }
 
