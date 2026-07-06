@@ -126,9 +126,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>442, 17</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>442, 17</value>
-  </metadata>
   <data name="UnitShieldAvgLabel.ToolTip" xml:space="preserve">
     <value>Shield value divided by the mean damage modifier across key damage types to the unit's armor type
 Combat power calulations use the closely related shield*average damage absorption or shield*(1 - mean modifier)</value>
@@ -147,11 +144,23 @@ The end value is only an approximation of how many of the shots fired should lan
 Structures with a galactic build limit (e.g., faction capitals) are excluded
 EaWX Trade Port income is dependent on layout and excluded unless a filter for a single galactic conquest is on</value>
   </data>
+  <data name="GCPresentBorderingLabel.ToolTip" xml:space="preserve">
+    <value>How many planets can launch attacks on this faction:
+Count of distinct planets of another playable/active faction bordering this faction
+
+Factions with an AI type of None are not included, or with no AI type and marked &lt;Is_Playable&gt;false&lt;/Is_Playable&gt;</value>
+  </data>
   <data name="GCPlanetForceLabel.ToolTip" xml:space="preserve">
     <value>The forces set on the planet in the campaign file. Does not reflect heroes or units spawned from scripts.
 Multiple factions with units on the same planet is rare and Holocron will not mark this
 
 EaWX often uses a "Generate_Force" placeholder that will be replaced with randomly generated forces</value>
+  </data>
+  <data name="GCPresentBorderLabel.ToolTip" xml:space="preserve">
+    <value>How many of this faction's planets can be attacked:
+Count of planets bordering another playable/active faction
+
+Factions with an AI type of None are not included, or with no AI type and marked &lt;Is_Playable&gt;false&lt;/Is_Playable&gt;</value>
   </data>
   <metadata name="contextMenuStrip2.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>287, 17</value>

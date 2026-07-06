@@ -21,14 +21,19 @@ using static SharedFunctions;
  *https://www.nuget.org/packages/HtmlAgilityPack/ handles invalid XML better
  *https://github.com/LorettaDevs/Loretta Lua parsing
  *
- *https://dev.to/karenpayneoregon/window-forms-dark-mode-33on in program.cs, requires .Net upgrade?
+ *https://dev.to/karenpayneoregon/window-forms-dark-mode-33on in program.cs, requires .Net upgrade? Application.SetColorMode(SystemColorMode.Dark);
+ *
  *
  * 
  * Buick hardpoints are not being found - innertext?
  *
+ *it might be useful to have SFXEvent_Target_Ability, SFXEvent_GUI_Unit_Ability_Activated overlap with general sounds like the Death one
+ *deactivate too
  *
  *
  *parse sfx on abilities - selecting an ability with sfx enters a special mode for sfx
+ *
+ * hide class for space units if EaWX?
  *
  * use absence of changelogs to detect EaWX versions
  * 
@@ -43,8 +48,8 @@ using static SharedFunctions;
  * lock controls during load
 
  * more right clicks with function - save images on conquest and planet maps, save/detail accuracy table?...
- * Don't use messagebox - create dedicated listbox popup
- * 
+ *  make text color HotTrack to mark this
+ *  border/ing planet is a good use case
  * 
  * add all space categories to filter page, not just targeting ones. Or just all categories and let them sort out ground?
  * 
@@ -262,10 +267,13 @@ namespace Holocron
             PlanetBTSTextBox.Anchor = AnchorStyles.Top |  AnchorStyles.Right | AnchorStyles.Left;
             GCPresentListbox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             GCPlanetListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            GCMapListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            GCMapListBox.Size = GCPlanetListBox.Size;
+            GCMapListBox.Location = GCPlanetListBox.Location;
             GCStoryTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             ConquestBTSTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             FactionBTSTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
-            MapsInPlanetsListbox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
+            MapsInPlanetsListbox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
             MapSearchBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             //PlanetCampaignLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             //PlanetGoToGCButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
@@ -314,6 +322,7 @@ namespace Holocron
         private void LoadThread(Loading loadscreen)
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            this.BeginInvoke(new Action(() => this.Enabled = false));
             loadscreen.ChangeText("Reading text file");
             entities.Text = DatParser.ReadDat(getModFile("Text\\MasterTextFile_ENGLISH.dat", entities), ',', 0);
             loadscreen.SetQuote(getLoadQuote(entities));
@@ -423,6 +432,7 @@ namespace Holocron
             //entities.hardpointhashes.Clear(); //No reason to keep these around after parsing. I found a reason
             //entities.projectilehashes.Clear();
 
+            this.BeginInvoke(new Action(() => this.Enabled = true));
             loadscreen.CloseLoadScreen();
         }
 
@@ -2564,6 +2574,48 @@ namespace Holocron
             foreach (string entry in SplitXMLWhitespaceList(selectedUnit.tooltip)) UnitTooltipLabelRichTextBox.Text += Find_Text_Entry(entry, entities) + "\n";
             if (selectedUnit.BTS != "") UnitBTSTextBox.Text = "Behind the scenes:\n" + selectedUnit.BTS;
             else UnitBTSTextBox.Text = "";
+            bool sfxfound = false;
+            for (int i = 0; i < selectedUnit.BasicSFXEvents.Length; i++)
+            {
+                if (selectedUnit.BasicSFXEvents[i] != "")
+                {
+                    sfx sfx = entities.sfx.FirstOrDefault(s => s.name == selectedUnit.BasicSFXEvents[i]);
+                    if (!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
+                    {
+                        string sourcefile = getModFile("XML\\" + sfx.sourcefile, entities);
+                        if (File.Exists(sourcefile))
+                        {
+                            string[] lines = File.ReadAllLines(sourcefile);
+                            for(int lineid = 0; lineid < lines.Length; lineid++)
+                            {
+                                string line = lines[lineid];
+                                if(line.Contains("\"" + sfx.name + "\""))
+                                {
+                                    int maxback = lineid - 250;
+                                    if (maxback < 0) maxback = 0;
+                                    for (int back = lineid; back > maxback; back--)
+                                    {
+                                        string comment = lines[back];
+                                        if (comment.Contains("<!--"))
+                                        {
+                                            string trimmed = comment.Replace("<!--","").Replace("-->", "").Replace("*", ""); //todo trim to comment only, first of open and last of close
+                                            if (trimmed.Replace(" ","").Length > 5 && !trimmed.Contains("Take_Cover") && !trimmed.Contains("TEXT_SFX_GO_AWAY_ERRORS") && comment.IndexOf("SFXEvent") <= comment.IndexOf("<!--"))
+                                            {//todo: read any adjacent lines further up?
+                                                UnitBTSTextBox.Text += "\n\nSound file source notes:\n" + trimmed.Trim();
+                                                sfxfound = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                                if (sfxfound) break;
+                            }
+                        }
+                    }
+                }
+                if (sfxfound) break;
+            }
+
             setAbilityDependentStats();
 
             if (selectedUnit.pop > 0)  UnitPopLabel.Text = "Population: " + selectedUnit.pop.ToString();
@@ -4172,7 +4224,8 @@ namespace Holocron
             AbilityPanel,
             SFXPanel,
             BTSPanel,
-            All,
+            CollapseAll,
+            ExpandAll,
         }
 
         void setExpandedButton(Button button)
@@ -4213,7 +4266,12 @@ namespace Holocron
 
         private void CollapseAllButton_Click(object sender, EventArgs e)
         {
-            collapsePanels(UnitPanels.All);
+            collapsePanels(UnitPanels.CollapseAll);
+        }
+
+        private void ExpandAllButton_Click(object sender, EventArgs e)
+        {
+            collapsePanels(UnitPanels.ExpandAll);
         }
 
         private void collapsePanels(UnitPanels toggleID)
@@ -4325,12 +4383,7 @@ namespace Holocron
                         setCollapsedButton(CollapseUnitSFXPanel, UnitPanels.SFXPanel);
                     }
                     break;
-                case UnitPanels.All:
-                    if(CollapseAllButton.Tag != null)
-                    {
-                        CollapseAllButton.Tag = null;
-                        CollapseAllButton.Text = "Expand All";
-
+                case UnitPanels.CollapseAll:
                         UnitTextPanel.Height = 0;
                         setCollapsedButton(CollapseUnitTextPanel, UnitPanels.TextPanel);
                         UnitAvailPanel.Height = 0;
@@ -4343,25 +4396,20 @@ namespace Holocron
                         setCollapsedButton(CollapseUnitAbilityPanel, UnitPanels.AbilityPanel);
                         UnitSFXPanel.Height = 0;
                         setCollapsedButton(CollapseUnitSFXPanel, UnitPanels.SFXPanel);
-                    }
-                    else
-                    {
-                        CollapseAllButton.Tag = true;
-                        CollapseAllButton.Text = "Collapse All";
-
-                        UnitTextPanel.Height = TextSize;
-                        setExpandedButton(CollapseUnitTextPanel);
-                        UnitAvailPanel.Height = AvailSize;
-                        setExpandedButton(CollapseUnitAvailPanel);
-                        UnitStatPanel.Height = StatSize;
-                        setExpandedButton(CollapseUnitStatPanel);
-                        UnitSubunitPanel.Height = SubunitSize;
-                        setExpandedButton(CollapseUnitSubunitPanel);
-                        UnitAbilityPanel.Height = AbilitySize;
-                        setExpandedButton(CollapseUnitAbilityPanel);
-                        UnitSFXPanel.Height = SFXSize;
-                        setExpandedButton(CollapseUnitSFXPanel);
-                    }
+                    break;
+                case UnitPanels.ExpandAll:
+                    UnitTextPanel.Height = TextSize;
+                    setExpandedButton(CollapseUnitTextPanel);
+                    UnitAvailPanel.Height = AvailSize;
+                    setExpandedButton(CollapseUnitAvailPanel);
+                    UnitStatPanel.Height = StatSize;
+                    setExpandedButton(CollapseUnitStatPanel);
+                    UnitSubunitPanel.Height = SubunitSize;
+                    setExpandedButton(CollapseUnitSubunitPanel);
+                    UnitAbilityPanel.Height = AbilitySize;
+                    setExpandedButton(CollapseUnitAbilityPanel);
+                    UnitSFXPanel.Height = SFXSize;
+                    setExpandedButton(CollapseUnitSFXPanel);
                     break;
                 default:
                     break;
@@ -4555,7 +4603,9 @@ namespace Holocron
             else
             {
                 System.Windows.Forms.Clipboard.SetText(entities.readerrors);
-                MessageBox.Show("Errors copied to clipboard" + entities.readerrors);
+                TextDetail deets = new TextDetail();
+                deets.detail = entities.readerrors;
+                deets.Show();
             }
         }
 
@@ -5052,7 +5102,18 @@ namespace Holocron
                 else AbilityTargetTypeLabel.Text = "";
                 if (able.excluded_types.Length > 0) AbilityExcludedUnitLabel.Text = "Excluded Targets: " + SerializeStringArray(able.excluded_types);
                 else AbilityExcludedUnitLabel.Text = "";
-                if (able.applicable_types.Length > 0) AbilityTargetUnitLabel.Text = "Target Units:" + SerializeStringArray(able.applicable_types);
+                if (able.applicable_types.Length > 0)
+                {
+                    string[] usernames = new string[able.applicable_types.Length];
+                    for(int i = 0; i < usernames.Length; i++)
+                    {
+                        string unitname = able.applicable_types[i];
+                        unit unit = entities.objects.FirstOrDefault(s => s.unitname == unitname);
+                        if (unit.unitname == unitname) usernames[i] = unit.username;
+                        else usernames[i] = unitname;
+                    }
+                    AbilityTargetUnitLabel.Text = "Target Units: " + SerializeStringArray(usernames);
+                }
                 else AbilityTargetUnitLabel.Text = "";
 
                 if(able.type == "Combat_Bonus_Ability")
@@ -5226,6 +5287,28 @@ namespace Holocron
                         {
                             sfx.displayname = Enum.GetName(typeof(basicSoundTypes), i);
                             sfx.displayname = sfx.displayname.Replace("SFXEvent_", "").Replace("_", " ");
+                            UnitSFXListbox.Items.Add(sfx);
+                        }
+                    }
+                }
+                for (int i = 0; i < unit.unitabilities.Count; i++)
+                {
+                    unitability able = unit.unitabilities[i];
+                    if (able.sound != "")
+                    {
+                        sfx sfx = entities.sfx.FirstOrDefault(s => s.name == able.sound);
+                        if (!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
+                        {
+                            sfx.displayname = able.ToString();
+                            UnitSFXListbox.Items.Add(sfx);
+                        }
+                    }
+                    if (able.deactivatesound != "")
+                    {
+                        sfx sfx = entities.sfx.FirstOrDefault(s => s.name == able.deactivatesound);
+                        if (!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
+                        {
+                            sfx.displayname = able.ToString() + " deactivate";
                             UnitSFXListbox.Items.Add(sfx);
                         }
                     }
@@ -6081,7 +6164,7 @@ namespace Holocron
                                 }
                                 if (docheck)
                                 {
-                                    int dist = (int)Math.Sqrt(((planet.x_coord - shared.x_coord) * (planet.x_coord - shared.x_coord) + (planet.y_coord - shared.y_coord) * (planet.y_coord - shared.y_coord)));
+                                    int dist = CalculatePlanetDistance(planet, shared);
                                     if (dist < min) min = dist;
                                 }
                             }
@@ -6114,7 +6197,7 @@ namespace Holocron
                                 }
                                 if (docheck)
                                 {
-                                    int dist = (int)Math.Sqrt(((planet.x_coord - shared.x_coord) * (planet.x_coord - shared.x_coord) + (planet.y_coord - shared.y_coord) * (planet.y_coord - shared.y_coord)));
+                                    int dist = CalculatePlanetDistance(planet, shared);
                                     if (dist < min) min = dist;
                                 }
                             }
@@ -6254,6 +6337,11 @@ namespace Holocron
             populateMapListbox();
         }
 
+        private int CalculatePlanetDistance(planet A, planet B)
+        {
+            return (int)Math.Sqrt(((A.x_coord - B.x_coord) * (A.x_coord - B.x_coord) + (A.y_coord - B.y_coord) * (A.y_coord - B.y_coord)));
+        }
+
         private void MapsInPlanetsListbox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (MapsInPlanetsListbox.SelectedItems.Count > 0)
@@ -6261,6 +6349,7 @@ namespace Holocron
                 quantizedObject q = (quantizedObject)MapsInPlanetsListbox.SelectedItem;
                 string planets = "";
                 bool furst = true;
+                List<planet> mapusers = new List<planet>();
                 foreach(planet planet in PlanetListBox.Items)
                 {
                     if(PlanetSpaceMapRB.Checked && planet.spaceMap == q.username || PlanetGroundMapRB.Checked && planet.groundMap == q.username)
@@ -6268,10 +6357,29 @@ namespace Holocron
                         if (furst) furst = false;
                         else planets += ", ";
                         planets += planet.username;
+                        mapusers.Add(planet);
                     }
                 }
-                MessageBox.Show(q.ToString() + "\n\n" + planets);
-
+                planets += "\n\nDistance between uses:";
+                List<quantizedObject> distances = new List<quantizedObject>();
+                for (int i = 0; i < mapusers.Count - 1; i++)
+                {
+                    for (int j = i+1; j < mapusers.Count; j++)
+                    {
+                        quantizedObject distance = new quantizedObject
+                        {
+                            quantity = CalculatePlanetDistance(mapusers[i], mapusers[j]),
+                            codename = mapusers[i].username,
+                            username = mapusers[j].username,
+                        };
+                        distances.Add(distance);
+                    }
+                }
+                distances.Sort((s1, s2) => s1.quantity.CompareTo(s2.quantity));
+                foreach (quantizedObject d in distances) planets += "\n" + d.codename + ", " + d.username + ": " + d.quantity;
+                TextDetail deets = new TextDetail();
+                deets.detail = q.username + "\n\nUsed by:\n" + planets;
+                deets.Show();
             }
         }
 
@@ -6325,6 +6433,39 @@ namespace Holocron
             }
         }
 
+        private void PlanetSharedGroundSelectAllButton_Click(object sender, EventArgs e)
+        {
+            SharedMapListBox.SelectedItems.Clear();
+            for(int i = 0; i < SharedMapListBox.Items.Count; i++)
+            {
+                planet shared = (planet)SharedMapListBox.Items[i];
+                foreach (planet filtered in PlanetListBox.Items)
+                {
+                    if(filtered.codename == shared.codename)
+                    {
+                        SharedMapListBox.SelectedItems.Add(shared);
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void PlanetSharedSpaceSelectAllButton_Click(object sender, EventArgs e)
+        {
+            SharedSpaceMapListBox.SelectedItems.Clear();
+            for (int i = 0; i < SharedSpaceMapListBox.Items.Count; i++)
+            {
+                planet shared = (planet)SharedSpaceMapListBox.Items[i];
+                foreach (planet filtered in PlanetListBox.Items)
+                {
+                    if (filtered.codename == shared.codename)
+                    {
+                        SharedSpaceMapListBox.SelectedItems.Add(shared);
+                        break;
+                    }
+                }
+            }
+        }
 
         private void PlanetSortButton_Click(object sender, EventArgs e)
         {
@@ -6456,6 +6597,7 @@ namespace Holocron
                 }
 
                 GCPlanetLabel.Text = "Planets: " + Campaign.planetObjects.Count;
+                populateGCMapListBox();
 
                 ConquestBTSTextBox.Text = "";
                 string BTS = "";
@@ -6613,7 +6755,12 @@ namespace Holocron
                     }
                 }
 
-                if(globals.devmode && bads.Count > 0) MessageBox.Show("Routes referencing nonexistent planets:\n" + SerializeStringArray(bads));
+                if (globals.devmode && bads.Count > 0)
+                {
+                    TextDetail deets = new TextDetail();
+                    deets.detail = "Routes referencing nonexistent planets:\n" + SerializeStringArray(bads);
+                    deets.Show();
+                }
 
                 foreach (planet planet in affiled)
                 {
@@ -6669,17 +6816,103 @@ namespace Holocron
             GCPlanetListBox.Items.Clear();
             foreach (planet planet in (List<planet>)GCActiveListBox.Tag)
             {
-                if(GCPresentListbox.SelectedItems.Count == 0) GCPlanetListBox.Items.Add(planet);
+                if (GCPresentListbox.SelectedItems.Count == 0) GCPlanetListBox.Items.Add(planet);
                 else
                 {
                     faction active = (faction)GCPresentListbox.SelectedItem;
-                    if(active.codename == planet.owner.codename) GCPlanetListBox.Items.Add(planet);
+                    if (active.codename == planet.owner.codename) GCPlanetListBox.Items.Add(planet);
                 }
             }
             GCPictureBox.Image = (Bitmap)GCPictureBox.Tag;
         }
 
+        private void populateGCMapListBox()
+        {
+            GCMapListBox.Items.Clear();
+            List<quantizedObject> qs = new List<quantizedObject>();
+            List<planet> planetsConAffil = (List<planet>)GCActiveListBox.Tag;
+            foreach (planet planet in planetsConAffil)
+            {
+                string map = planet.groundMap;
+                if (GCMapModeSpaceCheckBox.Checked) map = planet.spaceMap;
+                quantizedObject q = new quantizedObject
+                {
+                    quantity = 1,
+                    username = map,
+                    codename = map,
+                };
+                quantizedAdd(qs, q);
+            }
+            if(GCMapSortNameRB.Checked) qs.Sort((s1, s2) => s1.username.CompareTo(s2.username));
+            else if (GCMapSortUsageRB.Checked) qs.Sort((s1, s2) => s2.quantity.CompareTo(s1.quantity)); //High values first
+            else {
+                for(int i = 0; i < qs.Count; i++)
+                {
+                    quantizedObject q = qs[i];
+                    int min = int.MaxValue;
+                    List<planet> sharing = new List<planet>();
+                    if(GCMapModeSpaceCheckBox.Checked) sharing = planetsConAffil.FindAll(s => s.spaceMap == q.username);
+                    else sharing = planetsConAffil.FindAll(s => s.groundMap == q.username && s.groundMap != "");
+                    if (sharing.Count > 1)
+                    {
+                        for(int j = 0; j < sharing.Count - 1; j++)
+                        {
+                            for(int k = j + 1; k < sharing.Count; k++)
+                            {
+                                int dist = CalculatePlanetDistance(sharing[j], sharing[k]);
+                                if (dist < min) min = dist;
+                            }
+                        }
+                    }
+                    q.quantity = min;
+                    qs[i] = q;
+                }
+                qs.Sort((s1, s2) => s1.quantity.CompareTo(s2.quantity));
+            }
+            foreach (quantizedObject q in qs) GCMapListBox.Items.Add(q);
+        }
 
+
+        private void GCMapModeCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (GCMapModeCheckBox.Checked)
+            {
+                //GCPlanetLabel.Text = "Maps";
+                GCMapListBox.Visible = true;
+                GCPlanetListBox.Visible = false;
+                GCGoToPlanetButton.Visible = false;
+                GCMapModeSpaceCheckBox.Visible = true;
+                GCMapSortByLabel.Visible = true;
+                GCMapSortUsageRB.Visible = true;
+                GCMapSortNameRB.Visible = true;
+                GCMapSortNearestRB.Visible = true;
+            }
+            else
+            {
+                //GCPlanetLabel.Text = "Planets";
+                GCMapListBox.Visible = false;
+                GCPlanetListBox.Visible = true;
+                GCGoToPlanetButton.Visible = true;
+                GCMapModeSpaceCheckBox.Visible = false;
+                GCMapSortByLabel.Visible = false;
+                GCMapSortUsageRB.Visible = false;
+                GCMapSortNameRB.Visible = false;
+                GCMapSortNearestRB.Visible = false;
+            }
+            GCPlanetOwnerLabel.Text = "";
+            GCPlanetIncomeLabel.Text = "";
+            GCPlanetShipyardLabel.Text = "";
+            GCPlanetConnectionLabel.Text = "";
+            GCPlanetPotentialLabel.Text = "";
+            GCPlanetForceLabel.Text = "";
+
+            populateGCPlanetListBox();
+        }
+
+        private void RedoGCMapListEvent(object sender, EventArgs e)
+        {
+            populateGCMapListBox();
+        }
 
         private void GCPresentListbox_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -6751,7 +6984,7 @@ namespace Holocron
                 GCPresentShipyardsLabel.Text = "Level 4 Shipyards: " + level_4 + "\nLevel 3 Shipyards: " + level_3 + "\nLevel 2 Shipyards: " + level_2 + "\nLevel 1 Shipyards: " + level_1;
                 GCPresentBorderLabel.Text = "Border Planets: " + borderplanets + " (" + (100 * borderplanets / planetcount).ToString("0") + "% of owned territory)";
                 GCPresentBorderingLabel.Text = "Bordering Planets: " + borderingplanets.Count;
-                toolTip1.SetToolTip(GCPresentBorderingLabel, "Count of distinct planets owned by another playable/active faction bordering this faction\n" + SerializeStringArray(borderingplanets));
+                toolTip1.SetToolTip(GCPresentBorderingLabel, "How many planets can launch attacks on this faction:\nCount of distinct planets owned by another playable/active faction bordering this faction\n" + SerializeStringArray(borderingplanets));
                 GCPresentBorderFactionsLabel.Text = "Bordering Factions: " + borderingfactions.Count;
                 toolTip1.SetToolTip(GCPresentBorderFactionsLabel, "Count of distinct playable/active factions bordering this faction's territory\n" + SerializeStringArray(borderingfactions));
             }
@@ -6771,53 +7004,56 @@ namespace Holocron
         {
             if (GCPlanetListBox.SelectedItems.Count > 0)
             {
-                planet planet = (planet)GCPlanetListBox.SelectedItem;
-                GCPictureBox.Image = new Bitmap(GCPictureBox.Width, GCPictureBox.Height);
-                Graphics g = Graphics.FromImage(GCPictureBox.Image);
-                g.DrawImage((Bitmap)GCPictureBox.Tag, 0, 0, new Rectangle(0, 0, GCPictureBox.Width, GCPictureBox.Height), GraphicsUnit.Pixel);
-                int x = (Int32)(planet.x_coord * globals.scale + globals.origin) - 4;
-                int y = (Int32)(planet.y_coord * globals.scale + globals.origin) - 4;
-                Color brush = Color.FromArgb(255, planet.owner.color[0], planet.owner.color[1], planet.owner.color[2]);
-                g.FillEllipse(new SolidBrush(brush), x, y, 9, 9);
-
-                galacticConquest GC = (galacticConquest)GCListBox.SelectedItem;
-
-                GCPlanetOwnerLabel.Text = "Owner: " + planet.owner.textname;
-                GCPlanetIncomeLabel.Text = "Income: " + planet.credits;
-                GCPlanetShipyardLabel.Text = "Shipyard Level: " + planet.shipyard;
-                int connections = 0;
-                List<string> connected = new List<string>();
-                foreach(tradeRoute route in GC.traderouteObjects)
+                if (!GCMapModeCheckBox.Checked)
                 {
-                    if (route.planets[0] == planet.codename)
-                    {
-                        planet linked = GC.planetObjects.FirstOrDefault(s => s.codename == route.planets[1]);
-                        if(!(linked.username is null)) connected.Add(linked.username);
-                        connections++;
-                    }
-                    if (route.planets[1] == planet.codename)
-                    {
-                        planet linked = GC.planetObjects.FirstOrDefault(s => s.codename == route.planets[0]);
-                        if (!(linked.username is null)) connected.Add(linked.username);
-                        connections++;
-                    }
-                }
-                GCPlanetConnectionLabel.Text = "Connections: " + connections;
-                toolTip1.SetToolTip(GCPlanetConnectionLabel, "Connected to:\n" + SerializeStringArray(connected));
-                int tradehub = 1;
-                if (planet.tradehub) tradehub = globals.tradehubmultiplier;
-                if (entities.modid == "") tradehub = 0;
-                GCPlanetPotentialLabel.Text = "Potential Income: " + (getPotentialIncome(planet) + connections * globals.tradebase * tradehub);
-                GCPlanetForceLabel.Text = "Forces:";
+                    planet planet = (planet)GCPlanetListBox.SelectedItem;
+                    GCPictureBox.Image = new Bitmap(GCPictureBox.Width, GCPictureBox.Height);
+                    Graphics g = Graphics.FromImage(GCPictureBox.Image);
+                    g.DrawImage((Bitmap)GCPictureBox.Tag, 0, 0, new Rectangle(0, 0, GCPictureBox.Width, GCPictureBox.Height), GraphicsUnit.Pixel);
+                    int x = (Int32)(planet.x_coord * globals.scale + globals.origin) - 4;
+                    int y = (Int32)(planet.y_coord * globals.scale + globals.origin) - 4;
+                    Color brush = Color.FromArgb(255, planet.owner.color[0], planet.owner.color[1], planet.owner.color[2]);
+                    g.FillEllipse(new SolidBrush(brush), x, y, 9, 9);
 
-                for(int i = 0; i < GC.forceLocation[GCActiveListBox.SelectedIndex].Count; i++)
-                {//Todo read name from entities.objects
-                    if (GC.forceLocation[GCActiveListBox.SelectedIndex][i] == planet.codename)
+                    galacticConquest GC = (galacticConquest)GCListBox.SelectedItem;
+
+                    GCPlanetOwnerLabel.Text = "Owner: " + planet.owner.textname;
+                    GCPlanetIncomeLabel.Text = "Income: " + planet.credits;
+                    GCPlanetShipyardLabel.Text = "Shipyard Level: " + planet.shipyard;
+                    int connections = 0;
+                    List<string> connected = new List<string>();
+                    foreach (tradeRoute route in GC.traderouteObjects)
                     {
-                        string aswrit = GC.forceType[GCActiveListBox.SelectedIndex][i];
-                        unit userfacing = entities.objects.FirstOrDefault(s => s.unitname == aswrit);
-                        if (!(userfacing.username is null) && userfacing.username != "") aswrit = userfacing.username;
-                        GCPlanetForceLabel.Text += "\n" + aswrit;
+                        if (route.planets[0] == planet.codename)
+                        {
+                            planet linked = GC.planetObjects.FirstOrDefault(s => s.codename == route.planets[1]);
+                            if (!(linked.username is null)) connected.Add(linked.username);
+                            connections++;
+                        }
+                        if (route.planets[1] == planet.codename)
+                        {
+                            planet linked = GC.planetObjects.FirstOrDefault(s => s.codename == route.planets[0]);
+                            if (!(linked.username is null)) connected.Add(linked.username);
+                            connections++;
+                        }
+                    }
+                    GCPlanetConnectionLabel.Text = "Connections: " + connections;
+                    toolTip1.SetToolTip(GCPlanetConnectionLabel, "Connected to:\n" + SerializeStringArray(connected));
+                    int tradehub = 1;
+                    if (planet.tradehub) tradehub = globals.tradehubmultiplier;
+                    if (entities.modid == "") tradehub = 0;
+                    GCPlanetPotentialLabel.Text = "Potential Income: " + (getPotentialIncome(planet) + connections * globals.tradebase * tradehub);
+                    GCPlanetForceLabel.Text = "Forces:";
+
+                    for (int i = 0; i < GC.forceLocation[GCActiveListBox.SelectedIndex].Count; i++)
+                    {//Todo read name from entities.objects
+                        if (GC.forceLocation[GCActiveListBox.SelectedIndex][i] == planet.codename)
+                        {
+                            string aswrit = GC.forceType[GCActiveListBox.SelectedIndex][i];
+                            unit userfacing = entities.objects.FirstOrDefault(s => s.unitname == aswrit);
+                            if (!(userfacing.username is null) && userfacing.username != "") aswrit = userfacing.username;
+                            GCPlanetForceLabel.Text += "\n" + aswrit;
+                        }
                     }
                 }
             }
@@ -6829,6 +7065,64 @@ namespace Holocron
                 GCPlanetConnectionLabel.Text = "";
                 GCPlanetPotentialLabel.Text = "";
                 GCPlanetForceLabel.Text = "";
+            }
+        }
+
+        private void GCMapListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (GCMapListBox.SelectedItems.Count > 0)
+            {
+                if (GCMapModeCheckBox.Checked)
+                {
+                    string map = ((quantizedObject)GCMapListBox.SelectedItem).username;
+
+                    galacticConquest GC = (galacticConquest)GCListBox.SelectedItem;
+                    List<planet> mapUsers = new List<planet>();
+                    if (GCMapModeSpaceCheckBox.Checked) mapUsers = ((List<planet>)GCActiveListBox.Tag).FindAll(x => x.spaceMap == map);
+                    else mapUsers = ((List<planet>)GCActiveListBox.Tag).FindAll(x => x.groundMap == map);
+                    GCPlanetForceLabel.Text = "Owners: ";
+
+                    GCPictureBox.Image = new Bitmap(GCPictureBox.Width, GCPictureBox.Height);
+                    Graphics g = Graphics.FromImage(GCPictureBox.Image);
+                    g.DrawImage((Bitmap)GCPictureBox.Tag, 0, 0, new Rectangle(0, 0, GCPictureBox.Width, GCPictureBox.Height), GraphicsUnit.Pixel);
+                    foreach (planet planet in mapUsers)
+                    {
+                        int x = (Int32)(planet.x_coord * globals.scale + globals.origin) - 4;
+                        int y = (Int32)(planet.y_coord * globals.scale + globals.origin) - 4;
+                        Color brush = Color.FromArgb(255, planet.owner.color[0], planet.owner.color[1], planet.owner.color[2]);
+                        //Color brush = Color.White;
+                        g.FillEllipse(new SolidBrush(brush), x, y, 9, 9);
+                        GCPlanetForceLabel.Text += "\n"+ planet.username + ": " + planet.owner.textname;
+                    }
+
+                    GCPlanetConnectionLabel.Text = "Uses of map: " + mapUsers.Count;
+                    GCPlanetPotentialLabel.Text = map;
+
+                    if (mapUsers.Count > 1)
+                    {
+                        GCPlanetForceLabel.Text += "\n\nDistance between uses:";
+
+                        List<quantizedObject> distances = new List<quantizedObject>();
+                        for (int i = 0; i < mapUsers.Count - 1; i++)
+                        {
+                            for (int j = i; j < mapUsers.Count; j++)
+                            {
+                                if (mapUsers[i].codename != mapUsers[j].codename)
+                                {
+                                    quantizedObject distance = new quantizedObject
+                                    {
+                                        quantity = CalculatePlanetDistance(mapUsers[i], mapUsers[j]),
+                                        codename = mapUsers[i].username,
+                                        username = mapUsers[j].username,
+                                    };
+                                    distances.Add(distance);
+                                }
+                            }
+                        }
+                        distances.Sort((s1, s2) => s1.quantity.CompareTo(s2.quantity));
+                        foreach (quantizedObject d in distances) GCPlanetForceLabel.Text += "\n" + d.codename + ", " + d.username + ": " + d.quantity;
+                    }
+                }
             }
         }
 
@@ -6893,7 +7187,12 @@ namespace Holocron
         private void AbilityTargetUnitLabel_Click(object sender, EventArgs e)
         {
             MouseEventArgs me = (MouseEventArgs)e;
-            if (me.Button == MouseButtons.Left) MessageBox.Show(AbilityTargetUnitLabel.Text);
+            if (me.Button == MouseButtons.Left)
+            {
+                TextDetail deets = new TextDetail();
+                deets.detail = AbilityTargetUnitLabel.Text;
+                deets.Show();
+            }
             else if (me.Button == MouseButtons.Right) System.Windows.Forms.Clipboard.SetText(AbilityTargetUnitLabel.Text);
         }
 
@@ -6940,6 +7239,15 @@ namespace Holocron
                 deets.detail = "The following hardpoint sounds do not match others of the same type\n\n" + corenne;
                 deets.Show();
             }
+        }
+
+        private void OpenUnitFileButton_Click(object sender, EventArgs e)
+        {
+            if (UnitListBox.Tag is null) return;
+            unit selectedUnit = (unit)UnitListBox.Tag;
+            string datafile = selectedUnit.datafile;
+            if (File.Exists(datafile)) System.Diagnostics.Process.Start(@selectedUnit.datafile);
+            else MessageBox.Show("Could not find unit source file. Is it in a MEG?");
         }
 
         //Don't put any functions below here if you want it to still compile

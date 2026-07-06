@@ -85,7 +85,6 @@
             this.RandomFListBox = new System.Windows.Forms.ListBox();
             this.RegionalTab = new System.Windows.Forms.TabPage();
             this.tabUnits = new System.Windows.Forms.TabPage();
-            this.CollapseAllButton = new System.Windows.Forms.Button();
             this.UnitListBox = new System.Windows.Forms.ListBox();
             this.SpaceStructureRadioButton = new System.Windows.Forms.RadioButton();
             this.FighterRadioButton = new System.Windows.Forms.RadioButton();
@@ -102,6 +101,9 @@
             this.UnitSearchTextBox = new System.Windows.Forms.TextBox();
             this.UnitRadioButton = new System.Windows.Forms.RadioButton();
             this.Unitpanel = new System.Windows.Forms.Panel();
+            this.OpenUnitFileButton = new System.Windows.Forms.Button();
+            this.ExpandAllButton = new System.Windows.Forms.Button();
+            this.CollapseAllButton = new System.Windows.Forms.Button();
             this.UnitSFXPanel = new System.Windows.Forms.Panel();
             this.UnitSFXAmbientRB = new System.Windows.Forms.RadioButton();
             this.UnitSFXMaxPitchLabel = new System.Windows.Forms.Label();
@@ -261,8 +263,14 @@
             this.tabPlanets = new System.Windows.Forms.TabPage();
             this.PlanetListBox = new System.Windows.Forms.ListBox();
             this.PlanetPanel = new System.Windows.Forms.Panel();
+            this.PlanetSharedSpaceSelectAllButton = new System.Windows.Forms.Button();
+            this.PlanetSharedGroundSelectAllButton = new System.Windows.Forms.Button();
             this.PlanetSharedGroundGoToButton = new System.Windows.Forms.Button();
             this.PlanetSharedSpaceGoToButton = new System.Windows.Forms.Button();
+            this.label20 = new System.Windows.Forms.Label();
+            this.SharedSpaceMapListBox = new System.Windows.Forms.ListBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.SharedMapListBox = new System.Windows.Forms.ListBox();
             this.PlanetMissingTextButton = new System.Windows.Forms.Button();
             this.PlanetConnectionsLabel = new System.Windows.Forms.Label();
             this.PlanetSortLabel = new System.Windows.Forms.Label();
@@ -292,18 +300,14 @@
             this.PlanetGCListBox = new System.Windows.Forms.ListBox();
             this.PlanetMapLabel = new System.Windows.Forms.Label();
             this.MapsInPlanetsListbox = new System.Windows.Forms.ListBox();
-            this.label20 = new System.Windows.Forms.Label();
-            this.SharedSpaceMapListBox = new System.Windows.Forms.ListBox();
             this.label19 = new System.Windows.Forms.Label();
             this.PlanetGroundListBox = new System.Windows.Forms.ListBox();
             this.label18 = new System.Windows.Forms.Label();
             this.PlanetSpaceListBox = new System.Windows.Forms.ListBox();
             this.label17 = new System.Windows.Forms.Label();
             this.PlanetStructureListBox = new System.Windows.Forms.ListBox();
-            this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.PlanetSearchBox = new System.Windows.Forms.TextBox();
-            this.SharedMapListBox = new System.Windows.Forms.ListBox();
             this.PlanetShipyardLabel = new System.Windows.Forms.Label();
             this.PlanetHistoryTextBox = new System.Windows.Forms.RichTextBox();
             this.TerrainTypeLabel = new System.Windows.Forms.Label();
@@ -317,6 +321,11 @@
             this.tabGCs = new System.Windows.Forms.TabPage();
             this.GCListBox = new System.Windows.Forms.ListBox();
             this.GCPanel = new System.Windows.Forms.Panel();
+            this.GCMapSortByLabel = new System.Windows.Forms.Label();
+            this.GCMapSortNameRB = new System.Windows.Forms.RadioButton();
+            this.GCMapSortNearestRB = new System.Windows.Forms.RadioButton();
+            this.GCMapSortUsageRB = new System.Windows.Forms.RadioButton();
+            this.GCMapListBox = new System.Windows.Forms.ListBox();
             this.GCTradeRouterCheckBox = new System.Windows.Forms.CheckBox();
             this.SpeechCheckBox = new System.Windows.Forms.CheckBox();
             this.GCChapterLabel = new System.Windows.Forms.Label();
@@ -354,6 +363,8 @@
             this.ProgressiveCheckBox = new System.Windows.Forms.CheckBox();
             this.GCPictureBox = new System.Windows.Forms.PictureBox();
             this.GCSpeechListBox = new System.Windows.Forms.ListBox();
+            this.GCMapModeSpaceCheckBox = new System.Windows.Forms.CheckBox();
+            this.GCMapModeCheckBox = new System.Windows.Forms.CheckBox();
             this.tabFactions = new System.Windows.Forms.TabPage();
             this.FactionPanel = new System.Windows.Forms.Panel();
             this.FactionAliasLabel = new System.Windows.Forms.Label();
@@ -1079,7 +1090,6 @@
             // 
             // tabUnits
             // 
-            this.tabUnits.Controls.Add(this.CollapseAllButton);
             this.tabUnits.Controls.Add(this.UnitListBox);
             this.tabUnits.Controls.Add(this.SpaceStructureRadioButton);
             this.tabUnits.Controls.Add(this.FighterRadioButton);
@@ -1104,18 +1114,6 @@
             this.tabUnits.TabIndex = 2;
             this.tabUnits.Text = "Units/Heroes";
             this.tabUnits.UseVisualStyleBackColor = true;
-            // 
-            // CollapseAllButton
-            // 
-            this.CollapseAllButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseAllButton.Location = new System.Drawing.Point(328, 11);
-            this.CollapseAllButton.Name = "CollapseAllButton";
-            this.CollapseAllButton.Size = new System.Drawing.Size(62, 27);
-            this.CollapseAllButton.TabIndex = 13;
-            this.CollapseAllButton.Tag = "";
-            this.CollapseAllButton.Text = "Collapse All";
-            this.CollapseAllButton.UseVisualStyleBackColor = true;
-            this.CollapseAllButton.Click += new System.EventHandler(this.CollapseAllButton_Click);
             // 
             // UnitListBox
             // 
@@ -1271,7 +1269,7 @@
             this.UnitSearchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.UnitSearchTextBox.Location = new System.Drawing.Point(72, 12);
             this.UnitSearchTextBox.Name = "UnitSearchTextBox";
-            this.UnitSearchTextBox.Size = new System.Drawing.Size(250, 26);
+            this.UnitSearchTextBox.Size = new System.Drawing.Size(318, 26);
             this.UnitSearchTextBox.TabIndex = 51;
             this.UnitSearchTextBox.TextChanged += new System.EventHandler(this.UnitSearchTextBox_TextChanged);
             // 
@@ -1293,6 +1291,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.Unitpanel.AutoScroll = true;
+            this.Unitpanel.Controls.Add(this.OpenUnitFileButton);
+            this.Unitpanel.Controls.Add(this.ExpandAllButton);
+            this.Unitpanel.Controls.Add(this.CollapseAllButton);
             this.Unitpanel.Controls.Add(this.UnitSFXPanel);
             this.Unitpanel.Controls.Add(this.CollapseUnitSFXPanel);
             this.Unitpanel.Controls.Add(this.CollapseUnitAvailPanel);
@@ -1311,6 +1312,45 @@
             this.Unitpanel.Size = new System.Drawing.Size(1091, 775);
             this.Unitpanel.TabIndex = 2;
             // 
+            // OpenUnitFileButton
+            // 
+            this.OpenUnitFileButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OpenUnitFileButton.Location = new System.Drawing.Point(227, 3);
+            this.OpenUnitFileButton.Name = "OpenUnitFileButton";
+            this.OpenUnitFileButton.Size = new System.Drawing.Size(135, 27);
+            this.OpenUnitFileButton.TabIndex = 15;
+            this.OpenUnitFileButton.Tag = "";
+            this.OpenUnitFileButton.Text = "Open Unit File...";
+            this.toolTip1.SetToolTip(this.OpenUnitFileButton, "Open the file defining this unit in the default program for xml files");
+            this.OpenUnitFileButton.UseVisualStyleBackColor = true;
+            this.OpenUnitFileButton.Click += new System.EventHandler(this.OpenUnitFileButton_Click);
+            // 
+            // ExpandAllButton
+            // 
+            this.ExpandAllButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ExpandAllButton.Location = new System.Drawing.Point(116, 3);
+            this.ExpandAllButton.Name = "ExpandAllButton";
+            this.ExpandAllButton.Size = new System.Drawing.Size(105, 27);
+            this.ExpandAllButton.TabIndex = 14;
+            this.ExpandAllButton.Tag = "";
+            this.ExpandAllButton.Text = "Expand All";
+            this.toolTip1.SetToolTip(this.ExpandAllButton, "Expand all panel subdivisions");
+            this.ExpandAllButton.UseVisualStyleBackColor = true;
+            this.ExpandAllButton.Click += new System.EventHandler(this.ExpandAllButton_Click);
+            // 
+            // CollapseAllButton
+            // 
+            this.CollapseAllButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CollapseAllButton.Location = new System.Drawing.Point(5, 3);
+            this.CollapseAllButton.Name = "CollapseAllButton";
+            this.CollapseAllButton.Size = new System.Drawing.Size(105, 27);
+            this.CollapseAllButton.TabIndex = 13;
+            this.CollapseAllButton.Tag = "";
+            this.CollapseAllButton.Text = "Collapse All";
+            this.toolTip1.SetToolTip(this.CollapseAllButton, "Collapse all panel subdivisions");
+            this.CollapseAllButton.UseVisualStyleBackColor = true;
+            this.CollapseAllButton.Click += new System.EventHandler(this.CollapseAllButton_Click);
+            // 
             // UnitSFXPanel
             // 
             this.UnitSFXPanel.Controls.Add(this.UnitSFXAmbientRB);
@@ -1327,7 +1367,7 @@
             this.UnitSFXPanel.Controls.Add(this.UnitPlaySoundButton);
             this.UnitSFXPanel.Controls.Add(this.UnitSampleListBox);
             this.UnitSFXPanel.Controls.Add(this.UnitSFXListbox);
-            this.UnitSFXPanel.Location = new System.Drawing.Point(32, 1547);
+            this.UnitSFXPanel.Location = new System.Drawing.Point(32, 1572);
             this.UnitSFXPanel.Name = "UnitSFXPanel";
             this.UnitSFXPanel.Size = new System.Drawing.Size(1039, 298);
             this.UnitSFXPanel.TabIndex = 12;
@@ -1497,7 +1537,7 @@
             // CollapseUnitSFXPanel
             // 
             this.CollapseUnitSFXPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseUnitSFXPanel.Location = new System.Drawing.Point(5, 1547);
+            this.CollapseUnitSFXPanel.Location = new System.Drawing.Point(5, 1572);
             this.CollapseUnitSFXPanel.Name = "CollapseUnitSFXPanel";
             this.CollapseUnitSFXPanel.Size = new System.Drawing.Size(24, 19);
             this.CollapseUnitSFXPanel.TabIndex = 11;
@@ -1509,7 +1549,7 @@
             // CollapseUnitAvailPanel
             // 
             this.CollapseUnitAvailPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseUnitAvailPanel.Location = new System.Drawing.Point(5, 386);
+            this.CollapseUnitAvailPanel.Location = new System.Drawing.Point(5, 411);
             this.CollapseUnitAvailPanel.Name = "CollapseUnitAvailPanel";
             this.CollapseUnitAvailPanel.Size = new System.Drawing.Size(24, 19);
             this.CollapseUnitAvailPanel.TabIndex = 10;
@@ -1546,7 +1586,7 @@
             this.UnitAvailPanel.Controls.Add(this.ReqStructuresListBox);
             this.UnitAvailPanel.Controls.Add(this.SpawnSetLabel);
             this.UnitAvailPanel.Controls.Add(this.UnitSpawnSetListBox);
-            this.UnitAvailPanel.Location = new System.Drawing.Point(32, 386);
+            this.UnitAvailPanel.Location = new System.Drawing.Point(32, 411);
             this.UnitAvailPanel.Name = "UnitAvailPanel";
             this.UnitAvailPanel.Size = new System.Drawing.Size(1039, 376);
             this.UnitAvailPanel.TabIndex = 9;
@@ -1842,7 +1882,7 @@
             this.UnitAbilityPanel.Controls.Add(this.AbilityPictureBox);
             this.UnitAbilityPanel.Controls.Add(this.AbilityListBox);
             this.UnitAbilityPanel.Controls.Add(this.UnitAbilityListBox);
-            this.UnitAbilityPanel.Location = new System.Drawing.Point(32, 1356);
+            this.UnitAbilityPanel.Location = new System.Drawing.Point(32, 1381);
             this.UnitAbilityPanel.Name = "UnitAbilityPanel";
             this.UnitAbilityPanel.Size = new System.Drawing.Size(1039, 180);
             this.UnitAbilityPanel.TabIndex = 8;
@@ -1913,6 +1953,7 @@
             // AbilityTargetUnitLabel
             // 
             this.AbilityTargetUnitLabel.AutoSize = true;
+            this.AbilityTargetUnitLabel.ForeColor = System.Drawing.SystemColors.HotTrack;
             this.AbilityTargetUnitLabel.Location = new System.Drawing.Point(394, 65);
             this.AbilityTargetUnitLabel.Name = "AbilityTargetUnitLabel";
             this.AbilityTargetUnitLabel.Size = new System.Drawing.Size(68, 13);
@@ -2080,7 +2121,7 @@
             // CollapseUnitSubunitPanel
             // 
             this.CollapseUnitSubunitPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseUnitSubunitPanel.Location = new System.Drawing.Point(5, 1177);
+            this.CollapseUnitSubunitPanel.Location = new System.Drawing.Point(5, 1202);
             this.CollapseUnitSubunitPanel.Name = "CollapseUnitSubunitPanel";
             this.CollapseUnitSubunitPanel.Size = new System.Drawing.Size(24, 19);
             this.CollapseUnitSubunitPanel.TabIndex = 7;
@@ -2103,7 +2144,7 @@
             this.UnitSubunitPanel.Controls.Add(this.SubUnitLabel);
             this.UnitSubunitPanel.Controls.Add(this.UnitSubSquadListbox);
             this.UnitSubunitPanel.Controls.Add(this.UnitSubunitListbox);
-            this.UnitSubunitPanel.Location = new System.Drawing.Point(32, 1177);
+            this.UnitSubunitPanel.Location = new System.Drawing.Point(32, 1202);
             this.UnitSubunitPanel.Name = "UnitSubunitPanel";
             this.UnitSubunitPanel.Size = new System.Drawing.Size(1039, 166);
             this.UnitSubunitPanel.TabIndex = 6;
@@ -2117,6 +2158,7 @@
             this.ComplementXMLCheckBox.Size = new System.Drawing.Size(144, 17);
             this.ComplementXMLCheckBox.TabIndex = 37;
             this.ComplementXMLCheckBox.Text = "Show XML Complements";
+            this.toolTip1.SetToolTip(this.ComplementXMLCheckBox, "Toggle between XML and Lua complements");
             this.ComplementXMLCheckBox.UseVisualStyleBackColor = true;
             this.ComplementXMLCheckBox.Visible = false;
             this.ComplementXMLCheckBox.CheckedChanged += new System.EventHandler(this.ComplementXMLCheckBox_CheckedChanged);
@@ -2300,7 +2342,7 @@
             // CollapseUnitAbilityPanel
             // 
             this.CollapseUnitAbilityPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseUnitAbilityPanel.Location = new System.Drawing.Point(5, 1356);
+            this.CollapseUnitAbilityPanel.Location = new System.Drawing.Point(5, 1381);
             this.CollapseUnitAbilityPanel.Name = "CollapseUnitAbilityPanel";
             this.CollapseUnitAbilityPanel.Size = new System.Drawing.Size(24, 19);
             this.CollapseUnitAbilityPanel.TabIndex = 5;
@@ -2312,7 +2354,7 @@
             // CollapseUnitStatPanel
             // 
             this.CollapseUnitStatPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseUnitStatPanel.Location = new System.Drawing.Point(5, 768);
+            this.CollapseUnitStatPanel.Location = new System.Drawing.Point(5, 793);
             this.CollapseUnitStatPanel.Name = "CollapseUnitStatPanel";
             this.CollapseUnitStatPanel.Size = new System.Drawing.Size(24, 19);
             this.CollapseUnitStatPanel.TabIndex = 4;
@@ -2324,7 +2366,7 @@
             // CollapseUnitTextPanel
             // 
             this.CollapseUnitTextPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseUnitTextPanel.Location = new System.Drawing.Point(5, 8);
+            this.CollapseUnitTextPanel.Location = new System.Drawing.Point(5, 33);
             this.CollapseUnitTextPanel.Name = "CollapseUnitTextPanel";
             this.CollapseUnitTextPanel.Size = new System.Drawing.Size(24, 19);
             this.CollapseUnitTextPanel.TabIndex = 3;
@@ -2378,7 +2420,7 @@
             this.UnitStatPanel.Controls.Add(this.UnitSpeedLabel);
             this.UnitStatPanel.Controls.Add(this.UnitShieldLabel);
             this.UnitStatPanel.Controls.Add(this.UnitHpLabel);
-            this.UnitStatPanel.Location = new System.Drawing.Point(32, 772);
+            this.UnitStatPanel.Location = new System.Drawing.Point(32, 797);
             this.UnitStatPanel.Name = "UnitStatPanel";
             this.UnitStatPanel.Size = new System.Drawing.Size(1039, 396);
             this.UnitStatPanel.TabIndex = 2;
@@ -2863,7 +2905,7 @@
             // UnitBTSPanel
             // 
             this.UnitBTSPanel.Controls.Add(this.UnitBTSTextBox);
-            this.UnitBTSPanel.Location = new System.Drawing.Point(32, 1851);
+            this.UnitBTSPanel.Location = new System.Drawing.Point(32, 1876);
             this.UnitBTSPanel.Name = "UnitBTSPanel";
             this.UnitBTSPanel.Size = new System.Drawing.Size(1039, 150);
             this.UnitBTSPanel.TabIndex = 1;
@@ -2894,7 +2936,7 @@
             this.UnitTextPanel.Controls.Add(this.UnitNameLabel);
             this.UnitTextPanel.Controls.Add(this.UnitCostLabel);
             this.UnitTextPanel.Controls.Add(this.UnitPopLabel);
-            this.UnitTextPanel.Location = new System.Drawing.Point(35, 8);
+            this.UnitTextPanel.Location = new System.Drawing.Point(35, 33);
             this.UnitTextPanel.Name = "UnitTextPanel";
             this.UnitTextPanel.Size = new System.Drawing.Size(1039, 367);
             this.UnitTextPanel.TabIndex = 0;
@@ -3106,8 +3148,14 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.PlanetPanel.AutoScroll = true;
+            this.PlanetPanel.Controls.Add(this.PlanetSharedSpaceSelectAllButton);
+            this.PlanetPanel.Controls.Add(this.PlanetSharedGroundSelectAllButton);
             this.PlanetPanel.Controls.Add(this.PlanetSharedGroundGoToButton);
             this.PlanetPanel.Controls.Add(this.PlanetSharedSpaceGoToButton);
+            this.PlanetPanel.Controls.Add(this.label20);
+            this.PlanetPanel.Controls.Add(this.SharedSpaceMapListBox);
+            this.PlanetPanel.Controls.Add(this.label16);
+            this.PlanetPanel.Controls.Add(this.SharedMapListBox);
             this.PlanetPanel.Controls.Add(this.PlanetMissingTextButton);
             this.PlanetPanel.Controls.Add(this.PlanetConnectionsLabel);
             this.PlanetPanel.Controls.Add(this.PlanetSortLabel);
@@ -3137,18 +3185,14 @@
             this.PlanetPanel.Controls.Add(this.PlanetGCListBox);
             this.PlanetPanel.Controls.Add(this.PlanetMapLabel);
             this.PlanetPanel.Controls.Add(this.MapsInPlanetsListbox);
-            this.PlanetPanel.Controls.Add(this.label20);
-            this.PlanetPanel.Controls.Add(this.SharedSpaceMapListBox);
             this.PlanetPanel.Controls.Add(this.label19);
             this.PlanetPanel.Controls.Add(this.PlanetGroundListBox);
             this.PlanetPanel.Controls.Add(this.label18);
             this.PlanetPanel.Controls.Add(this.PlanetSpaceListBox);
             this.PlanetPanel.Controls.Add(this.label17);
             this.PlanetPanel.Controls.Add(this.PlanetStructureListBox);
-            this.PlanetPanel.Controls.Add(this.label16);
             this.PlanetPanel.Controls.Add(this.label15);
             this.PlanetPanel.Controls.Add(this.PlanetSearchBox);
-            this.PlanetPanel.Controls.Add(this.SharedMapListBox);
             this.PlanetPanel.Controls.Add(this.PlanetShipyardLabel);
             this.PlanetPanel.Controls.Add(this.PlanetHistoryTextBox);
             this.PlanetPanel.Controls.Add(this.TerrainTypeLabel);
@@ -3164,9 +3208,29 @@
             this.PlanetPanel.Size = new System.Drawing.Size(1288, 775);
             this.PlanetPanel.TabIndex = 63;
             // 
+            // PlanetSharedSpaceSelectAllButton
+            // 
+            this.PlanetSharedSpaceSelectAllButton.Location = new System.Drawing.Point(68, 840);
+            this.PlanetSharedSpaceSelectAllButton.Name = "PlanetSharedSpaceSelectAllButton";
+            this.PlanetSharedSpaceSelectAllButton.Size = new System.Drawing.Size(120, 23);
+            this.PlanetSharedSpaceSelectAllButton.TabIndex = 119;
+            this.PlanetSharedSpaceSelectAllButton.Text = "Select All in Filter";
+            this.PlanetSharedSpaceSelectAllButton.UseVisualStyleBackColor = true;
+            this.PlanetSharedSpaceSelectAllButton.Click += new System.EventHandler(this.PlanetSharedSpaceSelectAllButton_Click);
+            // 
+            // PlanetSharedGroundSelectAllButton
+            // 
+            this.PlanetSharedGroundSelectAllButton.Location = new System.Drawing.Point(248, 840);
+            this.PlanetSharedGroundSelectAllButton.Name = "PlanetSharedGroundSelectAllButton";
+            this.PlanetSharedGroundSelectAllButton.Size = new System.Drawing.Size(120, 23);
+            this.PlanetSharedGroundSelectAllButton.TabIndex = 118;
+            this.PlanetSharedGroundSelectAllButton.Text = "Select All in Filter";
+            this.PlanetSharedGroundSelectAllButton.UseVisualStyleBackColor = true;
+            this.PlanetSharedGroundSelectAllButton.Click += new System.EventHandler(this.PlanetSharedGroundSelectAllButton_Click);
+            // 
             // PlanetSharedGroundGoToButton
             // 
-            this.PlanetSharedGroundGoToButton.Location = new System.Drawing.Point(194, 1070);
+            this.PlanetSharedGroundGoToButton.Location = new System.Drawing.Point(199, 840);
             this.PlanetSharedGroundGoToButton.Name = "PlanetSharedGroundGoToButton";
             this.PlanetSharedGroundGoToButton.Size = new System.Drawing.Size(43, 23);
             this.PlanetSharedGroundGoToButton.TabIndex = 117;
@@ -3176,13 +3240,53 @@
             // 
             // PlanetSharedSpaceGoToButton
             // 
-            this.PlanetSharedSpaceGoToButton.Location = new System.Drawing.Point(17, 1070);
+            this.PlanetSharedSpaceGoToButton.Location = new System.Drawing.Point(20, 840);
             this.PlanetSharedSpaceGoToButton.Name = "PlanetSharedSpaceGoToButton";
             this.PlanetSharedSpaceGoToButton.Size = new System.Drawing.Size(43, 23);
             this.PlanetSharedSpaceGoToButton.TabIndex = 116;
             this.PlanetSharedSpaceGoToButton.Text = "Go to";
             this.PlanetSharedSpaceGoToButton.UseVisualStyleBackColor = true;
             this.PlanetSharedSpaceGoToButton.Click += new System.EventHandler(this.PlanetSharedSpaceGoToButton_Click);
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label20.Location = new System.Drawing.Point(16, 672);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(154, 20);
+            this.label20.TabIndex = 86;
+            this.label20.Text = "Shared Space Maps";
+            // 
+            // SharedSpaceMapListBox
+            // 
+            this.SharedSpaceMapListBox.FormattingEnabled = true;
+            this.SharedSpaceMapListBox.Location = new System.Drawing.Point(19, 700);
+            this.SharedSpaceMapListBox.Name = "SharedSpaceMapListBox";
+            this.SharedSpaceMapListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.SharedSpaceMapListBox.Size = new System.Drawing.Size(170, 134);
+            this.SharedSpaceMapListBox.TabIndex = 85;
+            this.SharedSpaceMapListBox.SelectedIndexChanged += new System.EventHandler(this.SharedSpaceMapListBox_SelectedIndexChanged);
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label16.Location = new System.Drawing.Point(194, 672);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(162, 20);
+            this.label16.TabIndex = 77;
+            this.label16.Text = "Shared Ground Maps";
+            // 
+            // SharedMapListBox
+            // 
+            this.SharedMapListBox.FormattingEnabled = true;
+            this.SharedMapListBox.Location = new System.Drawing.Point(197, 700);
+            this.SharedMapListBox.Name = "SharedMapListBox";
+            this.SharedMapListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.SharedMapListBox.Size = new System.Drawing.Size(170, 134);
+            this.SharedMapListBox.TabIndex = 74;
+            this.SharedMapListBox.SelectedIndexChanged += new System.EventHandler(this.SharedMapListBox_SelectedIndexChanged);
             // 
             // PlanetMissingTextButton
             // 
@@ -3354,7 +3458,7 @@
             // 
             // PlanetGroundUnitsGoToButton
             // 
-            this.PlanetGroundUnitsGoToButton.Location = new System.Drawing.Point(370, 857);
+            this.PlanetGroundUnitsGoToButton.Location = new System.Drawing.Point(373, 1053);
             this.PlanetGroundUnitsGoToButton.Name = "PlanetGroundUnitsGoToButton";
             this.PlanetGroundUnitsGoToButton.Size = new System.Drawing.Size(43, 23);
             this.PlanetGroundUnitsGoToButton.TabIndex = 99;
@@ -3364,7 +3468,7 @@
             // 
             // PlanetSpaceUnitsGoToButton
             // 
-            this.PlanetSpaceUnitsGoToButton.Location = new System.Drawing.Point(194, 857);
+            this.PlanetSpaceUnitsGoToButton.Location = new System.Drawing.Point(197, 1053);
             this.PlanetSpaceUnitsGoToButton.Name = "PlanetSpaceUnitsGoToButton";
             this.PlanetSpaceUnitsGoToButton.Size = new System.Drawing.Size(43, 23);
             this.PlanetSpaceUnitsGoToButton.TabIndex = 98;
@@ -3374,7 +3478,7 @@
             // 
             // PlanetStructuresGoToButton
             // 
-            this.PlanetStructuresGoToButton.Location = new System.Drawing.Point(16, 857);
+            this.PlanetStructuresGoToButton.Location = new System.Drawing.Point(19, 1053);
             this.PlanetStructuresGoToButton.Name = "PlanetStructuresGoToButton";
             this.PlanetStructuresGoToButton.Size = new System.Drawing.Size(43, 23);
             this.PlanetStructuresGoToButton.TabIndex = 97;
@@ -3485,31 +3589,11 @@
             this.MapsInPlanetsListbox.TabIndex = 87;
             this.MapsInPlanetsListbox.SelectedIndexChanged += new System.EventHandler(this.MapsInPlanetsListbox_SelectedIndexChanged);
             // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label20.Location = new System.Drawing.Point(13, 902);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(154, 20);
-            this.label20.TabIndex = 86;
-            this.label20.Text = "Shared Space Maps";
-            // 
-            // SharedSpaceMapListBox
-            // 
-            this.SharedSpaceMapListBox.FormattingEnabled = true;
-            this.SharedSpaceMapListBox.Location = new System.Drawing.Point(16, 930);
-            this.SharedSpaceMapListBox.Name = "SharedSpaceMapListBox";
-            this.SharedSpaceMapListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.SharedSpaceMapListBox.Size = new System.Drawing.Size(170, 134);
-            this.SharedSpaceMapListBox.TabIndex = 85;
-            this.SharedSpaceMapListBox.SelectedIndexChanged += new System.EventHandler(this.SharedSpaceMapListBox_SelectedIndexChanged);
-            // 
             // label19
             // 
             this.label19.AutoSize = true;
             this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label19.Location = new System.Drawing.Point(366, 689);
+            this.label19.Location = new System.Drawing.Point(369, 885);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(153, 20);
             this.label19.TabIndex = 84;
@@ -3518,7 +3602,7 @@
             // PlanetGroundListBox
             // 
             this.PlanetGroundListBox.FormattingEnabled = true;
-            this.PlanetGroundListBox.Location = new System.Drawing.Point(369, 717);
+            this.PlanetGroundListBox.Location = new System.Drawing.Point(372, 913);
             this.PlanetGroundListBox.Name = "PlanetGroundListBox";
             this.PlanetGroundListBox.Size = new System.Drawing.Size(170, 134);
             this.PlanetGroundListBox.TabIndex = 83;
@@ -3527,7 +3611,7 @@
             // 
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label18.Location = new System.Drawing.Point(190, 689);
+            this.label18.Location = new System.Drawing.Point(193, 885);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(145, 20);
             this.label18.TabIndex = 82;
@@ -3536,7 +3620,7 @@
             // PlanetSpaceListBox
             // 
             this.PlanetSpaceListBox.FormattingEnabled = true;
-            this.PlanetSpaceListBox.Location = new System.Drawing.Point(193, 717);
+            this.PlanetSpaceListBox.Location = new System.Drawing.Point(196, 913);
             this.PlanetSpaceListBox.Name = "PlanetSpaceListBox";
             this.PlanetSpaceListBox.Size = new System.Drawing.Size(170, 134);
             this.PlanetSpaceListBox.TabIndex = 81;
@@ -3545,7 +3629,7 @@
             // 
             this.label17.AutoSize = true;
             this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label17.Location = new System.Drawing.Point(12, 689);
+            this.label17.Location = new System.Drawing.Point(15, 885);
             this.label17.Name = "label17";
             this.label17.Size = new System.Drawing.Size(132, 20);
             this.label17.TabIndex = 80;
@@ -3554,20 +3638,10 @@
             // PlanetStructureListBox
             // 
             this.PlanetStructureListBox.FormattingEnabled = true;
-            this.PlanetStructureListBox.Location = new System.Drawing.Point(15, 717);
+            this.PlanetStructureListBox.Location = new System.Drawing.Point(18, 913);
             this.PlanetStructureListBox.Name = "PlanetStructureListBox";
             this.PlanetStructureListBox.Size = new System.Drawing.Size(170, 134);
             this.PlanetStructureListBox.TabIndex = 79;
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.Location = new System.Drawing.Point(189, 902);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(162, 20);
-            this.label16.TabIndex = 77;
-            this.label16.Text = "Shared Ground Maps";
             // 
             // label15
             // 
@@ -3587,16 +3661,6 @@
             this.PlanetSearchBox.Size = new System.Drawing.Size(299, 26);
             this.PlanetSearchBox.TabIndex = 75;
             this.PlanetSearchBox.TextChanged += new System.EventHandler(this.PlanetSearchBox_TextChanged);
-            // 
-            // SharedMapListBox
-            // 
-            this.SharedMapListBox.FormattingEnabled = true;
-            this.SharedMapListBox.Location = new System.Drawing.Point(192, 930);
-            this.SharedMapListBox.Name = "SharedMapListBox";
-            this.SharedMapListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.SharedMapListBox.Size = new System.Drawing.Size(170, 134);
-            this.SharedMapListBox.TabIndex = 74;
-            this.SharedMapListBox.SelectedIndexChanged += new System.EventHandler(this.SharedMapListBox_SelectedIndexChanged);
             // 
             // PlanetShipyardLabel
             // 
@@ -3724,6 +3788,11 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.GCPanel.AutoScroll = true;
+            this.GCPanel.Controls.Add(this.GCMapSortByLabel);
+            this.GCPanel.Controls.Add(this.GCMapSortNameRB);
+            this.GCPanel.Controls.Add(this.GCMapSortNearestRB);
+            this.GCPanel.Controls.Add(this.GCMapSortUsageRB);
+            this.GCPanel.Controls.Add(this.GCMapListBox);
             this.GCPanel.Controls.Add(this.GCTradeRouterCheckBox);
             this.GCPanel.Controls.Add(this.SpeechCheckBox);
             this.GCPanel.Controls.Add(this.GCChapterLabel);
@@ -3761,10 +3830,71 @@
             this.GCPanel.Controls.Add(this.ProgressiveCheckBox);
             this.GCPanel.Controls.Add(this.GCPictureBox);
             this.GCPanel.Controls.Add(this.GCSpeechListBox);
+            this.GCPanel.Controls.Add(this.GCMapModeSpaceCheckBox);
+            this.GCPanel.Controls.Add(this.GCMapModeCheckBox);
             this.GCPanel.Location = new System.Drawing.Point(398, 6);
             this.GCPanel.Name = "GCPanel";
             this.GCPanel.Size = new System.Drawing.Size(1081, 769);
             this.GCPanel.TabIndex = 64;
+            // 
+            // GCMapSortByLabel
+            // 
+            this.GCMapSortByLabel.AutoSize = true;
+            this.GCMapSortByLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCMapSortByLabel.Location = new System.Drawing.Point(959, 58);
+            this.GCMapSortByLabel.Name = "GCMapSortByLabel";
+            this.GCMapSortByLabel.Size = new System.Drawing.Size(44, 13);
+            this.GCMapSortByLabel.TabIndex = 110;
+            this.GCMapSortByLabel.Text = "Sort By:";
+            this.GCMapSortByLabel.Visible = false;
+            // 
+            // GCMapSortNameRB
+            // 
+            this.GCMapSortNameRB.AutoSize = true;
+            this.GCMapSortNameRB.Location = new System.Drawing.Point(962, 120);
+            this.GCMapSortNameRB.Name = "GCMapSortNameRB";
+            this.GCMapSortNameRB.Size = new System.Drawing.Size(53, 17);
+            this.GCMapSortNameRB.TabIndex = 109;
+            this.GCMapSortNameRB.Text = "Name";
+            this.GCMapSortNameRB.UseVisualStyleBackColor = true;
+            this.GCMapSortNameRB.Visible = false;
+            this.GCMapSortNameRB.CheckedChanged += new System.EventHandler(this.RedoGCMapListEvent);
+            // 
+            // GCMapSortNearestRB
+            // 
+            this.GCMapSortNearestRB.AutoSize = true;
+            this.GCMapSortNearestRB.Location = new System.Drawing.Point(962, 97);
+            this.GCMapSortNearestRB.Name = "GCMapSortNearestRB";
+            this.GCMapSortNearestRB.Size = new System.Drawing.Size(99, 17);
+            this.GCMapSortNearestRB.TabIndex = 108;
+            this.GCMapSortNearestRB.Text = "Nearest Shared";
+            this.GCMapSortNearestRB.UseVisualStyleBackColor = true;
+            this.GCMapSortNearestRB.Visible = false;
+            this.GCMapSortNearestRB.CheckedChanged += new System.EventHandler(this.RedoGCMapListEvent);
+            // 
+            // GCMapSortUsageRB
+            // 
+            this.GCMapSortUsageRB.AutoSize = true;
+            this.GCMapSortUsageRB.Checked = true;
+            this.GCMapSortUsageRB.Location = new System.Drawing.Point(962, 76);
+            this.GCMapSortUsageRB.Name = "GCMapSortUsageRB";
+            this.GCMapSortUsageRB.Size = new System.Drawing.Size(56, 17);
+            this.GCMapSortUsageRB.TabIndex = 107;
+            this.GCMapSortUsageRB.TabStop = true;
+            this.GCMapSortUsageRB.Text = "Usage";
+            this.GCMapSortUsageRB.UseVisualStyleBackColor = true;
+            this.GCMapSortUsageRB.Visible = false;
+            this.GCMapSortUsageRB.CheckedChanged += new System.EventHandler(this.RedoGCMapListEvent);
+            // 
+            // GCMapListBox
+            // 
+            this.GCMapListBox.FormattingEnabled = true;
+            this.GCMapListBox.Location = new System.Drawing.Point(702, 79);
+            this.GCMapListBox.Name = "GCMapListBox";
+            this.GCMapListBox.Size = new System.Drawing.Size(149, 784);
+            this.GCMapListBox.TabIndex = 106;
+            this.GCMapListBox.Visible = false;
+            this.GCMapListBox.SelectedIndexChanged += new System.EventHandler(this.GCMapListBox_SelectedIndexChanged);
             // 
             // GCTradeRouterCheckBox
             // 
@@ -3860,6 +3990,7 @@
             this.GCPresentBorderingLabel.Size = new System.Drawing.Size(139, 20);
             this.GCPresentBorderingLabel.TabIndex = 94;
             this.GCPresentBorderingLabel.Text = "Bordering Planets:";
+            this.toolTip1.SetToolTip(this.GCPresentBorderingLabel, resources.GetString("GCPresentBorderingLabel.ToolTip"));
             // 
             // ConquestBTSTextBox
             // 
@@ -3963,9 +4094,7 @@
             this.GCPresentBorderLabel.Size = new System.Drawing.Size(118, 20);
             this.GCPresentBorderLabel.TabIndex = 81;
             this.GCPresentBorderLabel.Text = "Border Planets:";
-            this.toolTip1.SetToolTip(this.GCPresentBorderLabel, "Count of planets bordering another playable/active faction\r\n\r\nFactions with an AI" +
-        " type of None are not included, or with no AI type and marked <Is_Playable>false" +
-        "</Is_Playable>");
+            this.toolTip1.SetToolTip(this.GCPresentBorderLabel, resources.GetString("GCPresentBorderLabel.ToolTip"));
             // 
             // GCPresentShipyardsLabel
             // 
@@ -4163,6 +4292,29 @@
             this.GCSpeechListBox.TabIndex = 101;
             this.toolTip1.SetToolTip(this.GCSpeechListBox, "The factions that start with planets in this Galactic Conquest");
             this.GCSpeechListBox.SelectedIndexChanged += new System.EventHandler(this.GCSpeechListBox_SelectedIndexChanged);
+            // 
+            // GCMapModeSpaceCheckBox
+            // 
+            this.GCMapModeSpaceCheckBox.AutoSize = true;
+            this.GCMapModeSpaceCheckBox.Location = new System.Drawing.Point(791, 59);
+            this.GCMapModeSpaceCheckBox.Name = "GCMapModeSpaceCheckBox";
+            this.GCMapModeSpaceCheckBox.Size = new System.Drawing.Size(60, 17);
+            this.GCMapModeSpaceCheckBox.TabIndex = 105;
+            this.GCMapModeSpaceCheckBox.Text = "Space ";
+            this.GCMapModeSpaceCheckBox.UseVisualStyleBackColor = true;
+            this.GCMapModeSpaceCheckBox.Visible = false;
+            this.GCMapModeSpaceCheckBox.CheckedChanged += new System.EventHandler(this.RedoGCMapListEvent);
+            // 
+            // GCMapModeCheckBox
+            // 
+            this.GCMapModeCheckBox.AutoSize = true;
+            this.GCMapModeCheckBox.Location = new System.Drawing.Point(861, 59);
+            this.GCMapModeCheckBox.Name = "GCMapModeCheckBox";
+            this.GCMapModeCheckBox.Size = new System.Drawing.Size(77, 17);
+            this.GCMapModeCheckBox.TabIndex = 104;
+            this.GCMapModeCheckBox.Text = "Map Mode";
+            this.GCMapModeCheckBox.UseVisualStyleBackColor = true;
+            this.GCMapModeCheckBox.CheckedChanged += new System.EventHandler(this.GCMapModeCheckBox_CheckedChanged);
             // 
             // tabFactions
             // 
@@ -5528,6 +5680,17 @@
         private System.Windows.Forms.Button CollapseAllButton;
         private System.Windows.Forms.Button PlanetSharedGroundGoToButton;
         private System.Windows.Forms.Button PlanetSharedSpaceGoToButton;
+        private System.Windows.Forms.Button PlanetSharedSpaceSelectAllButton;
+        private System.Windows.Forms.Button PlanetSharedGroundSelectAllButton;
+        private System.Windows.Forms.CheckBox GCMapModeCheckBox;
+        private System.Windows.Forms.CheckBox GCMapModeSpaceCheckBox;
+        private System.Windows.Forms.ListBox GCMapListBox;
+        private System.Windows.Forms.Label GCMapSortByLabel;
+        private System.Windows.Forms.RadioButton GCMapSortNameRB;
+        private System.Windows.Forms.RadioButton GCMapSortNearestRB;
+        private System.Windows.Forms.RadioButton GCMapSortUsageRB;
+        private System.Windows.Forms.Button OpenUnitFileButton;
+        private System.Windows.Forms.Button ExpandAllButton;
     }
 }
 

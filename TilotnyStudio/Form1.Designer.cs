@@ -42,7 +42,7 @@
             this.ModListBox = new System.Windows.Forms.ListBox();
             this.button1 = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.BoardingCheckBox = new System.Windows.Forms.CheckBox();
             this.PathfindCheckBox = new System.Windows.Forms.CheckBox();
             this.FactionPanel = new System.Windows.Forms.Panel();
             this.label4 = new System.Windows.Forms.Label();
@@ -114,6 +114,22 @@
             this.hpBox = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
             this.StatTemplateCheckBox = new System.Windows.Forms.CheckBox();
+            this.UnitCopyTab = new System.Windows.Forms.TabPage();
+            this.label15 = new System.Windows.Forms.Label();
+            this.CopyUnitDescTextBox = new System.Windows.Forms.RichTextBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.CopyUnitUsernameTextBox = new System.Windows.Forms.TextBox();
+            this.UnitNewStatsCheckBox = new System.Windows.Forms.CheckBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.CopyUnitNameTextBox = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.NewUnitHPFileTextBox = new System.Windows.Forms.TextBox();
+            this.NewUnitHPFileCheckBox = new System.Windows.Forms.CheckBox();
+            this.UnitHPCopyFileComboBox = new System.Windows.Forms.ComboBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.NewUnitFileTextBox = new System.Windows.Forms.TextBox();
+            this.NewUnitFileCheckBox = new System.Windows.Forms.CheckBox();
+            this.UnitCopyFileComboBox = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.AffilSearchTextBox = new System.Windows.Forms.TextBox();
             this.GroundRadioButton = new System.Windows.Forms.RadioButton();
@@ -129,7 +145,8 @@
             this.VersionComboBox = new System.Windows.Forms.ComboBox();
             this.ModFilesButton = new System.Windows.Forms.Button();
             this.SuperToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.UnitCopyTab = new System.Windows.Forms.TabPage();
+            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.label16 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -152,6 +169,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.CostBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PopBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hpBox)).BeginInit();
+            this.UnitCopyTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -223,7 +241,6 @@
             this.CopyModButton.TabIndex = 6;
             this.CopyModButton.Text = "Copy Submod...";
             this.CopyModButton.UseVisualStyleBackColor = true;
-            this.CopyModButton.Visible = false;
             this.CopyModButton.Click += new System.EventHandler(this.CopyModButton_Click);
             // 
             // DeleteButton
@@ -289,7 +306,7 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.checkBox1);
+            this.tabPage2.Controls.Add(this.BoardingCheckBox);
             this.tabPage2.Controls.Add(this.PathfindCheckBox);
             this.tabPage2.Controls.Add(this.FactionPanel);
             this.tabPage2.Controls.Add(this.label4);
@@ -303,18 +320,18 @@
             this.tabPage2.Text = "Faction/Pop";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // BoardingCheckBox
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox1.Location = new System.Drawing.Point(952, 9);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(182, 24);
-            this.checkBox1.TabIndex = 9;
-            this.checkBox1.Text = "Guaranteed Boarding";
-            this.SuperToolTip.SetToolTip(this.checkBox1, "Toggle 100% capture chance on Boarding Shuttles");
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.Visible = false;
+            this.BoardingCheckBox.AutoSize = true;
+            this.BoardingCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BoardingCheckBox.Location = new System.Drawing.Point(952, 9);
+            this.BoardingCheckBox.Name = "BoardingCheckBox";
+            this.BoardingCheckBox.Size = new System.Drawing.Size(182, 24);
+            this.BoardingCheckBox.TabIndex = 9;
+            this.BoardingCheckBox.Text = "Guaranteed Boarding";
+            this.SuperToolTip.SetToolTip(this.BoardingCheckBox, "Toggle 100% capture chance on Boarding Shuttles");
+            this.BoardingCheckBox.UseVisualStyleBackColor = true;
+            this.BoardingCheckBox.Visible = false;
             // 
             // PathfindCheckBox
             // 
@@ -1214,6 +1231,176 @@
             this.StatTemplateCheckBox.Text = "Apply edits to all templates and variants";
             this.StatTemplateCheckBox.UseVisualStyleBackColor = true;
             // 
+            // UnitCopyTab
+            // 
+            this.UnitCopyTab.Controls.Add(this.label16);
+            this.UnitCopyTab.Controls.Add(this.label15);
+            this.UnitCopyTab.Controls.Add(this.CopyUnitDescTextBox);
+            this.UnitCopyTab.Controls.Add(this.label14);
+            this.UnitCopyTab.Controls.Add(this.CopyUnitUsernameTextBox);
+            this.UnitCopyTab.Controls.Add(this.UnitNewStatsCheckBox);
+            this.UnitCopyTab.Controls.Add(this.label13);
+            this.UnitCopyTab.Controls.Add(this.CopyUnitNameTextBox);
+            this.UnitCopyTab.Controls.Add(this.label12);
+            this.UnitCopyTab.Controls.Add(this.NewUnitHPFileTextBox);
+            this.UnitCopyTab.Controls.Add(this.NewUnitHPFileCheckBox);
+            this.UnitCopyTab.Controls.Add(this.UnitHPCopyFileComboBox);
+            this.UnitCopyTab.Controls.Add(this.label10);
+            this.UnitCopyTab.Controls.Add(this.NewUnitFileTextBox);
+            this.UnitCopyTab.Controls.Add(this.NewUnitFileCheckBox);
+            this.UnitCopyTab.Controls.Add(this.UnitCopyFileComboBox);
+            this.UnitCopyTab.Location = new System.Drawing.Point(4, 22);
+            this.UnitCopyTab.Name = "UnitCopyTab";
+            this.UnitCopyTab.Size = new System.Drawing.Size(920, 634);
+            this.UnitCopyTab.TabIndex = 2;
+            this.UnitCopyTab.Text = "Copy";
+            this.UnitCopyTab.UseVisualStyleBackColor = true;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.Location = new System.Drawing.Point(25, 225);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(124, 20);
+            this.label15.TabIndex = 14;
+            this.label15.Text = "New Description";
+            // 
+            // CopyUnitDescTextBox
+            // 
+            this.CopyUnitDescTextBox.Location = new System.Drawing.Point(220, 223);
+            this.CopyUnitDescTextBox.Name = "CopyUnitDescTextBox";
+            this.CopyUnitDescTextBox.Size = new System.Drawing.Size(476, 171);
+            this.CopyUnitDescTextBox.TabIndex = 13;
+            this.CopyUnitDescTextBox.Text = "";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(25, 176);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(180, 20);
+            this.label14.TabIndex = 12;
+            this.label14.Text = "New User Facing Name:";
+            // 
+            // CopyUnitUsernameTextBox
+            // 
+            this.CopyUnitUsernameTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CopyUnitUsernameTextBox.Location = new System.Drawing.Point(220, 173);
+            this.CopyUnitUsernameTextBox.Name = "CopyUnitUsernameTextBox";
+            this.CopyUnitUsernameTextBox.Size = new System.Drawing.Size(476, 26);
+            this.CopyUnitUsernameTextBox.TabIndex = 11;
+            // 
+            // UnitNewStatsCheckBox
+            // 
+            this.UnitNewStatsCheckBox.AutoSize = true;
+            this.UnitNewStatsCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitNewStatsCheckBox.Location = new System.Drawing.Point(29, 146);
+            this.UnitNewStatsCheckBox.Name = "UnitNewStatsCheckBox";
+            this.UnitNewStatsCheckBox.Size = new System.Drawing.Size(149, 24);
+            this.UnitNewStatsCheckBox.TabIndex = 10;
+            this.UnitNewStatsCheckBox.Text = "Deep Copy Stats";
+            this.SuperToolTip.SetToolTip(this.UnitNewStatsCheckBox, "Make a complete copy of the unit stats so they can be changed independently of th" +
+        "e original");
+            this.UnitNewStatsCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.Location = new System.Drawing.Point(25, 99);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(123, 20);
+            this.label13.TabIndex = 9;
+            this.label13.Text = "New Unit Name:";
+            // 
+            // CopyUnitNameTextBox
+            // 
+            this.CopyUnitNameTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CopyUnitNameTextBox.Location = new System.Drawing.Point(220, 96);
+            this.CopyUnitNameTextBox.Name = "CopyUnitNameTextBox";
+            this.CopyUnitNameTextBox.Size = new System.Drawing.Size(476, 26);
+            this.CopyUnitNameTextBox.TabIndex = 8;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.Location = new System.Drawing.Point(24, 514);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(190, 20);
+            this.label12.TabIndex = 7;
+            this.label12.Text = "File to copy hardpoints to:";
+            // 
+            // NewUnitHPFileTextBox
+            // 
+            this.NewUnitHPFileTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NewUnitHPFileTextBox.Location = new System.Drawing.Point(220, 542);
+            this.NewUnitHPFileTextBox.Name = "NewUnitHPFileTextBox";
+            this.NewUnitHPFileTextBox.Size = new System.Drawing.Size(476, 26);
+            this.NewUnitHPFileTextBox.TabIndex = 6;
+            // 
+            // NewUnitHPFileCheckBox
+            // 
+            this.NewUnitHPFileCheckBox.AutoSize = true;
+            this.NewUnitHPFileCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NewUnitHPFileCheckBox.Location = new System.Drawing.Point(29, 544);
+            this.NewUnitHPFileCheckBox.Name = "NewUnitHPFileCheckBox";
+            this.NewUnitHPFileCheckBox.Size = new System.Drawing.Size(166, 24);
+            this.NewUnitHPFileCheckBox.TabIndex = 5;
+            this.NewUnitHPFileCheckBox.Text = "Create New HP File";
+            this.NewUnitHPFileCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // UnitHPCopyFileComboBox
+            // 
+            this.UnitHPCopyFileComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.UnitHPCopyFileComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitHPCopyFileComboBox.FormattingEnabled = true;
+            this.UnitHPCopyFileComboBox.Location = new System.Drawing.Point(220, 511);
+            this.UnitHPCopyFileComboBox.Name = "UnitHPCopyFileComboBox";
+            this.UnitHPCopyFileComboBox.Size = new System.Drawing.Size(476, 28);
+            this.UnitHPCopyFileComboBox.TabIndex = 4;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Location = new System.Drawing.Point(24, 17);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(141, 20);
+            this.label10.TabIndex = 3;
+            this.label10.Text = "File to copy unit to:";
+            // 
+            // NewUnitFileTextBox
+            // 
+            this.NewUnitFileTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NewUnitFileTextBox.Location = new System.Drawing.Point(220, 45);
+            this.NewUnitFileTextBox.Name = "NewUnitFileTextBox";
+            this.NewUnitFileTextBox.Size = new System.Drawing.Size(476, 26);
+            this.NewUnitFileTextBox.TabIndex = 2;
+            // 
+            // NewUnitFileCheckBox
+            // 
+            this.NewUnitFileCheckBox.AutoSize = true;
+            this.NewUnitFileCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NewUnitFileCheckBox.Location = new System.Drawing.Point(29, 47);
+            this.NewUnitFileCheckBox.Name = "NewUnitFileCheckBox";
+            this.NewUnitFileCheckBox.Size = new System.Drawing.Size(173, 24);
+            this.NewUnitFileCheckBox.TabIndex = 1;
+            this.NewUnitFileCheckBox.Text = "Create New Unit File";
+            this.NewUnitFileCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // UnitCopyFileComboBox
+            // 
+            this.UnitCopyFileComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.UnitCopyFileComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitCopyFileComboBox.FormattingEnabled = true;
+            this.UnitCopyFileComboBox.Location = new System.Drawing.Point(220, 14);
+            this.UnitCopyFileComboBox.Name = "UnitCopyFileComboBox";
+            this.UnitCopyFileComboBox.Size = new System.Drawing.Size(476, 28);
+            this.UnitCopyFileComboBox.TabIndex = 0;
+            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -1366,14 +1553,20 @@
             this.ModFilesButton.UseVisualStyleBackColor = true;
             this.ModFilesButton.Click += new System.EventHandler(this.ModFilesButton_Click);
             // 
-            // UnitCopyTab
+            // contextMenuStrip2
             // 
-            this.UnitCopyTab.Location = new System.Drawing.Point(4, 22);
-            this.UnitCopyTab.Name = "UnitCopyTab";
-            this.UnitCopyTab.Size = new System.Drawing.Size(920, 634);
-            this.UnitCopyTab.TabIndex = 2;
-            this.UnitCopyTab.Text = "Copy";
-            this.UnitCopyTab.UseVisualStyleBackColor = true;
+            this.contextMenuStrip2.Name = "contextMenuStrip2";
+            this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label16.Location = new System.Drawing.Point(216, 135);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(242, 16);
+            this.label16.TabIndex = 15;
+            this.label16.Text = "New unit will have its affiiliations cleared";
             // 
             // Form1
             // 
@@ -1420,6 +1613,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.CostBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PopBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.hpBox)).EndInit();
+            this.UnitCopyTab.ResumeLayout(false);
+            this.UnitCopyTab.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1515,7 +1710,7 @@
         private System.Windows.Forms.Label CrewLabel;
         private System.Windows.Forms.NumericUpDown CrewBox;
         private System.Windows.Forms.Label hpFinePrintLabel;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox BoardingCheckBox;
         private System.Windows.Forms.ToolTip SuperToolTip;
         private System.Windows.Forms.Button CopyModButton;
         private System.Windows.Forms.CheckBox SuperShipCheckBox;
@@ -1527,6 +1722,23 @@
         private System.Windows.Forms.RadioButton GroundHeroRadioButton;
         private System.Windows.Forms.CheckBox ShowAllModsCheckBox;
         private System.Windows.Forms.TabPage UnitCopyTab;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox NewUnitFileTextBox;
+        private System.Windows.Forms.CheckBox NewUnitFileCheckBox;
+        private System.Windows.Forms.ComboBox UnitCopyFileComboBox;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox NewUnitHPFileTextBox;
+        private System.Windows.Forms.CheckBox NewUnitHPFileCheckBox;
+        private System.Windows.Forms.ComboBox UnitHPCopyFileComboBox;
+        private System.Windows.Forms.CheckBox UnitNewStatsCheckBox;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox CopyUnitNameTextBox;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.TextBox CopyUnitUsernameTextBox;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.RichTextBox CopyUnitDescTextBox;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.Label label16;
     }
 }
 
