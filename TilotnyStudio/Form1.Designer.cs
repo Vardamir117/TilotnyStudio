@@ -115,6 +115,7 @@
             this.label6 = new System.Windows.Forms.Label();
             this.StatTemplateCheckBox = new System.Windows.Forms.CheckBox();
             this.UnitCopyTab = new System.Windows.Forms.TabPage();
+            this.label16 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.CopyUnitDescTextBox = new System.Windows.Forms.RichTextBox();
             this.label14 = new System.Windows.Forms.Label();
@@ -146,7 +147,6 @@
             this.ModFilesButton = new System.Windows.Forms.Button();
             this.SuperToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.label16 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -1256,6 +1256,16 @@
             this.UnitCopyTab.Text = "Copy";
             this.UnitCopyTab.UseVisualStyleBackColor = true;
             // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label16.Location = new System.Drawing.Point(216, 135);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(242, 16);
+            this.label16.TabIndex = 15;
+            this.label16.Text = "New unit will have its affiiliations cleared";
+            // 
             // label15
             // 
             this.label15.AutoSize = true;
@@ -1558,16 +1568,6 @@
             this.contextMenuStrip2.Name = "contextMenuStrip2";
             this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
             // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label16.Location = new System.Drawing.Point(216, 135);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(242, 16);
-            this.label16.TabIndex = 15;
-            this.label16.Text = "New unit will have its affiiliations cleared";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1583,7 +1583,7 @@
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "Tilotny Submodding Studio v0.2";
+            this.Text = "Tilotny Submodding Studio v0.3";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);

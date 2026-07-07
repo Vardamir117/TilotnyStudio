@@ -5,6 +5,7 @@ using System.Linq;
 using System.IO;
 using System.Xml;
 using System.Drawing;
+using System.Windows.Forms;
 
 //todo wrap file reading in exceptions to say which file it is
 
@@ -1781,22 +1782,30 @@ public static class SharedFunctions
         string path = getModFile(objectfile, entities);
         if (path == "") path = "*" + objectfile;
 
-        XmlDocument doc = readModXmlOrMeg(objectfile, entities);
-        XmlNode root = doc.DocumentElement;
-        if (root is null) return;
-
-        XmlNodeList objects = root.SelectNodes("*");
-        foreach (XmlNode entity in objects)
+        try
         {
-            if (!(entity is null))
+            XmlDocument doc = readModXmlOrMeg(objectfile, entities);
+            XmlNode root = doc.DocumentElement;
+            if (root is null) return;
+
+            XmlNodeList objects = root.SelectNodes("*");
+            foreach (XmlNode entity in objects)
             {
-                if (!(entity.LastChild is null))
+                if (!(entity is null))
                 {
-                    if (parseUnit(entity, entities, path)) break;
+                    if (!(entity.LastChild is null))
+                    {
+                        if (parseUnit(entity, entities, path)) break;
+                    }
                 }
+                //parseUnit(file, entities);
             }
-            //parseUnit(file, entities);
         }
+        catch (Exception e)
+        {
+            MessageBox.Show("Error parsing file " + LastFolderOrFile(path) + "\n" + e.Message + "\n\nParsing will continue, but data will be missing");
+        }
+        
     }
 
     public static void parseObjects(entities entities)
@@ -1976,6 +1985,11 @@ public static class SharedFunctions
         string path = getModFile("Megafiles.xml", entities); //todo add optional third arg to alway use vanilla? But get sound files working on vanilla first
         XmlDocument doc = new XmlDocument();
         doc.PreserveWhitespace = true;
+        if (path == "")
+        {
+            MessageBox.Show("Meg data not found. Data may be missing");
+            return;
+        }
         doc.Load(path);
 
         XmlNode root = doc.DocumentElement;
