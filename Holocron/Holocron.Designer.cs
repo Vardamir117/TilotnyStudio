@@ -28,8 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Holocron));
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.backToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.forwardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -325,7 +328,7 @@
             this.GCMapSortNearestRB = new System.Windows.Forms.RadioButton();
             this.GCMapSortUsageRB = new System.Windows.Forms.RadioButton();
             this.GCMapListBox = new System.Windows.Forms.ListBox();
-            this.GCTradeRouterCheckBox = new System.Windows.Forms.CheckBox();
+            this.GCTradeRoutesCheckBox = new System.Windows.Forms.CheckBox();
             this.SpeechCheckBox = new System.Windows.Forms.CheckBox();
             this.GCChapterLabel = new System.Windows.Forms.Label();
             this.label31 = new System.Windows.Forms.Label();
@@ -366,6 +369,8 @@
             this.GCMapModeCheckBox = new System.Windows.Forms.CheckBox();
             this.tabFactions = new System.Windows.Forms.TabPage();
             this.FactionPanel = new System.Windows.Forms.Panel();
+            this.FactionGotoSpawnSetButton = new System.Windows.Forms.Button();
+            this.FactionGotoMissionButton = new System.Windows.Forms.Button();
             this.FactionAliasLabel = new System.Windows.Forms.Label();
             this.FactionGotoUnitButton = new System.Windows.Forms.Button();
             this.FactionGotoConquestButton = new System.Windows.Forms.Button();
@@ -407,6 +412,36 @@
             this.MainTab = new System.Windows.Forms.TabControl();
             this.tabGov = new System.Windows.Forms.TabPage();
             this.tabGalaxy = new System.Windows.Forms.TabPage();
+            this.GCMapControlsButton = new System.Windows.Forms.Button();
+            this.GalaxyFitAllButton = new System.Windows.Forms.Button();
+            this.GalaxyResetButton = new System.Windows.Forms.Button();
+            this.GalaxyMapGCFactionBox = new System.Windows.Forms.ComboBox();
+            this.GalaxyFilterButton = new System.Windows.Forms.Button();
+            this.GalaxyFactionLegendButton = new System.Windows.Forms.Button();
+            this.GalaxyTerrainLegendButton = new System.Windows.Forms.Button();
+            this.PlanetSizeLabel = new System.Windows.Forms.Label();
+            this.GalaxyMapPlanetBox = new System.Windows.Forms.NumericUpDown();
+            this.GalaxyPanRightButton = new System.Windows.Forms.Button();
+            this.GalaxyPanDownButton = new System.Windows.Forms.Button();
+            this.GalaxyPanUpButton = new System.Windows.Forms.Button();
+            this.GalaxyPanLeftButton = new System.Windows.Forms.Button();
+            this.ZoomLabel = new System.Windows.Forms.Label();
+            this.GalaxyMapZoomBox = new System.Windows.Forms.NumericUpDown();
+            this.GalaxyMapPictureBox = new System.Windows.Forms.PictureBox();
+            this.GalaxyMapGCRoutesCheckBox = new System.Windows.Forms.CheckBox();
+            this.GalaxyMapGCInfCheckBox = new System.Windows.Forms.CheckBox();
+            this.GalaxyMapGCHistCheckBox = new System.Windows.Forms.CheckBox();
+            this.GalaxyMapGCRegCheckBox = new System.Windows.Forms.CheckBox();
+            this.GalaxyMapGCProgCheckBox = new System.Windows.Forms.CheckBox();
+            this.GalaxyMapGCComboBox = new System.Windows.Forms.ComboBox();
+            this.GalaxyMapEraBox = new System.Windows.Forms.NumericUpDown();
+            this.GalaxyMapFilterCheckbox = new System.Windows.Forms.CheckBox();
+            this.GalaxyMapEraRB = new System.Windows.Forms.RadioButton();
+            this.GalaxyMapGCRB = new System.Windows.Forms.RadioButton();
+            this.GalaxyMapTerrainRB = new System.Windows.Forms.RadioButton();
+            this.GalaxyMapSimpleRB = new System.Windows.Forms.RadioButton();
+            this.MapHidePlanetsCheckBox = new System.Windows.Forms.CheckBox();
+            this.PlanetNameCheckBox = new System.Windows.Forms.CheckBox();
             this.tabAutoResolve = new System.Windows.Forms.TabPage();
             this.AutoResolveTransportLossesNumeric = new System.Windows.Forms.NumericUpDown();
             this.TransportLossesLabel = new System.Windows.Forms.Label();
@@ -433,8 +468,9 @@
             this.AutoResolveAttritionAllowanceLabel = new System.Windows.Forms.Label();
             this.AutoResolveBattleTypeComboBox = new System.Windows.Forms.ComboBox();
             this.AutoResolveBattleTypeLabel = new System.Windows.Forms.Label();
-            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip();
-            this.toolTip1 = new System.Windows.Forms.ToolTip();
+            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.OpenUnitModelButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tabLookups.SuspendLayout();
             this.LookupTabControl.SuspendLayout();
@@ -471,6 +507,11 @@
             this.tabFactions.SuspendLayout();
             this.FactionPanel.SuspendLayout();
             this.MainTab.SuspendLayout();
+            this.tabGalaxy.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapPlanetBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapZoomBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapEraBox)).BeginInit();
             this.tabAutoResolve.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveTransportLossesNumeric)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveTechLevelNumeric)).BeginInit();
@@ -602,7 +643,23 @@
             this.MatrixGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.MatrixGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.MatrixGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.MatrixGrid.DefaultCellStyle = dataGridViewCellStyle4;
             this.MatrixGrid.Location = new System.Drawing.Point(3, 24);
             this.MatrixGrid.Name = "MatrixGrid";
             this.MatrixGrid.ReadOnly = true;
@@ -1290,6 +1347,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.Unitpanel.AutoScroll = true;
+            this.Unitpanel.Controls.Add(this.OpenUnitModelButton);
             this.Unitpanel.Controls.Add(this.OpenUnitFileButton);
             this.Unitpanel.Controls.Add(this.ExpandAllButton);
             this.Unitpanel.Controls.Add(this.CollapseAllButton);
@@ -1406,14 +1464,15 @@
             // 
             // CheckWeaponMismatchButton
             // 
-            this.CheckWeaponMismatchButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CheckWeaponMismatchButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.CheckWeaponMismatchButton.Location = new System.Drawing.Point(538, 200);
             this.CheckWeaponMismatchButton.Name = "CheckWeaponMismatchButton";
             this.CheckWeaponMismatchButton.Size = new System.Drawing.Size(134, 23);
             this.CheckWeaponMismatchButton.TabIndex = 48;
-            this.CheckWeaponMismatchButton.Text = "Check Weapon Mismatches";
+            this.CheckWeaponMismatchButton.Text = "Weapon Mismatches";
             this.toolTip1.SetToolTip(this.CheckWeaponMismatchButton, "Verify that all individual hardpoints grouped together have the same sounds");
             this.CheckWeaponMismatchButton.UseVisualStyleBackColor = true;
+            this.CheckWeaponMismatchButton.Visible = false;
             this.CheckWeaponMismatchButton.Click += new System.EventHandler(this.CheckWeaponMismatchButton_Click);
             // 
             // label35
@@ -3504,7 +3563,7 @@
             this.PlanetFilterTypeLabel.Name = "PlanetFilterTypeLabel";
             this.PlanetFilterTypeLabel.Size = new System.Drawing.Size(132, 104);
             this.PlanetFilterTypeLabel.TabIndex = 95;
-            this.PlanetFilterTypeLabel.Text = "Any faction";
+            this.PlanetFilterTypeLabel.Text = "All planets";
             this.toolTip1.SetToolTip(this.PlanetFilterTypeLabel, "Buildable only checks that the tech level is in the valid range, which roughly co" +
         "rresponds to it being possible to be enabled.\r\nIt may return several units that " +
         "are not buildable in practice");
@@ -3792,7 +3851,7 @@
             this.GCPanel.Controls.Add(this.GCMapSortNearestRB);
             this.GCPanel.Controls.Add(this.GCMapSortUsageRB);
             this.GCPanel.Controls.Add(this.GCMapListBox);
-            this.GCPanel.Controls.Add(this.GCTradeRouterCheckBox);
+            this.GCPanel.Controls.Add(this.GCTradeRoutesCheckBox);
             this.GCPanel.Controls.Add(this.SpeechCheckBox);
             this.GCPanel.Controls.Add(this.GCChapterLabel);
             this.GCPanel.Controls.Add(this.label31);
@@ -3895,19 +3954,19 @@
             this.GCMapListBox.Visible = false;
             this.GCMapListBox.SelectedIndexChanged += new System.EventHandler(this.GCMapListBox_SelectedIndexChanged);
             // 
-            // GCTradeRouterCheckBox
+            // GCTradeRoutesCheckBox
             // 
-            this.GCTradeRouterCheckBox.AutoSize = true;
-            this.GCTradeRouterCheckBox.Checked = true;
-            this.GCTradeRouterCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.GCTradeRouterCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GCTradeRouterCheckBox.Location = new System.Drawing.Point(451, 507);
-            this.GCTradeRouterCheckBox.Name = "GCTradeRouterCheckBox";
-            this.GCTradeRouterCheckBox.Size = new System.Drawing.Size(169, 24);
-            this.GCTradeRouterCheckBox.TabIndex = 103;
-            this.GCTradeRouterCheckBox.Text = "Show Trade Routes";
-            this.GCTradeRouterCheckBox.UseVisualStyleBackColor = true;
-            this.GCTradeRouterCheckBox.CheckedChanged += new System.EventHandler(this.GCTradeRouterCheckBox_CheckedChanged);
+            this.GCTradeRoutesCheckBox.AutoSize = true;
+            this.GCTradeRoutesCheckBox.Checked = true;
+            this.GCTradeRoutesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.GCTradeRoutesCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GCTradeRoutesCheckBox.Location = new System.Drawing.Point(451, 507);
+            this.GCTradeRoutesCheckBox.Name = "GCTradeRoutesCheckBox";
+            this.GCTradeRoutesCheckBox.Size = new System.Drawing.Size(169, 24);
+            this.GCTradeRoutesCheckBox.TabIndex = 103;
+            this.GCTradeRoutesCheckBox.Text = "Show Trade Routes";
+            this.GCTradeRoutesCheckBox.UseVisualStyleBackColor = true;
+            this.GCTradeRoutesCheckBox.CheckedChanged += new System.EventHandler(this.GCTradeRouterCheckBox_CheckedChanged);
             // 
             // SpeechCheckBox
             // 
@@ -4333,6 +4392,8 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.FactionPanel.AutoScroll = true;
+            this.FactionPanel.Controls.Add(this.FactionGotoSpawnSetButton);
+            this.FactionPanel.Controls.Add(this.FactionGotoMissionButton);
             this.FactionPanel.Controls.Add(this.FactionAliasLabel);
             this.FactionPanel.Controls.Add(this.FactionGotoUnitButton);
             this.FactionPanel.Controls.Add(this.FactionGotoConquestButton);
@@ -4374,6 +4435,26 @@
             this.FactionPanel.Name = "FactionPanel";
             this.FactionPanel.Size = new System.Drawing.Size(1203, 775);
             this.FactionPanel.TabIndex = 1;
+            // 
+            // FactionGotoSpawnSetButton
+            // 
+            this.FactionGotoSpawnSetButton.Location = new System.Drawing.Point(925, 578);
+            this.FactionGotoSpawnSetButton.Name = "FactionGotoSpawnSetButton";
+            this.FactionGotoSpawnSetButton.Size = new System.Drawing.Size(127, 23);
+            this.FactionGotoSpawnSetButton.TabIndex = 110;
+            this.FactionGotoSpawnSetButton.Text = "Go to Spawn Sets";
+            this.FactionGotoSpawnSetButton.UseVisualStyleBackColor = true;
+            this.FactionGotoSpawnSetButton.Click += new System.EventHandler(this.FactionGotoSpawnSetButton_Click);
+            // 
+            // FactionGotoMissionButton
+            // 
+            this.FactionGotoMissionButton.Location = new System.Drawing.Point(777, 578);
+            this.FactionGotoMissionButton.Name = "FactionGotoMissionButton";
+            this.FactionGotoMissionButton.Size = new System.Drawing.Size(127, 23);
+            this.FactionGotoMissionButton.TabIndex = 109;
+            this.FactionGotoMissionButton.Text = "Go to Mission Rewards";
+            this.FactionGotoMissionButton.UseVisualStyleBackColor = true;
+            this.FactionGotoMissionButton.Click += new System.EventHandler(this.FactionGotoMissionButton_Click);
             // 
             // FactionAliasLabel
             // 
@@ -4824,12 +4905,428 @@
             // 
             // tabGalaxy
             // 
+            this.tabGalaxy.Controls.Add(this.GCMapControlsButton);
+            this.tabGalaxy.Controls.Add(this.GalaxyFitAllButton);
+            this.tabGalaxy.Controls.Add(this.GalaxyResetButton);
+            this.tabGalaxy.Controls.Add(this.GalaxyMapGCFactionBox);
+            this.tabGalaxy.Controls.Add(this.GalaxyFilterButton);
+            this.tabGalaxy.Controls.Add(this.GalaxyFactionLegendButton);
+            this.tabGalaxy.Controls.Add(this.GalaxyTerrainLegendButton);
+            this.tabGalaxy.Controls.Add(this.PlanetSizeLabel);
+            this.tabGalaxy.Controls.Add(this.GalaxyMapPlanetBox);
+            this.tabGalaxy.Controls.Add(this.GalaxyPanRightButton);
+            this.tabGalaxy.Controls.Add(this.GalaxyPanDownButton);
+            this.tabGalaxy.Controls.Add(this.GalaxyPanUpButton);
+            this.tabGalaxy.Controls.Add(this.GalaxyPanLeftButton);
+            this.tabGalaxy.Controls.Add(this.ZoomLabel);
+            this.tabGalaxy.Controls.Add(this.GalaxyMapZoomBox);
+            this.tabGalaxy.Controls.Add(this.GalaxyMapPictureBox);
+            this.tabGalaxy.Controls.Add(this.GalaxyMapGCRoutesCheckBox);
+            this.tabGalaxy.Controls.Add(this.GalaxyMapGCInfCheckBox);
+            this.tabGalaxy.Controls.Add(this.GalaxyMapGCHistCheckBox);
+            this.tabGalaxy.Controls.Add(this.GalaxyMapGCRegCheckBox);
+            this.tabGalaxy.Controls.Add(this.GalaxyMapGCProgCheckBox);
+            this.tabGalaxy.Controls.Add(this.GalaxyMapGCComboBox);
+            this.tabGalaxy.Controls.Add(this.GalaxyMapEraBox);
+            this.tabGalaxy.Controls.Add(this.GalaxyMapFilterCheckbox);
+            this.tabGalaxy.Controls.Add(this.GalaxyMapEraRB);
+            this.tabGalaxy.Controls.Add(this.GalaxyMapGCRB);
+            this.tabGalaxy.Controls.Add(this.GalaxyMapTerrainRB);
+            this.tabGalaxy.Controls.Add(this.GalaxyMapSimpleRB);
+            this.tabGalaxy.Controls.Add(this.MapHidePlanetsCheckBox);
+            this.tabGalaxy.Controls.Add(this.PlanetNameCheckBox);
             this.tabGalaxy.Location = new System.Drawing.Point(4, 22);
             this.tabGalaxy.Name = "tabGalaxy";
             this.tabGalaxy.Size = new System.Drawing.Size(1487, 781);
             this.tabGalaxy.TabIndex = 7;
             this.tabGalaxy.Text = "Galaxy Map";
             this.tabGalaxy.UseVisualStyleBackColor = true;
+            // 
+            // GCMapControlsButton
+            // 
+            this.GCMapControlsButton.Location = new System.Drawing.Point(271, 2);
+            this.GCMapControlsButton.Name = "GCMapControlsButton";
+            this.GCMapControlsButton.Size = new System.Drawing.Size(64, 23);
+            this.GCMapControlsButton.TabIndex = 81;
+            this.GCMapControlsButton.Text = "Controls...";
+            this.GCMapControlsButton.UseVisualStyleBackColor = true;
+            // 
+            // GalaxyFitAllButton
+            // 
+            this.GalaxyFitAllButton.Location = new System.Drawing.Point(219, 26);
+            this.GalaxyFitAllButton.Name = "GalaxyFitAllButton";
+            this.GalaxyFitAllButton.Size = new System.Drawing.Size(46, 23);
+            this.GalaxyFitAllButton.TabIndex = 79;
+            this.GalaxyFitAllButton.Text = "Fit All";
+            this.toolTip1.SetToolTip(this.GalaxyFitAllButton, "Zooms and pans to show the entire galaxy at once");
+            this.GalaxyFitAllButton.UseVisualStyleBackColor = true;
+            this.GalaxyFitAllButton.Click += new System.EventHandler(this.GalaxyFitAllButton_Click);
+            // 
+            // GalaxyResetButton
+            // 
+            this.GalaxyResetButton.Location = new System.Drawing.Point(196, 2);
+            this.GalaxyResetButton.Name = "GalaxyResetButton";
+            this.GalaxyResetButton.Size = new System.Drawing.Size(69, 23);
+            this.GalaxyResetButton.TabIndex = 78;
+            this.GalaxyResetButton.Text = "Reset View";
+            this.toolTip1.SetToolTip(this.GalaxyResetButton, "Puts the view in the center of the galaxy with a zoom level that keeps names read" +
+        "able at EaW:X densities");
+            this.GalaxyResetButton.UseVisualStyleBackColor = true;
+            this.GalaxyResetButton.Click += new System.EventHandler(this.GalaxyResetButton_Click);
+            // 
+            // GalaxyMapGCFactionBox
+            // 
+            this.GalaxyMapGCFactionBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.GalaxyMapGCFactionBox.FormattingEnabled = true;
+            this.GalaxyMapGCFactionBox.Location = new System.Drawing.Point(734, 26);
+            this.GalaxyMapGCFactionBox.Name = "GalaxyMapGCFactionBox";
+            this.GalaxyMapGCFactionBox.Size = new System.Drawing.Size(181, 21);
+            this.GalaxyMapGCFactionBox.TabIndex = 76;
+            this.toolTip1.SetToolTip(this.GalaxyMapGCFactionBox, "Set which faction\'s version of the selected campaign to use");
+            this.GalaxyMapGCFactionBox.SelectedIndexChanged += new System.EventHandler(this.GalaxyMapGCFactionBox_ValueChanged);
+            // 
+            // GalaxyFilterButton
+            // 
+            this.GalaxyFilterButton.Location = new System.Drawing.Point(3, 2);
+            this.GalaxyFilterButton.Name = "GalaxyFilterButton";
+            this.GalaxyFilterButton.Size = new System.Drawing.Size(96, 23);
+            this.GalaxyFilterButton.TabIndex = 75;
+            this.GalaxyFilterButton.Text = "Filter Settings...";
+            this.GalaxyFilterButton.UseVisualStyleBackColor = true;
+            this.GalaxyFilterButton.Click += new System.EventHandler(this.GalaxyFilterButton_Click);
+            // 
+            // GalaxyFactionLegendButton
+            // 
+            this.GalaxyFactionLegendButton.Location = new System.Drawing.Point(577, 26);
+            this.GalaxyFactionLegendButton.Name = "GalaxyFactionLegendButton";
+            this.GalaxyFactionLegendButton.Size = new System.Drawing.Size(108, 23);
+            this.GalaxyFactionLegendButton.TabIndex = 74;
+            this.GalaxyFactionLegendButton.Text = "Faction Legend...";
+            this.toolTip1.SetToolTip(this.GalaxyFactionLegendButton, "Open a popup displaying all faction names and colors");
+            this.GalaxyFactionLegendButton.UseVisualStyleBackColor = true;
+            this.GalaxyFactionLegendButton.Click += new System.EventHandler(this.GalaxyFactionLegendButton_Click);
+            // 
+            // GalaxyTerrainLegendButton
+            // 
+            this.GalaxyTerrainLegendButton.Location = new System.Drawing.Point(1236, 26);
+            this.GalaxyTerrainLegendButton.Name = "GalaxyTerrainLegendButton";
+            this.GalaxyTerrainLegendButton.Size = new System.Drawing.Size(108, 23);
+            this.GalaxyTerrainLegendButton.TabIndex = 73;
+            this.GalaxyTerrainLegendButton.Text = "Terrain Legend...";
+            this.toolTip1.SetToolTip(this.GalaxyTerrainLegendButton, "Open a popup displaying all terrain types and colors");
+            this.GalaxyTerrainLegendButton.UseVisualStyleBackColor = true;
+            this.GalaxyTerrainLegendButton.Click += new System.EventHandler(this.GalaxyTerrainLegendButton_Click);
+            // 
+            // PlanetSizeLabel
+            // 
+            this.PlanetSizeLabel.AutoSize = true;
+            this.PlanetSizeLabel.Location = new System.Drawing.Point(375, 28);
+            this.PlanetSizeLabel.Name = "PlanetSizeLabel";
+            this.PlanetSizeLabel.Size = new System.Drawing.Size(30, 13);
+            this.PlanetSizeLabel.TabIndex = 72;
+            this.PlanetSizeLabel.Text = "Size:";
+            // 
+            // GalaxyMapPlanetBox
+            // 
+            this.GalaxyMapPlanetBox.Location = new System.Drawing.Point(411, 29);
+            this.GalaxyMapPlanetBox.Name = "GalaxyMapPlanetBox";
+            this.GalaxyMapPlanetBox.Size = new System.Drawing.Size(40, 20);
+            this.GalaxyMapPlanetBox.TabIndex = 71;
+            this.toolTip1.SetToolTip(this.GalaxyMapPlanetBox, "Set the size of planets on the map");
+            this.GalaxyMapPlanetBox.Value = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.GalaxyMapPlanetBox.ValueChanged += new System.EventHandler(this.DrawMapHook);
+            // 
+            // GalaxyPanRightButton
+            // 
+            this.GalaxyPanRightButton.Location = new System.Drawing.Point(190, 26);
+            this.GalaxyPanRightButton.Name = "GalaxyPanRightButton";
+            this.GalaxyPanRightButton.Size = new System.Drawing.Size(28, 23);
+            this.GalaxyPanRightButton.TabIndex = 70;
+            this.GalaxyPanRightButton.Text = ">";
+            this.toolTip1.SetToolTip(this.GalaxyPanRightButton, "Pan right");
+            this.GalaxyPanRightButton.UseVisualStyleBackColor = true;
+            this.GalaxyPanRightButton.Click += new System.EventHandler(this.GalaxyPanRightButton_Click);
+            // 
+            // GalaxyPanDownButton
+            // 
+            this.GalaxyPanDownButton.Location = new System.Drawing.Point(161, 26);
+            this.GalaxyPanDownButton.Name = "GalaxyPanDownButton";
+            this.GalaxyPanDownButton.Size = new System.Drawing.Size(28, 23);
+            this.GalaxyPanDownButton.TabIndex = 69;
+            this.GalaxyPanDownButton.Text = "\\/";
+            this.toolTip1.SetToolTip(this.GalaxyPanDownButton, "Pan down");
+            this.GalaxyPanDownButton.UseVisualStyleBackColor = true;
+            this.GalaxyPanDownButton.Click += new System.EventHandler(this.GalaxyPanDownButton_Click);
+            // 
+            // GalaxyPanUpButton
+            // 
+            this.GalaxyPanUpButton.Location = new System.Drawing.Point(132, 26);
+            this.GalaxyPanUpButton.Name = "GalaxyPanUpButton";
+            this.GalaxyPanUpButton.Size = new System.Drawing.Size(28, 23);
+            this.GalaxyPanUpButton.TabIndex = 68;
+            this.GalaxyPanUpButton.Text = "/\\";
+            this.toolTip1.SetToolTip(this.GalaxyPanUpButton, "Pan up");
+            this.GalaxyPanUpButton.UseVisualStyleBackColor = true;
+            this.GalaxyPanUpButton.Click += new System.EventHandler(this.GalaxyPanUpButton_Click);
+            // 
+            // GalaxyPanLeftButton
+            // 
+            this.GalaxyPanLeftButton.Location = new System.Drawing.Point(103, 26);
+            this.GalaxyPanLeftButton.Name = "GalaxyPanLeftButton";
+            this.GalaxyPanLeftButton.Size = new System.Drawing.Size(28, 23);
+            this.GalaxyPanLeftButton.TabIndex = 67;
+            this.GalaxyPanLeftButton.Text = "<";
+            this.toolTip1.SetToolTip(this.GalaxyPanLeftButton, "Pan left");
+            this.GalaxyPanLeftButton.UseVisualStyleBackColor = true;
+            this.GalaxyPanLeftButton.Click += new System.EventHandler(this.GalaxyPanLeftButton_Click);
+            // 
+            // ZoomLabel
+            // 
+            this.ZoomLabel.AutoSize = true;
+            this.ZoomLabel.Location = new System.Drawing.Point(104, 8);
+            this.ZoomLabel.Name = "ZoomLabel";
+            this.ZoomLabel.Size = new System.Drawing.Size(37, 13);
+            this.ZoomLabel.TabIndex = 66;
+            this.ZoomLabel.Text = "Zoom:";
+            // 
+            // GalaxyMapZoomBox
+            // 
+            this.GalaxyMapZoomBox.Increment = new decimal(new int[] {
+            25,
+            0,
+            0,
+            0});
+            this.GalaxyMapZoomBox.Location = new System.Drawing.Point(147, 6);
+            this.GalaxyMapZoomBox.Maximum = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.GalaxyMapZoomBox.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.GalaxyMapZoomBox.Name = "GalaxyMapZoomBox";
+            this.GalaxyMapZoomBox.Size = new System.Drawing.Size(40, 20);
+            this.GalaxyMapZoomBox.TabIndex = 65;
+            this.toolTip1.SetToolTip(this.GalaxyMapZoomBox, "Set the zoom level on the map");
+            this.GalaxyMapZoomBox.Value = new decimal(new int[] {
+            200,
+            0,
+            0,
+            0});
+            this.GalaxyMapZoomBox.ValueChanged += new System.EventHandler(this.GalaxyMapZoomBox_ValueChanged);
+            // 
+            // GalaxyMapPictureBox
+            // 
+            this.GalaxyMapPictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.GalaxyMapPictureBox.Location = new System.Drawing.Point(0, 51);
+            this.GalaxyMapPictureBox.Name = "GalaxyMapPictureBox";
+            this.GalaxyMapPictureBox.Size = new System.Drawing.Size(1487, 730);
+            this.GalaxyMapPictureBox.TabIndex = 64;
+            this.GalaxyMapPictureBox.TabStop = false;
+            this.GalaxyMapPictureBox.Click += new System.EventHandler(this.GalaxyMapPictureBox_Click);
+            this.GalaxyMapPictureBox.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.GalaxyMapPictureBox_Keypress);
+            // 
+            // GalaxyMapGCRoutesCheckBox
+            // 
+            this.GalaxyMapGCRoutesCheckBox.AutoSize = true;
+            this.GalaxyMapGCRoutesCheckBox.Checked = true;
+            this.GalaxyMapGCRoutesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.GalaxyMapGCRoutesCheckBox.Location = new System.Drawing.Point(1100, 7);
+            this.GalaxyMapGCRoutesCheckBox.Name = "GalaxyMapGCRoutesCheckBox";
+            this.GalaxyMapGCRoutesCheckBox.Size = new System.Drawing.Size(121, 17);
+            this.GalaxyMapGCRoutesCheckBox.TabIndex = 11;
+            this.GalaxyMapGCRoutesCheckBox.Text = "Show Trade Routes";
+            this.toolTip1.SetToolTip(this.GalaxyMapGCRoutesCheckBox, "Toggle rendering of trade routes");
+            this.GalaxyMapGCRoutesCheckBox.UseVisualStyleBackColor = true;
+            this.GalaxyMapGCRoutesCheckBox.CheckedChanged += new System.EventHandler(this.DrawMapHook);
+            // 
+            // GalaxyMapGCInfCheckBox
+            // 
+            this.GalaxyMapGCInfCheckBox.AutoSize = true;
+            this.GalaxyMapGCInfCheckBox.Checked = true;
+            this.GalaxyMapGCInfCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.GalaxyMapGCInfCheckBox.Location = new System.Drawing.Point(1029, 28);
+            this.GalaxyMapGCInfCheckBox.Name = "GalaxyMapGCInfCheckBox";
+            this.GalaxyMapGCInfCheckBox.Size = new System.Drawing.Size(64, 17);
+            this.GalaxyMapGCInfCheckBox.TabIndex = 10;
+            this.GalaxyMapGCInfCheckBox.Text = "Infinities";
+            this.GalaxyMapGCInfCheckBox.UseVisualStyleBackColor = true;
+            this.GalaxyMapGCInfCheckBox.CheckedChanged += new System.EventHandler(this.setMapGCOptions_Hook);
+            // 
+            // GalaxyMapGCHistCheckBox
+            // 
+            this.GalaxyMapGCHistCheckBox.AutoSize = true;
+            this.GalaxyMapGCHistCheckBox.Checked = true;
+            this.GalaxyMapGCHistCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.GalaxyMapGCHistCheckBox.Location = new System.Drawing.Point(951, 28);
+            this.GalaxyMapGCHistCheckBox.Name = "GalaxyMapGCHistCheckBox";
+            this.GalaxyMapGCHistCheckBox.Size = new System.Drawing.Size(69, 17);
+            this.GalaxyMapGCHistCheckBox.TabIndex = 9;
+            this.GalaxyMapGCHistCheckBox.Text = "Historical";
+            this.GalaxyMapGCHistCheckBox.UseVisualStyleBackColor = true;
+            this.GalaxyMapGCHistCheckBox.CheckedChanged += new System.EventHandler(this.setMapGCOptions_Hook);
+            // 
+            // GalaxyMapGCRegCheckBox
+            // 
+            this.GalaxyMapGCRegCheckBox.AutoSize = true;
+            this.GalaxyMapGCRegCheckBox.Checked = true;
+            this.GalaxyMapGCRegCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.GalaxyMapGCRegCheckBox.Location = new System.Drawing.Point(1029, 7);
+            this.GalaxyMapGCRegCheckBox.Name = "GalaxyMapGCRegCheckBox";
+            this.GalaxyMapGCRegCheckBox.Size = new System.Drawing.Size(68, 17);
+            this.GalaxyMapGCRegCheckBox.TabIndex = 8;
+            this.GalaxyMapGCRegCheckBox.Text = "Regional";
+            this.GalaxyMapGCRegCheckBox.UseVisualStyleBackColor = true;
+            this.GalaxyMapGCRegCheckBox.CheckedChanged += new System.EventHandler(this.setMapGCOptions_Hook);
+            // 
+            // GalaxyMapGCProgCheckBox
+            // 
+            this.GalaxyMapGCProgCheckBox.AutoSize = true;
+            this.GalaxyMapGCProgCheckBox.Checked = true;
+            this.GalaxyMapGCProgCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.GalaxyMapGCProgCheckBox.Location = new System.Drawing.Point(951, 7);
+            this.GalaxyMapGCProgCheckBox.Name = "GalaxyMapGCProgCheckBox";
+            this.GalaxyMapGCProgCheckBox.Size = new System.Drawing.Size(81, 17);
+            this.GalaxyMapGCProgCheckBox.TabIndex = 7;
+            this.GalaxyMapGCProgCheckBox.Text = "Progressive";
+            this.GalaxyMapGCProgCheckBox.UseVisualStyleBackColor = true;
+            this.GalaxyMapGCProgCheckBox.CheckedChanged += new System.EventHandler(this.setMapGCOptions_Hook);
+            // 
+            // GalaxyMapGCComboBox
+            // 
+            this.GalaxyMapGCComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.GalaxyMapGCComboBox.FormattingEnabled = true;
+            this.GalaxyMapGCComboBox.Location = new System.Drawing.Point(734, 4);
+            this.GalaxyMapGCComboBox.Name = "GalaxyMapGCComboBox";
+            this.GalaxyMapGCComboBox.Size = new System.Drawing.Size(211, 21);
+            this.GalaxyMapGCComboBox.TabIndex = 6;
+            this.toolTip1.SetToolTip(this.GalaxyMapGCComboBox, "Set the campaign to render");
+            this.GalaxyMapGCComboBox.SelectedIndexChanged += new System.EventHandler(this.GalaxyMapGCComboBox_SelectedIndexChanged);
+            // 
+            // GalaxyMapEraBox
+            // 
+            this.GalaxyMapEraBox.Location = new System.Drawing.Point(578, 6);
+            this.GalaxyMapEraBox.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.GalaxyMapEraBox.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.GalaxyMapEraBox.Name = "GalaxyMapEraBox";
+            this.GalaxyMapEraBox.Size = new System.Drawing.Size(40, 20);
+            this.GalaxyMapEraBox.TabIndex = 5;
+            this.toolTip1.SetToolTip(this.GalaxyMapEraBox, "Set the era to check ownership for");
+            this.GalaxyMapEraBox.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.GalaxyMapEraBox.ValueChanged += new System.EventHandler(this.DrawMapHook);
+            // 
+            // GalaxyMapFilterCheckbox
+            // 
+            this.GalaxyMapFilterCheckbox.AutoSize = true;
+            this.GalaxyMapFilterCheckbox.Location = new System.Drawing.Point(3, 28);
+            this.GalaxyMapFilterCheckbox.Name = "GalaxyMapFilterCheckbox";
+            this.GalaxyMapFilterCheckbox.Size = new System.Drawing.Size(103, 17);
+            this.GalaxyMapFilterCheckbox.TabIndex = 4;
+            this.GalaxyMapFilterCheckbox.Text = "Planet Tab Filter";
+            this.toolTip1.SetToolTip(this.GalaxyMapFilterCheckbox, "Disable Planet filtering without clearing filter settings");
+            this.GalaxyMapFilterCheckbox.UseVisualStyleBackColor = true;
+            this.GalaxyMapFilterCheckbox.CheckedChanged += new System.EventHandler(this.DrawMapHook);
+            // 
+            // GalaxyMapEraRB
+            // 
+            this.GalaxyMapEraRB.AutoSize = true;
+            this.GalaxyMapEraRB.Location = new System.Drawing.Point(455, 8);
+            this.GalaxyMapEraRB.Name = "GalaxyMapEraRB";
+            this.GalaxyMapEraRB.Size = new System.Drawing.Size(91, 17);
+            this.GalaxyMapEraRB.TabIndex = 3;
+            this.GalaxyMapEraRB.Text = "Era Affiliations";
+            this.toolTip1.SetToolTip(this.GalaxyMapEraRB, "Render all planets as owned by the faction that owns them in a progressive or reg" +
+        "ional campaign");
+            this.GalaxyMapEraRB.UseVisualStyleBackColor = true;
+            this.GalaxyMapEraRB.CheckedChanged += new System.EventHandler(this.DrawMapHook);
+            // 
+            // GalaxyMapGCRB
+            // 
+            this.GalaxyMapGCRB.AutoSize = true;
+            this.GalaxyMapGCRB.Location = new System.Drawing.Point(624, 8);
+            this.GalaxyMapGCRB.Name = "GalaxyMapGCRB";
+            this.GalaxyMapGCRB.Size = new System.Drawing.Size(112, 17);
+            this.GalaxyMapGCRB.TabIndex = 2;
+            this.GalaxyMapGCRB.Text = "Galactic Conquest";
+            this.toolTip1.SetToolTip(this.GalaxyMapGCRB, "Render the planets and trade routes of the selected galactic conquest");
+            this.GalaxyMapGCRB.UseVisualStyleBackColor = true;
+            this.GalaxyMapGCRB.CheckedChanged += new System.EventHandler(this.GalaxyMapGCRB_CheckedChanged);
+            // 
+            // GalaxyMapTerrainRB
+            // 
+            this.GalaxyMapTerrainRB.AutoSize = true;
+            this.GalaxyMapTerrainRB.Location = new System.Drawing.Point(1236, 8);
+            this.GalaxyMapTerrainRB.Name = "GalaxyMapTerrainRB";
+            this.GalaxyMapTerrainRB.Size = new System.Drawing.Size(58, 17);
+            this.GalaxyMapTerrainRB.TabIndex = 1;
+            this.GalaxyMapTerrainRB.Text = "Terrain";
+            this.toolTip1.SetToolTip(this.GalaxyMapTerrainRB, "Render planets as colors matching their terrain type (e.g. planets that trigger s" +
+        "nowtroopers are white)");
+            this.GalaxyMapTerrainRB.UseVisualStyleBackColor = true;
+            this.GalaxyMapTerrainRB.CheckedChanged += new System.EventHandler(this.DrawMapHook);
+            // 
+            // GalaxyMapSimpleRB
+            // 
+            this.GalaxyMapSimpleRB.AutoSize = true;
+            this.GalaxyMapSimpleRB.Checked = true;
+            this.GalaxyMapSimpleRB.Location = new System.Drawing.Point(347, 8);
+            this.GalaxyMapSimpleRB.Name = "GalaxyMapSimpleRB";
+            this.GalaxyMapSimpleRB.Size = new System.Drawing.Size(87, 17);
+            this.GalaxyMapSimpleRB.TabIndex = 0;
+            this.GalaxyMapSimpleRB.TabStop = true;
+            this.GalaxyMapSimpleRB.Text = "Monochrome";
+            this.toolTip1.SetToolTip(this.GalaxyMapSimpleRB, "Render all planets in white");
+            this.GalaxyMapSimpleRB.UseVisualStyleBackColor = true;
+            this.GalaxyMapSimpleRB.CheckedChanged += new System.EventHandler(this.DrawMapHook);
+            // 
+            // MapHidePlanetsCheckBox
+            // 
+            this.MapHidePlanetsCheckBox.AutoSize = true;
+            this.MapHidePlanetsCheckBox.Checked = true;
+            this.MapHidePlanetsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.MapHidePlanetsCheckBox.Location = new System.Drawing.Point(455, 28);
+            this.MapHidePlanetsCheckBox.Name = "MapHidePlanetsCheckBox";
+            this.MapHidePlanetsCheckBox.Size = new System.Drawing.Size(126, 17);
+            this.MapHidePlanetsCheckBox.TabIndex = 77;
+            this.MapHidePlanetsCheckBox.Text = "Hide Unused Planets";
+            this.toolTip1.SetToolTip(this.MapHidePlanetsCheckBox, "Toggle planets never owned by a faction in the era between invisible and neutral");
+            this.MapHidePlanetsCheckBox.UseVisualStyleBackColor = true;
+            this.MapHidePlanetsCheckBox.CheckedChanged += new System.EventHandler(this.DrawMapHook);
+            // 
+            // PlanetNameCheckBox
+            // 
+            this.PlanetNameCheckBox.AutoSize = true;
+            this.PlanetNameCheckBox.Checked = true;
+            this.PlanetNameCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.PlanetNameCheckBox.Location = new System.Drawing.Point(273, 28);
+            this.PlanetNameCheckBox.Name = "PlanetNameCheckBox";
+            this.PlanetNameCheckBox.Size = new System.Drawing.Size(92, 17);
+            this.PlanetNameCheckBox.TabIndex = 80;
+            this.PlanetNameCheckBox.Text = "Planet Names";
+            this.toolTip1.SetToolTip(this.PlanetNameCheckBox, "Toggle rendering of trade routes");
+            this.PlanetNameCheckBox.UseVisualStyleBackColor = true;
+            this.PlanetNameCheckBox.CheckedChanged += new System.EventHandler(this.DrawMapHook);
             // 
             // tabAutoResolve
             // 
@@ -5203,6 +5700,19 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
+            // OpenUnitModelButton
+            // 
+            this.OpenUnitModelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OpenUnitModelButton.Location = new System.Drawing.Point(368, 3);
+            this.OpenUnitModelButton.Name = "OpenUnitModelButton";
+            this.OpenUnitModelButton.Size = new System.Drawing.Size(135, 27);
+            this.OpenUnitModelButton.TabIndex = 16;
+            this.OpenUnitModelButton.Tag = "";
+            this.OpenUnitModelButton.Text = "Open Unit Model...";
+            this.toolTip1.SetToolTip(this.OpenUnitModelButton, "Open the model file for this unit in the default program for alo files");
+            this.OpenUnitModelButton.UseVisualStyleBackColor = true;
+            this.OpenUnitModelButton.Click += new System.EventHandler(this.OpenUnitModelButton_Click);
+            // 
             // Holocron
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -5268,6 +5778,12 @@
             this.FactionPanel.ResumeLayout(false);
             this.FactionPanel.PerformLayout();
             this.MainTab.ResumeLayout(false);
+            this.tabGalaxy.ResumeLayout(false);
+            this.tabGalaxy.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapPlanetBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapZoomBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapEraBox)).EndInit();
             this.tabAutoResolve.ResumeLayout(false);
             this.tabAutoResolve.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.AutoResolveTransportLossesNumeric)).EndInit();
@@ -5656,7 +6172,7 @@
         private System.Windows.Forms.Label label32;
         private System.Windows.Forms.ListBox UnitDiscountListBox;
         private System.Windows.Forms.CheckBox UnitAllSquadSizesCheckBox;
-        private System.Windows.Forms.CheckBox GCTradeRouterCheckBox;
+        private System.Windows.Forms.CheckBox GCTradeRoutesCheckBox;
         private System.Windows.Forms.Label label34;
         private System.Windows.Forms.NumericUpDown UnitAoEBox;
         private System.Windows.Forms.Button PlanetMissingTextButton;
@@ -5690,6 +6206,39 @@
         private System.Windows.Forms.RadioButton GCMapSortUsageRB;
         private System.Windows.Forms.Button OpenUnitFileButton;
         private System.Windows.Forms.Button ExpandAllButton;
+        private System.Windows.Forms.Button FactionGotoSpawnSetButton;
+        private System.Windows.Forms.Button FactionGotoMissionButton;
+        private System.Windows.Forms.RadioButton GalaxyMapEraRB;
+        private System.Windows.Forms.RadioButton GalaxyMapGCRB;
+        private System.Windows.Forms.RadioButton GalaxyMapTerrainRB;
+        private System.Windows.Forms.RadioButton GalaxyMapSimpleRB;
+        private System.Windows.Forms.PictureBox GalaxyMapPictureBox;
+        private System.Windows.Forms.CheckBox GalaxyMapGCRoutesCheckBox;
+        private System.Windows.Forms.CheckBox GalaxyMapGCInfCheckBox;
+        private System.Windows.Forms.CheckBox GalaxyMapGCHistCheckBox;
+        private System.Windows.Forms.CheckBox GalaxyMapGCRegCheckBox;
+        private System.Windows.Forms.CheckBox GalaxyMapGCProgCheckBox;
+        private System.Windows.Forms.ComboBox GalaxyMapGCComboBox;
+        private System.Windows.Forms.NumericUpDown GalaxyMapEraBox;
+        private System.Windows.Forms.CheckBox GalaxyMapFilterCheckbox;
+        private System.Windows.Forms.Button GalaxyPanRightButton;
+        private System.Windows.Forms.Button GalaxyPanDownButton;
+        private System.Windows.Forms.Button GalaxyPanUpButton;
+        private System.Windows.Forms.Button GalaxyPanLeftButton;
+        private System.Windows.Forms.Label ZoomLabel;
+        private System.Windows.Forms.NumericUpDown GalaxyMapZoomBox;
+        private System.Windows.Forms.Label PlanetSizeLabel;
+        private System.Windows.Forms.NumericUpDown GalaxyMapPlanetBox;
+        private System.Windows.Forms.Button GalaxyFactionLegendButton;
+        private System.Windows.Forms.Button GalaxyTerrainLegendButton;
+        private System.Windows.Forms.Button GalaxyFilterButton;
+        private System.Windows.Forms.ComboBox GalaxyMapGCFactionBox;
+        private System.Windows.Forms.CheckBox MapHidePlanetsCheckBox;
+        private System.Windows.Forms.Button GalaxyResetButton;
+        private System.Windows.Forms.Button GalaxyFitAllButton;
+        private System.Windows.Forms.Button GCMapControlsButton;
+        private System.Windows.Forms.CheckBox PlanetNameCheckBox;
+        private System.Windows.Forms.Button OpenUnitModelButton;
     }
 }
 

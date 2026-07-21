@@ -12,8 +12,14 @@ using System.Xml;
 using static SharedFunctions;
 using System.Globalization;
 using System.Threading;
+
+//advanced mode
 //only add to spawns sets if the object has a lua file
 //Removing units from Yevetha breaks things
+
+//Make templates useable units? Not sure how to supply file contents. Being able to copy units from FotR to TR would handle Pelta Assault and such fine anyway
+
+//How to add reading mods directly to the launch args? Break backwards compatibility? Add Tilotfile to high level stack?
 
 //automagically remove debug
 
@@ -302,6 +308,7 @@ namespace TilotnyStudio
             {
                 old = new Text_Entry {
                     identifier = ID,
+                    crc = Text_Entry.calculateCRC(ID),
                 };
             }
             old.entry = value;
@@ -323,10 +330,12 @@ namespace TilotnyStudio
         private void SaveText(string[] lines)
         {
             File.WriteAllLines(globals.LocalMod + "\\Text\\Submod_text.txt", lines);
+            entities.Text.Sort((s1, s2) => s1.crc.CompareTo(s2.crc));
+            DatParser.compileDat(entities.Text, ConvertMainPathToMod("\\Data\\Text\\MasterTextFile_ENGLISH.dat"));
             //System.Diagnostics.Process.Start("cmd.exe", "/K cd \""+globals.LocalMod + "\\Text \" " + globals.LocalMod + "\\Text\\alphabetize-and-build.bat\"");
-            string path = "\"" + globals.LocalMod + "\\Text\\datassembler.exe\"";
-            string arg = "/b \"" + globals.LocalMod + "\\Text\\MasterTextFile_ENGLISH.txt\" -r:\"" + globals.LocalMod + "\\Text\\Submod_text.txt\"";
-            System.Diagnostics.Process.Start("\"" + globals.LocalMod + "\\Text\\datassembler.exe\"", "/b \"" + globals.LocalMod + "\\Text\\MasterTextFile_ENGLISH.txt\" \"" + globals.LocalMod + "\\Text\\MasterTextFile_ENGLISH.dat\" -r:\"" + globals.LocalMod + "\\Text\\Submod_text.txt\"");
+            //string path = "\"" + globals.LocalMod + "\\Text\\datassembler.exe\"";
+            //string arg = "/b \"" + globals.LocalMod + "\\Text\\MasterTextFile_ENGLISH.txt\" -r:\"" + globals.LocalMod + "\\Text\\Submod_text.txt\"";
+            //System.Diagnostics.Process.Start("\"" + globals.LocalMod + "\\Text\\datassembler.exe\"", "/b \"" + globals.LocalMod + "\\Text\\MasterTextFile_ENGLISH.txt\" \"" + globals.LocalMod + "\\Text\\MasterTextFile_ENGLISH.dat\" -r:\"" + globals.LocalMod + "\\Text\\Submod_text.txt\"");
         }
 
         public struct playablefaction
@@ -791,6 +800,7 @@ namespace TilotnyStudio
 
             loadscreen.ChangeText("Reading text file");
             entities.Text = DatParser.ReadDat(getModFile("Text\\MasterTextFile_ENGLISH.dat", entities), ',', 0);
+            crcGlobals.initTable();
             loadscreen.SetQuote(getLoadQuote(entities));
 
             loadscreen.ChangeText("Reading MEG files");
@@ -2650,7 +2660,7 @@ namespace TilotnyStudio
                                     int subid = CopyUnits.FindIndex(x => string.Equals(x, unit.companyunits[compid], StringComparison.OrdinalIgnoreCase));
                                     if(subid >= 0) newcompany.Add(CopyUnitNewNames[subid]);
                                 }
-                                WriteXMLTag("Company_Units", SerializeStringArray(newcompany), savedoc, import);
+                                if(newcompany.Count > 0) WriteXMLTag("Company_Units", SerializeStringArray(newcompany), savedoc, import);
                                 unit.companyunits = newcompany;
 
                                 int contain = CopyUnits.FindIndex(x => string.Equals(x, unit.container, StringComparison.OrdinalIgnoreCase));
@@ -2669,19 +2679,19 @@ namespace TilotnyStudio
                                 WriteXMLTag("Armor_Type", unit.armor_type.ToString(), savedoc, import);
                                 WriteXMLTag("Shield_Armor_Type", unit.shield_type.ToString(), savedoc, import);
                                 float nonzer = unit.regen;
-                                if (nonzer < 0) nonzero = 0;
+                                if (nonzer < 0) nonzer = 0;
                                 WriteXMLTag("Shield_Refresh_Rate", nonzer.ToString(), savedoc, import);
                                 nonzer = unit.speed;
-                                if (nonzer < 0) nonzero = 0;
+                                if (nonzer < 0) nonzer = 0;
                                 WriteXMLTag("Max_Speed", nonzer.ToString(), savedoc, import);
                                 nonzer = unit.turn;
-                                if (nonzer < 0) nonzero = 0;
+                                if (nonzer < 0) nonzer = 0;
                                 WriteXMLTag("Max_Rate_Of_Turn", nonzer.ToString(), savedoc, import);
                                 nonzer = unit.accel;
-                                if (nonzer < 0) nonzero = 0;
+                                if (nonzer < 0) nonzer = 0;
                                 WriteXMLTag("OverrideAcceleration", nonzer.ToString(), savedoc, import);
                                 nonzer = unit.min_speed;
-                                if (nonzer < 0) nonzero = 0;
+                                if (nonzer < 0) nonzer = 0;
                                 WriteXMLTag("Min_Speed", nonzer.ToString(), savedoc, import);
                                 unit.hp_baseID = -1; //On the units in this session as well as the future
                                 unit.shield_baseID = -1;
@@ -3002,8 +3012,8 @@ namespace TilotnyStudio
             List<string> files = getModFiles("Text", "*.txt", entities);
 
             CopyMainToMod(getModFile("Text\\MasterTextFile_ENGLISH.dat", entities));
-            CopyMainToMod(getModFile("Text\\datassembler.exe", entities)); //todo kiilit and use dat functions directly
-            System.Diagnostics.Process.Start("\"" + globals.LocalMod + "\\Data\\Text\\datassembler.exe\"", "/e \"" + globals.LocalMod + "\\Data\\Text\\MasterTextFile_ENGLISH.dat\" \"" + globals.LocalMod + "\\Data\\Text\\MasterTextFile_ENGLISH.txt\"");
+            //CopyMainToMod(getModFile("Text\\datassembler.exe", entities)); //todo kiilit and use dat functions directly
+            //System.Diagnostics.Process.Start("\"" + globals.LocalMod + "\\Data\\Text\\datassembler.exe\"", "/e \"" + globals.LocalMod + "\\Data\\Text\\MasterTextFile_ENGLISH.dat\" \"" + globals.LocalMod + "\\Data\\Text\\MasterTextFile_ENGLISH.txt\"");
             CopyMainToMod(getModFile("Text\\Submod_text.txt", entities));
 
             ModListBox.Items.Add(newmod);

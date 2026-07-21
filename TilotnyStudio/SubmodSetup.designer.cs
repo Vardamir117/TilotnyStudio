@@ -39,6 +39,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.ClearButton = new System.Windows.Forms.Button();
             this.CloseButton = new System.Windows.Forms.Button();
+            this.DevModeCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // SubmodButton
@@ -143,11 +144,23 @@
             this.CloseButton.UseVisualStyleBackColor = true;
             this.CloseButton.Click += new System.EventHandler(this.CloseButton_Click);
             // 
+            // DevModeCheckBox
+            // 
+            this.DevModeCheckBox.AutoSize = true;
+            this.DevModeCheckBox.Location = new System.Drawing.Point(611, 272);
+            this.DevModeCheckBox.Name = "DevModeCheckBox";
+            this.DevModeCheckBox.Size = new System.Drawing.Size(108, 17);
+            this.DevModeCheckBox.TabIndex = 10;
+            this.DevModeCheckBox.Text = "Edit mods directly";
+            this.DevModeCheckBox.UseVisualStyleBackColor = true;
+            this.DevModeCheckBox.Visible = false;
+            // 
             // SubmodSetup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(740, 380);
+            this.Controls.Add(this.DevModeCheckBox);
             this.Controls.Add(this.CloseButton);
             this.Controls.Add(this.ClearButton);
             this.Controls.Add(this.label1);
@@ -179,5 +192,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button ClearButton;
         private System.Windows.Forms.Button CloseButton;
+        private System.Windows.Forms.CheckBox DevModeCheckBox;
     }
 }

@@ -660,6 +660,11 @@ public static class SharedFunctions
                 }
             }
         }
+        value = unit.SelectSingleNode("descendant::Space_Model_Name");
+        if (!(value is null))
+        {
+            if (!(value.LastChild is null)) model = value.LastChild.Value;
+        }
         value = unit.SelectSingleNode("descendant::Affiliation");
         if (!(value is null))
         {
@@ -677,6 +682,14 @@ public static class SharedFunctions
         if (!(value is null))
         {
             Hardpoints = ReadWhiteSpaceAsCommas(value.InnerText);
+        }
+        else
+        {
+            value = unit.SelectSingleNode("descendant::Hardpoints");
+            if (!(value is null))
+            {
+                Hardpoints = ReadWhiteSpaceAsCommas(value.InnerText);
+            }
         }
         /*if (name == "T4A_Company") //parse debug
         {
@@ -3324,6 +3337,39 @@ public static class SharedFunctions
         return getTerrainName(terraintype); ;
     }
 
+    public static Color getTerrainColor(int terraintype)
+    {
+        Color corenne = new Color();
+        switch (terraintype)
+        {
+            default:
+                corenne = Color.LawnGreen; //"Temperate"
+                break;
+            case 1:
+                corenne = Color.Snow; //"Arctic"
+                break;
+            case 2:
+                corenne = Color.SandyBrown; //"Desert"
+                break;
+            case 3:
+                corenne = Color.ForestGreen; //"Forest"
+                break;
+            case 4:
+                corenne = Color.SaddleBrown; //"Swamp"
+                break;
+            case 5:
+                corenne = Color.Red; //"Volcanic"
+                break;
+            case 6:
+                corenne = Color.Gray; //"Urban"
+                break;
+            case 7:
+                corenne = Color.Blue; //"Space"
+                break;
+        }
+        return corenne;
+    }
+
     public static string getTerrainName(int terraintype)
     {
         string mapTerrain = "";
@@ -5446,6 +5492,136 @@ public static class SharedFunctions
         return proj;
     }
 
+    private static List<projectileAccuracyTemplate> LightLaserAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        return ExpectedAccuracy;
+    }
+
+    private static PointF projectileExamine(string projectile, string damageType)
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        float expectedRange = 0;
+
+        bool heavy = (projectile.Contains("heavy_") || projectile.Contains("Heavy_"));
+        bool light = (projectile.Contains("light_") || projectile.Contains("Light_"));
+
+        switch (damageType)
+        {
+            case "DamageS_Laser":
+                if (projectile.Contains("rapid_") || projectile.Contains("Rapid_"))
+                {//masers have different range?
+                    if (light)
+                    {
+                        expectedRange = 1500;
+                    }
+                    else if (heavy)
+                    {
+                        expectedRange = 2000;
+                    }
+                    else
+                    {
+                        expectedRange = 1750;
+                    }
+                }
+                else
+                {
+                    if (light)
+                    {
+                        expectedRange = 1750;
+                    }
+                    else if (heavy)
+                    {
+                        expectedRange = 2250;
+                    }
+                    else
+                    {
+                        expectedRange = 2000;
+                    }
+                }
+                break;
+            case "DamageS_Turbolaser":
+                if (light)
+                {
+                    expectedRange = 2500;
+                }
+                else if (heavy)
+                {
+                    expectedRange = 3500;
+                }
+                else
+                {
+                    expectedRange = 3000;
+                }
+                break;
+            case "DamageS_TurboIon":
+                if (light)
+                {
+                    expectedRange = 2500;
+                }
+                else if (heavy)
+                {
+                    expectedRange = 3500;
+                }
+                else
+                {
+                    expectedRange = 3000;
+                }
+                break;
+            case "DamageS_Concussion":
+                if (projectile.Contains("assault_") || projectile.Contains("Assault_"))
+                {
+                    expectedRange = 3500;
+                }
+                else if (projectile.Contains("_sphere") || projectile.Contains("_Sphere"))
+                {
+                    expectedRange = 2500;
+                }
+                else
+                {
+                    expectedRange = 2000;
+                }
+                break;
+            case "DamageS_Proton":
+                if (projectile.Contains("mass_driver") || projectile.Contains("Mass_Driver"))
+                {
+                    expectedRange = 3500;
+                }
+                else
+                {
+                    expectedRange = 2500; //todo siege torps for Torp Sphere
+                }
+                break;
+        }
+
+        return new PointF(expectedRange, -1);
+        //todo return -1 range if hardpoint doesn't count (engine, grav well, dummy...)
+    }
+
+    public static unit hardpointExamine(unit unit)
+    {
+        float range = 0;
+        float acctier = 0;
+        int weaponcount = 0;
+
+        foreach(hardpoint hp in unit.consolidatedhps)
+        {
+            PointF examination = projectileExamine(hp.projectile, hp.damageType);
+
+            if(examination.X > 0)
+            {
+                range += examination.X * hp.quantity;
+                acctier += examination.Y * hp.quantity;
+                weaponcount += hp.quantity;
+            }
+        }
+
+        range /= weaponcount;
+        acctier /= weaponcount;
+
+        return unit;
+    }
+
 }
 
 public struct MEGentry
@@ -5466,6 +5642,12 @@ public struct projectile
     public float blastRadius;
     public float speed;
     public float turn;
+}
+
+public struct projectileAccuracyTemplate
+{
+    public string armor;
+    public float accuracy;
 }
 public struct hardpoint
 {
@@ -6062,6 +6244,18 @@ public class Text_Entry : IComparable<Text_Entry>
         return corenne;
     }
 
+    public static uint calculateCRC(string id)
+    {
+        uint check = 0xFFFFFFFF;
+        byte[] win1252Bytes = Encoding.Convert(Encoding.Unicode, Encoding.GetEncoding("windows-1252"), toBytes(id.ToCharArray(0, id.Length)));
+        for (int j = 0; j < win1252Bytes.Length; j++)
+        {
+            check = ((check >> 8) & 0x00FFFFFF) ^ crcGlobals.crcTable[(check ^ win1252Bytes[j]) & 0xFF];
+        }
+        check ^= 0xFFFFFFFF;
+        return check;
+    }
+
     public static Text_Entry FromCsv(string csvLine, char delimiter)
     {
         if (csvLine.Length == 0 || !csvLine.Contains(delimiter))
@@ -6074,14 +6268,8 @@ public class Text_Entry : IComparable<Text_Entry>
         entry.identifier = csvLine.Substring(0, firstdelimit);
         entry.entry = csvLine.Substring(firstdelimit + 1, csvLine.Length - firstdelimit - 1);
 
-        uint check = 0xFFFFFFFF;
-        byte[] win1252Bytes = Encoding.Convert(Encoding.Unicode, Encoding.GetEncoding("windows-1252"), toBytes(entry.identifier.ToCharArray(0, entry.identifier.Length)));
-        for (int j = 0; j < win1252Bytes.Length; j++)
-        {
-            check = ((check >> 8) & 0x00FFFFFF) ^ crcGlobals.crcTable[(check ^ win1252Bytes[j]) & 0xFF];
-        }
-        check ^= 0xFFFFFFFF;
-        entry.crc = check;
+        
+        entry.crc = calculateCRC(entry.identifier);
 
         return entry;
     }
@@ -6265,5 +6453,62 @@ public static class DatParser
         }
 
         return entries;
+    }
+
+
+    public static void compileDat(List<Text_Entry> Entries, string outFile)
+    {
+        uint total_entries = (uint)Entries.Count;
+
+        File.Delete(outFile);
+        List<byte> datfile = new List<byte>();
+
+
+        byte[] bytes = tobytesLE(total_entries);
+        for (int i = 0; i < 4; i++)
+        {
+            datfile.Add(bytes[i]);
+        }
+
+
+        for (int i = 0; i < total_entries; i++)
+        {
+            byte[] crcbytes = tobytesLE(Entries[i].crc);
+            for (int j = 0; j < 4; j++)
+            {
+                datfile.Add(crcbytes[j]);
+            }
+            crcbytes = tobytesLE(Convert.ToUInt32(Entries[i].entry.Length));
+            for (int j = 0; j < 4; j++)
+            {
+                datfile.Add(crcbytes[j]);
+            }
+            crcbytes = tobytesLE(Convert.ToUInt32(Entries[i].identifier.Length));
+            for (int j = 0; j < 4; j++)
+            {
+                datfile.Add(crcbytes[j]);
+            }
+        }
+
+        for (int i = 0; i < total_entries; i++)
+        {
+            byte[] letters = Encoding.Convert(Encoding.Unicode, Encoding.Unicode, Text_Entry.toBytes(Entries[i].entry.ToCharArray(0, Entries[i].entry.Length)));
+            for (int j = 0; j < letters.Length; j++)
+            {
+                datfile.Add(Convert.ToByte(letters[j]));
+            }
+        }
+
+        for (int i = 0; i < total_entries; i++)
+        {
+            byte[] letters = Encoding.Convert(Encoding.Unicode, Encoding.GetEncoding("windows-1252"), Text_Entry.toBytes(Entries[i].identifier.ToCharArray(0, Entries[i].identifier.Length)));
+            for (int j = 0; j < letters.Length; j++)
+            {
+                datfile.Add(Convert.ToByte(letters[j]));
+            }
+        }
+
+
+        System.IO.File.WriteAllBytes(outFile, datfile.ToArray());
     }
 }

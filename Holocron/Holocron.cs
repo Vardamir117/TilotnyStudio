@@ -24,14 +24,8 @@ using static SharedFunctions;
  *https://dev.to/karenpayneoregon/window-forms-dark-mode-33on in program.cs, requires .Net upgrade? Application.SetColorMode(SystemColorMode.Dark);
  *
  *
+ *Templates as another category like mission objects
  * 
- * Buick hardpoints are not being found - innertext?
- *
- *it might be useful to have SFXEvent_Target_Ability, SFXEvent_GUI_Unit_Ability_Activated overlap with general sounds like the Death one
- *deactivate too
- *
- *
- *parse sfx on abilities - selecting an ability with sfx enters a special mode for sfx
  *
  * hide class for space units if EaWX?
  *
@@ -103,6 +97,14 @@ namespace Holocron
             //Assume map picturebox is a square of odd pixel count, the same size between GC and planet pages
             public static int origin;
             public static float scale;
+
+            public static int map_x = 0;
+            public static int map_y = 0;
+
+            public static int map_extra_edge = 250; //Extra space so that planets/labels have room  to spill outside the coordinates
+
+            public static int map_old_center_x = 0;
+            public static int map_old_center_y = 0;
 
             public static bool allplanets = false; //todo make sure this is off for releases
             public static bool devmode = false;
@@ -182,7 +184,7 @@ namespace Holocron
             if (args.Length > 1)
             {
                 string[] split = args[1].Split(';');
-                for (int i=0; i< split.Length; i++) { //First arg is exe, second is semicolon delimited mod args
+                for (int i = 0; i < split.Length; i++) { //First arg is exe, second is semicolon delimited mod args
                     entities.modpaths.Add(split[i]);
                 }
             }
@@ -193,7 +195,7 @@ namespace Holocron
             {
                 globals.localmodpath = UpOneFolder(UpOneFolder(modfolder));
                 globals.steammodpath = UpOneFolder(UpOneFolder(UpOneFolder(localmodtest))) + "\\workshop\\content\\32470";
-                if(entities.modpaths.Count == 0)
+                if (entities.modpaths.Count == 0)
                 {
                     if (Directory.Exists(modfolder + "\\..\\TR") && Directory.Exists(modfolder + "\\..\\FotR") && Directory.Exists(modfolder + "\\..\\CoreSaga") && Directory.Exists(modfolder + "\\..\\Rev"))
                     {
@@ -239,13 +241,13 @@ namespace Holocron
                     // entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470\\3417277973\\Data");
 
                     //Dev build
-                        
+
                     //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\Rev\\Data");
                     //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\TR\\Data");
                     //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\FotR\\Data");
                     //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\CoreSaga\\Data");
                     //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\Data");
-                        
+
 
                     //Vanillua
                     //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Data");
@@ -264,7 +266,7 @@ namespace Holocron
             //todo stop right aligned? controls from resizing in stupid ways when the design tab is reopened
             //In lieu of a proper fix, make things right aligned at runtime...
             //PlanetGCListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
-            PlanetBTSTextBox.Anchor = AnchorStyles.Top |  AnchorStyles.Right | AnchorStyles.Left;
+            PlanetBTSTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             GCPresentListbox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             GCPlanetListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             GCMapListBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
@@ -296,11 +298,12 @@ namespace Holocron
 
             this.WindowState = FormWindowState.Maximized;
         }
-        
+
         private void load_mods()
         {
             Loading loadscreen = new Loading();
             loadscreen.Show();
+            loadscreen.Activate();
             FactionListBox.Items.Clear();
             ComplementFactionListBox.Items.Clear();
             GCListBox.Items.Clear();
@@ -317,6 +320,7 @@ namespace Holocron
             globals.shipnames.Clear();
             globals.MoneyStructures.Clear();
             globals.DiscountEntities.Clear();
+            loadscreen.Activate();
         }
 
         private void LoadThread(Loading loadscreen)
@@ -428,7 +432,7 @@ namespace Holocron
             globals.ContrastValues = ReadContrastValues();
             //Assume picturebox is a square of odd pixel count
             globals.origin = (PlanetPictureBox.Width - 1) / 2;
-            globals.scale = globals.origin/(entities.PlanetBounds + 25);
+            globals.scale = globals.origin / (entities.PlanetBounds + 25);
             //entities.hardpointhashes.Clear(); //No reason to keep these around after parsing. I found a reason
             //entities.projectilehashes.Clear();
 
@@ -550,9 +554,9 @@ namespace Holocron
         {
             if (nav.suppresshistory) return;
             if (nav.navindex > 0 && nav.item[nav.navindex] == entity) return; //Don't duplicate entries when e.g. sorting reselects the same index. Technically should care if the others are the same too, but it's not often names should overlap
-            if(nav.navindex < nav.maintab.Count-1)
+            if (nav.navindex < nav.maintab.Count - 1)
             {
-                for(int i = nav.maintab.Count - 1; i > nav.navindex; i--)
+                for (int i = nav.maintab.Count - 1; i > nav.navindex; i--)
                 {
                     nav.maintab.RemoveAt(i);
                     nav.secondary.RemoveAt(i);
@@ -580,7 +584,7 @@ namespace Holocron
             switch (main)
             {
                 case historymaintabs.faction:
-                    for(int i = 0; i < entities.factions.Count; i++)
+                    for (int i = 0; i < entities.factions.Count; i++)
                     {
                         if (item == entities.factions[i].codename)
                         {
@@ -714,6 +718,17 @@ namespace Holocron
                                 }
                             }
                             break;
+                        case lookupsubtabs.lkReward:
+                            for (int i = 0; i < MissionListBox.Items.Count; i++)
+                            {
+                                if (item == (string)MissionListBox.Items[i])
+                                {
+                                    MissionListBox.SelectedItem = MissionListBox.Items[i];
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            break;
                         case lookupsubtabs.lkStandard:
                             for (int i = 0; i < StandardFListBox.Items.Count; i++)
                             {
@@ -748,7 +763,7 @@ namespace Holocron
 
         private void backToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if(nav.navindex > 0)
+            if (nav.navindex > 0)
             {
                 nav.navindex--;
                 goto_history(nav.navindex);
@@ -784,6 +799,10 @@ namespace Holocron
                 case (int)historymaintabs.planet:
                     if (PlanetListBox.SelectedItems.Count == 0) populatePlanetListbox();
                     break;
+                case (int)historymaintabs.galaxy:
+                    if (GalaxyMapPictureBox.Image == null) GalaxyResetView();
+                    if (GalaxyMapGCComboBox.Items.Count == 0) setMapGCOptions();
+                    break;
                 case (int)historymaintabs.lookups:
                     FillMatrixLookup();
                     break;
@@ -805,7 +824,7 @@ namespace Holocron
             switch (LookupTabControl.SelectedIndex) //todo add to history someday. use lookups*100 + this index
             {
                 //case 0: The matrix doesn't need filling from here, actually
-                    //break;
+                //break;
                 case 2:
                     //todo - more sorting and filtering? filter by unit and hero names only? Filter out dropship and/or cadet?
                     //How are there two acclamator_I instances for Acclamator? Because it's in the list twice. Probably leave that in
@@ -834,7 +853,7 @@ namespace Holocron
 
                                             foreach (string moniker in monikers)
                                             {
-                                                if(moniker != "")
+                                                if (moniker != "")
                                                 {
                                                     int index = globals.shipnames.FindIndex(s => s.name == moniker);
                                                     if (index >= 0)
@@ -900,7 +919,7 @@ namespace Holocron
                         foreach (unit hero in entities.spaceHeroes)
                         {//todo: think of a way to capture cases like Lucid Voice, where the name is not also used as a hero flagship. Doesn't have COMMAND and isn't a fighter?
                             int index = globals.shipnames.FindIndex(s => s.name == hero.username);
-                            if(index >= 0 && !hero.tooltip.Contains("TEXT_TOOLTIP_COMMAND_")) //If it's the name of a standalone named ship it shouldn't have this, whereas a major hero name and ship name can also happen to coexost (e.g. Rooks)
+                            if (index >= 0 && !hero.tooltip.Contains("TEXT_TOOLTIP_COMMAND_")) //If it's the name of a standalone named ship it shouldn't have this, whereas a major hero name and ship name can also happen to coexost (e.g. Rooks)
                             {
                                 shipname name = globals.shipnames[index];
                                 name.heroes.Add(hero.username + " (Standalone)");
@@ -931,7 +950,7 @@ namespace Holocron
 
                                 foreach (string moniker in monikers)
                                 {
-                                    if(moniker != "")
+                                    if (moniker != "")
                                     {
                                         int index = globals.shipnames.FindIndex(s => s.name == moniker);
                                         if (index >= 0)
@@ -976,7 +995,7 @@ namespace Holocron
                         List<string> missionfiles = getModFiles("Scripts\\Library\\eawx-plugins\\intervention-missions\\rewards", "*.lua", entities);
                         foreach (string file in missionfiles)
                         {
-                            MissionListBox.Items.Add(LastFolderOrFile(file).Replace("RewardTables_","").ToUpper().Replace(".LUA",""));
+                            MissionListBox.Items.Add(LastFolderOrFile(file).Replace("RewardTables_", "").ToUpper().Replace(".LUA", ""));
                         }
                     }
                     break;
@@ -1014,7 +1033,7 @@ namespace Holocron
                     // code block
                     break;
             }
-            
+
         }
 
         private void MatrixSpaceRB_CheckedChanged(object sender, EventArgs e)
@@ -1881,7 +1900,7 @@ namespace Holocron
             List<string> armors = new List<string>();
             if (MatrixSpaceRB.Checked)
             {
-                if(entities.SpaceDamageTypes.Count > 0) damages = entities.SpaceDamageTypes;
+                if (entities.SpaceDamageTypes.Count > 0) damages = entities.SpaceDamageTypes;
                 else damages = entities.DamageTypes;
 
                 if (entities.SpaceArmors.Count > 0)
@@ -1908,7 +1927,7 @@ namespace Holocron
             MatrixGrid.Columns.Add("DamageNames", "");
             for (int i = 0; i < y; i++)
             {
-                MatrixGrid.Columns.Add(damages[i], damages[i].Replace("DamageL_","").Replace("DamageS_", ""));
+                MatrixGrid.Columns.Add(damages[i], damages[i].Replace("DamageL_", "").Replace("DamageS_", ""));
             }
             for (int i = 0; i < x; i++)
             {
@@ -1932,7 +1951,7 @@ namespace Holocron
             }
 
             //Automatically shrink (mostly) columns as needed
-            for (int i = 0; i<MatrixGrid.Columns.Count; i++)
+            for (int i = 0; i < MatrixGrid.Columns.Count; i++)
             {
                 MatrixGrid.Columns[i].AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells;
             }
@@ -2035,11 +2054,11 @@ namespace Holocron
 
         private void ShipnameListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(ShipnameListBox.SelectedItems.Count > 0)
+            if (ShipnameListBox.SelectedItems.Count > 0)
             {
                 shipname moniker = (shipname)ShipnameListBox.SelectedItem;
                 ShipnameDetailLabel.Text = moniker.name;
-                if(moniker.units.Count > 0) ShipnameDetailLabel.Text += "\n\nUsed in name lists:\n"+ moniker.units[0];
+                if (moniker.units.Count > 0) ShipnameDetailLabel.Text += "\n\nUsed in name lists:\n" + moniker.units[0];
                 for (int i = 1; i < moniker.units.Count; i++) ShipnameDetailLabel.Text += ", " + moniker.units[i];
                 if (moniker.heroes.Count > 0) ShipnameDetailLabel.Text += "\n\nUsed by heroes:\n" + moniker.heroes[0];
                 for (int i = 1; i < moniker.heroes.Count; i++) ShipnameDetailLabel.Text += ", " + moniker.heroes[i];
@@ -2076,7 +2095,7 @@ namespace Holocron
             SpawnText.Text = File.ReadAllText(getModFile("Scripts\\Library\\spawn-sets\\" + SpawnListBox.SelectedItem + ".lua", entities));
             SpawnPlanetListBox.Items.Clear();
             spawnSet set = entities.spawnSets.FirstOrDefault(s => String.Equals(s.name, (string)SpawnListBox.SelectedItem, StringComparison.OrdinalIgnoreCase));
-            if(!(set.name is null))
+            if (!(set.name is null))
             {
                 foreach (string planetname in set.planets)
                 {
@@ -2109,7 +2128,7 @@ namespace Holocron
             if (color is null) return "";
             string corenne = "";
             bool furst = true;
-            foreach(int component in color)
+            foreach (int component in color)
             {
                 if (furst) furst = false;
                 else corenne += ", ";
@@ -2168,7 +2187,7 @@ namespace Holocron
             else FactionLColorLabel.Text = "Lua Color: " + colorString(faction.lcolor);
             FactionLColorLabel.BackColor = factioncolor(faction.lcolor);
 
-            string Luapath =  getModFile("Scripts\\Story\\GCMenu_DescriptionText.lua", entities);
+            string Luapath = getModFile("Scripts\\Story\\GCMenu_DescriptionText.lua", entities);
             FactionDescLabel.Text = "";
             if (Luapath != "")
             {
@@ -2181,7 +2200,7 @@ namespace Holocron
                     if (mode == 1 && line.Contains("Overviews")) mode = 2;
                     if (mode == 2 && line.Contains("DEFAULT"))
                     {
-                        FactionDescLabel.Text = line.Substring(line.LastIndexOf("=") + 1, line.Length - line.LastIndexOf("=") - 1).Trim().Replace("\"","");
+                        FactionDescLabel.Text = line.Substring(line.LastIndexOf("=") + 1, line.Length - line.LastIndexOf("=") - 1).Trim().Replace("\"", "");
                         break;
                     }
                 }
@@ -2195,7 +2214,7 @@ namespace Holocron
             {
                 if (factory.affiliations.Contains(faction.codename))
                 {
-                    if(entities.groundCompanies.FindIndex(s => s.reqstructures.Contains(factory.unitname) && s.affiliations.Contains(faction.codename) && s.techlevel <= 5) >= 0) FactionFactoryListbox.Items.Add(factory);
+                    if (entities.groundCompanies.FindIndex(s => s.reqstructures.Contains(factory.unitname) && s.affiliations.Contains(faction.codename) && s.techlevel <= 5) >= 0) FactionFactoryListbox.Items.Add(factory);
                 }
             }
             foreach (unit factory in entities.spaceStructures)
@@ -2256,7 +2275,7 @@ namespace Holocron
 
         private void FactionFactoryListbox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(FactionFactoryListbox.SelectedItems.Count > 0)
+            if (FactionFactoryListbox.SelectedItems.Count > 0)
             {
                 faction faction = (faction)FactionListBox.Tag; //todo support multi select units, make level one ships not match level 4 yards
                 List<string> factories = new List<string>();
@@ -2310,7 +2329,7 @@ namespace Holocron
 
         private void FactionGotoConquestButton_Click(object sender, EventArgs e)
         {
-            if(FactionGCListbox.SelectedItems.Count > 0)
+            if (FactionGCListbox.SelectedItems.Count > 0)
             {
                 insert_history((int)historymaintabs.conquest, 0, ((galacticConquest)FactionGCListbox.SelectedItem).codename, true);
             }
@@ -2341,21 +2360,37 @@ namespace Holocron
             if (FactionUnitListBox.SelectedItems.Count > 0)
             {
                 string unit = ((unit)FactionUnitListBox.SelectedItem).unitname;
-                if(FactionSpaceUnitRB.Checked) insert_history((int)historymaintabs.unit, 0, unit, true);
+                if (FactionSpaceUnitRB.Checked) insert_history((int)historymaintabs.unit, 0, unit, true);
                 else if (FactionGroundTeamRB.Checked) insert_history((int)historymaintabs.unit, 1, unit, true);
                 else if (FactionSpaceHeroRB.Checked) insert_history((int)historymaintabs.unit, 4, unit, true);
                 else if (FactionHeroTeamRB.Checked) insert_history((int)historymaintabs.unit, 5, unit, true);
             }
         }
 
+        private void FactionGotoMissionButton_Click(object sender, EventArgs e)
+        {
+            if (FactionListBox.Tag == null) return;
+            faction faction = (faction)FactionListBox.Tag;
+            insert_history((int)historymaintabs.lookups, (int)lookupsubtabs.lkReward, faction.codename.ToUpper(), true);
+        }
+
+        private void FactionGotoSpawnSetButton_Click(object sender, EventArgs e)
+        {
+            if (FactionListBox.Tag == null) return;
+            faction faction = (faction)FactionListBox.Tag;
+            insert_history((int)historymaintabs.lookups, (int)lookupsubtabs.lkSpawn, faction.codename.ToUpper(), true);
+        }
+
         private void setFactionAvailText(unit unit)
         {
             faction faction = ((faction)FactionListBox.Tag);
             FactionUnitInternalLabel.Text = "Internal Name: " + unit.unitname;
+            FactionUnitAvailabilityLabel.Text = "Checking prerequisites...";
+            FactionUnitAvailabilityLabel.Update();
             FactionUnitAvailabilityLabel.Text = checkUnitAvailibility(unit, faction);
 
-            string spawnsetlib = getModFile("Scripts\\Library\\spawn-sets\\"+ faction.codename.ToUpper()+".lua", entities); //TODO make sure this is still correct when modcontentloader is cut
-            if(spawnsetlib != "")
+            string spawnsetlib = getModFile("Scripts\\Library\\spawn-sets\\" + faction.codename.ToUpper() + ".lua", entities); //TODO make sure this is still correct when modcontentloader is cut
+            if (spawnsetlib != "")
             {
                 string filetext = File.ReadAllText(spawnsetlib);
                 if (filetext.Contains("\"" + unit.unitname + "\"")) FactionUnitAvailabilityLabel.Text += "\nStarting Force Option";
@@ -2371,8 +2406,8 @@ namespace Holocron
         private void FactionFactoryOptionsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             unit unit = (unit)FactionFactoryOptionsListBox.SelectedItem;
-                setFactionAvailText(unit);
-            }
+            setFactionAvailText(unit);
+        }
 
         private bool FullSalvoOn()
         {
@@ -2419,6 +2454,7 @@ namespace Holocron
                     }
                 }
             }
+            if (selectedUnit.consolidatedhps.Count > 0) UnitHPListbox.SelectedIndex = 0;
             RawDPSLabel.Text = "Base DPS totals:";
             float average = 0;
             for (int i = 0; i < types.Count; i++)
@@ -2521,7 +2557,7 @@ namespace Holocron
                     case "Force_Healing_Ability":
                         heal = true;
                         HealScoreLabel.Text = "Heal Score: " + getHealScore(able);
-                        if(able.genericValue > 0) HealAmountLabel.Text = "Heal Amount: " + able.genericValue;
+                        if (able.genericValue > 0) HealAmountLabel.Text = "Heal Amount: " + able.genericValue;
                         else HealAmountLabel.Text = "Heal Percent: " + able.duration * 100 + "%";
                         HealRechargeLabel.Text = "Heal Recharge: " + able.recharge;
                         HealRadiusLabel.Text = "Heal Radius: " + able.radius;
@@ -2552,7 +2588,7 @@ namespace Holocron
                 }
             }
             int tab = 0;
-            if(GroundRadioButton.Checked) tab = 1;
+            if (GroundRadioButton.Checked) tab = 1;
             else if (UnitRadioButton.Checked) tab = 2;
             else if (FighterRadioButton.Checked) tab = 3;
             else if (SpaceHeroRadioButton.Checked) tab = 4;
@@ -2564,7 +2600,7 @@ namespace Holocron
 
             ShipNameRichTextBox.Text = "";
             string[] monikers = findUnitNameFile(selectedUnit, entities);
-            foreach(string moniker in monikers)
+            foreach (string moniker in monikers)
             {
                 ShipNameRichTextBox.Text += moniker + "\n";
             }
@@ -2586,10 +2622,10 @@ namespace Holocron
                         if (File.Exists(sourcefile))
                         {
                             string[] lines = File.ReadAllLines(sourcefile);
-                            for(int lineid = 0; lineid < lines.Length; lineid++)
+                            for (int lineid = 0; lineid < lines.Length; lineid++)
                             {
                                 string line = lines[lineid];
-                                if(line.Contains("\"" + sfx.name + "\""))
+                                if (line.Contains("\"" + sfx.name + "\""))
                                 {
                                     int maxback = lineid - 250;
                                     if (maxback < 0) maxback = 0;
@@ -2598,8 +2634,8 @@ namespace Holocron
                                         string comment = lines[back];
                                         if (comment.Contains("<!--"))
                                         {
-                                            string trimmed = comment.Replace("<!--","").Replace("-->", "").Replace("*", ""); //todo trim to comment only, first of open and last of close
-                                            if (trimmed.Replace(" ","").Length > 5 && !trimmed.Contains("Take_Cover") && !trimmed.Contains("TEXT_SFX_GO_AWAY_ERRORS") && comment.IndexOf("SFXEvent") <= comment.IndexOf("<!--"))
+                                            string trimmed = comment.Replace("<!--", "").Replace("-->", "").Replace("*", ""); //todo trim to comment only, first of open and last of close
+                                            if (trimmed.Replace(" ", "").Length > 5 && !trimmed.Contains("Take_Cover") && !trimmed.Contains("TEXT_SFX_GO_AWAY_ERRORS") && comment.IndexOf("SFXEvent") <= comment.IndexOf("<!--"))
                                             {//todo: read any adjacent lines further up?
                                                 UnitBTSTextBox.Text += "\n\nSound file source notes:\n" + trimmed.Trim();
                                                 sfxfound = true;
@@ -2616,9 +2652,35 @@ namespace Holocron
                 if (sfxfound) break;
             }
 
+            string weaperrlist = "";
+            List<hardpoint> hps = selectedUnit.consolidatedhps;
+            foreach (string hardpoint in selectedUnit.Hardpoints)
+            {
+                int index = LookupUntemplateID(hardpoint);
+                for (int j = 0; j < entities.hardpointhashes[index].Count; j++)
+                {
+                    hardpoint hp2 = entities.hardpoints[entities.hardpointhashes[index][j]];
+                    if (hp2.name == hardpoint)
+                    {
+                        for (int k = 0; k < hps.Count; k++)
+                        {
+                            if (hpEquality(hp2, hps[k]))
+                            {
+                                if (hp2.firesound != hps[k].firesound) weaperrlist += hp2.name + " fire: " + hp2.firesound + "\n";
+                                if (hp2.diesound != hps[k].diesound) weaperrlist += hp2.name + " die: " + hp2.diesound + "\n";
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            CheckWeaponMismatchButton.Visible = weaperrlist != "";
+            CheckWeaponMismatchButton.Tag = weaperrlist;
+
             setAbilityDependentStats();
 
-            if (selectedUnit.pop > 0)  UnitPopLabel.Text = "Population: " + selectedUnit.pop.ToString();
+            if (selectedUnit.pop > 0) UnitPopLabel.Text = "Population: " + selectedUnit.pop.ToString();
             else UnitPopLabel.Text = "";
             if (selectedUnit.cost > 1) UnitCostLabel.Text = "Cost: " + selectedUnit.cost.ToString();
             else UnitCostLabel.Text = "";
@@ -2654,7 +2716,7 @@ namespace Holocron
             else MaintenanceLabel.Text = "";
             if (selectedUnit.variantchain.Count > 0)
             {
-                VariantLabel.Text = "Variant Chain: " + selectedUnit.variantchain[selectedUnit.variantchain.Count-1];
+                VariantLabel.Text = "Variant Chain: " + selectedUnit.variantchain[selectedUnit.variantchain.Count - 1];
                 for (int i = selectedUnit.variantchain.Count - 2; i >= 0; i--) VariantLabel.Text += ", " + selectedUnit.variantchain[i];
             }
             else VariantLabel.Text = "";
@@ -2711,9 +2773,9 @@ namespace Holocron
                     ComplementXMLCheckBox.Checked = false;
                     ComplementResearchListBox.Items.Clear();
                     List<string> researches = new List<string>();
-                    foreach(garrison_lua gar in selectedUnit.garrison_lua)
+                    foreach (garrison_lua gar in selectedUnit.garrison_lua)
                     {
-                        foreach(string research in gar.ResearchRequired)
+                        foreach (string research in gar.ResearchRequired)
                         {
                             if (!researches.Contains(research))
                             {
@@ -2751,12 +2813,12 @@ namespace Holocron
             else if (selectedUnit.sortstring != "") SortValueLabel.Text = "Sort: " + selectedUnit.sortstring;
             else SortValueLabel.Text = "Sort: " + selectedUnit.sortfloat.ToString(globals.dpsformat);
 
-            if(FactionListBox.SelectedItems.Count > 0) IncomingDamageBox_SelectedIndexChanged(IncomingDamageBox, e);
+            if (FactionListBox.SelectedItems.Count > 0) IncomingDamageBox_SelectedIndexChanged(IncomingDamageBox, e);
             if (selectedUnit.garrison_slots > 0) GarrisonSlotLabel.Text = "Garrison Slots: " + selectedUnit.garrison_slots.ToString();
             else GarrisonSlotLabel.Text = "";
             if (selectedUnit.garrison_value > 0) GarrisonValueLabel.Text = "Garrison Value: " + selectedUnit.garrison_value.ToString();
             else GarrisonValueLabel.Text = "";
-            if (selectedUnit.garrison_type!= "") GarrisonTypeLabel.Text = "Garrison Type: " + selectedUnit.garrison_type;
+            if (selectedUnit.garrison_type != "") GarrisonTypeLabel.Text = "Garrison Type: " + selectedUnit.garrison_type;
             else GarrisonTypeLabel.Text = "";
             if (GroundRadioButton.Checked || UnitRadioButton.Checked) LocomotorLabel.Text = "Locomotor: " + selectedUnit.locomotor_type; //todo ground hero and company
             else if (selectedUnit.fightermode >= 0) LocomotorLabel.Text = "Locomotor: Fighter";
@@ -2787,7 +2849,7 @@ namespace Holocron
                 if (!reqstru.Contains("_Dummy") && !(reqstru.Contains("INFLUENCE_")))
                 {
                     unit req = entities.spaceStructures.FirstOrDefault(s => s.unitname.ToLower() == reqstru.ToLower());
-                    if(req.unitname is null) req = entities.structures.FirstOrDefault(s => s.unitname.ToLower() == reqstru.ToLower());
+                    if (req.unitname is null) req = entities.structures.FirstOrDefault(s => s.unitname.ToLower() == reqstru.ToLower());
                     req.username = getBuildingAffils(req);
                     req.sortstring = req.username;
                     ReqStructuresListBox.Items.Add(req);
@@ -2795,10 +2857,10 @@ namespace Holocron
             }
 
             FactionAvailableListbox.Items.Clear();
-            foreach(string affilation in selectedUnit.affiliations)
+            foreach (string affilation in selectedUnit.affiliations)
             {
                 foreach (faction faction in entities.factions)
-                { 
+                {
                     if (affilation == faction.codename)
                     {
                         FactionAvailableListbox.Items.Add(faction);
@@ -2832,7 +2894,7 @@ namespace Holocron
             foreach (string file in spawnsets)
             {
                 string filetext = File.ReadAllText(file);
-                if(filetext.Contains("\""+selectedUnit.unitname+"\"")) UnitSpawnSetListBox.Items.Add(LastFolderOrFile(file).ToUpper().Replace(".LUA", ""));
+                if (filetext.Contains("\"" + selectedUnit.unitname + "\"")) UnitSpawnSetListBox.Items.Add(LastFolderOrFile(file).ToUpper().Replace(".LUA", ""));
             }//todo goto after history for the lookup is set up
 
             UnitRequiredPlanetListbox.Items.Clear();
@@ -2847,7 +2909,7 @@ namespace Holocron
                 foreach (string planet in selectedUnit.planets)
                 {
                     int id = entities.Conquests.FindIndex(s => s.planets.Contains(planet));
-                    if(id >= 0)
+                    if (id >= 0)
                     {
                         UnitGCListbox.Items.Add(GC);
                         break;
@@ -2859,11 +2921,11 @@ namespace Holocron
             foreach (unit discounter in globals.DiscountEntities)
             {
                 bool found = false;
-                foreach(ability able in discounter.abilities)
+                foreach (ability able in discounter.abilities)
                 {
-                    if(able.type == "Reduce_Production_Price_Ability")
+                    if (able.type == "Reduce_Production_Price_Ability")
                     {
-                        if(able.applicable_types.Length > 0)
+                        if (able.applicable_types.Length > 0)
                         {
                             if (able.applicable_types.Contains(selectedUnit.unitname))
                             {
@@ -2922,7 +2984,7 @@ namespace Holocron
 
             bool singlemode = false;
             string singlefaction = "";
-            if(FactionAvailableListbox.SelectedItems.Count > 0)
+            if (FactionAvailableListbox.SelectedItems.Count > 0)
             {
                 singlemode = true;
                 singlefaction = ((faction)FactionAvailableListbox.SelectedItem).codename;
@@ -2938,7 +3000,7 @@ namespace Holocron
                         UnitHostListbox.Items.Add(unidad);
                         continue;
                     }
-                    if(!(unidad.subcompanies is null))
+                    if (!(unidad.subcompanies is null))
                     {
                         if (unidad.subcompanies.FindIndex(s => s.codename == selectedUnit.unitname) >= 0)
                         {
@@ -3035,14 +3097,14 @@ namespace Holocron
 
                 foreach (garrison_lua gar in unit.garrison_lua)
                 {
-                    if(gar.tech[tech] && (gar.ownerAlias == owner || gar.ownerAlias == alias || gar.ownerAlias == "DEFAULT"))
+                    if (gar.tech[tech] && (gar.ownerAlias == owner || gar.ownerAlias == alias || gar.ownerAlias == "DEFAULT"))
                     {
-                        if(gar.ResearchRequired.Count > 0)
+                        if (gar.ResearchRequired.Count > 0)
                         {
                             bool match = false;
                             foreach (string research in ComplementResearchListBox.SelectedItems)
                             {
-                                if(gar.ResearchRequired.FindIndex(s => s == research) >= 0)
+                                if (gar.ResearchRequired.FindIndex(s => s == research) >= 0)
                                 {
                                     match = true;
                                     break;
@@ -3124,7 +3186,7 @@ namespace Holocron
                     unit.sortfloat = unit.cp;
                     if (globals.UnitSortConfig.complementCP)
                     {
-                        foreach(garrison_entry gar in unit.garrison)
+                        foreach (garrison_entry gar in unit.garrison)
                         {
                             if (gar.tech[1])
                             {
@@ -3134,7 +3196,7 @@ namespace Holocron
                                 float reservecp = upfrontcp * (1 - reserveratio);
                                 unit.sortfloat += upfrontcp + reservecp;
                             }
-                            
+
                         }
                     }
                     break;
@@ -3228,7 +3290,7 @@ namespace Holocron
                     break;
                 case UnitSortTypes.dpsRaw:
                     unit.sortfloat = 0;
-                    foreach(hardpoint hp in unit.consolidatedhps)
+                    foreach (hardpoint hp in unit.consolidatedhps)
                     {
                         if (hp.damageType == IncomingDamageBox.Text)
                         {
@@ -3245,7 +3307,7 @@ namespace Holocron
                     unit.sortfloat = 0;
                     foreach (hardpoint hp in unit.consolidatedhps)
                     {
-                        if(hp.damageType != "") //Turns out hangars and engines will do something when routed through the calcs
+                        if (hp.damageType != "") //Turns out hangars and engines will do something when routed through the calcs
                         {
                             float dps = getDPS(hp);
                             dps *= GetWeaponMods(hp.damageType).median;
@@ -3359,7 +3421,7 @@ namespace Holocron
                     break;
                 case UnitSortTypes.Heal:
                     ability healable = unit.abilities.FirstOrDefault(s => s.type == "Force_Healing_Ability"); //todo may need to find last instead
-                    if(healable.recharge > 0)
+                    if (healable.recharge > 0)
                     {
                         switch (globals.UnitSortConfig.HealMode)
                         {
@@ -3368,7 +3430,7 @@ namespace Holocron
                                 break;
                             case 1:
                                 if (healable.genericValue > 0) unit.sortfloat = healable.genericValue;
-                                else unit.sortfloat = healable.duration*100;
+                                else unit.sortfloat = healable.duration * 100;
                                 break;
                             case 2:
                                 unit.sortfloat = healable.genericValue;
@@ -3405,7 +3467,7 @@ namespace Holocron
                 case UnitSortTypes.CommandBonus:
                     List<ability> PerStack = new List<ability>();
                     bool anymod = false;
-                    foreach(ability cmd in unit.abilities)
+                    foreach (ability cmd in unit.abilities)
                     {
                         int mode = globals.UnitSortConfig.CommandTypeMode;
                         int stack = cmd.stacking;
@@ -3416,7 +3478,7 @@ namespace Holocron
                             {
                                 anymod = true;
                                 int id = PerStack.FindIndex(s => s.stacking == stack);
-                                if(id < 0) PerStack.Add(cmd);
+                                if (id < 0) PerStack.Add(cmd);
                                 else
                                 {
                                     ability stackable = PerStack[id];
@@ -3429,7 +3491,7 @@ namespace Holocron
                                 }
                             }
                         }
-                        if(mode < 2 && cmd.type == "Battlefield_Modifier_Ability") //Vision mods are always universal
+                        if (mode < 2 && cmd.type == "Battlefield_Modifier_Ability") //Vision mods are always universal
                         {
                             anymod = true;
                             int id = PerStack.FindIndex(s => s.stacking == stack);
@@ -3507,7 +3569,7 @@ namespace Holocron
             }
 
             //TODO remove invalid sort conditions on rb change
-            if(globals.UnitSortConfig.SortType > UnitSortTypes.Name) //Numerical
+            if (globals.UnitSortConfig.SortType > UnitSortTypes.Name) //Numerical
             {
                 float denom = 1;
                 switch (globals.UnitSortConfig.denomtype)
@@ -3619,7 +3681,7 @@ namespace Holocron
 
             if (globals.UnitFilterConfig.buildableMode > 0)
             {
-                if(unit.techlevel <= 5 && unit.fightermode <=0)// && unit.cost > 1) //For a loose definition of buildable, but one only prone to false positives
+                if (unit.techlevel <= 5 && unit.fightermode <= 0)// && unit.cost > 1) //For a loose definition of buildable, but one only prone to false positives
                 {
                     if (globals.UnitFilterConfig.buildableMode == 2) return false;
                 }
@@ -3766,7 +3828,7 @@ namespace Holocron
             if (!Building.unitname.Contains("_HQ") && Building.affiliations.Count > 0 && Building.affiliations.Count <= 2 && Building.affiliations[0] != "Neutral")
             {
                 Building.username += " (" + FactionNameFromCode(Building.affiliations[0], entities);
-                for (int j = 1; j < Building.affiliations.Count; j++) Building.username += ", " + FactionNameFromCode(Building.affiliations[j],entities);
+                for (int j = 1; j < Building.affiliations.Count; j++) Building.username += ", " + FactionNameFromCode(Building.affiliations[j], entities);
                 Building.username += ")";
             }
             return Building.username;
@@ -3790,10 +3852,10 @@ namespace Holocron
             else if (SpaceStructureRadioButton.Checked) units = entities.spaceStructures;
             else units = entities.groundCompanies;
 
-            for (int i = 0; i< units.Count; i++)
+            for (int i = 0; i < units.Count; i++)
             {
                 unit unit = units[i];
-                if (unit.variantbase != "Infantry_Dummy_Template" && unit.unitname != "Infantry_Dummy_Template" && (!StructureRadioButton.Checked || !SpaceStructureRadioButton.Checked || (unit.hp > 1 && !unit.flags.Contains("NotOpportunityTarget"))) )
+                if (unit.variantbase != "Infantry_Dummy_Template" && unit.unitname != "Infantry_Dummy_Template" && (!StructureRadioButton.Checked || !SpaceStructureRadioButton.Checked || (unit.hp > 1 && !unit.flags.Contains("NotOpportunityTarget"))))
                 {
                     if ((search == "" || (unit.username).ToLower().Contains(search.ToLower())) && filterUnit(unit))
                     {
@@ -3872,7 +3934,7 @@ namespace Holocron
                 else
                 {
                     if (entities.SpaceArmors.Count > 0) src = entities.SpaceArmors;
-                } 
+                }
             }
             else
             {
@@ -3886,7 +3948,7 @@ namespace Holocron
                 }
             }
             foreach (string armor in src) box.Items.Add(armor);
-            if(box.Items.Count > 0) box.SelectedIndex = 0;
+            if (box.Items.Count > 0) box.SelectedIndex = 0;
         }
 
         private void CategoryBoxTypeFill(bool space)
@@ -4020,7 +4082,7 @@ namespace Holocron
             float dps = 0;
             foreach (hardpoint hp in unit.consolidatedhps)
             {
-                if(hp.range >= (float)TargetRangeBox.SelectedItem)
+                if (hp.range >= (float)TargetRangeBox.SelectedItem)
                 {
                     WeaponMods weap = GetWeaponMods(hp.damageType);
                     string type = TargetArmorBox.Text;
@@ -4033,9 +4095,9 @@ namespace Holocron
         }
         private float GetHPAccuracyMod(hardpoint hp)
         {
-            for(int i = 0; i < hp.inaccuracyTypes.Count; i++)
+            for (int i = 0; i < hp.inaccuracyTypes.Count; i++)
             {
-                if(hp.inaccuracyTypes[i] == TargetCategoryBox.Text || hp.inaccuracyTypes[i] == "All")
+                if (hp.inaccuracyTypes[i] == TargetCategoryBox.Text || hp.inaccuracyTypes[i] == "All")
                 {
                     return (100 - hp.inaccuracyAmounts[i]) / 100;
                 }
@@ -4045,7 +4107,7 @@ namespace Holocron
 
         private void setTargetDPS()
         {
-            if(UnitListBox.SelectedItems.Count > 0 && TargetRangeBox.SelectedIndex >= 0)
+            if (UnitListBox.SelectedItems.Count > 0 && TargetRangeBox.SelectedIndex >= 0)
             {
                 unit selected = (unit)UnitListBox.SelectedItem;
 
@@ -4122,7 +4184,7 @@ namespace Holocron
                     UnitSFXWeaponRB.Checked = false;
                     UnitSFXListbox.Items.Clear();
                     UnitSampleListBox.Items.Clear();
-                    if(selected.firesound != "")
+                    if (selected.firesound != "")
                     {
                         sfx sfx = entities.sfx.FirstOrDefault(s => s.name == selected.firesound);
                         if (!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
@@ -4177,7 +4239,7 @@ namespace Holocron
         private void AlphaCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             setTargetDPS();
-            if(UnitListBox.SelectedItems.Count > 0) setDPSBreakdown();
+            if (UnitListBox.SelectedItems.Count > 0) setDPSBreakdown();
             UnitHPListbox_SelectedIndexChanged(UnitHPListbox.SelectedItem, e);
             UnitSortTypes[] redo = { UnitSortTypes.dpsRaw, UnitSortTypes.dpsAvg, UnitSortTypes.dpsArmor, UnitSortTypes.dpsShield };
             if (redo.Contains(globals.UnitSortConfig.SortType)) populateUnitListbox();
@@ -4279,7 +4341,7 @@ namespace Holocron
             int TextSize = 0;
             int.TryParse(UnitTextPanel.Tag.ToString(), out TextSize);
 
-            if(TextSize == 0) //init time, save all the sizes
+            if (TextSize == 0) //init time, save all the sizes
             {
                 UnitTextPanel.Tag = UnitTextPanel.Height;
                 TextSize = UnitTextPanel.Height;
@@ -4312,7 +4374,7 @@ namespace Holocron
             switch (toggleID) //toggle panel and associated buttons
             {
                 case UnitPanels.TextPanel:
-                    if(UnitTextPanel.Height == 0)
+                    if (UnitTextPanel.Height == 0)
                     {
                         UnitTextPanel.Height = TextSize;
                         setExpandedButton(CollapseUnitTextPanel);
@@ -4384,18 +4446,18 @@ namespace Holocron
                     }
                     break;
                 case UnitPanels.CollapseAll:
-                        UnitTextPanel.Height = 0;
-                        setCollapsedButton(CollapseUnitTextPanel, UnitPanels.TextPanel);
-                        UnitAvailPanel.Height = 0;
-                        setCollapsedButton(CollapseUnitAvailPanel, UnitPanels.AvailPanel);
-                        UnitStatPanel.Height = 0;
-                        setCollapsedButton(CollapseUnitStatPanel, UnitPanels.StatPanel);
-                        UnitSubunitPanel.Height = 0;
-                        setCollapsedButton(CollapseUnitSubunitPanel, UnitPanels.SubunitPanel);
-                        UnitAbilityPanel.Height = 0;
-                        setCollapsedButton(CollapseUnitAbilityPanel, UnitPanels.AbilityPanel);
-                        UnitSFXPanel.Height = 0;
-                        setCollapsedButton(CollapseUnitSFXPanel, UnitPanels.SFXPanel);
+                    UnitTextPanel.Height = 0;
+                    setCollapsedButton(CollapseUnitTextPanel, UnitPanels.TextPanel);
+                    UnitAvailPanel.Height = 0;
+                    setCollapsedButton(CollapseUnitAvailPanel, UnitPanels.AvailPanel);
+                    UnitStatPanel.Height = 0;
+                    setCollapsedButton(CollapseUnitStatPanel, UnitPanels.StatPanel);
+                    UnitSubunitPanel.Height = 0;
+                    setCollapsedButton(CollapseUnitSubunitPanel, UnitPanels.SubunitPanel);
+                    UnitAbilityPanel.Height = 0;
+                    setCollapsedButton(CollapseUnitAbilityPanel, UnitPanels.AbilityPanel);
+                    UnitSFXPanel.Height = 0;
+                    setCollapsedButton(CollapseUnitSFXPanel, UnitPanels.SFXPanel);
                     break;
                 case UnitPanels.ExpandAll:
                     UnitTextPanel.Height = TextSize;
@@ -4490,11 +4552,11 @@ namespace Holocron
             if (UnitSubunitListbox.SelectedItems.Count > 0)
             {
                 string obj = "";
-                if(ComplementTechLevelBox.Visible || ComplementLuaTechLevelBox.Visible)
+                if (ComplementTechLevelBox.Visible || ComplementLuaTechLevelBox.Visible)
                 {
                     garrison_lua gar = ((garrison_lua)UnitSubunitListbox.SelectedItem);
                     obj = gar.unitname;
-                    if(gar.standard)
+                    if (gar.standard)
                     {
                         insert_history((int)historymaintabs.lookups, (int)lookupsubtabs.lkStandard, obj, true);
                         return;
@@ -4630,7 +4692,7 @@ namespace Holocron
 
         private void UnitGCGotoButton_Click(object sender, EventArgs e)
         {
-            if (UnitGCListbox.SelectedItems.Count > 0)insert_history((int)historymaintabs.conquest, 0, ((galacticConquest)UnitGCListbox.SelectedItem).codename, true);
+            if (UnitGCListbox.SelectedItems.Count > 0) insert_history((int)historymaintabs.conquest, 0, ((galacticConquest)UnitGCListbox.SelectedItem).codename, true);
         }
 
         private void UnitDiscountGotoButton_Click(object sender, EventArgs e)
@@ -4647,9 +4709,13 @@ namespace Holocron
         {
             if (FactionAvailableListbox.SelectedItems.Count > 0)
             {
+                AvailabilityLabel.Text = "Checking prerequisites...";
+                AvailabilityLabel.Update();
                 unit unit = (unit)UnitListBox.Tag;
                 if (SpaceRadioButton.Checked || GroundRadioButton.Checked)
                 {
+                    AvailabilityLabel.Text = "Checking prerequisites...";
+                    AvailabilityLabel.Update();
                     AvailabilityLabel.Text = checkUnitAvailibility(unit, (faction)FactionAvailableListbox.SelectedItem);
                 }
                 else if (SpaceHeroRadioButton.Checked || HeroCompaniesRadioButton.Checked)
@@ -4669,19 +4735,19 @@ namespace Holocron
             bool laststate = false;
             int lastindex = -1;
             bool furst = true;
-            for(int i = 0; i < statearray.Length; i++)
+            for (int i = 0; i < statearray.Length; i++)
             {
                 bool state = statearray[i];
                 if (state && !laststate)
                 {
                     if (furst) furst = false;
                     else corenne += ", ";
-                    corenne += (i+1).ToString(); //Convert 0 index to 1 based
-                    lastindex = i+1;
+                    corenne += (i + 1).ToString(); //Convert 0 index to 1 based
+                    lastindex = i + 1;
                 }
                 if (!state && laststate && i != lastindex)
                 {
-                    corenne += "-"+i.ToString();
+                    corenne += "-" + i.ToString();
                 }
                 laststate = state;
             }
@@ -4696,7 +4762,7 @@ namespace Holocron
             bool firstlock = true;
             bool firstunlock = true;
             if (unit.fightermode > 0) return "";
-            if (unit.techlevel > 5) locks = "Locked by tech level"; //todo add locked by req structures w/o affil (TR Hutt Keldabe)
+            if (unit.techlevel > 5) locks = "Never Buildable: Tech level"; //todo add locked by req structures w/o affil (TR Hutt Keldabe)
             else
             {
                 unlocks = "Unlocks: ";
@@ -4704,6 +4770,13 @@ namespace Holocron
                 {
                     unlocks += "Default";
                     firstunlock = false;
+                }
+
+                if (unit.techlevel > 1)
+                {
+                    if (firstunlock) firstunlock = false;
+                    else unlocks += ", ";
+                    unlocks += "Tech level " + unit.techlevel.ToString();
                 }
 
                 locks += "Locks: ";
@@ -4714,7 +4787,7 @@ namespace Holocron
                 }
 
                 string factionlower = faction.codename.ToLower();
-                string unitlower = "\""+unit.unitname.ToLower()+"\"";
+                string unitlower = "\"" + unit.unitname.ToLower() + "\"";
 
                 //Tech states
                 List<string> statefiles = getModFiles("Scripts\\Library\\eawx-states\\tech", "*.lua", entities);
@@ -4806,7 +4879,7 @@ namespace Holocron
                 }
                 //Turn final lockarrays into human readable results
                 string states = readstatearray(unlockarray);
-                if(states != "")
+                if (states != "")
                 {
                     if (firstunlock) firstunlock = false;
                     else unlocks += ", ";
@@ -4822,7 +4895,7 @@ namespace Holocron
 
                 //Research
                 string research = getModFile("Scripts\\Library\\eawx-plugins\\tech-handler\\TechHandler.lua", entities);
-                if(research != "")
+                if (research != "")
                 {
                     string[] statedata = File.ReadAllText(research).Replace('(', ')').Split(')');
 
@@ -4851,11 +4924,11 @@ namespace Holocron
                                     switch (commaCount)
                                     {
                                         case 3:
-                                            fStart = i+1;
+                                            fStart = i + 1;
                                             break;
                                         case 4:
                                             //if factions don't match, move one
-                                            if(!chunk.Substring(fStart, i - 1 - fStart).ToLower().Contains("\""+factionlower+ "\"")) breakout = true;
+                                            if (!chunk.Substring(fStart, i - 1 - fStart).ToLower().Contains("\"" + factionlower + "\"")) breakout = true;
                                             uStart = i + 1;
                                             break;
                                         case 5:
@@ -4877,12 +4950,12 @@ namespace Holocron
                                             }
                                             hStart = i + 1;
                                             break;
-                                        /*case 7: todo: pull hero spawns from this. Move breakout
-                                            if (chunk.Substring(hStart, i - 1 - hStart).Contains(unitlower))
-                                            {
-                                                
-                                            }
-                                            break;*/
+                                            /*case 7: todo: pull hero spawns from this. Move breakout
+                                                if (chunk.Substring(hStart, i - 1 - hStart).Contains(unitlower))
+                                                {
+
+                                                }
+                                                break;*/
                                     }
                                 }
                                 if (car == '{') inArray = true;
@@ -4893,9 +4966,9 @@ namespace Holocron
                         if (chunk.Contains("GenericResearch"))
                         {
                             int selfdot = chunk.LastIndexOf('.');
-                            if(selfdot >= 0)
+                            if (selfdot >= 0)
                             {
-                                researchname = chunk.Substring(selfdot+1, chunk.LastIndexOf('=') - selfdot - 2);
+                                researchname = chunk.Substring(selfdot + 1, chunk.LastIndexOf('=') - selfdot - 2);
                                 parsenext = true;
                             }
                         }
@@ -4905,7 +4978,7 @@ namespace Holocron
                 //todo regimes
 
                 //GC master scripts
-                foreach(galacticConquest GC in entities.Conquests)
+                foreach (galacticConquest GC in entities.Conquests)
                 {
                     bool GClock = false;
                     bool GCunlock = false;
@@ -4913,12 +4986,12 @@ namespace Holocron
                     {
                         XmlDocument doc = readModXmlOrMeg("XML\\" + plotfile, entities);
                         XmlNodeList Luas = doc.SelectNodes("descendant::Lua_Script");
-                        foreach(XmlNode Lua in Luas)
+                        foreach (XmlNode Lua in Luas)
                         {
-                            if(!(Lua.InnerText is null))
+                            if (!(Lua.InnerText is null))
                             {
                                 string statefile = getModFile("Scripts\\Story\\" + Lua.InnerText.Trim() + ".lua", entities);
-                                if(statefile != "")
+                                if (statefile != "")
                                 {
                                     string[] lines = File.ReadAllLines(statefile);
                                     List<string> factionaliases = new List<string>();
@@ -4974,9 +5047,12 @@ namespace Holocron
                 string filetext = File.ReadAllText(missionfile);
                 string[] split = filetext.Split('=');
                 bool furst = true;
-                for(int i = 1; i < split.Length; i++)
+                for (int i = 1; i < split.Length; i++)
                 {
-                    if(split[i].Contains("\"" + unit.unitname + "\""))
+                    if (!split[i].Contains('}')) continue;
+                    string sub = split[i].Substring(0, split[i].IndexOf('}'));
+                    if ((sub.Length - sub.Replace("{", "").Length) < 3) continue;
+                    if (split[i].Contains("\"" + unit.unitname + "\""))
                     {
                         if (furst)
                         {
@@ -4986,16 +5062,16 @@ namespace Holocron
                         else locks += ", ";
                         string last = split[i - 1];
                         int newline = last.LastIndexOf("\n");
-                        locks += last.Substring(newline+1, last.Length - newline - 1).Trim();
+                        locks += last.Substring(newline + 1, last.Length - newline - 1).Trim();
                     }
                 }
             }
-            return unlocks+"\n"+locks;
+            return unlocks + "\n" + locks;
         }
 
         private void UnitAbilityListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(UnitAbilityListBox.SelectedItems.Count > 0)
+            if (UnitAbilityListBox.SelectedItems.Count > 0)
             {
                 unitability able = (unitability)UnitAbilityListBox.SelectedItem;
                 AbilityPictureBox.Image = new Bitmap(IconPictureBox.Width, IconPictureBox.Height);
@@ -5012,7 +5088,7 @@ namespace Holocron
                 UnitAbilityDescLabel.Text = Find_Text_Entry(able.desc, entities);
 
                 UATimeLabel.Text = "";
-                if (able.expiration > 0) UATimeLabel.Text = "Duration: " + able.expiration.ToString("0")+" ";
+                if (able.expiration > 0) UATimeLabel.Text = "Duration: " + able.expiration.ToString("0") + " ";
                 if (able.recharge > 0) UATimeLabel.Text = "Recharge: " + able.recharge.ToString("0");
                 if (able.damageMod != 1) UADamageLabel.Text = "Damage Modifer: " + able.damageMod.ToString("0.###");
                 else UADamageLabel.Text = "";
@@ -5025,7 +5101,7 @@ namespace Holocron
                 if (able.speedMod != 1) UASpeedLabel.Text = "Speed Modifer: " + able.speedMod.ToString("0.###");
                 else UASpeedLabel.Text = "";
                 UAStimLabel.Text = "";
-                if (able.selfdamage > 0) UAStimLabel.Text = "Damage on use: " + able.selfdamage.ToString("0")+ "% ";
+                if (able.selfdamage > 0) UAStimLabel.Text = "Damage on use: " + able.selfdamage.ToString("0") + "% ";
                 else UAStimLabel.Text = "";
                 if (able.radius > 0) UARadiusLabel.Text = "Radius: " + able.radius.ToString("0");
                 else UARadiusLabel.Text = "";
@@ -5041,17 +5117,17 @@ namespace Holocron
 
                 if (able.ability != "")
                 {
-                    foreach(ability ability in AbilityListBox.Items)
+                    foreach (ability ability in AbilityListBox.Items)
                     {
                         if (ability.name == able.ability)
                         {
                             AbilityListBox.SelectedItem = ability;
                             break;
-                        }    
+                        }
                     }
                 }
 
-                if(able.sound != "" || able.deactivatesound != "")
+                if (able.sound != "" || able.deactivatesound != "")
                 {
                     UnitSFXBasicRB.Checked = false;
                     UnitSFXAmbientRB.Checked = false;
@@ -5090,7 +5166,7 @@ namespace Holocron
                 ability able = (ability)AbilityListBox.SelectedItem;
                 AbilityTypeLabel.Text = "Type: " + able.type;
                 AbilityActivationLabel.Text = "Activation: " + able.activation;
-                if(able.activation == "User_Input")
+                if (able.activation == "User_Input")
                 {
                     foreach (unitability ability in UnitAbilityListBox.Items)
                     {
@@ -5105,7 +5181,7 @@ namespace Holocron
                 if (able.applicable_types.Length > 0)
                 {
                     string[] usernames = new string[able.applicable_types.Length];
-                    for(int i = 0; i < usernames.Length; i++)
+                    for (int i = 0; i < usernames.Length; i++)
                     {
                         string unitname = able.applicable_types[i];
                         unit unit = entities.objects.FirstOrDefault(s => s.unitname == unitname);
@@ -5116,7 +5192,7 @@ namespace Holocron
                 }
                 else AbilityTargetUnitLabel.Text = "";
 
-                if(able.type == "Combat_Bonus_Ability")
+                if (able.type == "Combat_Bonus_Ability")
                 {//Repurpose labels entirely
                     if (able.damageBonus != 0) AbilityTimeLabel.Text = "Damage bonus: " + able.damageBonus;
                     else AbilityTimeLabel.Text = "";
@@ -5138,7 +5214,7 @@ namespace Holocron
                     else if (able.type == "Force_Healing_Ability")
                     {
                         if (able.genericValue > 0) AbilityValueLabel.Text = "Heal Amount: " + able.genericValue + " ";
-                        if (able.duration > 0 ) AbilityValueLabel.Text = "Heal Percent: " + able.duration*100+"%";
+                        if (able.duration > 0) AbilityValueLabel.Text = "Heal Percent: " + able.duration * 100 + "%";
                     }
                     else AbilityValueLabel.Text = "";
                     if (able.percentCredits > 0) AbilityValueLabel.Text = "Planet Income Increase: " + able.percentCredits * 100 + "%";
@@ -5222,6 +5298,7 @@ namespace Holocron
             SaveFileDialog fil = new SaveFileDialog();
             fil.Filter = ("Text Files (*.txt)|*.txt|All files (*.*)|*.*");
             fil.Title = "Export Unit list";
+            fil.FileName = "Export Units";
             if (fil.ShowDialog() == DialogResult.OK)
             {
                 using (StreamWriter filewrite = new StreamWriter(fil.FileName))
@@ -5271,9 +5348,9 @@ namespace Holocron
             {
                 for (int i = 0; i < unit.BasicSFXEvents.Length; i++)
                 {
-                    if(unit.BasicSFXEvents[i] != "")
+                    if (unit.BasicSFXEvents[i] != "")
                     {
-                        if((basicSoundTypes)i != basicSoundTypes.Death_SFXEvent_Start_Die) //Can be dialog or ambient, keep in both
+                        if ((basicSoundTypes)i != basicSoundTypes.Death_SFXEvent_Start_Die) //Can be dialog or ambient, keep in both
                         {
                             bool isambient = ambients.Contains((basicSoundTypes)i);
                             if (UnitSFXAmbientRB.Checked ^ isambient)
@@ -5281,9 +5358,9 @@ namespace Holocron
                                 continue;
                             }
                         }
-                        
+
                         sfx sfx = entities.sfx.FirstOrDefault(s => s.name == unit.BasicSFXEvents[i]);
-                        if(!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
+                        if (!(sfx.name is null) && !string.Equals(sfx.name, "null", StringComparison.OrdinalIgnoreCase))
                         {
                             sfx.displayname = Enum.GetName(typeof(basicSoundTypes), i);
                             sfx.displayname = sfx.displayname.Replace("SFXEvent_", "").Replace("_", " ");
@@ -5420,7 +5497,7 @@ namespace Holocron
                 else UnitSFXMinPitchLabel.Text = "";
                 if (sfx.maxpitch > 0) UnitSFXMaxPitchLabel.Text = "Maximum Pitch: " + sfx.maxpitch.ToString();
                 else UnitSFXMaxPitchLabel.Text = "";
-            }  
+            }
         }
 
         private void UnitSampleListBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -5430,7 +5507,7 @@ namespace Holocron
 
         private void UnitPlaySoundButton_Click(object sender, EventArgs e)
         {
-           if(UnitSampleListBox.SelectedItems.Count > 0)
+            if (UnitSampleListBox.SelectedItems.Count > 0)
             {
                 string path = (string)UnitSampleListBox.SelectedItem;
                 byte[] byteArray = readModBytesOrMeg(path.ToLower().Replace("data\\", ""), entities);
@@ -5522,7 +5599,7 @@ namespace Holocron
 
         private void PlanetListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(PlanetListBox.SelectedItems.Count > 0)
+            if (PlanetListBox.SelectedItems.Count > 0)
             {
                 planet planet = (planet)PlanetListBox.SelectedItem;
                 PlanetListBox.Tag = planet;
@@ -5674,26 +5751,53 @@ namespace Holocron
         private void PlanetPictureBox_Click(object sender, EventArgs e)
         {
             MouseEventArgs me = (MouseEventArgs)e;
-            float x = (me.Location.X - globals.origin) / globals.scale;
-            float y = (me.Location.Y - globals.origin) / globals.scale;
 
-            float close = float.PositiveInfinity;
-            int closest = -1;
-
-            for (int i = 0; i < PlanetListBox.Items.Count; i++)
+            if (me.Button == MouseButtons.Right)
             {
-                planet planet = (planet)PlanetListBox.Items[i];
-                float prox = (planet.x_coord - x) * (planet.x_coord - x) + (planet.y_coord - y) * (planet.y_coord - y);
-                if (prox < close)
+                if (GCPictureBox.Image == null) return;
+                SaveFileDialog fil = new SaveFileDialog();
+                fil.Filter = ("Bitmap files (*.bmp)|*.bmp|PNG Files (*.png)|*.png|JPEG files (*.jpg)|*.jpg");
+                fil.Title = "Map Export";
+                fil.FileName = "Planet image";
+                if (fil.ShowDialog() == DialogResult.OK)
                 {
-                    close = prox;
-                    closest = i;
+                    System.Drawing.Imaging.ImageFormat format = System.Drawing.Imaging.ImageFormat.Bmp;
+                    switch (fil.FilterIndex)
+                    {
+                        case 1:
+                            format = System.Drawing.Imaging.ImageFormat.Png;
+                            break;
+                        case 2:
+                            format = System.Drawing.Imaging.ImageFormat.Jpeg;
+                            break;
+                    }
+                    GCPictureBox.Image.Save(fil.FileName, format);
+                    MessageBox.Show("Image saved");
                 }
             }
-
-            if (closest >= 0)
+            else
             {
-                PlanetListBox.SelectedIndex = closest;
+                float x = (me.Location.X - globals.origin) / globals.scale;
+                float y = (me.Location.Y - globals.origin) / globals.scale;
+
+                float close = float.PositiveInfinity;
+                int closest = -1;
+
+                for (int i = 0; i < PlanetListBox.Items.Count; i++)
+                {
+                    planet planet = (planet)PlanetListBox.Items[i];
+                    float prox = (planet.x_coord - x) * (planet.x_coord - x) + (planet.y_coord - y) * (planet.y_coord - y);
+                    if (prox < close)
+                    {
+                        close = prox;
+                        closest = i;
+                    }
+                }
+
+                if (closest >= 0)
+                {
+                    PlanetListBox.SelectedIndex = closest;
+                }
             }
         }
 
@@ -5701,7 +5805,7 @@ namespace Holocron
         {
             string corenne = "";
             string[] BTS = File.ReadAllLines(path);
-            foreach(string line in BTS)
+            foreach (string line in BTS)
             {
                 int firstcomma = line.IndexOf(",");
                 if (firstcomma > 0)
@@ -5764,7 +5868,7 @@ namespace Holocron
             if (globals.PlanetFilterConfig.GCs.Count > 0)
             {
                 bool match = !globals.PlanetFilterConfig.UnionIntersection;
-                foreach(galacticConquest GC in globals.PlanetFilterConfig.GCs)
+                foreach (galacticConquest GC in globals.PlanetFilterConfig.GCs)
                 {
                     if (GC.planets.Contains(planet.codename))
                     {
@@ -5914,7 +6018,7 @@ namespace Holocron
                     if (globals.PlanetFilterConfig.buildingFilter == buildingFilter.nonfinancial)
                     {
                         //Can't use the shortcuts because a planet could have a mine/corp and a nonfinancial buidling
-                        foreach(unit structure in entities.structures)
+                        foreach (unit structure in entities.structures)
                         {
                             if (structure.planets.Contains(planet.codename))
                             {
@@ -5962,8 +6066,8 @@ namespace Holocron
                     if (globals.PlanetFilterConfig.buildingFilter != buildingFilter.income)
                     {
                         getDiscountObjects();
-                        
-                        foreach(unit corp in globals.DiscountEntities)
+
+                        foreach (unit corp in globals.DiscountEntities)
                         {
                             if (corp.planets.Contains(planet.codename))
                             {
@@ -6020,9 +6124,9 @@ namespace Holocron
         private int mapCountinGCType(planet primaryplanet, List<planet> mapUsers, List<galacticConquest> GCList)
         {
             int corenne = 0;
-            foreach(planet planet in mapUsers)
+            foreach (planet planet in mapUsers)
             {
-                if(globals.PlanetSortConfig.sharedMapMode == 0) corenne += GCList.Count(x => x.planets.Contains(planet.codename));
+                if (globals.PlanetSortConfig.sharedMapMode == 0) corenne += GCList.Count(x => x.planets.Contains(planet.codename));
                 else
                 {
                     if (planet.codename != primaryplanet.codename) corenne += GCList.Count(x => x.planets.Contains(planet.codename) && x.planets.Contains(primaryplanet.codename));
@@ -6132,30 +6236,30 @@ namespace Holocron
                     planet.sortint = (int)Math.Sqrt((planet.x_coord * planet.x_coord + planet.y_coord * planet.y_coord));
                     break;
                 case PlanetSortTypes.SharingGround:
-                    planet.sortint = entities.Planets.Count(s => s.groundMap == planet.groundMap)-1; //Don't count the planet itself
+                    planet.sortint = entities.Planets.Count(s => s.groundMap == planet.groundMap) - 1; //Don't count the planet itself
                     break;
                 case PlanetSortTypes.SharingSpace:
-                    planet.sortint = entities.Planets.Count(s => s.spaceMap == planet.spaceMap)-1;
+                    planet.sortint = entities.Planets.Count(s => s.spaceMap == planet.spaceMap) - 1;
                     break;
                 case PlanetSortTypes.NearestGround:
                     //List<planet> source = entities.Planets; //todo implement sortign across filtered planets? But that largely means recreating filter
                     //if(globals.PlanetSortConfig.sharedMapMode == 2) source =
                     List<planet> sharing = entities.Planets.FindAll(s => s.groundMap == planet.groundMap && s.groundMap != "");
-                    if(sharing.Count == 1) planet.sortint = int.MaxValue;
+                    if (sharing.Count == 1) planet.sortint = int.MaxValue;
                     else
                     {
                         int min = int.MaxValue;
-                        foreach(planet shared in sharing)
+                        foreach (planet shared in sharing)
                         {
-                            if(planet.codename != shared.codename)
+                            if (planet.codename != shared.codename)
                             {
                                 bool docheck = true;
-                                if(globals.PlanetSortConfig.sharedMapMode == 1)
+                                if (globals.PlanetSortConfig.sharedMapMode == 1)
                                 {
                                     docheck = false;
                                     foreach (galacticConquest conquest in entities.Conquests)
                                     {
-                                        if(conquest.planets.Contains(planet.codename) && conquest.planets.Contains(shared.codename))
+                                        if (conquest.planets.Contains(planet.codename) && conquest.planets.Contains(shared.codename))
                                         {
                                             docheck = true;
                                             break;
@@ -6315,10 +6419,10 @@ namespace Holocron
         {
             MapsInPlanetsListbox.Items.Clear();
             List<quantizedObject> maps = (List<quantizedObject>)PlanetSpaceMapRB.Tag;
-            if(PlanetGroundMapRB.Checked) maps = (List<quantizedObject>)PlanetGroundMapRB.Tag;
+            if (PlanetGroundMapRB.Checked) maps = (List<quantizedObject>)PlanetGroundMapRB.Tag;
             foreach (quantizedObject q in maps)
             {
-                if(q.username.Contains(MapSearchBox.Text.ToUpper())) MapsInPlanetsListbox.Items.Add(q);
+                if (q.username.Contains(MapSearchBox.Text.ToUpper())) MapsInPlanetsListbox.Items.Add(q);
             }
         }
 
@@ -6350,9 +6454,9 @@ namespace Holocron
                 string planets = "";
                 bool furst = true;
                 List<planet> mapusers = new List<planet>();
-                foreach(planet planet in PlanetListBox.Items)
+                foreach (planet planet in PlanetListBox.Items)
                 {
-                    if(PlanetSpaceMapRB.Checked && planet.spaceMap == q.username || PlanetGroundMapRB.Checked && planet.groundMap == q.username)
+                    if (PlanetSpaceMapRB.Checked && planet.spaceMap == q.username || PlanetGroundMapRB.Checked && planet.groundMap == q.username)
                     {
                         if (furst) furst = false;
                         else planets += ", ";
@@ -6364,7 +6468,7 @@ namespace Holocron
                 List<quantizedObject> distances = new List<quantizedObject>();
                 for (int i = 0; i < mapusers.Count - 1; i++)
                 {
-                    for (int j = i+1; j < mapusers.Count; j++)
+                    for (int j = i + 1; j < mapusers.Count; j++)
                     {
                         quantizedObject distance = new quantizedObject
                         {
@@ -6436,12 +6540,12 @@ namespace Holocron
         private void PlanetSharedGroundSelectAllButton_Click(object sender, EventArgs e)
         {
             SharedMapListBox.SelectedItems.Clear();
-            for(int i = 0; i < SharedMapListBox.Items.Count; i++)
+            for (int i = 0; i < SharedMapListBox.Items.Count; i++)
             {
                 planet shared = (planet)SharedMapListBox.Items[i];
                 foreach (planet filtered in PlanetListBox.Items)
                 {
-                    if(filtered.codename == shared.codename)
+                    if (filtered.codename == shared.codename)
                     {
                         SharedMapListBox.SelectedItems.Add(shared);
                         break;
@@ -6505,6 +6609,7 @@ namespace Holocron
             SaveFileDialog fil = new SaveFileDialog();
             fil.Filter = ("Text Files (*.txt)|*.txt|All files (*.*)|*.*");
             fil.Title = "Export Planet list";
+            fil.FileName = "Export Planets";
             if (fil.ShowDialog() == DialogResult.OK)
             {
                 using (StreamWriter filewrite = new StreamWriter(fil.FileName))
@@ -6518,14 +6623,14 @@ namespace Holocron
         private void PlanetMissingTextButton_Click(object sender, EventArgs e)
         {
             string corenne = "";
-            foreach(planet planet in PlanetListBox.Items)
+            foreach (planet planet in PlanetListBox.Items)
             {
                 if (planet.username.Contains("TEXT_OBJECT_STAR_SYSTEM_")) corenne += planet.username + ",\n";
                 if (entities.Text.FindIndex(s => s.identifier == planet.desc_fauna) < 0) corenne += planet.desc_fauna + ",\n";
                 if (entities.Text.FindIndex(s => s.identifier == planet.desc_history) < 0) corenne += planet.desc_history + ",\n";
                 if (entities.Text.FindIndex(s => s.identifier == planet.desc_pop) < 0) corenne += planet.desc_pop + ",\n";
             }
-            if(corenne == "") MessageBox.Show("No missing text detected");
+            if (corenne == "") MessageBox.Show("No missing text detected");
             else
             {
                 TextDetail deets = new TextDetail();
@@ -6544,7 +6649,7 @@ namespace Holocron
                 if (conquest.Type == GCType.Regional && RegionalCheckBox.Checked) add = true;
                 if (conquest.Type == GCType.Historical && HistoricalCheckBox.Checked) add = true;
                 if ((conquest.Type == GCType.Infinity || conquest.Type == GCType.InfinityLayoutCopy) && InfinityCheckBox.Checked) add = true;
-                if(add) GCListBox.Items.Add(conquest);
+                if (add) GCListBox.Items.Add(conquest);
             }
         }
 
@@ -6565,7 +6670,7 @@ namespace Holocron
 
         private void GCListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(GCListBox.SelectedItems.Count > 0)
+            if (GCListBox.SelectedItems.Count > 0)
             {
                 galacticConquest Campaign = (galacticConquest)GCListBox.SelectedItem;
                 insert_history((int)historymaintabs.conquest, 0, Campaign.codename);
@@ -6621,10 +6726,10 @@ namespace Holocron
                         {
                             XmlDocument doc = readModXmlOrMeg("XML\\" + plot.InnerText, entities);
                             XmlNodeList events = doc.SelectNodes("descendant::Event");
-                            foreach(XmlNode even in events)
+                            foreach (XmlNode even in events)
                             {
                                 XmlNode dialog = even.SelectSingleNode("descendant::Story_Dialog");
-                                if(!(dialog is null)) 
+                                if (!(dialog is null))
                                 {
                                     string filepath = dialog.InnerText.Trim();
                                     if (filepath != "" && !dialogs.Contains(filepath) && getDialogPath(filepath) != "") dialogs.Add(filepath);
@@ -6633,10 +6738,10 @@ namespace Holocron
                                 if (!(reward is null))
                                 {
                                     string rewardtype = reward.InnerText.Trim();
-                                    if(rewardtype == "MULTIMEDIA" || rewardtype == "SCREEN_TEXT")
+                                    if (rewardtype == "MULTIMEDIA" || rewardtype == "SCREEN_TEXT")
                                     {
                                         string title = even.Attributes[0].Value;
-                                        if (!speeches.Contains(title) && !title.Contains("Template_") && title != "About1" && title != "About2" && title !="About3")
+                                        if (!speeches.Contains(title) && !title.Contains("Template_") && title != "About1" && title != "About2" && title != "About3")
                                         {
                                             XmlNode param = even.SelectSingleNode("descendant::Reward_Param1");
                                             if (!(param is null))
@@ -6728,7 +6833,7 @@ namespace Holocron
 
                 List<string> bads = new List<string>();
 
-                if (GCTradeRouterCheckBox.Checked)
+                if (GCTradeRoutesCheckBox.Checked)
                 {
                     foreach (tradeRoute route in selected.traderouteObjects)
                     {
@@ -6788,32 +6893,59 @@ namespace Holocron
         private void GCPictureBox_Click(object sender, EventArgs e)
         {
             MouseEventArgs me = (MouseEventArgs)e;
-            float x = (me.Location.X - globals.origin) / globals.scale;
-            float y = (me.Location.Y - globals.origin) / globals.scale;
-
-            float close = float.PositiveInfinity;
-            int closest = -1;
-
-            for(int i = 0; i< GCPlanetListBox.Items.Count; i++)
+            if (me.Button == MouseButtons.Right)
             {
-                planet planet = (planet)GCPlanetListBox.Items[i];
-                float prox = (planet.x_coord - x) * (planet.x_coord - x) + (planet.y_coord - y) * (planet.y_coord - y);
-                if (prox < close)
+                if (GCPictureBox.Image == null) return;
+                SaveFileDialog fil = new SaveFileDialog();
+                fil.Filter = ("Bitmap files (*.bmp)|*.bmp|PNG Files (*.png)|*.png|JPEG files (*.jpg)|*.jpg");
+                fil.Title = "Map Export";
+                fil.FileName = "Galactic Conquest image";
+                if (fil.ShowDialog() == DialogResult.OK)
                 {
-                    close = prox;
-                    closest = i;
+                    System.Drawing.Imaging.ImageFormat format = System.Drawing.Imaging.ImageFormat.Bmp;
+                    switch (fil.FilterIndex)
+                    {
+                        case 1:
+                            format = System.Drawing.Imaging.ImageFormat.Png;
+                            break;
+                        case 2:
+                            format = System.Drawing.Imaging.ImageFormat.Jpeg;
+                            break;
+                    }
+                    GCPictureBox.Image.Save(fil.FileName, format);
+                    MessageBox.Show("Image saved");
                 }
             }
-
-            if(closest >= 0)
+            else
             {
-                GCPlanetListBox.SelectedIndex = closest;
+                float x = (me.Location.X - globals.origin) / globals.scale;
+                float y = (me.Location.Y - globals.origin) / globals.scale;
+
+                float close = float.PositiveInfinity;
+                int closest = -1;
+
+                for (int i = 0; i < GCPlanetListBox.Items.Count; i++)
+                {
+                    planet planet = (planet)GCPlanetListBox.Items[i];
+                    float prox = (planet.x_coord - x) * (planet.x_coord - x) + (planet.y_coord - y) * (planet.y_coord - y);
+                    if (prox < close)
+                    {
+                        close = prox;
+                        closest = i;
+                    }
+                }
+
+                if (closest >= 0)
+                {
+                    GCPlanetListBox.SelectedIndex = closest;
+                }
             }
         }
 
         private void populateGCPlanetListBox()
         {
             GCPlanetListBox.Items.Clear();
+            if (GCActiveListBox.Tag == null) return;
             foreach (planet planet in (List<planet>)GCActiveListBox.Tag)
             {
                 if (GCPresentListbox.SelectedItems.Count == 0) GCPlanetListBox.Items.Add(planet);
@@ -6843,21 +6975,21 @@ namespace Holocron
                 };
                 quantizedAdd(qs, q);
             }
-            if(GCMapSortNameRB.Checked) qs.Sort((s1, s2) => s1.username.CompareTo(s2.username));
+            if (GCMapSortNameRB.Checked) qs.Sort((s1, s2) => s1.username.CompareTo(s2.username));
             else if (GCMapSortUsageRB.Checked) qs.Sort((s1, s2) => s2.quantity.CompareTo(s1.quantity)); //High values first
             else {
-                for(int i = 0; i < qs.Count; i++)
+                for (int i = 0; i < qs.Count; i++)
                 {
                     quantizedObject q = qs[i];
                     int min = int.MaxValue;
                     List<planet> sharing = new List<planet>();
-                    if(GCMapModeSpaceCheckBox.Checked) sharing = planetsConAffil.FindAll(s => s.spaceMap == q.username);
+                    if (GCMapModeSpaceCheckBox.Checked) sharing = planetsConAffil.FindAll(s => s.spaceMap == q.username);
                     else sharing = planetsConAffil.FindAll(s => s.groundMap == q.username && s.groundMap != "");
                     if (sharing.Count > 1)
                     {
-                        for(int j = 0; j < sharing.Count - 1; j++)
+                        for (int j = 0; j < sharing.Count - 1; j++)
                         {
-                            for(int k = j + 1; k < sharing.Count; k++)
+                            for (int k = j + 1; k < sharing.Count; k++)
                             {
                                 int dist = CalculatePlanetDistance(sharing[j], sharing[k]);
                                 if (dist < min) min = dist;
@@ -6916,7 +7048,7 @@ namespace Holocron
 
         private void GCPresentListbox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(GCPresentListbox.SelectedItems.Count > 0)
+            if (GCPresentListbox.SelectedItems.Count > 0)
             {
                 galacticConquest GC = (galacticConquest)GCListBox.SelectedItem;
 
@@ -6945,16 +7077,16 @@ namespace Holocron
 
                         bool bordered = false;
                         List<tradeRoute> links = GC.traderouteObjects.FindAll(s => s.planets[0] == planet.codename);
-                        foreach(tradeRoute route in links)
+                        foreach (tradeRoute route in links)
                         {
                             planet connected = ownedPlanets.FirstOrDefault(s => s.codename == route.planets[1]);
-                            if(!(connected.codename is null))
+                            if (!(connected.codename is null))
                             {
                                 string owner = connected.owner.codename;
-                                if(owner != planet.owner.codename && !(connected.owner.ai == "None" || (connected.owner.ai == "" && !connected.owner.playable)))
+                                if (owner != planet.owner.codename && !(connected.owner.ai == "None" || (connected.owner.ai == "" && !connected.owner.playable)))
                                 {
                                     bordered = true;
-                                    if(!borderingplanets.Contains(connected.username)) borderingplanets.Add(connected.username);
+                                    if (!borderingplanets.Contains(connected.username)) borderingplanets.Add(connected.username);
                                     if (!borderingfactions.Contains(connected.owner.textname)) borderingfactions.Add(connected.owner.textname);
                                 }
                             }
@@ -6974,13 +7106,13 @@ namespace Holocron
                                 }
                             }
                         }
-                        if(bordered) borderplanets++;
+                        if (bordered) borderplanets++;
                     }
                     borderingplanets.Sort();
                 }
 
                 GCPresentPlanetsLabel.Text = "Planets: " + planetcount + " (" + (100 * planetcount / GC.planetObjects.Count).ToString("0") + "% of total)";
-                GCPresentIncomeLabel.Text = "Income: " + income + " ("+ (100 * income / (int)GCPresentIncomeLabel.Tag).ToString("0") + "% of total)";
+                GCPresentIncomeLabel.Text = "Income: " + income + " (" + (100 * income / (int)GCPresentIncomeLabel.Tag).ToString("0") + "% of total)";
                 GCPresentShipyardsLabel.Text = "Level 4 Shipyards: " + level_4 + "\nLevel 3 Shipyards: " + level_3 + "\nLevel 2 Shipyards: " + level_2 + "\nLevel 1 Shipyards: " + level_1;
                 GCPresentBorderLabel.Text = "Border Planets: " + borderplanets + " (" + (100 * borderplanets / planetcount).ToString("0") + "% of owned territory)";
                 GCPresentBorderingLabel.Text = "Bordering Planets: " + borderingplanets.Count;
@@ -7092,7 +7224,7 @@ namespace Holocron
                         Color brush = Color.FromArgb(255, planet.owner.color[0], planet.owner.color[1], planet.owner.color[2]);
                         //Color brush = Color.White;
                         g.FillEllipse(new SolidBrush(brush), x, y, 9, 9);
-                        GCPlanetForceLabel.Text += "\n"+ planet.username + ": " + planet.owner.textname;
+                        GCPlanetForceLabel.Text += "\n" + planet.username + ": " + planet.owner.textname;
                     }
 
                     GCPlanetConnectionLabel.Text = "Uses of map: " + mapUsers.Count;
@@ -7141,11 +7273,11 @@ namespace Holocron
 
         private void GCDialogListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if(GCDialogListBox.SelectedItems.Count > 0)
+            if (GCDialogListBox.SelectedItems.Count > 0)
             {
                 GCChapterListBox.Items.Clear();
                 string[] dialogfile = File.ReadAllLines(getDialogPath((string)GCDialogListBox.SelectedItem));
-                foreach(string line in dialogfile)
+                foreach (string line in dialogfile)
                 {
                     if (line.Contains("[CHAPTER ")) GCChapterListBox.Items.Add(line.Replace("[CHAPTER ", "").Replace("]", ""));
                 }
@@ -7165,7 +7297,7 @@ namespace Holocron
 
                 if (active)
                 {
-                    if(line.Length > 6)
+                    if (line.Length > 6)
                     {
                         //if (line.Substring(0, 5) == "TITLE") dialogtext += Find_Text_Entry(line.Substring(6, line.Length - 6)) + "\n"; Theoretically valid, but tends to be duplicated in the first line anyway
                         if (line.Substring(0, 5) == "TEXT ") dialogtext += Find_Text_Entry(line.Substring(5, line.Length - 5), entities) + "\n";
@@ -7206,37 +7338,15 @@ namespace Holocron
 
         private void CheckWeaponMismatchButton_Click(object sender, EventArgs e)
         {
-            if (UnitListBox.Tag is null) return;
-            unit unit = (unit)UnitListBox.Tag;
-            string corenne = "";
-            List<hardpoint> hps = unit.consolidatedhps;
-            foreach (string hardpoint in unit.Hardpoints)
-            {
-                int index = LookupUntemplateID(hardpoint);
-                for (int j = 0; j < entities.hardpointhashes[index].Count; j++)
-                {
-                    hardpoint hp2 = entities.hardpoints[entities.hardpointhashes[index][j]];
-                    if (hp2.name == hardpoint)
-                    {
-                        for (int k = 0; k < hps.Count; k++)
-                        {
-                            if (hpEquality(hp2, hps[k]))
-                            {
-                                if (hp2.firesound != hps[k].firesound) corenne += hp2.name + " fire: " + hp2.firesound + "\n";
-                                if (hp2.diesound != hps[k].diesound) corenne += hp2.name + " die: " + hp2.diesound + "\n";
-                                break;
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
+            if (CheckWeaponMismatchButton.Tag is null) return;
+            string errlist = (string)CheckWeaponMismatchButton.Tag;
 
-            if (corenne == "") MessageBox.Show("All hard points of the same type have matching sounds");
+
+            if (errlist == "") MessageBox.Show("All hard points of the same type have matching sounds");
             else
             {
                 TextDetail deets = new TextDetail();
-                deets.detail = "The following hardpoint sounds do not match others of the same type\n\n" + corenne;
+                deets.detail = "The following hardpoint sounds do not match others of the same type\n\n" + errlist;
                 deets.Show();
             }
         }
@@ -7248,6 +7358,444 @@ namespace Holocron
             string datafile = selectedUnit.datafile;
             if (File.Exists(datafile)) System.Diagnostics.Process.Start(@selectedUnit.datafile);
             else MessageBox.Show("Could not find unit source file. Is it in a MEG?");
+        }
+
+        private void OpenUnitModelButton_Click(object sender, EventArgs e)
+        {
+            if (UnitListBox.Tag is null) return;
+            unit selectedUnit = (unit)UnitListBox.Tag;
+            string datafile = getModFile("Art\\Models\\" + selectedUnit.model, entities);
+            if (datafile != "") System.Diagnostics.Process.Start(@datafile);
+            else MessageBox.Show("Could not find model file. Is it in a MEG?");
+        }
+
+        private void SetGalaxyMapBackground()
+        {//Can't make a full map and crop, that runs out of memory. Make slightly larger area so planets can be drawn in, then cut to fit
+            int planet_radius = (int)GalaxyMapPlanetBox.Value;
+            float scale = (float)GalaxyMapZoomBox.Value / 100;
+            int bounds = (int)(scale * (2 * entities.PlanetBounds + globals.map_extra_edge));
+            if (bounds % 2 == 0) bounds++;
+            int buffer = 0; //Extra space larger than the rendered area, based on apparently mistaken assumptions about how robust the draw functions are on out of bounds areas
+            int origin = (bounds - 1) / 2 + buffer;
+            int dx_min = (int)(globals.map_x * scale);
+            int dx_max = dx_min + GalaxyMapPictureBox.Width + 2 * buffer;
+            int dy_min = (int)(globals.map_y * scale);
+            int dy_max = dy_min + GalaxyMapPictureBox.Height + 2 * buffer;
+
+            globals.map_old_center_x = (int)(globals.map_x + GalaxyMapPictureBox.Width / 2 / scale);
+            globals.map_old_center_y = (int)(globals.map_y + GalaxyMapPictureBox.Height / 2 / scale);
+
+            Bitmap Starfield = new Bitmap(GalaxyMapPictureBox.Width + 2 * buffer, GalaxyMapPictureBox.Height + 2 * buffer);
+            Graphics g = Graphics.FromImage(Starfield);
+            g.FillRectangle(new SolidBrush(Color.Black), 0, 0, Starfield.Width, Starfield.Height);
+
+            //todo move GC and era affiliations to a central location instead of recalcing on every move/zoom
+
+            galacticConquest GC = new galacticConquest();
+            if (GalaxyMapGCComboBox.SelectedIndex >= 0) GC = (galacticConquest)GalaxyMapGCComboBox.SelectedItem;
+            List<planet> affiled = new List<planet>();
+            List<string> bads = new List<string>();
+            if (GalaxyMapGCRB.Checked && GCTradeRoutesCheckBox.Checked)
+            {
+                int factionindex = GalaxyMapGCFactionBox.SelectedIndex;
+                if (factionindex >= 0)
+                {
+                    affiled = (List<planet>)GalaxyMapGCFactionBox.Tag;
+                }
+                if (GalaxyMapGCRoutesCheckBox.Checked && affiled.Count > 0)
+                {
+                    foreach (tradeRoute route in GC.traderouteObjects)
+                    {
+                        planet A = affiled.FirstOrDefault(s => s.codename == route.planets[0]);
+                        planet B = affiled.FirstOrDefault(s => s.codename == route.planets[1]);
+
+                        if (!(A.codename is null || B.codename is null))
+                        {
+                            /*int Ax = (Int32)(A.x_coord * scale + origin) - planet_radius - 1;
+                            int Ay = (Int32)(A.y_coord * scale + origin) - planet_radius - 1;
+                            int Bx = (Int32)(B.x_coord * scale + origin) - planet_radius - 1;
+                            int By = (Int32)(B.y_coord * scale + origin) - planet_radius - 1;
+                            if (Ax >= dx_min && Ax <= dx_max && Ay >= dy_min && Ay <= dy_max && Bx >= dx_min && Bx <= dx_max && By >= dy_min && By <= dy_max)
+                            {
+                                Ax -= dx_min;
+                                Ay -= dy_min;
+                                Bx -= dx_min;
+                                By -= dy_min;
+                                Ax += planet_radius + 1; //Keep the check the same as planets so any planet drawn shows routes instead of edge planet dropping connections
+                                Ay += planet_radius + 1;
+                                Bx += planet_radius + 1;
+                                By += planet_radius + 1;
+                                if (A.owner.codename == B.owner.codename)
+                                {
+                                    Pen drawPen = new Pen(Color.FromArgb(255, A.owner.color[0], A.owner.color[1], A.owner.color[2]), 1);
+                                    g.DrawLine(drawPen, Ax, Ay, Bx, By);
+                                }
+                                else
+                                {
+                                    Pen drawPen = new Pen(Color.Gray, 1);
+                                    g.DrawLine(drawPen, Ax, Ay, Bx, By);
+                                }
+                            }*/
+                            int Ax = (Int32)(A.x_coord * scale + origin) - dx_min;
+                            int Ay = (Int32)(A.y_coord * scale + origin) - dy_min;
+                            int Bx = (Int32)(B.x_coord * scale + origin) - dx_min;
+                            int By = (Int32)(B.y_coord * scale + origin) - dy_min;
+                            if (A.owner.codename == B.owner.codename)
+                            {
+                                Pen drawPen = new Pen(Color.FromArgb(255, A.owner.color[0], A.owner.color[1], A.owner.color[2]), 1);
+                                g.DrawLine(drawPen, Ax, Ay, Bx, By);
+                            }
+                            else
+                            {
+                                Pen drawPen = new Pen(Color.Gray, 1);
+                                g.DrawLine(drawPen, Ax, Ay, Bx, By);
+                            }
+                        }
+                        else
+                        {
+                            bads.Add(route.name);
+                        }
+                    }
+                }
+
+                if (globals.devmode && bads.Count > 0)
+                {
+                    TextDetail deets = new TextDetail();
+                    deets.detail = "Routes referencing nonexistent planets:\n" + SerializeStringArray(bads);
+                    deets.Show();
+                }
+            }
+
+            for (int i = 0; i < entities.Planets.Count; i++) //Can't use for each because terrain type is saved as it is calculated
+            {
+                SolidBrush brush = new SolidBrush(Color.White);
+                planet planet = entities.Planets[i];
+                if (GalaxyMapGCRB.Checked && GalaxyMapGCComboBox.SelectedIndex >= 0)
+                {
+                    int GCplanetID = affiled.FindIndex(s => string.Equals(planet.codename, s.codename, StringComparison.OrdinalIgnoreCase));
+                    if (GCplanetID < 0) continue;
+                    else
+                    {
+                        planet GCplanet = affiled[GCplanetID];
+                        if (GCplanet.owner.codename is null || GCplanet.owner.codename == "") GCplanet.owner = FactionFromCodeName("Neutral", entities);
+                        brush = new SolidBrush(Color.FromArgb(255, GCplanet.owner.color[0], GCplanet.owner.color[1], GCplanet.owner.color[2]));
+                    }
+                }
+                if (GalaxyMapEraRB.Checked)
+                {
+                    string era_string = "Era_" + GalaxyMapEraBox.Value + "_";
+                    bool neverfound = true;
+                    foreach (galacticConquest campaign in entities.Conquests)
+                    {
+                        if (campaign.Type == GCType.Progressive || campaign.Type == GCType.Regional)
+                        {
+                            if (campaign.codename.Contains(era_string))
+                            {
+                                bool found = false;
+                                for (int j = 0; j < campaign.forceLocation[0].Count; j++)
+                                {
+                                    if (campaign.forceLocation[0][j] == planet.codename)
+                                    {
+                                        planet.owner = FactionFromCodeName(campaign.forceOwner[0][j], entities);
+                                        if ((planet.owner.codename == "" || planet.owner.codename is null)) planet.owner = FactionFromCodeName("Neutral", entities);
+                                        brush = new SolidBrush(Color.FromArgb(255, planet.owner.color[0], planet.owner.color[1], planet.owner.color[2]));
+                                        found = true;
+                                        neverfound = false;
+                                        break;
+                                    }
+                                }
+                                if (found) break;
+                            }
+                        }
+                    }
+                    if (neverfound)
+                    {
+                        if (MapHidePlanetsCheckBox.Checked) continue;
+                        else
+                        {
+                            planet.owner = FactionFromCodeName("Neutral", entities);
+                            brush = new SolidBrush(Color.FromArgb(255, planet.owner.color[0], planet.owner.color[1], planet.owner.color[2]));
+                        }
+                    }
+                }
+                if (planet.codename != "Galaxy_Core_Art_Model" && (!GalaxyMapFilterCheckbox.Checked || filterPlanet(planet)))
+                {
+                    int x = (Int32)(planet.x_coord * scale + origin) - planet_radius - 1;
+                    int y = (Int32)(planet.y_coord * scale + origin) - planet_radius - 1;
+                    if (x >= dx_min && x <= dx_max && y >= dy_min && y <= dy_max)
+                    {
+                        x -= dx_min;
+                        y -= dy_min;
+                        if (GalaxyMapTerrainRB.Checked)
+                        {
+                            if (planet.terrain_id < 0)
+                            {//Save changes on the fly so the user who isn't trying to use every planet terrain can skip the long load
+                                planet.terrain_id = getTerrainIndex(planet.groundMap, entities);
+                                entities.Planets[i] = planet;
+                            }
+                            int terrain = planet.terrain_id;
+                            if (!planet.has_ground) terrain = 7;
+                            brush = new SolidBrush(getTerrainColor(terrain));
+                        }
+
+                        if (PlanetNameCheckBox.Checked)
+                        {
+                            StringFormat sf = new StringFormat();
+                            sf.LineAlignment = StringAlignment.Center;
+                            sf.Alignment = StringAlignment.Center;
+
+                            g.DrawString(planet.username, new Font(this.Font.Name, 10, this.Font.Style), brush, new Rectangle(x - 150 + planet_radius, y - 25, 300, 20), sf);
+                        }
+
+                        //g.DrawString(planet.username, font brush,);
+                        g.FillEllipse(brush, x, y, 2 * planet_radius + 1, 2 * planet_radius + 1);
+                    }
+                }
+            }
+
+            Bitmap Cropped = new Bitmap(GalaxyMapPictureBox.Width, GalaxyMapPictureBox.Height);
+            Graphics g2 = Graphics.FromImage(Cropped);
+            g2.DrawImage(Starfield, -buffer, -buffer, GalaxyMapPictureBox.Width + buffer, GalaxyMapPictureBox.Height + buffer);
+            GalaxyMapPictureBox.Image = Cropped;
+        }
+
+        private void DrawMapHook(object sender, EventArgs e)
+        {
+            SetGalaxyMapBackground();
+        }
+
+        private void GalaxyMapGCFactionBox_ValueChanged(object sender, EventArgs e)
+        {
+            int factionindex = GalaxyMapGCFactionBox.SelectedIndex;
+            List<planet> affiled = new List<planet>();
+
+            galacticConquest GC = new galacticConquest();
+            if (GalaxyMapGCComboBox.SelectedIndex >= 0) GC = (galacticConquest)GalaxyMapGCComboBox.SelectedItem;
+
+            for (int i = 0; i < GC.planetObjects.Count; i++)
+            {
+                planet planet = GC.planetObjects[i];
+                bool notfound = true;
+                for (int j = 0; j < GC.forceLocation[factionindex].Count; j++)
+                {
+                    if (GC.forceLocation[factionindex][j] == planet.codename)
+                    {
+                        planet.owner = FactionFromCodeName(GC.forceOwner[factionindex][j], entities);
+                        if (planet.owner.codename == "" || planet.owner.codename is null) planet.owner = FactionFromCodeName("Neutral", entities);
+                        notfound = false;
+                        break;
+                    }
+                }
+                if (notfound) planet.owner = FactionFromCodeName("Neutral", entities);
+                affiled.Add(planet);
+            }
+
+            GalaxyMapGCFactionBox.Tag = affiled;
+        }
+
+        private void GalaxyPanLeftButton_Click(object sender, EventArgs e)
+        {
+            globals.map_x -= 100;
+            SetGalaxyMapBackground();
+        }
+
+        private void GalaxyPanUpButton_Click(object sender, EventArgs e)
+        {
+            globals.map_y -= 100;
+            SetGalaxyMapBackground();
+        }
+
+        private void GalaxyPanDownButton_Click(object sender, EventArgs e)
+        {
+            globals.map_y += 100;
+            SetGalaxyMapBackground();
+        }
+
+        private void GalaxyPanRightButton_Click(object sender, EventArgs e)
+        {
+            globals.map_x += 100;
+            SetGalaxyMapBackground();
+        }
+
+        private void GalaxyMapPictureBox_Click(object sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if (me.Button == MouseButtons.Right)
+            {
+                if (GalaxyMapPictureBox.Image == null) return;
+                SaveFileDialog fil = new SaveFileDialog();
+                fil.Filter = ("Bitmap files (*.bmp)|*.bmp|PNG Files (*.png)|*.png|JPEG files (*.jpg)|*.jpg");
+                fil.Title = "Map Export";
+                fil.FileName = "Galaxy";
+                if (fil.ShowDialog() == DialogResult.OK)
+                {
+                    System.Drawing.Imaging.ImageFormat format = System.Drawing.Imaging.ImageFormat.Bmp;
+                    switch (fil.FilterIndex)
+                    {
+                        case 1:
+                            format = System.Drawing.Imaging.ImageFormat.Png;
+                            break;
+                        case 2:
+                            format = System.Drawing.Imaging.ImageFormat.Jpeg;
+                            break;
+                    }
+                    GalaxyMapPictureBox.Image.Save(fil.FileName, format);
+                    MessageBox.Show("Image saved");
+                }
+            }
+        }
+
+        //todo add mouse wheel and keypress events. Probably need to do formwide and check galaxy map tab is active
+
+        private void GalaxyMapPictureBox_Keypress(object sender, System.Windows.Forms.PreviewKeyDownEventArgs e)
+        {
+            var visible = e.KeyValue;
+            //switch (e.KeyValue)
+            //{
+            //    case syte
+            //}
+        }
+
+        private void setMapGCOptions()
+        {
+            GalaxyMapGCComboBox.Items.Clear();
+            foreach (galacticConquest GC in entities.Conquests)
+            {
+                bool add = false;
+                if (GC.Type == GCType.Progressive && GalaxyMapGCProgCheckBox.Checked) add = true;
+                if (GC.Type == GCType.Regional && GalaxyMapGCRegCheckBox.Checked) add = true;
+                if (GC.Type == GCType.Historical && GalaxyMapGCHistCheckBox.Checked) add = true;
+                if ((GC.Type == GCType.Infinity || GC.Type == GCType.InfinityLayoutCopy) && GalaxyMapGCInfCheckBox.Checked) add = true;
+                if (add) GalaxyMapGCComboBox.Items.Add(GC);
+            }
+            if (GalaxyMapGCComboBox.Items.Count > 0) GalaxyMapGCComboBox.SelectedIndex = 0;
+        }
+
+        private void setMapActiveFaction()
+        {
+            GalaxyMapGCFactionBox.Items.Clear();
+            if (GalaxyMapGCComboBox.SelectedIndex < 0) return;
+            galacticConquest GC = (galacticConquest)GalaxyMapGCComboBox.SelectedItem;
+            foreach (string active in GC.factionsPlayable) GalaxyMapGCFactionBox.Items.Add(active);
+            GalaxyMapGCFactionBox.SelectedIndex = 0;
+        }
+
+        private void setMapGCOptions_Hook(object sender, EventArgs e)
+        {
+            setMapGCOptions();
+        }
+
+        private void GalaxyMapGCComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            setMapActiveFaction();
+            SetGalaxyMapBackground();
+        }
+
+        private void GalaxyMapGCRB_CheckedChanged(object sender, EventArgs e)
+        {
+            GalaxyMapFilterCheckbox.Checked = false;
+            SetGalaxyMapBackground();
+        }
+
+        private void GalaxyMapZoomBox_ValueChanged(object sender, EventArgs e)
+        {
+            float scale = (float)GalaxyMapZoomBox.Value / 100;
+            globals.map_x = (int)((globals.map_old_center_x - GalaxyMapPictureBox.Width / 2 / scale));
+            globals.map_y = (int)((globals.map_old_center_y - GalaxyMapPictureBox.Height / 2 / scale));
+            SetGalaxyMapBackground();
+        }
+
+        private void GalaxyFilterButton_Click(object sender, EventArgs e)
+        {
+            PlanetFilter filter = new PlanetFilter();
+            filter.filterConfig = globals.PlanetFilterConfig;
+            filter.GCFull = entities.Conquests;
+
+            filter.ShowDialog();
+
+            if (!filter.cancel)
+            {
+                globals.PlanetFilterConfig = filter.filterConfig;
+                SetGalaxyMapBackground();
+            }
+            GalaxyMapFilterCheckbox.Checked = true;
+        }
+
+        private void GalaxyResetView()
+        {
+            GalaxyMapZoomBox.Value = 100;
+            float scale = (float)GalaxyMapZoomBox.Value / 100;
+            int bounds = (int)(scale * (2 * entities.PlanetBounds + globals.map_extra_edge));
+            if (bounds % 2 == 0) bounds++;
+            int unused_x = bounds - GalaxyMapPictureBox.Width;
+            int unused_y = bounds - GalaxyMapPictureBox.Height;
+            globals.map_x = (int)(unused_x / 2 / scale); //Buffer needs to be subtracte from unused_x if stops being 0
+            globals.map_y = (int)(unused_y / 2 / scale);
+            SetGalaxyMapBackground();
+        }
+
+        private void GalaxyFitAllButton_Click(object sender, EventArgs e)
+        {
+            float min_x = float.MaxValue;
+            float max_x = float.MinValue;
+            float min_y = float.MaxValue;
+            float max_y = float.MinValue;
+
+            List<planet> checklist = entities.Planets;
+            if (GalaxyMapGCRB.Checked)
+            {
+                if (GalaxyMapGCComboBox.SelectedIndex >= 0) checklist = ((galacticConquest)GalaxyMapGCComboBox.SelectedItem).planetObjects;
+            }
+
+            foreach(planet planet in checklist)
+            {
+                if(!GalaxyMapFilterCheckbox.Checked || filterPlanet(planet))
+                {
+                    if (planet.x_coord < min_x) min_x = planet.x_coord;
+                    if (planet.x_coord > max_x) max_x = planet.x_coord;
+                    if (planet.y_coord < min_y) min_y = planet.y_coord;
+                    if (planet.y_coord > max_y) max_y = planet.y_coord;
+                }
+            }
+
+            if (min_x == float.MaxValue) return;
+
+            int xbounds = (int)(max_x - min_x + globals.map_extra_edge);
+            int ybounds = (int)(max_y - min_y + globals.map_extra_edge);
+            int zoom_x = (int)(GalaxyMapPictureBox.Width * 100 / xbounds); //This does crop to fit the entire bounding square as seen on the planet tab.
+            int zoom_y = (int)(GalaxyMapPictureBox.Height * 100 / ybounds); //Outliers on one coordinate will mean there may be gaps on some sides
+            if (zoom_x < zoom_y)
+            {
+                GalaxyMapZoomBox.Value = zoom_x;
+                globals.map_x = (int)(entities.PlanetBounds + min_x);
+                globals.map_y = (int)(entities.PlanetBounds + min_y) + (ybounds - GalaxyMapPictureBox.Height * 100 / zoom_x) / 2;
+            }
+            else
+            {
+                GalaxyMapZoomBox.Value = zoom_y;
+                globals.map_x = (int)(entities.PlanetBounds + min_x) + (xbounds - GalaxyMapPictureBox.Width * 100 / zoom_y) / 2;
+                globals.map_y = (int)(entities.PlanetBounds + min_y);
+            }
+            SetGalaxyMapBackground();
+        }
+
+        private void GalaxyResetButton_Click(object sender, EventArgs e)
+        {
+            GalaxyResetView();
+        }
+
+        private void GalaxyTerrainLegendButton_Click(object sender, EventArgs e)
+        {
+            TerrainLegend legend = new TerrainLegend();
+            legend.Show();
+        }
+
+        private void GalaxyFactionLegendButton_Click(object sender, EventArgs e)
+        {
+            FactionLegend legend = new FactionLegend();
+            legend.Factions = entities.factions;
+            legend.Show();
         }
 
         //Don't put any functions below here if you want it to still compile

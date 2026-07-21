@@ -114,6 +114,18 @@
     </Compile>
     <Compile Include="TargetContrastPort.cs" />
     <Compile Include="TargetResult.cs" />
+    <Compile Include="FactionLegend.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FactionLegend.Designer.cs">
+      <DependentUpon>FactionLegend.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TerrainLegend.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TerrainLegend.Designer.cs">
+      <DependentUpon>TerrainLegend.cs</DependentUpon>
+    </Compile>
     <Compile Include="TextDetail.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -156,6 +168,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SubmodSetup.resx">
       <DependentUpon>SubmodSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FactionLegend.resx">
+      <DependentUpon>FactionLegend.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TerrainLegend.resx">
+      <DependentUpon>TerrainLegend.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TextDetail.resx">
       <DependentUpon>TextDetail.cs</DependentUpon>
