@@ -129,6 +129,20 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>442, 17</value>
   </metadata>
+  <data name="UnitLengthLabel.ToolTip" xml:space="preserve">
+    <value>Approximate length value derived from modifiers on weapon range
+
+Large ships (SSDs) are scaled down by 25% or 33% for gameplay purposes
+
+Special cases or nonstandard balancing may throw the value off</value>
+  </data>
+  <data name="UnitAccTierLabel.ToolTip" xml:space="preserve">
+    <value>A modifier on all weapon accuracy values for the unit
+
+Ranges from -2 to 2 in standard balance. Each tier adjusts the value by 10% of the base inaccuracy
+
+Factors such as good sensors or being a very old class affect the tier</value>
+  </data>
   <data name="UnitShieldAvgLabel.ToolTip" xml:space="preserve">
     <value>Shield value divided by the mean damage modifier across key damage types to the unit's armor type
 Combat power calulations use the closely related shield*average damage absorption or shield*(1 - mean modifier)</value>

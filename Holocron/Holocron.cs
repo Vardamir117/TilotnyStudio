@@ -2942,6 +2942,34 @@ namespace Holocron
             //Ability and weapon sounds don't have handy auto select features
             if (!UnitSFXBasicRB.Checked && !UnitSFXAmbientRB.Checked && !UnitSFXAttackRB.Checked && !UnitSFXDestroyedRB.Checked && !UnitSFXAbilityRB.Checked && !UnitSFXWeaponRB.Checked) UnitSFXBasicRB.Checked = true;
             populateUnitSFXList();
+
+            double calcCP = 0;
+            if (selectedUnit.fightermode < 0 && (SpaceRadioButton.Checked || SpaceHeroRadioButton.Checked)) //Todo how do gunships work? Are they actually just ignored?
+            {
+                (float range, float acctier) = hardpointExamine(selectedUnit);
+                if(entities.modid != "")
+                {
+                    int resolution = 250;
+                    if (entities.modid == "rev") resolution /= 2;
+                    if (range is float.NaN) UnitLengthLabel.Text = "";
+                    else
+                    {
+                        float lower = range * 10 - resolution;
+                        if (lower < 0) lower = 0;
+                        UnitLengthLabel.Text = "Length Bracket: " + (lower).ToString("0") + "-" + (range * 10 + resolution).ToString("0") + "m";
+                    }
+                    UnitAccTierLabel.Text = "Accuracy Tier: " + acctier.ToString("0.#");
+                }
+                calcCP = CalculateSpaceCPfromUnit(selectedUnit, acctier);
+            }
+            else
+            {
+                UnitLengthLabel.Text = "";
+                UnitAccTierLabel.Text = "";
+            }
+            UnitEngageRangeLabel.Text = "Engagement Range: " + selectedUnit.range;
+
+            UnitCPLabel.Text = "Combat Power: " + selectedUnit.cp + "    Calculated: " + calcCP + "    Pop: " + ((calcCP + getComplementCP(selectedUnit))/100).ToString("0");
         }
 
         private void populateHostListBox()
@@ -3186,18 +3214,7 @@ namespace Holocron
                     unit.sortfloat = unit.cp;
                     if (globals.UnitSortConfig.complementCP)
                     {
-                        foreach (garrison_entry gar in unit.garrison)
-                        {
-                            if (gar.tech[1])
-                            {
-                                float upfrontcp = gar.cp * gar.upfront[1]; //For debug purposes
-                                float reserveratio = (float)Math.Pow(0.5, (double)gar.reserve[1] / gar.upfront[1]);
-                                if (gar.reserve[1] == -1) reserveratio = 0;
-                                float reservecp = upfrontcp * (1 - reserveratio);
-                                unit.sortfloat += upfrontcp + reservecp;
-                            }
-
-                        }
+                        unit.sortfloat += getComplementCP(unit);
                     }
                     break;
                 case UnitSortTypes.Durability: //TODO modifiers for reflect/absorb
@@ -3307,7 +3324,7 @@ namespace Holocron
                     unit.sortfloat = 0;
                     foreach (hardpoint hp in unit.consolidatedhps)
                     {
-                        if (hp.damageType != "") //Turns out hangars and engines will do something when routed through the calcs
+                        if (hp.damageAmount > 0) //Turns out hangars and engines will do something when routed through the calcs
                         {
                             float dps = getDPS(hp);
                             dps *= GetWeaponMods(hp.damageType).median;
@@ -3323,7 +3340,7 @@ namespace Holocron
                     unit.sortfloat = 0;
                     foreach (hardpoint hp in unit.consolidatedhps)
                     {
-                        if (hp.damageType != "")
+                        if (hp.damageAmount > 0)
                         {
                             float dps = getDPS(hp);
                             WeaponMods weap = GetWeaponMods(hp.damageType);
@@ -3340,7 +3357,7 @@ namespace Holocron
                     unit.sortfloat = 0;
                     foreach (hardpoint hp in unit.consolidatedhps)
                     {
-                        if (hp.damageType != "")
+                        if (hp.damageAmount > 0)
                         {
                             float dps = getDPS(hp);
                             WeaponMods weap = GetWeaponMods(hp.damageType);
@@ -4062,14 +4079,9 @@ namespace Holocron
             populateUnitListbox();
         }
 
-        private float getDPS(hardpoint hardpoint, bool suppressQty = false) //todo: extra param to force alpha/not for cp calcs, be able to incorporate selected ability values 
+        private float getDPS(hardpoint hardpoint, bool suppressQty = false)
         {
-            float reload = hardpoint.recharge + (hardpoint.pulseCount - 1) * hardpoint.pulseDelay;
-            if (AlphaCheckBox.Checked) reload = (float)Math.Log10(reload);
-            float corenne = hardpoint.damageAmount * hardpoint.pulseCount / reload;
-            if (hardpoint.blastRadius > 0) corenne *= (float)UnitAoEBox.Value;
-            if (!suppressQty) corenne *= hardpoint.quantity;
-            return corenne;
+            return hpDPS(hardpoint, suppressQty, AlphaCheckBox.Checked, (float)UnitAoEBox.Value);
         }
 
         private string getDPSString(hardpoint hardpoint, bool suppressQty = false)

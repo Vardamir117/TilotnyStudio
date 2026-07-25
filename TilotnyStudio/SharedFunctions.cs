@@ -2341,6 +2341,28 @@ public static class SharedFunctions
         {
             entities.modid = id.Attributes[0].Value;
         }
+
+        switch (entities.modid)
+        {
+            case "icw":
+                entities.version = 34;
+                if (File.Exists(getModFile("..\\TRChangelog35.txt", entities))) entities.version = 35;
+                if (File.Exists(getModFile("..\\TRChangelog36.txt", entities))) entities.version = 40;
+                if (File.Exists(getModFile("..\\TRChangelog40.txt", entities))) entities.version = 40;
+                break;
+            case "fotr":
+                entities.version = 34;
+                if (File.Exists(getModFile("..\\FotRChangelog15.txt", entities))) entities.version = 35;
+                if (File.Exists(getModFile("..\\FotRChangelog16.txt", entities))) entities.version = 40;
+                if (File.Exists(getModFile("..\\FotRChangelog20.txt", entities))) entities.version = 40;
+                break;
+            case "rev":
+                entities.version = 34;
+                if (File.Exists(getModFile("..\\RevChangelog05.txt", entities))) entities.version = 35;
+                if (File.Exists(getModFile("..\\RevChangelog06.txt", entities))) entities.version = 40;
+                if (File.Exists(getModFile("..\\RevChangelog10.txt", entities))) entities.version = 40;
+                break;
+        }
     }
 
     public static void parseProjectiles(entities entities)
@@ -2548,6 +2570,7 @@ public static class SharedFunctions
                         //float coneHeight = -1;
                         float fullsalvomod = 1;
                         float range = -1;
+                        string proj = "";
                         List<float> inaccuracyAmounts = new List<float>();
                         List<string> inaccuracyTypes = new List<string>();
                         XmlNode value = hp.SelectSingleNode("descendant::Is_Targetable");
@@ -2577,7 +2600,7 @@ public static class SharedFunctions
                             {
                                 if (!(value.LastChild is null))
                                 {
-                                    string proj = fullTrim(value.LastChild.Value);
+                                    proj = fullTrim(value.LastChild.Value);
                                     string lower = proj.ToLower();
                                     bool notfound = true;
                                     int index = LookupUntemplateID(proj);
@@ -2730,7 +2753,8 @@ public static class SharedFunctions
                         hardpoint hard = new hardpoint
                         {
                             name = name,
-                            projectile = Find_Text_Entry(text, entities),
+                            text = Find_Text_Entry(text, entities),
+                            projectile = proj,
                             quantity = 1,
                             damageType = damageType,
                             hpType = hpType,
@@ -5481,6 +5505,7 @@ public static class SharedFunctions
 
     public static string convertProjectileToName(string projectile)
     {
+        if (projectile is null) return "";
         string proj = projectile.Replace("Proj_", "").Replace("proj_", "").Replace("ship_", ""); //TODO I'm sure I've missed some colors
         proj = proj.Replace("_Blue", "").Replace("_blue", "");
         proj = proj.Replace("_Red", "").Replace("_red", "");
@@ -5492,90 +5517,344 @@ public static class SharedFunctions
         return proj;
     }
 
-    private static List<projectileAccuracyTemplate> LightLaserAccs()
+    private static List<projectileAccuracyTemplate> LightLaserAccs() //TODO we already have different acc calcs in dev vs public... You can check which is which by looking for changelog presence
     {
         List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        //public
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 1, tiermod = 0.1f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 1, tiermod = 0.1f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 3, tiermod = 0.3f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 3, tiermod = 0.3f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 3, tiermod = 0.3f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 3, tiermod = 0.3f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 3, tiermod = 0.3f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 6, tiermod = 0.6f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 10, tiermod = 1f });
+
+        //dev
+        /*ExpectedAccuracy.Add(new projectileAccuracyTemplate {category = "Fighter", accuracy = 1, tiermod = 0.1f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 1, tiermod = 0.1f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 1, tiermod = 0.1f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 1, tiermod = 0.1f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 3, tiermod = 0.3f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 3, tiermod = 0.3f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 3, tiermod = 0.3f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 3, tiermod = 0.3f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 6, tiermod = 0.6f });*/
         return ExpectedAccuracy;
     }
 
-    private static PointF projectileExamine(string projectile, string damageType)
+    private static List<projectileAccuracyTemplate> MedLaserAccs()
     {
         List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
-        float expectedRange = 0;
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 1.5f, tiermod = 0.15f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 1.5f, tiermod = 0.15f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 4.5f, tiermod = 0.45f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 4.5f, tiermod = 0.45f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 4.5f, tiermod = 0.45f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 4.5f, tiermod = 0.45f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 4.5f, tiermod = 0.45f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 7, tiermod = 0.7f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 10, tiermod = 1f });
+        return ExpectedAccuracy;
+    }
 
-        bool heavy = (projectile.Contains("heavy_") || projectile.Contains("Heavy_"));
-        bool light = (projectile.Contains("light_") || projectile.Contains("Light_"));
+    private static List<projectileAccuracyTemplate> HeavyLaserAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 2, tiermod = 0.2f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 2, tiermod = 0.2f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 6, tiermod = 0.6f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 6, tiermod = 0.6f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 6, tiermod = 0.6f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 6, tiermod = 0.6f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 6, tiermod = 0.6f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 8, tiermod = 0.8f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 10, tiermod = 1f });
+        return ExpectedAccuracy;
+    }
+
+    private static List<projectileAccuracyTemplate> LightIonAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 50, tiermod = 5 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 50, tiermod = 5 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 40, tiermod = 4 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 40, tiermod = 4 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 30, tiermod = 3 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 30, tiermod = 3 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 15, tiermod = 1.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 10, tiermod = 1 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 5, tiermod = 0.5f });
+        return ExpectedAccuracy;
+    }
+
+    private static List<projectileAccuracyTemplate> MedIonAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 60, tiermod = 6 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 60, tiermod = 6 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 50, tiermod = 5 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 50, tiermod = 5 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 35, tiermod = 3.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 35, tiermod = 3.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 20, tiermod = 2 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 10, tiermod = 1 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 5, tiermod = 0.5f });
+        return ExpectedAccuracy;
+    }
+
+    private static List<projectileAccuracyTemplate> HeavyIonAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 70, tiermod = 7 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 70, tiermod = 7 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 60, tiermod = 6 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 60, tiermod = 6 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 40, tiermod = 4 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 40, tiermod = 4 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 25, tiermod = 2.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 10, tiermod = 1 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 5, tiermod = 0.5f });
+        return ExpectedAccuracy;
+    }
+
+    private static List<projectileAccuracyTemplate> LightTurboAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 40, tiermod = 4 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 40, tiermod = 4 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 20, tiermod = 2 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 20, tiermod = 2 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 20, tiermod = 2 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 20, tiermod = 2 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 10, tiermod = 1 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 5, tiermod = 0.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 1, tiermod = 0.1f });
+        return ExpectedAccuracy;
+    }
+
+    private static List<projectileAccuracyTemplate> MedTurboAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 50, tiermod = 5 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 50, tiermod = 5 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 25, tiermod = 2.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 25, tiermod = 2.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 25, tiermod = 2.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 25, tiermod = 2.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 15, tiermod = 1.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 5, tiermod = 0.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 1, tiermod = 0.1f });
+        return ExpectedAccuracy;
+    }
+
+    private static List<projectileAccuracyTemplate> HeavyTurboAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 60, tiermod = 6 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 60, tiermod = 6 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 30, tiermod = 3 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 30, tiermod = 3 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 30, tiermod = 3 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 30, tiermod = 3 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 20, tiermod = 2 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 5, tiermod = 0.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 1, tiermod = 0.1f });
+        return ExpectedAccuracy;
+    }
+
+    private static List<projectileAccuracyTemplate> ArchaicAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 50, tiermod = 5 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 50, tiermod = 5 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 40, tiermod = 4 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 40, tiermod = 4 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 30, tiermod = 3 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 30, tiermod = 3 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 20, tiermod = 2 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 10, tiermod = 1 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 5, tiermod = 0.5f });
+        return ExpectedAccuracy;
+    }
+
+    public static float hpDPS(hardpoint hardpoint, bool suppressQty = false, bool alpha = false, float AOEmult = 1)
+    {
+        float reload = hardpoint.recharge + (hardpoint.pulseCount - 1) * hardpoint.pulseDelay;
+        if (alpha) reload = (float)Math.Log10(reload);
+        float corenne = hardpoint.damageAmount * hardpoint.pulseCount / reload;
+        if (hardpoint.blastRadius > 0) corenne *= AOEmult;
+        if (!suppressQty) corenne *= hardpoint.quantity;
+        return corenne;
+    }
+
+    public static float getComplementCP(unit unit)
+    {
+        float corenne = 0;
+        foreach (garrison_entry gar in unit.garrison)
+        {
+            if (gar.tech[1])
+            {
+                float upfrontcp = gar.cp * gar.upfront[1]; //For debug purposes
+                float reserveratio = (float)Math.Pow(0.5, (double)gar.reserve[1] / gar.upfront[1]);
+                if (gar.reserve[1] == -1) reserveratio = 0;
+                float reservecp = upfrontcp * (1 - reserveratio);
+                corenne += upfrontcp + reservecp;
+            }
+        }
+        return corenne;
+    }
+
+    //todo watch for accuracy. But it mostly seems to be DPS calc mismatches. Some of those are caused by different reload rounding on sheet vs game, which are unfixable
+    public static double CalculateSpaceCP(float dps, float acctier, float healscore, float hp, string atype, float shield, string stype, float regen)
+    {
+        int modscale = 1;
+        if (entities.modid == "rev") modscale = 4;
+        double dpsheal = 1.5 * (dps * (1 + (0.05 * acctier)) + healscore);
+        ArmorMods mods = GetArmorMods(stype);
+        double modshield = (shield + 1000 * regen / 3) * mods.average;
+        mods = GetArmorMods(atype);
+        double modhp = hp * mods.average;
+        return modscale * Math.Floor(Math.Sqrt(dpsheal*(modshield + modhp))); //todo multiply by defense mod inside sqrt
+    }
+
+    public static double CalculateSpaceCPfromUnit(unit unit, float acctier)
+    {
+        float avgdps = 0;
+        foreach (hardpoint hp in unit.consolidatedhps)
+        {
+            if(hp.damageAmount > 0)
+            {
+                WeaponMods weap = GetWeaponMods(hp.damageType);
+                float dps = hpDPS(hp);
+                avgdps += dps * weap.median;
+            }
+        }
+
+        float healscore = 0;
+        ability healable = unit.abilities.FirstOrDefault(s => s.type == "Force_Healing_Ability"); //todo may need to find last instead
+        if (healable.recharge > 0)
+        {
+            healscore = getHealScore(healable);
+        }
+
+        return CalculateSpaceCP(avgdps, acctier, healscore, unit.hp, unit.armor_type, unit.shield, unit.shield_type, unit.regen);
+    }
+
+    private static (float range, List<projectileAccuracyTemplate> accs) projectileExamine(string projectile, string damageType)
+    {//todo check supers on Aggressor and Peltast
+        string lower = projectile.ToLower();
+        float expectedRange = 0;
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+
+        bool ultraheavy = (lower.Contains("_ultraheavy") || lower.Contains("_super"));
+        bool heavy = (lower.Contains("_heavy"));
+        bool light = (lower.Contains("_light"));
 
         switch (damageType)
         {
             case "DamageS_Laser":
-                if (projectile.Contains("rapid_") || projectile.Contains("Rapid_"))
+                bool maser = lower.Contains("maser_");
+                if (lower.Contains("rapid_"))
                 {//masers have different range?
                     if (light)
                     {
-                        expectedRange = 1500;
+                        if (maser) expectedRange = 1800;
+                        else expectedRange = 1500;
+                        ExpectedAccuracy = LightLaserAccs();
                     }
                     else if (heavy)
                     {
-                        expectedRange = 2000;
+                        if (maser) expectedRange = 2200;
+                        else expectedRange = 2000;
+                        ExpectedAccuracy = HeavyLaserAccs();
                     }
                     else
                     {
-                        expectedRange = 1750;
+                        if (maser) expectedRange = 2000;
+                        else expectedRange = 1750;
+                        ExpectedAccuracy = MedLaserAccs();
                     }
                 }
                 else
                 {
                     if (light)
                     {
-                        expectedRange = 1750;
+                        if (maser) expectedRange = 1800;
+                        else expectedRange = 1750;
+                        ExpectedAccuracy = LightLaserAccs();
                     }
                     else if (heavy)
                     {
-                        expectedRange = 2250;
+                        if (maser) expectedRange = 2200;
+                        else expectedRange = 2250;
+                        ExpectedAccuracy = HeavyLaserAccs();
                     }
                     else
                     {
                         expectedRange = 2000;
+                        ExpectedAccuracy = MedLaserAccs();
                     }
                 }
+                break;
+            case "PD_Ion":
+                expectedRange = 1500;
+                ExpectedAccuracy = MedLaserAccs();
                 break;
             case "DamageS_Turbolaser":
                 if (light)
                 {
                     expectedRange = 2500;
+                    ExpectedAccuracy = LightTurboAccs();
+                }
+                else if (ultraheavy)
+                {
+                    expectedRange = 4000;
+                    ExpectedAccuracy = HeavyTurboAccs();
                 }
                 else if (heavy)
                 {
                     expectedRange = 3500;
+                    ExpectedAccuracy = HeavyTurboAccs();
                 }
                 else
                 {
                     expectedRange = 3000;
+                    ExpectedAccuracy = MedTurboAccs();
                 }
                 break;
             case "DamageS_TurboIon":
                 if (light)
                 {
                     expectedRange = 2500;
+                    ExpectedAccuracy = LightIonAccs();
+                }
+                else if (ultraheavy)
+                {
+                    expectedRange = 4000;
+                    ExpectedAccuracy = HeavyIonAccs();
                 }
                 else if (heavy)
                 {
                     expectedRange = 3500;
+                    ExpectedAccuracy = HeavyIonAccs();
                 }
                 else
                 {
                     expectedRange = 3000;
+                    ExpectedAccuracy = MedIonAccs();
                 }
                 break;
             case "DamageS_Concussion":
-                if (projectile.Contains("assault_") || projectile.Contains("Assault_"))
+                if (lower.Contains("assault_"))
                 {
                     expectedRange = 3500;
                 }
-                else if (projectile.Contains("_sphere") || projectile.Contains("_Sphere"))
+                else if (lower.Contains("_sphere"))
                 {
                     expectedRange = 2500;
+                    ExpectedAccuracy = ArchaicAccs();
                 }
                 else
                 {
@@ -5583,43 +5862,69 @@ public static class SharedFunctions
                 }
                 break;
             case "DamageS_Proton":
-                if (projectile.Contains("mass_driver") || projectile.Contains("Mass_Driver"))
+                if (lower.Contains("mass_driver"))
                 {
                     expectedRange = 3500;
+                    ExpectedAccuracy = ArchaicAccs();
                 }
                 else
                 {
-                    expectedRange = 2500; //todo siege torps for Torp Sphere
+                    if(lower.Contains("torpedo_siege_platform")) expectedRange = 3500; //todo: care about the accuracy mods on these?
+                    else expectedRange = 2500;
                 }
+                break;
+            case "DamageS_Flechette":
+                expectedRange = 1500;
+                ExpectedAccuracy = MedLaserAccs();
                 break;
         }
 
-        return new PointF(expectedRange, -1);
+        return (expectedRange, ExpectedAccuracy);
         //todo return -1 range if hardpoint doesn't count (engine, grav well, dummy...)
     }
 
-    public static unit hardpointExamine(unit unit)
+    public static (float range, float acctier) hardpointExamine(unit unit)
     {
         float range = 0;
         float acctier = 0;
         int weaponcount = 0;
+        int accweaponcount = 0;
 
-        foreach(hardpoint hp in unit.consolidatedhps)
+        foreach (hardpoint hp in unit.consolidatedhps)
         {
-            PointF examination = projectileExamine(hp.projectile, hp.damageType);
+            string dtype = hp.damageType;
+            if (hp.text.Contains("Anti-Fighter Ion")) dtype = "PD_Ion";
+            (float hprange, List<projectileAccuracyTemplate> accs) = projectileExamine(hp.projectile, dtype);
 
-            if(examination.X > 0)
+            if(hprange > 0)
             {
-                range += examination.X * hp.quantity;
-                acctier += examination.Y * hp.quantity;
+                range += (hp.range - hprange) * hp.quantity;
+                float tier = 0;
+                int tiercount = 0;
+                foreach(projectileAccuracyTemplate acc in accs)
+                {
+                    int id = hp.inaccuracyTypes.FindIndex(s => String.Equals(s, acc.category, StringComparison.OrdinalIgnoreCase));
+                    if(id >= 0)
+                    {
+                        float hpacc = hp.inaccuracyAmounts[id];
+                        tier += (acc.accuracy - hpacc) / acc.tiermod; //todo can just use acc/10?
+                        tiercount++;
+                    }
+                }
+                if (tiercount > 0)
+                {
+                    acctier += tier * hp.quantity / tiercount;
+                    accweaponcount += hp.quantity;
+                }
                 weaponcount += hp.quantity;
             }
         }
 
         range /= weaponcount;
-        acctier /= weaponcount;
+        acctier /= accweaponcount;
 
-        return unit;
+        //return unit;
+        return (range, acctier);
     }
 
 }
@@ -5646,12 +5951,14 @@ public struct projectile
 
 public struct projectileAccuracyTemplate
 {
-    public string armor;
+    public string category;
     public float accuracy;
+    public float tiermod;
 }
 public struct hardpoint
 {
     public string name;
+    public string text;
     public string projectile;
     public string damageType;
     public string hpType;
@@ -5675,7 +5982,7 @@ public struct hardpoint
 
     public override string ToString()
     {
-        if (range < 0) return quantity.ToString() + "x " + projectile;
+        if (range < 0) return quantity.ToString() + "x " + text;
         string proj = SharedFunctions.convertProjectileToName(projectile);
         return quantity.ToString() + "x " + proj.Replace("_", " ") + ": " + pulseCount.ToString() + " / " + recharge.ToString("0.0") + "s / " + range.ToString();
     }
@@ -6168,6 +6475,7 @@ public struct entities {
     public static AutoResolveSettings AutoResolveSettings = new AutoResolveSettings();
 
     public static string modid; //Should be deprecated in Rev 1.0, but keep around for compatibility
+    public static float version; //Standardize on TR version, but may need to work in conjuction with modid
     public static string readerrors = "";
 }
 

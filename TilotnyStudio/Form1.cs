@@ -1166,6 +1166,26 @@ namespace TilotnyStudio
                         if (CostBox.Visible) CostBox.Value = unit.cost;
                         if (BuildTimeBox.Visible) BuildTimeBox.Value = unit.buildtime;
                         if (CrewBox.Visible) CrewBox.Value = unit.crew;
+                        if (CPBox.Visible)
+                        {
+                            CPBox.Value = (decimal)unit.cp;
+                            bool space = false;
+                            if(SpaceRadioButton.Checked || SpaceHeroRadioButton.Checked)
+                            {
+                                (float range, float acctier) = hardpointExamine(unit);
+                                double calccp = CalculateSpaceCPfromUnit(unit, acctier);
+                                CPCalcBox.Value = (decimal)calccp;
+                                PopCalcBox.Value = (decimal)((calccp + getComplementCP(unit)) / 100);
+                                RangeAdjustBox.Value = (decimal)range;
+                                AccTierBox.Value = (decimal)acctier;
+                                space = true;
+                            }
+                            HPExamineFinePrintLabel.Visible = space;
+                            RangeAdjustBox.Visible = space;
+                            RangeAdjustLabel.Visible = space;
+                            AccTierBox.Visible = space;
+                            AccTierLabel.Visible = space;
+                        }
                         if (GUIRowComboBox.Visible)
                         {
                             if (unit.gui_row == 0) GUIRowComboBox.SelectedIndex = 1;

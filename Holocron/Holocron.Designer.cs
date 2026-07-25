@@ -103,6 +103,7 @@
             this.UnitSearchTextBox = new System.Windows.Forms.TextBox();
             this.UnitRadioButton = new System.Windows.Forms.RadioButton();
             this.Unitpanel = new System.Windows.Forms.Panel();
+            this.OpenUnitModelButton = new System.Windows.Forms.Button();
             this.OpenUnitFileButton = new System.Windows.Forms.Button();
             this.ExpandAllButton = new System.Windows.Forms.Button();
             this.CollapseAllButton = new System.Windows.Forms.Button();
@@ -199,6 +200,8 @@
             this.CollapseUnitStatPanel = new System.Windows.Forms.Button();
             this.CollapseUnitTextPanel = new System.Windows.Forms.Button();
             this.UnitStatPanel = new System.Windows.Forms.Panel();
+            this.UnitEngageRangeLabel = new System.Windows.Forms.Label();
+            this.UnitAccTierLabel = new System.Windows.Forms.Label();
             this.label34 = new System.Windows.Forms.Label();
             this.UnitAoEBox = new System.Windows.Forms.NumericUpDown();
             this.HealRadiusLabel = new System.Windows.Forms.Label();
@@ -245,6 +248,7 @@
             this.UnitBTSPanel = new System.Windows.Forms.Panel();
             this.UnitBTSTextBox = new System.Windows.Forms.RichTextBox();
             this.UnitTextPanel = new System.Windows.Forms.Panel();
+            this.UnitLengthLabel = new System.Windows.Forms.Label();
             this.VariantLabel = new System.Windows.Forms.Label();
             this.MaintenanceLabel = new System.Windows.Forms.Label();
             this.ShipNameRichTextBox = new System.Windows.Forms.RichTextBox();
@@ -470,7 +474,7 @@
             this.AutoResolveBattleTypeLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.OpenUnitModelButton = new System.Windows.Forms.Button();
+            this.UnitCPLabel = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tabLookups.SuspendLayout();
             this.LookupTabControl.SuspendLayout();
@@ -1368,6 +1372,19 @@
             this.Unitpanel.Name = "Unitpanel";
             this.Unitpanel.Size = new System.Drawing.Size(1091, 775);
             this.Unitpanel.TabIndex = 2;
+            // 
+            // OpenUnitModelButton
+            // 
+            this.OpenUnitModelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OpenUnitModelButton.Location = new System.Drawing.Point(368, 3);
+            this.OpenUnitModelButton.Name = "OpenUnitModelButton";
+            this.OpenUnitModelButton.Size = new System.Drawing.Size(135, 27);
+            this.OpenUnitModelButton.TabIndex = 16;
+            this.OpenUnitModelButton.Tag = "";
+            this.OpenUnitModelButton.Text = "Open Unit Model...";
+            this.toolTip1.SetToolTip(this.OpenUnitModelButton, "Open the model file for this unit in the default program for alo files");
+            this.OpenUnitModelButton.UseVisualStyleBackColor = true;
+            this.OpenUnitModelButton.Click += new System.EventHandler(this.OpenUnitModelButton_Click);
             // 
             // OpenUnitFileButton
             // 
@@ -2435,6 +2452,8 @@
             // 
             // UnitStatPanel
             // 
+            this.UnitStatPanel.Controls.Add(this.UnitEngageRangeLabel);
+            this.UnitStatPanel.Controls.Add(this.UnitAccTierLabel);
             this.UnitStatPanel.Controls.Add(this.label34);
             this.UnitStatPanel.Controls.Add(this.UnitAoEBox);
             this.UnitStatPanel.Controls.Add(this.HealRadiusLabel);
@@ -2483,6 +2502,29 @@
             this.UnitStatPanel.Size = new System.Drawing.Size(1039, 396);
             this.UnitStatPanel.TabIndex = 2;
             this.UnitStatPanel.Tag = "";
+            // 
+            // UnitEngageRangeLabel
+            // 
+            this.UnitEngageRangeLabel.AutoSize = true;
+            this.UnitEngageRangeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitEngageRangeLabel.Location = new System.Drawing.Point(907, 28);
+            this.UnitEngageRangeLabel.Name = "UnitEngageRangeLabel";
+            this.UnitEngageRangeLabel.Size = new System.Drawing.Size(105, 13);
+            this.UnitEngageRangeLabel.TabIndex = 50;
+            this.UnitEngageRangeLabel.Text = "Engagement Range:";
+            this.toolTip1.SetToolTip(this.UnitEngageRangeLabel, "The range the unit will move to to engage and the range of nonballistic built-in " +
+        "weapons");
+            // 
+            // UnitAccTierLabel
+            // 
+            this.UnitAccTierLabel.AutoSize = true;
+            this.UnitAccTierLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F);
+            this.UnitAccTierLabel.Location = new System.Drawing.Point(909, 51);
+            this.UnitAccTierLabel.Name = "UnitAccTierLabel";
+            this.UnitAccTierLabel.Size = new System.Drawing.Size(99, 17);
+            this.UnitAccTierLabel.TabIndex = 49;
+            this.UnitAccTierLabel.Text = "Accuracy Tier:";
+            this.toolTip1.SetToolTip(this.UnitAccTierLabel, resources.GetString("UnitAccTierLabel.ToolTip"));
             // 
             // label34
             // 
@@ -2979,6 +3021,8 @@
             // 
             // UnitTextPanel
             // 
+            this.UnitTextPanel.Controls.Add(this.UnitCPLabel);
+            this.UnitTextPanel.Controls.Add(this.UnitLengthLabel);
             this.UnitTextPanel.Controls.Add(this.VariantLabel);
             this.UnitTextPanel.Controls.Add(this.MaintenanceLabel);
             this.UnitTextPanel.Controls.Add(this.ShipNameRichTextBox);
@@ -2999,6 +3043,17 @@
             this.UnitTextPanel.Size = new System.Drawing.Size(1039, 367);
             this.UnitTextPanel.TabIndex = 0;
             this.UnitTextPanel.Tag = "";
+            // 
+            // UnitLengthLabel
+            // 
+            this.UnitLengthLabel.AutoSize = true;
+            this.UnitLengthLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitLengthLabel.Location = new System.Drawing.Point(614, 28);
+            this.UnitLengthLabel.Name = "UnitLengthLabel";
+            this.UnitLengthLabel.Size = new System.Drawing.Size(122, 20);
+            this.UnitLengthLabel.TabIndex = 18;
+            this.UnitLengthLabel.Text = "Length Bracket:";
+            this.toolTip1.SetToolTip(this.UnitLengthLabel, resources.GetString("UnitLengthLabel.ToolTip"));
             // 
             // VariantLabel
             // 
@@ -4950,6 +5005,7 @@
             this.GCMapControlsButton.TabIndex = 81;
             this.GCMapControlsButton.Text = "Controls...";
             this.GCMapControlsButton.UseVisualStyleBackColor = true;
+            this.GCMapControlsButton.Visible = false;
             // 
             // GalaxyFitAllButton
             // 
@@ -5700,18 +5756,17 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
-            // OpenUnitModelButton
+            // UnitCPLabel
             // 
-            this.OpenUnitModelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.OpenUnitModelButton.Location = new System.Drawing.Point(368, 3);
-            this.OpenUnitModelButton.Name = "OpenUnitModelButton";
-            this.OpenUnitModelButton.Size = new System.Drawing.Size(135, 27);
-            this.OpenUnitModelButton.TabIndex = 16;
-            this.OpenUnitModelButton.Tag = "";
-            this.OpenUnitModelButton.Text = "Open Unit Model...";
-            this.toolTip1.SetToolTip(this.OpenUnitModelButton, "Open the model file for this unit in the default program for alo files");
-            this.OpenUnitModelButton.UseVisualStyleBackColor = true;
-            this.OpenUnitModelButton.Click += new System.EventHandler(this.OpenUnitModelButton_Click);
+            this.UnitCPLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.UnitCPLabel.AutoSize = true;
+            this.UnitCPLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitCPLabel.Location = new System.Drawing.Point(719, 341);
+            this.UnitCPLabel.Name = "UnitCPLabel";
+            this.UnitCPLabel.Size = new System.Drawing.Size(79, 13);
+            this.UnitCPLabel.TabIndex = 19;
+            this.UnitCPLabel.Text = "Combat Power:";
+            this.toolTip1.SetToolTip(this.UnitCPLabel, "Galactic Conquest build cost in credits");
             // 
             // Holocron
             // 
@@ -6239,6 +6294,10 @@
         private System.Windows.Forms.Button GCMapControlsButton;
         private System.Windows.Forms.CheckBox PlanetNameCheckBox;
         private System.Windows.Forms.Button OpenUnitModelButton;
+        private System.Windows.Forms.Label UnitAccTierLabel;
+        private System.Windows.Forms.Label UnitLengthLabel;
+        private System.Windows.Forms.Label UnitEngageRangeLabel;
+        private System.Windows.Forms.Label UnitCPLabel;
     }
 }
 
