@@ -800,9 +800,12 @@ namespace TilotnyStudio
             this.BeginInvoke(new Action(() => this.Enabled = false));
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-            loadscreen.ChangeText("Reading text file");
-            entities.Text = DatParser.ReadDat(getModFile("Text\\MasterTextFile_ENGLISH.dat", entities), ',', 0);
-            crcGlobals.initTable();
+            //if (entities.Text.Count <= 0) //Shouldn't need to avoid reloading unsaved changes from faction tab, do need to avoid not reloading text if submod was changed
+            //{
+                loadscreen.ChangeText("Reading text file");
+                entities.Text = DatParser.ReadDat(getModFile("Text\\MasterTextFile_ENGLISH.dat", entities), ',', 0);
+                crcGlobals.initTable();
+            //}
             loadscreen.SetQuote(getLoadQuote(entities));
 
             loadscreen.BeginInvoke(new Action(() => loadscreen.TopMost = false)); //Make sure it's initially on top, but then let other windows win
@@ -914,7 +917,7 @@ namespace TilotnyStudio
             }
 
             SpaceRadioButton.BeginInvoke(new Action(() => SpaceRadioButton.Checked = true));
-            populateAffilUnits(true);
+            //populateAffilUnits(true);
             this.BeginInvoke(new Action(() => this.Enabled = true));
         }
 
@@ -1187,16 +1190,38 @@ namespace TilotnyStudio
                             {
                                 (float range, float acctier) = hardpointExamine(unit);
                                 double calccp = CalculateSpaceCPfromUnit(unit, acctier);
-                                CPCalcBox.Value = (decimal)calccp;
-                                PopCalcBox.Value = (decimal)((calccp + getComplementCP(unit)) / 100);
+                                try
+                                {
+                                    CPCalcBox.Value = (decimal)calccp;
+                                    PopCalcBox.Value = (decimal)((calccp + getComplementCP(unit)) / 100);
+                                }
+                                catch
+                                {
+                                    CPCalcBox.Value = 0;
+                                    PopCalcBox.Value = 0;
+                                }
                                 RangeAdjustBox.Value = (decimal)range;
-                                AccTierBox.Value = (decimal)acctier;
+                                try
+                                {
+                                    AccTierBox.Value = (decimal)acctier;
+                                }
+                                catch
+                                {
+                                    AccTierBox.Value = 0;
+                                }
                                 space = true;
                             }
                             if (UnitRadioButton.Checked || GroundHeroRadioButton.Checked)
                             {
                                 double calccp = CalculateGroundCPfromUnit(unit);
-                                CPCalcBox.Value = (decimal)calccp;
+                                try
+                                {
+                                    CPCalcBox.Value = (decimal)calccp;
+                                }
+                                catch
+                                {
+                                    CPCalcBox.Value = 0;
+                                }
                                 PopCalcBox.Value = PopBox.Value;
                             }
                             PopCalcLabel.Visible = space;
@@ -3076,13 +3101,32 @@ namespace TilotnyStudio
             File.WriteAllText(globals.LocalMod + "\\Tilotny", LastFolderOrFile(UpOneFolder(globals.modpaths[0])));
             List<string> files = getModFiles("Text", "*.txt", entities);
 
-            CopyMainToMod(getModFile("Text\\MasterTextFile_ENGLISH.dat", entities));
+            CopyMainToMod(getNonSubModFile("Text\\MasterTextFile_ENGLISH.dat"));
             //CopyMainToMod(getModFile("Text\\datassembler.exe", entities)); //todo kiilit and use dat functions directly
             //System.Diagnostics.Process.Start("\"" + globals.LocalMod + "\\Data\\Text\\datassembler.exe\"", "/e \"" + globals.LocalMod + "\\Data\\Text\\MasterTextFile_ENGLISH.dat\" \"" + globals.LocalMod + "\\Data\\Text\\MasterTextFile_ENGLISH.txt\"");
-            CopyMainToMod(getModFile("Text\\Submod_text.txt", entities));
+            CopyMainToMod(getNonSubModFile("Text\\Submod_text.txt"));
 
             ModListBox.Items.Add(newmod);
             ModListBox.SelectedItem = newmod;
+        }
+
+        string getNonSubModFile(string corepath)
+        {
+            try
+            {
+                string corenne = "";
+                foreach (string modpath in globals.modpaths)
+                {
+                    string test = Path.Combine(modpath, corepath);
+                    if (File.Exists(test))
+                    {
+                        corenne = test;
+                        break;
+                    }
+                }
+                return corenne;
+            }
+            catch { return ""; }
         }
 
         private void DeleteButton_Click(object sender, EventArgs e)
@@ -3198,6 +3242,11 @@ namespace TilotnyStudio
                     FactionPanel.Controls.Remove(tokill);
                 }
             }
+            //if (entities.Text.Count <= 0)
+            //{
+                entities.Text = DatParser.ReadDat(getModFile("Text\\MasterTextFile_ENGLISH.dat", entities), ',', 0);
+                crcGlobals.initTable();
+            //}
             XmlDocument doc = new XmlDocument();
             doc.PreserveWhitespace = true;
             doc.Load(getModFile("XML\\Factions.xml", entities));
