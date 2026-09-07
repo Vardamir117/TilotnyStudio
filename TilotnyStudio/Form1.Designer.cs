@@ -78,6 +78,19 @@
             this.ReqStructLabel = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.StatsTab = new System.Windows.Forms.TabPage();
+            this.HPExamineFinePrintLabel = new System.Windows.Forms.Label();
+            this.CalcLabel = new System.Windows.Forms.Label();
+            this.RangeAdjustBox = new System.Windows.Forms.NumericUpDown();
+            this.RangeAdjustLabel = new System.Windows.Forms.Label();
+            this.AccTierLabel = new System.Windows.Forms.Label();
+            this.AccTierBox = new System.Windows.Forms.NumericUpDown();
+            this.ApplyCalcButton = new System.Windows.Forms.Button();
+            this.PopCalcLabel = new System.Windows.Forms.Label();
+            this.PopCalcBox = new System.Windows.Forms.NumericUpDown();
+            this.CPCalcLabel = new System.Windows.Forms.Label();
+            this.CPCalcBox = new System.Windows.Forms.NumericUpDown();
+            this.CPLabel = new System.Windows.Forms.Label();
+            this.CPBox = new System.Windows.Forms.NumericUpDown();
             this.SuperShipCheckBox = new System.Windows.Forms.CheckBox();
             this.hpFinePrintLabel = new System.Windows.Forms.Label();
             this.CrewLabel = new System.Windows.Forms.Label();
@@ -147,19 +160,6 @@
             this.ModFilesButton = new System.Windows.Forms.Button();
             this.SuperToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.CPLabel = new System.Windows.Forms.Label();
-            this.CPBox = new System.Windows.Forms.NumericUpDown();
-            this.CPCalcLabel = new System.Windows.Forms.Label();
-            this.CPCalcBox = new System.Windows.Forms.NumericUpDown();
-            this.PopCalcLabel = new System.Windows.Forms.Label();
-            this.PopCalcBox = new System.Windows.Forms.NumericUpDown();
-            this.ApplyCalcButton = new System.Windows.Forms.Button();
-            this.AccTierLabel = new System.Windows.Forms.Label();
-            this.AccTierBox = new System.Windows.Forms.NumericUpDown();
-            this.RangeAdjustLabel = new System.Windows.Forms.Label();
-            this.RangeAdjustBox = new System.Windows.Forms.NumericUpDown();
-            this.CalcLabel = new System.Windows.Forms.Label();
-            this.HPExamineFinePrintLabel = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -169,6 +169,11 @@
             this.AffilTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.InfluenceNumericUpDown)).BeginInit();
             this.StatsTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.RangeAdjustBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AccTierBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PopCalcBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CPCalcBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CPBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CrewBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LifetimeBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ConcurrentBox)).BeginInit();
@@ -183,11 +188,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.PopBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hpBox)).BeginInit();
             this.UnitCopyTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.CPBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.CPCalcBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PopCalcBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.AccTierBox)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.RangeAdjustBox)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -473,11 +473,12 @@
             "Mission Units",
             "Ground War Dummies",
             "Survival Units",
-            "Captured Versions"});
+            "Captured Versions",
+            "Templates"});
             this.SkirmishListBox.Location = new System.Drawing.Point(3, 301);
             this.SkirmishListBox.Name = "SkirmishListBox";
             this.SkirmishListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.SkirmishListBox.Size = new System.Drawing.Size(120, 95);
+            this.SkirmishListBox.Size = new System.Drawing.Size(120, 108);
             this.SkirmishListBox.TabIndex = 77;
             this.SkirmishListBox.SelectedIndexChanged += new System.EventHandler(this.SkirmishListBox_SelectedIndexChanged);
             // 
@@ -520,7 +521,7 @@
             // FactionFilterClearButton
             // 
             this.FactionFilterClearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FactionFilterClearButton.Location = new System.Drawing.Point(11, 418);
+            this.FactionFilterClearButton.Location = new System.Drawing.Point(11, 431);
             this.FactionFilterClearButton.Name = "FactionFilterClearButton";
             this.FactionFilterClearButton.Size = new System.Drawing.Size(97, 27);
             this.FactionFilterClearButton.TabIndex = 33;
@@ -532,7 +533,7 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(7, 399);
+            this.label7.Location = new System.Drawing.Point(7, 412);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(105, 20);
             this.label7.TabIndex = 30;
@@ -543,10 +544,10 @@
             this.FactionFilterListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.FactionFilterListBox.FormattingEnabled = true;
-            this.FactionFilterListBox.Location = new System.Drawing.Point(3, 451);
+            this.FactionFilterListBox.Location = new System.Drawing.Point(3, 464);
             this.FactionFilterListBox.Name = "FactionFilterListBox";
             this.FactionFilterListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.FactionFilterListBox.Size = new System.Drawing.Size(120, 199);
+            this.FactionFilterListBox.Size = new System.Drawing.Size(120, 186);
             this.FactionFilterListBox.TabIndex = 29;
             this.FactionFilterListBox.SelectedIndexChanged += new System.EventHandler(this.FactionFilterListBox_SelectedIndexChanged);
             // 
@@ -847,6 +848,178 @@
             this.StatsTab.Text = "Stats";
             this.StatsTab.UseVisualStyleBackColor = true;
             // 
+            // HPExamineFinePrintLabel
+            // 
+            this.HPExamineFinePrintLabel.AutoSize = true;
+            this.HPExamineFinePrintLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HPExamineFinePrintLabel.Location = new System.Drawing.Point(18, 223);
+            this.HPExamineFinePrintLabel.Name = "HPExamineFinePrintLabel";
+            this.HPExamineFinePrintLabel.Size = new System.Drawing.Size(415, 12);
+            this.HPExamineFinePrintLabel.TabIndex = 87;
+            this.HPExamineFinePrintLabel.Text = "Range Adjust and Accuracy Tier are used to calculate new weapon values and are no" +
+    "t saved directly\r\n";
+            // 
+            // CalcLabel
+            // 
+            this.CalcLabel.AutoSize = true;
+            this.CalcLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CalcLabel.Location = new System.Drawing.Point(720, 12);
+            this.CalcLabel.Name = "CalcLabel";
+            this.CalcLabel.Size = new System.Drawing.Size(156, 20);
+            this.CalcLabel.TabIndex = 86;
+            this.CalcLabel.Text = "Calculated Changes:";
+            // 
+            // RangeAdjustBox
+            // 
+            this.RangeAdjustBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.RangeAdjustBox.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.RangeAdjustBox.Location = new System.Drawing.Point(129, 189);
+            this.RangeAdjustBox.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.RangeAdjustBox.Name = "RangeAdjustBox";
+            this.RangeAdjustBox.Size = new System.Drawing.Size(71, 26);
+            this.RangeAdjustBox.TabIndex = 84;
+            this.RangeAdjustBox.Visible = false;
+            // 
+            // RangeAdjustLabel
+            // 
+            this.RangeAdjustLabel.AutoSize = true;
+            this.RangeAdjustLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.RangeAdjustLabel.Location = new System.Drawing.Point(16, 191);
+            this.RangeAdjustLabel.Name = "RangeAdjustLabel";
+            this.RangeAdjustLabel.Size = new System.Drawing.Size(110, 20);
+            this.RangeAdjustLabel.TabIndex = 85;
+            this.RangeAdjustLabel.Text = "Range Adjust:";
+            this.RangeAdjustLabel.Visible = false;
+            // 
+            // AccTierLabel
+            // 
+            this.AccTierLabel.AutoSize = true;
+            this.AccTierLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AccTierLabel.Location = new System.Drawing.Point(250, 191);
+            this.AccTierLabel.Name = "AccTierLabel";
+            this.AccTierLabel.Size = new System.Drawing.Size(108, 20);
+            this.AccTierLabel.TabIndex = 83;
+            this.AccTierLabel.Text = "Accuracy Tier:";
+            // 
+            // AccTierBox
+            // 
+            this.AccTierBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AccTierBox.Location = new System.Drawing.Point(390, 189);
+            this.AccTierBox.Maximum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.AccTierBox.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            -2147483648});
+            this.AccTierBox.Name = "AccTierBox";
+            this.AccTierBox.Size = new System.Drawing.Size(71, 26);
+            this.AccTierBox.TabIndex = 82;
+            this.AccTierBox.ValueChanged += new System.EventHandler(this.RecalcCPHook);
+            // 
+            // ApplyCalcButton
+            // 
+            this.ApplyCalcButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ApplyCalcButton.Location = new System.Drawing.Point(701, 192);
+            this.ApplyCalcButton.Name = "ApplyCalcButton";
+            this.ApplyCalcButton.Size = new System.Drawing.Size(207, 35);
+            this.ApplyCalcButton.TabIndex = 81;
+            this.ApplyCalcButton.Text = "Apply Calculated Changes";
+            this.ApplyCalcButton.UseVisualStyleBackColor = true;
+            this.ApplyCalcButton.Click += new System.EventHandler(this.ApplyCalcButton_Click);
+            // 
+            // PopCalcLabel
+            // 
+            this.PopCalcLabel.AutoSize = true;
+            this.PopCalcLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PopCalcLabel.Location = new System.Drawing.Point(723, 49);
+            this.PopCalcLabel.Name = "PopCalcLabel";
+            this.PopCalcLabel.Size = new System.Drawing.Size(88, 20);
+            this.PopCalcLabel.TabIndex = 41;
+            this.PopCalcLabel.Text = "Population:";
+            // 
+            // PopCalcBox
+            // 
+            this.PopCalcBox.Enabled = false;
+            this.PopCalcBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PopCalcBox.Location = new System.Drawing.Point(836, 47);
+            this.PopCalcBox.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.PopCalcBox.Name = "PopCalcBox";
+            this.PopCalcBox.Size = new System.Drawing.Size(72, 26);
+            this.PopCalcBox.TabIndex = 40;
+            // 
+            // CPCalcLabel
+            // 
+            this.CPCalcLabel.AutoSize = true;
+            this.CPCalcLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CPCalcLabel.Location = new System.Drawing.Point(697, 159);
+            this.CPCalcLabel.Name = "CPCalcLabel";
+            this.CPCalcLabel.Size = new System.Drawing.Size(117, 20);
+            this.CPCalcLabel.TabIndex = 39;
+            this.CPCalcLabel.Text = "Combat Power:";
+            // 
+            // CPCalcBox
+            // 
+            this.CPCalcBox.Enabled = false;
+            this.CPCalcBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CPCalcBox.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.CPCalcBox.Location = new System.Drawing.Point(837, 157);
+            this.CPCalcBox.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.CPCalcBox.Name = "CPCalcBox";
+            this.CPCalcBox.Size = new System.Drawing.Size(71, 26);
+            this.CPCalcBox.TabIndex = 38;
+            // 
+            // CPLabel
+            // 
+            this.CPLabel.AutoSize = true;
+            this.CPLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CPLabel.Location = new System.Drawing.Point(250, 155);
+            this.CPLabel.Name = "CPLabel";
+            this.CPLabel.Size = new System.Drawing.Size(117, 20);
+            this.CPLabel.TabIndex = 37;
+            this.CPLabel.Text = "Combat Power:";
+            // 
+            // CPBox
+            // 
+            this.CPBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CPBox.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.CPBox.Location = new System.Drawing.Point(390, 153);
+            this.CPBox.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.CPBox.Name = "CPBox";
+            this.CPBox.Size = new System.Drawing.Size(71, 26);
+            this.CPBox.TabIndex = 36;
+            // 
             // SuperShipCheckBox
             // 
             this.SuperShipCheckBox.AutoSize = true;
@@ -1042,6 +1215,7 @@
             this.RegenBox.Name = "RegenBox";
             this.RegenBox.Size = new System.Drawing.Size(72, 26);
             this.RegenBox.TabIndex = 18;
+            this.RegenBox.ValueChanged += new System.EventHandler(this.RecalcCPHook);
             // 
             // ShieldLabel
             // 
@@ -1070,6 +1244,7 @@
             this.ShieldBox.Name = "ShieldBox";
             this.ShieldBox.Size = new System.Drawing.Size(72, 26);
             this.ShieldBox.TabIndex = 16;
+            this.ShieldBox.ValueChanged += new System.EventHandler(this.RecalcCPHook);
             // 
             // STypeLabel
             // 
@@ -1090,6 +1265,7 @@
             this.STypeComboBox.Name = "STypeComboBox";
             this.STypeComboBox.Size = new System.Drawing.Size(207, 28);
             this.STypeComboBox.TabIndex = 14;
+            this.STypeComboBox.SelectedIndexChanged += new System.EventHandler(this.RecalcCPHook);
             // 
             // ATypeLabel
             // 
@@ -1110,6 +1286,7 @@
             this.ATypeComboBox.Name = "ATypeComboBox";
             this.ATypeComboBox.Size = new System.Drawing.Size(207, 28);
             this.ATypeComboBox.TabIndex = 12;
+            this.ATypeComboBox.SelectedIndexChanged += new System.EventHandler(this.RecalcCPHook);
             // 
             // BuildTimeLabel
             // 
@@ -1240,6 +1417,7 @@
             this.hpBox.Name = "hpBox";
             this.hpBox.Size = new System.Drawing.Size(72, 26);
             this.hpBox.TabIndex = 2;
+            this.hpBox.ValueChanged += new System.EventHandler(this.RecalcCPHook);
             // 
             // label6
             // 
@@ -1599,182 +1777,6 @@
             this.contextMenuStrip2.Name = "contextMenuStrip2";
             this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
             // 
-            // CPLabel
-            // 
-            this.CPLabel.AutoSize = true;
-            this.CPLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CPLabel.Location = new System.Drawing.Point(250, 155);
-            this.CPLabel.Name = "CPLabel";
-            this.CPLabel.Size = new System.Drawing.Size(117, 20);
-            this.CPLabel.TabIndex = 37;
-            this.CPLabel.Text = "Combat Power:";
-            this.CPLabel.Visible = false;
-            // 
-            // CPBox
-            // 
-            this.CPBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CPBox.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.CPBox.Location = new System.Drawing.Point(390, 153);
-            this.CPBox.Maximum = new decimal(new int[] {
-            999999,
-            0,
-            0,
-            0});
-            this.CPBox.Name = "CPBox";
-            this.CPBox.Size = new System.Drawing.Size(71, 26);
-            this.CPBox.TabIndex = 36;
-            this.CPBox.Visible = false;
-            // 
-            // CPCalcLabel
-            // 
-            this.CPCalcLabel.AutoSize = true;
-            this.CPCalcLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CPCalcLabel.Location = new System.Drawing.Point(697, 159);
-            this.CPCalcLabel.Name = "CPCalcLabel";
-            this.CPCalcLabel.Size = new System.Drawing.Size(117, 20);
-            this.CPCalcLabel.TabIndex = 39;
-            this.CPCalcLabel.Text = "Combat Power:";
-            this.CPCalcLabel.Visible = false;
-            // 
-            // CPCalcBox
-            // 
-            this.CPCalcBox.Enabled = false;
-            this.CPCalcBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CPCalcBox.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.CPCalcBox.Location = new System.Drawing.Point(837, 157);
-            this.CPCalcBox.Maximum = new decimal(new int[] {
-            999999,
-            0,
-            0,
-            0});
-            this.CPCalcBox.Name = "CPCalcBox";
-            this.CPCalcBox.Size = new System.Drawing.Size(71, 26);
-            this.CPCalcBox.TabIndex = 38;
-            this.CPCalcBox.Visible = false;
-            // 
-            // PopCalcLabel
-            // 
-            this.PopCalcLabel.AutoSize = true;
-            this.PopCalcLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PopCalcLabel.Location = new System.Drawing.Point(723, 49);
-            this.PopCalcLabel.Name = "PopCalcLabel";
-            this.PopCalcLabel.Size = new System.Drawing.Size(88, 20);
-            this.PopCalcLabel.TabIndex = 41;
-            this.PopCalcLabel.Text = "Population:";
-            // 
-            // PopCalcBox
-            // 
-            this.PopCalcBox.Enabled = false;
-            this.PopCalcBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PopCalcBox.Location = new System.Drawing.Point(836, 47);
-            this.PopCalcBox.Maximum = new decimal(new int[] {
-            9999,
-            0,
-            0,
-            0});
-            this.PopCalcBox.Name = "PopCalcBox";
-            this.PopCalcBox.Size = new System.Drawing.Size(72, 26);
-            this.PopCalcBox.TabIndex = 40;
-            // 
-            // ApplyCalcButton
-            // 
-            this.ApplyCalcButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ApplyCalcButton.Location = new System.Drawing.Point(701, 192);
-            this.ApplyCalcButton.Name = "ApplyCalcButton";
-            this.ApplyCalcButton.Size = new System.Drawing.Size(207, 35);
-            this.ApplyCalcButton.TabIndex = 81;
-            this.ApplyCalcButton.Text = "Apply Calculated Changes";
-            this.ApplyCalcButton.UseVisualStyleBackColor = true;
-            // 
-            // AccTierLabel
-            // 
-            this.AccTierLabel.AutoSize = true;
-            this.AccTierLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AccTierLabel.Location = new System.Drawing.Point(250, 191);
-            this.AccTierLabel.Name = "AccTierLabel";
-            this.AccTierLabel.Size = new System.Drawing.Size(108, 20);
-            this.AccTierLabel.TabIndex = 83;
-            this.AccTierLabel.Text = "Accuracy Tier:";
-            this.AccTierLabel.Visible = false;
-            // 
-            // AccTierBox
-            // 
-            this.AccTierBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AccTierBox.Location = new System.Drawing.Point(390, 189);
-            this.AccTierBox.Maximum = new decimal(new int[] {
-            2,
-            0,
-            0,
-            0});
-            this.AccTierBox.Minimum = new decimal(new int[] {
-            2,
-            0,
-            0,
-            -2147483648});
-            this.AccTierBox.Name = "AccTierBox";
-            this.AccTierBox.Size = new System.Drawing.Size(71, 26);
-            this.AccTierBox.TabIndex = 82;
-            this.AccTierBox.Visible = false;
-            // 
-            // RangeAdjustLabel
-            // 
-            this.RangeAdjustLabel.AutoSize = true;
-            this.RangeAdjustLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RangeAdjustLabel.Location = new System.Drawing.Point(16, 191);
-            this.RangeAdjustLabel.Name = "RangeAdjustLabel";
-            this.RangeAdjustLabel.Size = new System.Drawing.Size(110, 20);
-            this.RangeAdjustLabel.TabIndex = 85;
-            this.RangeAdjustLabel.Text = "Range Adjust:";
-            this.RangeAdjustLabel.Visible = false;
-            // 
-            // RangeAdjustBox
-            // 
-            this.RangeAdjustBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RangeAdjustBox.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.RangeAdjustBox.Location = new System.Drawing.Point(129, 189);
-            this.RangeAdjustBox.Maximum = new decimal(new int[] {
-            999999,
-            0,
-            0,
-            0});
-            this.RangeAdjustBox.Name = "RangeAdjustBox";
-            this.RangeAdjustBox.Size = new System.Drawing.Size(71, 26);
-            this.RangeAdjustBox.TabIndex = 84;
-            this.RangeAdjustBox.Visible = false;
-            // 
-            // CalcLabel
-            // 
-            this.CalcLabel.AutoSize = true;
-            this.CalcLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CalcLabel.Location = new System.Drawing.Point(720, 12);
-            this.CalcLabel.Name = "CalcLabel";
-            this.CalcLabel.Size = new System.Drawing.Size(156, 20);
-            this.CalcLabel.TabIndex = 86;
-            this.CalcLabel.Text = "Calculated Changes:";
-            // 
-            // HPExamineFinePrintLabel
-            // 
-            this.HPExamineFinePrintLabel.AutoSize = true;
-            this.HPExamineFinePrintLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.HPExamineFinePrintLabel.Location = new System.Drawing.Point(18, 223);
-            this.HPExamineFinePrintLabel.Name = "HPExamineFinePrintLabel";
-            this.HPExamineFinePrintLabel.Size = new System.Drawing.Size(415, 12);
-            this.HPExamineFinePrintLabel.TabIndex = 87;
-            this.HPExamineFinePrintLabel.Text = "Range Adjust and Accuracy Tier are used to calculate new weapon values and are no" +
-    "t saved directly\r\n";
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1790,7 +1792,7 @@
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "Tilotny Submodding Studio v0.3c";
+            this.Text = "Tilotny Submodding Studio v0.4";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
@@ -1807,6 +1809,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.InfluenceNumericUpDown)).EndInit();
             this.StatsTab.ResumeLayout(false);
             this.StatsTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.RangeAdjustBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AccTierBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PopCalcBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CPCalcBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CPBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.CrewBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LifetimeBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ConcurrentBox)).EndInit();
@@ -1822,11 +1829,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.hpBox)).EndInit();
             this.UnitCopyTab.ResumeLayout(false);
             this.UnitCopyTab.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.CPBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.CPCalcBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.PopCalcBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.AccTierBox)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.RangeAdjustBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

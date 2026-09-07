@@ -29,8 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Holocron));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -248,6 +249,7 @@
             this.UnitBTSPanel = new System.Windows.Forms.Panel();
             this.UnitBTSTextBox = new System.Windows.Forms.RichTextBox();
             this.UnitTextPanel = new System.Windows.Forms.Panel();
+            this.UnitCPLabel = new System.Windows.Forms.Label();
             this.UnitLengthLabel = new System.Windows.Forms.Label();
             this.VariantLabel = new System.Windows.Forms.Label();
             this.MaintenanceLabel = new System.Windows.Forms.Label();
@@ -416,6 +418,8 @@
             this.MainTab = new System.Windows.Forms.TabControl();
             this.tabGov = new System.Windows.Forms.TabPage();
             this.tabGalaxy = new System.Windows.Forms.TabPage();
+            this.label36 = new System.Windows.Forms.Label();
+            this.GalaxyMapPlanetNameBox = new System.Windows.Forms.NumericUpDown();
             this.GCMapControlsButton = new System.Windows.Forms.Button();
             this.GalaxyFitAllButton = new System.Windows.Forms.Button();
             this.GalaxyResetButton = new System.Windows.Forms.Button();
@@ -474,7 +478,6 @@
             this.AutoResolveBattleTypeLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.UnitCPLabel = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.tabLookups.SuspendLayout();
             this.LookupTabControl.SuspendLayout();
@@ -512,6 +515,7 @@
             this.FactionPanel.SuspendLayout();
             this.MainTab.SuspendLayout();
             this.tabGalaxy.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapPlanetNameBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapPlanetBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapZoomBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapPictureBox)).BeginInit();
@@ -612,7 +616,7 @@
             this.MatrixTab.Padding = new System.Windows.Forms.Padding(3);
             this.MatrixTab.Size = new System.Drawing.Size(1476, 749);
             this.MatrixTab.TabIndex = 0;
-            this.MatrixTab.Text = "Armor Matrix";
+            this.MatrixTab.Text = "Damage Matrix";
             this.MatrixTab.UseVisualStyleBackColor = true;
             // 
             // MatrixGroundRB
@@ -647,6 +651,26 @@
             this.MatrixGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.MatrixGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.MatrixGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.MatrixGrid.DefaultCellStyle = dataGridViewCellStyle2;
+            this.MatrixGrid.Location = new System.Drawing.Point(3, 24);
+            this.MatrixGrid.Name = "MatrixGrid";
+            this.MatrixGrid.ReadOnly = true;
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -654,19 +678,7 @@
             dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.MatrixGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.MatrixGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.MatrixGrid.DefaultCellStyle = dataGridViewCellStyle4;
-            this.MatrixGrid.Location = new System.Drawing.Point(3, 24);
-            this.MatrixGrid.Name = "MatrixGrid";
-            this.MatrixGrid.ReadOnly = true;
+            this.MatrixGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.MatrixGrid.Size = new System.Drawing.Size(1470, 722);
             this.MatrixGrid.TabIndex = 1;
             // 
@@ -1441,7 +1453,7 @@
             this.UnitSFXPanel.Controls.Add(this.UnitPlaySoundButton);
             this.UnitSFXPanel.Controls.Add(this.UnitSampleListBox);
             this.UnitSFXPanel.Controls.Add(this.UnitSFXListbox);
-            this.UnitSFXPanel.Location = new System.Drawing.Point(32, 1572);
+            this.UnitSFXPanel.Location = new System.Drawing.Point(32, 1595);
             this.UnitSFXPanel.Name = "UnitSFXPanel";
             this.UnitSFXPanel.Size = new System.Drawing.Size(1039, 298);
             this.UnitSFXPanel.TabIndex = 12;
@@ -1612,7 +1624,7 @@
             // CollapseUnitSFXPanel
             // 
             this.CollapseUnitSFXPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseUnitSFXPanel.Location = new System.Drawing.Point(5, 1572);
+            this.CollapseUnitSFXPanel.Location = new System.Drawing.Point(5, 1595);
             this.CollapseUnitSFXPanel.Name = "CollapseUnitSFXPanel";
             this.CollapseUnitSFXPanel.Size = new System.Drawing.Size(24, 19);
             this.CollapseUnitSFXPanel.TabIndex = 11;
@@ -1663,7 +1675,7 @@
             this.UnitAvailPanel.Controls.Add(this.UnitSpawnSetListBox);
             this.UnitAvailPanel.Location = new System.Drawing.Point(32, 411);
             this.UnitAvailPanel.Name = "UnitAvailPanel";
-            this.UnitAvailPanel.Size = new System.Drawing.Size(1039, 376);
+            this.UnitAvailPanel.Size = new System.Drawing.Size(1039, 403);
             this.UnitAvailPanel.TabIndex = 9;
             // 
             // UnitAllSquadSizesCheckBox
@@ -1724,7 +1736,7 @@
             // 
             this.label32.AutoSize = true;
             this.label32.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label32.Location = new System.Drawing.Point(269, 228);
+            this.label32.Location = new System.Drawing.Point(169, 228);
             this.label32.Name = "label32";
             this.label32.Size = new System.Drawing.Size(139, 20);
             this.label32.TabIndex = 47;
@@ -1734,9 +1746,9 @@
             // UnitDiscountListBox
             // 
             this.UnitDiscountListBox.FormattingEnabled = true;
-            this.UnitDiscountListBox.Location = new System.Drawing.Point(273, 252);
+            this.UnitDiscountListBox.Location = new System.Drawing.Point(173, 252);
             this.UnitDiscountListBox.Name = "UnitDiscountListBox";
-            this.UnitDiscountListBox.Size = new System.Drawing.Size(205, 121);
+            this.UnitDiscountListBox.Size = new System.Drawing.Size(305, 121);
             this.UnitDiscountListBox.TabIndex = 46;
             this.toolTip1.SetToolTip(this.UnitDiscountListBox, "Objects that discount this unit specifically (not units in general)");
             // 
@@ -1762,7 +1774,7 @@
             // 
             // UnitSpawnGotoButton
             // 
-            this.UnitSpawnGotoButton.Location = new System.Drawing.Point(219, 228);
+            this.UnitSpawnGotoButton.Location = new System.Drawing.Point(119, 228);
             this.UnitSpawnGotoButton.Name = "UnitSpawnGotoButton";
             this.UnitSpawnGotoButton.Size = new System.Drawing.Size(48, 23);
             this.UnitSpawnGotoButton.TabIndex = 43;
@@ -1844,7 +1856,7 @@
             // 
             this.InfluenceLabel.AutoSize = true;
             this.InfluenceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.InfluenceLabel.Location = new System.Drawing.Point(364, 167);
+            this.InfluenceLabel.Location = new System.Drawing.Point(364, 129);
             this.InfluenceLabel.Name = "InfluenceLabel";
             this.InfluenceLabel.Size = new System.Drawing.Size(120, 20);
             this.InfluenceLabel.TabIndex = 35;
@@ -1866,7 +1878,7 @@
             // 
             this.BuildLimitLabel.AutoSize = true;
             this.BuildLimitLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BuildLimitLabel.Location = new System.Drawing.Point(364, 136);
+            this.BuildLimitLabel.Location = new System.Drawing.Point(6, 376);
             this.BuildLimitLabel.Name = "BuildLimitLabel";
             this.BuildLimitLabel.Size = new System.Drawing.Size(85, 20);
             this.BuildLimitLabel.TabIndex = 33;
@@ -1876,7 +1888,7 @@
             // 
             this.ReqUnitLabel.AutoSize = true;
             this.ReqUnitLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ReqUnitLabel.Location = new System.Drawing.Point(364, 195);
+            this.ReqUnitLabel.Location = new System.Drawing.Point(529, 376);
             this.ReqUnitLabel.Name = "ReqUnitLabel";
             this.ReqUnitLabel.Size = new System.Drawing.Size(119, 20);
             this.ReqUnitLabel.TabIndex = 32;
@@ -1914,7 +1926,7 @@
             // 
             this.SpawnSetLabel.AutoSize = true;
             this.SpawnSetLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SpawnSetLabel.Location = new System.Drawing.Point(102, 228);
+            this.SpawnSetLabel.Location = new System.Drawing.Point(2, 228);
             this.SpawnSetLabel.Name = "SpawnSetLabel";
             this.SpawnSetLabel.Size = new System.Drawing.Size(99, 20);
             this.SpawnSetLabel.TabIndex = 1;
@@ -1924,7 +1936,7 @@
             // UnitSpawnSetListBox
             // 
             this.UnitSpawnSetListBox.FormattingEnabled = true;
-            this.UnitSpawnSetListBox.Location = new System.Drawing.Point(106, 252);
+            this.UnitSpawnSetListBox.Location = new System.Drawing.Point(6, 252);
             this.UnitSpawnSetListBox.Name = "UnitSpawnSetListBox";
             this.UnitSpawnSetListBox.Size = new System.Drawing.Size(161, 121);
             this.UnitSpawnSetListBox.TabIndex = 0;
@@ -1957,7 +1969,7 @@
             this.UnitAbilityPanel.Controls.Add(this.AbilityPictureBox);
             this.UnitAbilityPanel.Controls.Add(this.AbilityListBox);
             this.UnitAbilityPanel.Controls.Add(this.UnitAbilityListBox);
-            this.UnitAbilityPanel.Location = new System.Drawing.Point(32, 1381);
+            this.UnitAbilityPanel.Location = new System.Drawing.Point(32, 1404);
             this.UnitAbilityPanel.Name = "UnitAbilityPanel";
             this.UnitAbilityPanel.Size = new System.Drawing.Size(1039, 180);
             this.UnitAbilityPanel.TabIndex = 8;
@@ -2196,7 +2208,7 @@
             // CollapseUnitSubunitPanel
             // 
             this.CollapseUnitSubunitPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseUnitSubunitPanel.Location = new System.Drawing.Point(5, 1202);
+            this.CollapseUnitSubunitPanel.Location = new System.Drawing.Point(5, 1225);
             this.CollapseUnitSubunitPanel.Name = "CollapseUnitSubunitPanel";
             this.CollapseUnitSubunitPanel.Size = new System.Drawing.Size(24, 19);
             this.CollapseUnitSubunitPanel.TabIndex = 7;
@@ -2219,7 +2231,7 @@
             this.UnitSubunitPanel.Controls.Add(this.SubUnitLabel);
             this.UnitSubunitPanel.Controls.Add(this.UnitSubSquadListbox);
             this.UnitSubunitPanel.Controls.Add(this.UnitSubunitListbox);
-            this.UnitSubunitPanel.Location = new System.Drawing.Point(32, 1202);
+            this.UnitSubunitPanel.Location = new System.Drawing.Point(32, 1225);
             this.UnitSubunitPanel.Name = "UnitSubunitPanel";
             this.UnitSubunitPanel.Size = new System.Drawing.Size(1039, 166);
             this.UnitSubunitPanel.TabIndex = 6;
@@ -2417,7 +2429,7 @@
             // CollapseUnitAbilityPanel
             // 
             this.CollapseUnitAbilityPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseUnitAbilityPanel.Location = new System.Drawing.Point(5, 1381);
+            this.CollapseUnitAbilityPanel.Location = new System.Drawing.Point(5, 1404);
             this.CollapseUnitAbilityPanel.Name = "CollapseUnitAbilityPanel";
             this.CollapseUnitAbilityPanel.Size = new System.Drawing.Size(24, 19);
             this.CollapseUnitAbilityPanel.TabIndex = 5;
@@ -2429,7 +2441,7 @@
             // CollapseUnitStatPanel
             // 
             this.CollapseUnitStatPanel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CollapseUnitStatPanel.Location = new System.Drawing.Point(5, 793);
+            this.CollapseUnitStatPanel.Location = new System.Drawing.Point(5, 816);
             this.CollapseUnitStatPanel.Name = "CollapseUnitStatPanel";
             this.CollapseUnitStatPanel.Size = new System.Drawing.Size(24, 19);
             this.CollapseUnitStatPanel.TabIndex = 4;
@@ -2497,7 +2509,7 @@
             this.UnitStatPanel.Controls.Add(this.UnitSpeedLabel);
             this.UnitStatPanel.Controls.Add(this.UnitShieldLabel);
             this.UnitStatPanel.Controls.Add(this.UnitHpLabel);
-            this.UnitStatPanel.Location = new System.Drawing.Point(32, 797);
+            this.UnitStatPanel.Location = new System.Drawing.Point(32, 820);
             this.UnitStatPanel.Name = "UnitStatPanel";
             this.UnitStatPanel.Size = new System.Drawing.Size(1039, 396);
             this.UnitStatPanel.TabIndex = 2;
@@ -2615,8 +2627,8 @@
             this.HealScoreLabel.Size = new System.Drawing.Size(79, 16);
             this.HealScoreLabel.TabIndex = 42;
             this.HealScoreLabel.Text = "Heal Score:";
-            this.toolTip1.SetToolTip(this.HealScoreLabel, "The contribution of healing abilities to combat power caluclations\r\nAmount / rate" +
-        ", with a 20x modifier for area healing and 12x for fighter tenders");
+            this.toolTip1.SetToolTip(this.HealScoreLabel, "The contribution of healing abilities to combat power caluclations\r\nAmount / rech" +
+        "arge, with a 20x modifier for area healing and 12x for fighter tenders");
             // 
             // PDRadiusLabel
             // 
@@ -3001,11 +3013,12 @@
             this.UnitHpLabel.Size = new System.Drawing.Size(40, 20);
             this.UnitHpLabel.TabIndex = 2;
             this.UnitHpLabel.Text = "Hull:";
+            this.toolTip1.SetToolTip(this.UnitHpLabel, "Red color indicates a mismatch in unit hit points and total hardpoint hit points");
             // 
             // UnitBTSPanel
             // 
             this.UnitBTSPanel.Controls.Add(this.UnitBTSTextBox);
-            this.UnitBTSPanel.Location = new System.Drawing.Point(32, 1876);
+            this.UnitBTSPanel.Location = new System.Drawing.Point(32, 1899);
             this.UnitBTSPanel.Name = "UnitBTSPanel";
             this.UnitBTSPanel.Size = new System.Drawing.Size(1039, 150);
             this.UnitBTSPanel.TabIndex = 1;
@@ -3044,15 +3057,27 @@
             this.UnitTextPanel.TabIndex = 0;
             this.UnitTextPanel.Tag = "";
             // 
+            // UnitCPLabel
+            // 
+            this.UnitCPLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.UnitCPLabel.AutoSize = true;
+            this.UnitCPLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitCPLabel.Location = new System.Drawing.Point(719, 341);
+            this.UnitCPLabel.Name = "UnitCPLabel";
+            this.UnitCPLabel.Size = new System.Drawing.Size(79, 13);
+            this.UnitCPLabel.TabIndex = 19;
+            this.UnitCPLabel.Text = "Combat Power:";
+            this.toolTip1.SetToolTip(this.UnitCPLabel, resources.GetString("UnitCPLabel.ToolTip"));
+            // 
             // UnitLengthLabel
             // 
             this.UnitLengthLabel.AutoSize = true;
             this.UnitLengthLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.UnitLengthLabel.Location = new System.Drawing.Point(614, 28);
             this.UnitLengthLabel.Name = "UnitLengthLabel";
-            this.UnitLengthLabel.Size = new System.Drawing.Size(122, 20);
+            this.UnitLengthLabel.Size = new System.Drawing.Size(63, 20);
             this.UnitLengthLabel.TabIndex = 18;
-            this.UnitLengthLabel.Text = "Length Bracket:";
+            this.UnitLengthLabel.Text = "Length:";
             this.toolTip1.SetToolTip(this.UnitLengthLabel, resources.GetString("UnitLengthLabel.ToolTip"));
             // 
             // VariantLabel
@@ -3075,7 +3100,7 @@
             this.MaintenanceLabel.Size = new System.Drawing.Size(72, 13);
             this.MaintenanceLabel.TabIndex = 16;
             this.MaintenanceLabel.Text = "Maintenance:";
-            this.toolTip1.SetToolTip(this.MaintenanceLabel, "Galactic Conquest build cost in credits");
+            this.toolTip1.SetToolTip(this.MaintenanceLabel, "Weekly upkeep cost");
             // 
             // ShipNameRichTextBox
             // 
@@ -4960,6 +4985,8 @@
             // 
             // tabGalaxy
             // 
+            this.tabGalaxy.Controls.Add(this.label36);
+            this.tabGalaxy.Controls.Add(this.GalaxyMapPlanetNameBox);
             this.tabGalaxy.Controls.Add(this.GCMapControlsButton);
             this.tabGalaxy.Controls.Add(this.GalaxyFitAllButton);
             this.tabGalaxy.Controls.Add(this.GalaxyResetButton);
@@ -4997,6 +5024,29 @@
             this.tabGalaxy.Text = "Galaxy Map";
             this.tabGalaxy.UseVisualStyleBackColor = true;
             // 
+            // label36
+            // 
+            this.label36.AutoSize = true;
+            this.label36.Location = new System.Drawing.Point(372, 29);
+            this.label36.Name = "label36";
+            this.label36.Size = new System.Drawing.Size(16, 13);
+            this.label36.TabIndex = 83;
+            this.label36.Text = "pt";
+            // 
+            // GalaxyMapPlanetNameBox
+            // 
+            this.GalaxyMapPlanetNameBox.Location = new System.Drawing.Point(332, 27);
+            this.GalaxyMapPlanetNameBox.Name = "GalaxyMapPlanetNameBox";
+            this.GalaxyMapPlanetNameBox.Size = new System.Drawing.Size(40, 20);
+            this.GalaxyMapPlanetNameBox.TabIndex = 82;
+            this.toolTip1.SetToolTip(this.GalaxyMapPlanetNameBox, "Set the size of planets on the map");
+            this.GalaxyMapPlanetNameBox.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.GalaxyMapPlanetNameBox.ValueChanged += new System.EventHandler(this.DrawMapHook);
+            // 
             // GCMapControlsButton
             // 
             this.GCMapControlsButton.Location = new System.Drawing.Point(271, 2);
@@ -5005,7 +5055,7 @@
             this.GCMapControlsButton.TabIndex = 81;
             this.GCMapControlsButton.Text = "Controls...";
             this.GCMapControlsButton.UseVisualStyleBackColor = true;
-            this.GCMapControlsButton.Visible = false;
+            this.GCMapControlsButton.Click += new System.EventHandler(this.GCMapControlsButton_Click);
             // 
             // GalaxyFitAllButton
             // 
@@ -5034,7 +5084,7 @@
             // 
             this.GalaxyMapGCFactionBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.GalaxyMapGCFactionBox.FormattingEnabled = true;
-            this.GalaxyMapGCFactionBox.Location = new System.Drawing.Point(734, 26);
+            this.GalaxyMapGCFactionBox.Location = new System.Drawing.Point(781, 26);
             this.GalaxyMapGCFactionBox.Name = "GalaxyMapGCFactionBox";
             this.GalaxyMapGCFactionBox.Size = new System.Drawing.Size(181, 21);
             this.GalaxyMapGCFactionBox.TabIndex = 76;
@@ -5053,7 +5103,7 @@
             // 
             // GalaxyFactionLegendButton
             // 
-            this.GalaxyFactionLegendButton.Location = new System.Drawing.Point(577, 26);
+            this.GalaxyFactionLegendButton.Location = new System.Drawing.Point(624, 26);
             this.GalaxyFactionLegendButton.Name = "GalaxyFactionLegendButton";
             this.GalaxyFactionLegendButton.Size = new System.Drawing.Size(108, 23);
             this.GalaxyFactionLegendButton.TabIndex = 74;
@@ -5064,7 +5114,7 @@
             // 
             // GalaxyTerrainLegendButton
             // 
-            this.GalaxyTerrainLegendButton.Location = new System.Drawing.Point(1236, 26);
+            this.GalaxyTerrainLegendButton.Location = new System.Drawing.Point(1283, 26);
             this.GalaxyTerrainLegendButton.Name = "GalaxyTerrainLegendButton";
             this.GalaxyTerrainLegendButton.Size = new System.Drawing.Size(108, 23);
             this.GalaxyTerrainLegendButton.TabIndex = 73;
@@ -5076,15 +5126,15 @@
             // PlanetSizeLabel
             // 
             this.PlanetSizeLabel.AutoSize = true;
-            this.PlanetSizeLabel.Location = new System.Drawing.Point(375, 28);
+            this.PlanetSizeLabel.Location = new System.Drawing.Point(394, 31);
             this.PlanetSizeLabel.Name = "PlanetSizeLabel";
-            this.PlanetSizeLabel.Size = new System.Drawing.Size(30, 13);
+            this.PlanetSizeLabel.Size = new System.Drawing.Size(63, 13);
             this.PlanetSizeLabel.TabIndex = 72;
-            this.PlanetSizeLabel.Text = "Size:";
+            this.PlanetSizeLabel.Text = "Planet Size:";
             // 
             // GalaxyMapPlanetBox
             // 
-            this.GalaxyMapPlanetBox.Location = new System.Drawing.Point(411, 29);
+            this.GalaxyMapPlanetBox.Location = new System.Drawing.Point(458, 29);
             this.GalaxyMapPlanetBox.Name = "GalaxyMapPlanetBox";
             this.GalaxyMapPlanetBox.Size = new System.Drawing.Size(40, 20);
             this.GalaxyMapPlanetBox.TabIndex = 71;
@@ -5189,14 +5239,19 @@
             this.GalaxyMapPictureBox.TabIndex = 64;
             this.GalaxyMapPictureBox.TabStop = false;
             this.GalaxyMapPictureBox.Click += new System.EventHandler(this.GalaxyMapPictureBox_Click);
-            this.GalaxyMapPictureBox.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.GalaxyMapPictureBox_Keypress);
+            this.GalaxyMapPictureBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.GalaxyMapPictureBox_MouseDown);
+            this.GalaxyMapPictureBox.MouseEnter += new System.EventHandler(this.GalaxyMapPictureBox_MouseEnter);
+            this.GalaxyMapPictureBox.MouseLeave += new System.EventHandler(this.GalaxyMapPictureBox_MouseLeave);
+            this.GalaxyMapPictureBox.MouseMove += new System.Windows.Forms.MouseEventHandler(this.GalaxyMapPictureBox_MouseMove);
+            this.GalaxyMapPictureBox.MouseUp += new System.Windows.Forms.MouseEventHandler(this.GalaxyMapPictureBox_MouseUp);
+            this.GalaxyMapPictureBox.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.GalaxyMapPictureBox_MouseWheel);
             // 
             // GalaxyMapGCRoutesCheckBox
             // 
             this.GalaxyMapGCRoutesCheckBox.AutoSize = true;
             this.GalaxyMapGCRoutesCheckBox.Checked = true;
             this.GalaxyMapGCRoutesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.GalaxyMapGCRoutesCheckBox.Location = new System.Drawing.Point(1100, 7);
+            this.GalaxyMapGCRoutesCheckBox.Location = new System.Drawing.Point(1147, 7);
             this.GalaxyMapGCRoutesCheckBox.Name = "GalaxyMapGCRoutesCheckBox";
             this.GalaxyMapGCRoutesCheckBox.Size = new System.Drawing.Size(121, 17);
             this.GalaxyMapGCRoutesCheckBox.TabIndex = 11;
@@ -5210,7 +5265,7 @@
             this.GalaxyMapGCInfCheckBox.AutoSize = true;
             this.GalaxyMapGCInfCheckBox.Checked = true;
             this.GalaxyMapGCInfCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.GalaxyMapGCInfCheckBox.Location = new System.Drawing.Point(1029, 28);
+            this.GalaxyMapGCInfCheckBox.Location = new System.Drawing.Point(1076, 28);
             this.GalaxyMapGCInfCheckBox.Name = "GalaxyMapGCInfCheckBox";
             this.GalaxyMapGCInfCheckBox.Size = new System.Drawing.Size(64, 17);
             this.GalaxyMapGCInfCheckBox.TabIndex = 10;
@@ -5223,7 +5278,7 @@
             this.GalaxyMapGCHistCheckBox.AutoSize = true;
             this.GalaxyMapGCHistCheckBox.Checked = true;
             this.GalaxyMapGCHistCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.GalaxyMapGCHistCheckBox.Location = new System.Drawing.Point(951, 28);
+            this.GalaxyMapGCHistCheckBox.Location = new System.Drawing.Point(998, 28);
             this.GalaxyMapGCHistCheckBox.Name = "GalaxyMapGCHistCheckBox";
             this.GalaxyMapGCHistCheckBox.Size = new System.Drawing.Size(69, 17);
             this.GalaxyMapGCHistCheckBox.TabIndex = 9;
@@ -5236,7 +5291,7 @@
             this.GalaxyMapGCRegCheckBox.AutoSize = true;
             this.GalaxyMapGCRegCheckBox.Checked = true;
             this.GalaxyMapGCRegCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.GalaxyMapGCRegCheckBox.Location = new System.Drawing.Point(1029, 7);
+            this.GalaxyMapGCRegCheckBox.Location = new System.Drawing.Point(1076, 7);
             this.GalaxyMapGCRegCheckBox.Name = "GalaxyMapGCRegCheckBox";
             this.GalaxyMapGCRegCheckBox.Size = new System.Drawing.Size(68, 17);
             this.GalaxyMapGCRegCheckBox.TabIndex = 8;
@@ -5249,7 +5304,7 @@
             this.GalaxyMapGCProgCheckBox.AutoSize = true;
             this.GalaxyMapGCProgCheckBox.Checked = true;
             this.GalaxyMapGCProgCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.GalaxyMapGCProgCheckBox.Location = new System.Drawing.Point(951, 7);
+            this.GalaxyMapGCProgCheckBox.Location = new System.Drawing.Point(998, 7);
             this.GalaxyMapGCProgCheckBox.Name = "GalaxyMapGCProgCheckBox";
             this.GalaxyMapGCProgCheckBox.Size = new System.Drawing.Size(81, 17);
             this.GalaxyMapGCProgCheckBox.TabIndex = 7;
@@ -5261,7 +5316,7 @@
             // 
             this.GalaxyMapGCComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.GalaxyMapGCComboBox.FormattingEnabled = true;
-            this.GalaxyMapGCComboBox.Location = new System.Drawing.Point(734, 4);
+            this.GalaxyMapGCComboBox.Location = new System.Drawing.Point(781, 4);
             this.GalaxyMapGCComboBox.Name = "GalaxyMapGCComboBox";
             this.GalaxyMapGCComboBox.Size = new System.Drawing.Size(211, 21);
             this.GalaxyMapGCComboBox.TabIndex = 6;
@@ -5270,7 +5325,7 @@
             // 
             // GalaxyMapEraBox
             // 
-            this.GalaxyMapEraBox.Location = new System.Drawing.Point(578, 6);
+            this.GalaxyMapEraBox.Location = new System.Drawing.Point(625, 6);
             this.GalaxyMapEraBox.Maximum = new decimal(new int[] {
             20,
             0,
@@ -5307,7 +5362,7 @@
             // GalaxyMapEraRB
             // 
             this.GalaxyMapEraRB.AutoSize = true;
-            this.GalaxyMapEraRB.Location = new System.Drawing.Point(455, 8);
+            this.GalaxyMapEraRB.Location = new System.Drawing.Point(501, 8);
             this.GalaxyMapEraRB.Name = "GalaxyMapEraRB";
             this.GalaxyMapEraRB.Size = new System.Drawing.Size(91, 17);
             this.GalaxyMapEraRB.TabIndex = 3;
@@ -5320,7 +5375,7 @@
             // GalaxyMapGCRB
             // 
             this.GalaxyMapGCRB.AutoSize = true;
-            this.GalaxyMapGCRB.Location = new System.Drawing.Point(624, 8);
+            this.GalaxyMapGCRB.Location = new System.Drawing.Point(671, 8);
             this.GalaxyMapGCRB.Name = "GalaxyMapGCRB";
             this.GalaxyMapGCRB.Size = new System.Drawing.Size(112, 17);
             this.GalaxyMapGCRB.TabIndex = 2;
@@ -5332,7 +5387,7 @@
             // GalaxyMapTerrainRB
             // 
             this.GalaxyMapTerrainRB.AutoSize = true;
-            this.GalaxyMapTerrainRB.Location = new System.Drawing.Point(1236, 8);
+            this.GalaxyMapTerrainRB.Location = new System.Drawing.Point(1283, 8);
             this.GalaxyMapTerrainRB.Name = "GalaxyMapTerrainRB";
             this.GalaxyMapTerrainRB.Size = new System.Drawing.Size(58, 17);
             this.GalaxyMapTerrainRB.TabIndex = 1;
@@ -5361,7 +5416,7 @@
             this.MapHidePlanetsCheckBox.AutoSize = true;
             this.MapHidePlanetsCheckBox.Checked = true;
             this.MapHidePlanetsCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.MapHidePlanetsCheckBox.Location = new System.Drawing.Point(455, 28);
+            this.MapHidePlanetsCheckBox.Location = new System.Drawing.Point(502, 28);
             this.MapHidePlanetsCheckBox.Name = "MapHidePlanetsCheckBox";
             this.MapHidePlanetsCheckBox.Size = new System.Drawing.Size(126, 17);
             this.MapHidePlanetsCheckBox.TabIndex = 77;
@@ -5377,9 +5432,9 @@
             this.PlanetNameCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.PlanetNameCheckBox.Location = new System.Drawing.Point(273, 28);
             this.PlanetNameCheckBox.Name = "PlanetNameCheckBox";
-            this.PlanetNameCheckBox.Size = new System.Drawing.Size(92, 17);
+            this.PlanetNameCheckBox.Size = new System.Drawing.Size(59, 17);
             this.PlanetNameCheckBox.TabIndex = 80;
-            this.PlanetNameCheckBox.Text = "Planet Names";
+            this.PlanetNameCheckBox.Text = "Names";
             this.toolTip1.SetToolTip(this.PlanetNameCheckBox, "Toggle rendering of trade routes");
             this.PlanetNameCheckBox.UseVisualStyleBackColor = true;
             this.PlanetNameCheckBox.CheckedChanged += new System.EventHandler(this.DrawMapHook);
@@ -5756,18 +5811,6 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
-            // UnitCPLabel
-            // 
-            this.UnitCPLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.UnitCPLabel.AutoSize = true;
-            this.UnitCPLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UnitCPLabel.Location = new System.Drawing.Point(719, 341);
-            this.UnitCPLabel.Name = "UnitCPLabel";
-            this.UnitCPLabel.Size = new System.Drawing.Size(79, 13);
-            this.UnitCPLabel.TabIndex = 19;
-            this.UnitCPLabel.Text = "Combat Power:";
-            this.toolTip1.SetToolTip(this.UnitCPLabel, "Galactic Conquest build cost in credits");
-            // 
             // Holocron
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -5779,7 +5822,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Holocron";
-            this.Text = "EaWX Holocron v0.3";
+            this.Text = "EaWX Holocron v0.4";
             this.Load += new System.EventHandler(this.Holocron_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -5835,6 +5878,7 @@
             this.MainTab.ResumeLayout(false);
             this.tabGalaxy.ResumeLayout(false);
             this.tabGalaxy.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapPlanetNameBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapPlanetBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapZoomBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapPictureBox)).EndInit();
@@ -6298,6 +6342,8 @@
         private System.Windows.Forms.Label UnitLengthLabel;
         private System.Windows.Forms.Label UnitEngageRangeLabel;
         private System.Windows.Forms.Label UnitCPLabel;
+        private System.Windows.Forms.Label label36;
+        private System.Windows.Forms.NumericUpDown GalaxyMapPlanetNameBox;
     }
 }
 

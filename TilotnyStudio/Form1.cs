@@ -343,6 +343,7 @@ namespace TilotnyStudio
             public string factionname;
             public string facingname;
             public string altshipyard; //Pirate base, ship market - if a unit has this as a prereq, do not use defaults
+            public string altshipyard2; //Super pirate base
             public string level42shipyard; //Rancor Base, Star Forge Relay - a prereq unless alt is used
             public bool parallelshipyards; //Hapan shipyards - all shipyards on by default
             public List<string> offices; //Hapans ruining everything :(
@@ -399,6 +400,7 @@ namespace TilotnyStudio
                                 faction.parallelshipyards = false;
                                 faction.level42shipyard = "";
                                 faction.altshipyard = "";
+                                faction.altshipyard2 = "";
                                 foreach (playablefaction fac in globals.playablefactions)
                                 {
                                     if (fac.factionname == facname)
@@ -803,6 +805,8 @@ namespace TilotnyStudio
             crcGlobals.initTable();
             loadscreen.SetQuote(getLoadQuote(entities));
 
+            loadscreen.BeginInvoke(new Action(() => loadscreen.TopMost = false)); //Make sure it's initially on top, but then let other windows win
+
             loadscreen.ChangeText("Reading MEG files");
             parseMEGs(entities, UpOneFolder(UpOneFolder(globals.localmodpath)));
 
@@ -839,9 +843,17 @@ namespace TilotnyStudio
             entities.spaceUnits = new List<unit>();
             entities.groundCompanies = new List<unit>();
             entities.groundUnits = new List<unit>();
+            entities.structures = new List<unit>();
+            entities.spaceStructures = new List<unit>();
             entities.spaceHeroes = new List<unit>();
             entities.groundCompanies = new List<unit>();
             entities.groundHeroes = new List<unit>();
+            entities.fighters = new List<unit>();
+
+            loadscreen.ChangeText("Parsing constants");
+            parseCategories(entities);
+            parseFlags(entities);
+            parseGameConstants(entities);
 
             loadscreen.ChangeText("Parsing object data");
             parseObjects(entities);
@@ -901,7 +913,7 @@ namespace TilotnyStudio
                 UnitHPCopyFileComboBox.SelectedIndex = 0;
             }
 
-
+            SpaceRadioButton.BeginInvoke(new Action(() => SpaceRadioButton.Checked = true));
             populateAffilUnits(true);
             this.BeginInvoke(new Action(() => this.Enabled = true));
         }
@@ -1112,6 +1124,7 @@ namespace TilotnyStudio
                 {
                     if (unit.unitname == AffilListBox.SelectedItem.ToString())
                     {
+                        AffilListBox.Tag = unit;
                         if (!UnitRadioButton.Checked)
                         {
                             if (SpaceRadioButton.Checked) CorpLabel.Text = "Filter: ";
@@ -1180,6 +1193,14 @@ namespace TilotnyStudio
                                 AccTierBox.Value = (decimal)acctier;
                                 space = true;
                             }
+                            if (UnitRadioButton.Checked || GroundHeroRadioButton.Checked)
+                            {
+                                double calccp = CalculateGroundCPfromUnit(unit);
+                                CPCalcBox.Value = (decimal)calccp;
+                                PopCalcBox.Value = PopBox.Value;
+                            }
+                            PopCalcLabel.Visible = space;
+                            PopCalcBox.Visible = space;
                             HPExamineFinePrintLabel.Visible = space;
                             RangeAdjustBox.Visible = space;
                             RangeAdjustLabel.Visible = space;
@@ -2122,6 +2143,30 @@ namespace TilotnyStudio
                                     }
                                 }
                                 WriteXMLTag("GUI_Row", unit.gui_row.ToString(), doc, XMLunit);
+                                changed = true;
+                            }
+
+                            if (CPBox.Enabled && (float)CPBox.Value != unit.cp && (MainUnit && (!StatTemplateCheckBox.Checked || unit.cp_baseID < 0) || templates[count].cp_baseID == j))
+                            {
+                                unit.cp = (float)CPBox.Value;
+                                if (MainUnit)
+                                {
+                                    unit.cp_baseID = -1;
+                                    templates[count].cp_baseID = -1;
+                                }
+                                for (int k = 0; k < unitlist.Count; k++)
+                                {
+                                    unit unit2 = unitlist[k];
+                                    for (int l = 0; l < unit2.variantchain.Count; l++)
+                                    {
+                                        if (unit2.variantchain[l] == unit.unitname && unit2.cp_baseID == l)
+                                        {
+                                            unit2.cp = unit.cp;
+                                            break;
+                                        }
+                                    }
+                                }
+                                WriteXMLTag("AI_Combat_Power", unit.cp.ToString(), doc, XMLunit);
                                 changed = true;
                             }
 
@@ -3565,7 +3610,7 @@ namespace TilotnyStudio
                     break;
                 case 2:
                     loadAffilData();
-                    SpaceRadioButton.Checked = true;
+                    SpaceRadioButton.Checked = false; //force a reload of the armor types when it is turned on later in the process
                     break;
                 //default:
                     // code block
@@ -3765,6 +3810,11 @@ namespace TilotnyStudio
                         faction.level42shipyard = "Rancor_Base";
                         faction.shipyards.Add("Rancor_Base");
                         faction.shipyards.Add("Pirate_Base");
+                        if(entities.version > 35)
+                        {
+                            faction.altshipyard2 = "Super_Pirate_Base";
+                            faction.shipyards.Add("Super_Pirate_Base");
+                        }
                     }
                     else if (faction.factionname == "Corporate_Sector")
                     {
@@ -3775,6 +3825,11 @@ namespace TilotnyStudio
                     {
                         faction.altshipyard = "Pirate_Base";
                         faction.shipyards.Add("Pirate_Base");
+                        if (entities.version > 35)
+                        {
+                            faction.altshipyard2 = "Super_Pirate_Base";
+                            faction.shipyards.Add("Super_Pirate_Base");
+                        }
                     }
                     /*else if (faction.factionname == "Rebel")
                     {
@@ -3864,6 +3919,10 @@ namespace TilotnyStudio
                 {
                     globals.allfactories.Add(faction.altshipyard);
                 }
+                if (faction.altshipyard2 != "" && !globals.allfactories.Contains(faction.altshipyard2))
+                {
+                    globals.allfactories.Add(faction.altshipyard2);
+                }
             }
         }
 
@@ -3903,6 +3962,55 @@ namespace TilotnyStudio
             populateModPage();
         }
 
-        //leave below thos point alone
+        private void ApplyCalcButton_Click(object sender, EventArgs e)
+        {
+            CPBox.Value = CPCalcBox.Value;
+            PopBox.Value = PopCalcBox.Value;
+        }
+
+        private void RecalcCPHook(object sender, EventArgs e)
+        {
+            if(!(AffilListBox.Tag is null))
+            {
+                unit unit = (unit)AffilListBox.Tag;
+                float defensemod = getDefenseMod(unit);
+                float avgdps = 0;
+                float avgdpsA = 0;
+                foreach (hardpoint hp in unit.consolidatedhps)
+                {
+                    if (hp.damageAmount > 0)
+                    {
+                        WeaponMods weap = GetWeaponMods(hp.damageType);
+                        float dps = hpDPS(hp);
+                        avgdps += dps * weap.median;
+                        avgdpsA += dps * weap.medianA;
+                    }
+                }
+                //if (entities.version > 35) avgdpsA = avgdps; TODO once fixed, stop used bugged armor only calc except for legacy versions
+
+                float healscore = 0;
+                ability healable = unit.abilities.FirstOrDefault(s => s.type == "Force_Healing_Ability"); //todo may need to find last instead
+                if (healable.recharge > 0)
+                {
+                    healscore = getHealScore(healable);
+                }
+
+                if (SpaceRadioButton.Checked || SpaceHeroRadioButton.Checked)
+                {
+                    defensemod = 1; //todo delete this line once 3.5 and up do use it
+                    if (entities.version <= 35) defensemod = 1;
+                    double calcCP = CalculateSpaceCP(avgdps, (float)AccTierBox.Value, healscore, (float)hpBox.Value, ATypeComboBox.Text, (float)ShieldBox.Value, STypeComboBox.Text, (float)RegenBox.Value, defensemod);
+                    CPCalcBox.Value = (decimal)calcCP;
+                    PopCalcBox.Value = (decimal)((calcCP + getComplementCP(unit)) / 100);
+                }
+                if (UnitRadioButton.Checked || GroundHeroRadioButton.Checked)
+                {
+                    CPCalcBox.Value = (decimal)CalculateGroundCP(avgdpsA, (float)hpBox.Value, ATypeComboBox.Text, (float)ShieldBox.Value, STypeComboBox.Text, (float)RegenBox.Value, defensemod);
+                }
+            }
+            
+        }
+
+        //leave below this point alone
     }
 }

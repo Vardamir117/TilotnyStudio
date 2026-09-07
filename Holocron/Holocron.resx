@@ -126,16 +126,6 @@
   <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>442, 17</value>
   </metadata>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>442, 17</value>
-  </metadata>
-  <data name="UnitLengthLabel.ToolTip" xml:space="preserve">
-    <value>Approximate length value derived from modifiers on weapon range
-
-Large ships (SSDs) are scaled down by 25% or 33% for gameplay purposes
-
-Special cases or nonstandard balancing may throw the value off</value>
-  </data>
   <data name="UnitAccTierLabel.ToolTip" xml:space="preserve">
     <value>A modifier on all weapon accuracy values for the unit
 
@@ -144,17 +134,34 @@ Ranges from -2 to 2 in standard balance. Each tier adjusts the value by 10% of t
 Factors such as good sensors or being a very old class affect the tier</value>
   </data>
   <data name="UnitShieldAvgLabel.ToolTip" xml:space="preserve">
-    <value>Shield value divided by the mean damage modifier across key damage types to the unit's armor type
-Combat power calulations use the closely related shield*average damage absorption or shield*(1 - mean modifier)</value>
+    <value>Shield value * defense mod divided by the mean damage modifier across key damage types to the unit's armor type
+Combat power calulations use the closely related shield*average damage absorption or shield*(1 - mean modifier)
+Defense mod is the sum of reflect, absorb, and block chances (+ 100%)</value>
   </data>
   <data name="UnitHpAvgLabel.ToolTip" xml:space="preserve">
-    <value>Health value divided by the mean damage modifier across key damage types to the unit's armor type
-Combat power calulations use the closely related hp*average damage absorption or hp*(1 - mean modifier)</value>
+    <value>Health value * defense mod divided by the mean damage modifier across key damage types to the unit's armor type
+Combat power calulations use the closely related hp*average damage absorption or hp*(1 - mean modifier)
+Defense mod is the sum of reflect, absorb, and block chances (+ 100%)</value>
   </data>
   <data name="TargetAccuracyLabel.ToolTip" xml:space="preserve">
     <value>DPS lowered by the inaccuracy of each weapon toward the selected category. Also includes range and armor/shield type modifers
 The collision system in EaW means "missed" shots can still hit the target, especially for larger units, and "hits" can miss accelerating/turning targets.
 The end value is only an approximation of how many of the shots fired should land.</value>
+  </data>
+  <data name="UnitCPLabel.ToolTip" xml:space="preserve">
+    <value>A approximation of the overall strength of the unit used for autoresolve and ai computations
+
+The calculated value uses the units stats to reconstruct the value according to EaW:X formulas
+
+The calculated pop is (calculated cp + cp of tech level 1 spawns) / 100</value>
+  </data>
+  <data name="UnitLengthLabel.ToolTip" xml:space="preserve">
+    <value>Length range derived from modifiers on weapon range, exact value derived from crew cost.
+Rounding makes crew based cost rare accurate to the meter
+
+Large ships (SSDs) are scaled down by 25% or 33% for gameplay purposes
+
+Special cases or nonstandard balancing may throw either value off</value>
   </data>
   <data name="PlanetPotentialabel.ToolTip" xml:space="preserve">
     <value>Base planet income plus structures with income modifiers.

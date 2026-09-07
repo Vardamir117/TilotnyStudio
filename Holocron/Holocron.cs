@@ -47,11 +47,7 @@ using static SharedFunctions;
  * 
  * add all space categories to filter page, not just targeting ones. Or just all categories and let them sort out ground?
  * 
- * 
- * armor matrix is broken in vanilla
- * 
- * 
- * sound section for units - parse sourcing information, play sounds?
+ *
  * 
  * 
  * parse skirmish prereqs and tactical build lists. Especially for MDU alikes
@@ -113,6 +109,14 @@ namespace Holocron
 
             public static int tradebase = 50; //Todo read this from the data
             public static int tradehubmultiplier = 2;
+
+            public static int map_scroll_interval = 100;
+
+            public static bool map_mouse_down = false;
+            public static bool map_box_select = false;
+            public static bool in_galaxy_map = false;
+            public static int map_mouse_x;
+            public static int map_mouse_y;
         }
 
         public static class nav
@@ -331,6 +335,8 @@ namespace Holocron
             entities.Text = DatParser.ReadDat(getModFile("Text\\MasterTextFile_ENGLISH.dat", entities), ',', 0);
             loadscreen.SetQuote(getLoadQuote(entities));
 
+            loadscreen.BeginInvoke(new Action(() => loadscreen.TopMost = false)); //Make sure it's initially on top, but then let other windows win
+
             parsemodid(entities);
 
             loadscreen.ChangeText("Reading MEG files");
@@ -378,9 +384,11 @@ namespace Holocron
             entities.groundCompanies = new List<unit>();
             entities.groundUnits = new List<unit>();
             entities.structures = new List<unit>();
+            entities.spaceStructures = new List<unit>();
             entities.spaceHeroes = new List<unit>();
             entities.heroCompanies = new List<unit>();
             entities.groundHeroes = new List<unit>();
+            entities.fighters = new List<unit>();
 
             loadscreen.ChangeText("Parsing constants");
             parseCategories(entities);
@@ -1893,7 +1901,7 @@ namespace Holocron
         }
 
 
-        private void FillMatrixLookup()
+        private void FillMatrixLookup()//Todo need to clear armor types when reloading
         {
             MatrixGrid.Columns.Clear();
             List<string> damages = entities.SpaceDamageTypes;
@@ -1908,7 +1916,7 @@ namespace Holocron
                     foreach (string armor in entities.SpaceArmors) armors.Add(armor);
                     foreach (string armor in entities.SpaceShields) armors.Add(armor);
                 }
-                else damages = entities.AllArmors;
+                else armors = entities.AllArmors;
             }
             else
             {
@@ -1920,7 +1928,7 @@ namespace Holocron
                     foreach (string armor in entities.GroundArmors) armors.Add(armor);
                     foreach (string armor in entities.GroundShields) armors.Add(armor);
                 }
-                else damages = entities.AllArmors;
+                else armors = entities.AllArmors;
             }
             int x = armors.Count;
             int y = damages.Count;
@@ -1929,9 +1937,10 @@ namespace Holocron
             {
                 MatrixGrid.Columns.Add(damages[i], damages[i].Replace("DamageL_", "").Replace("DamageS_", ""));
             }
+            MatrixGrid.Columns.Add("Avg","Avg reduction");
             for (int i = 0; i < x; i++)
             {
-                string[] row = new string[y + 1];
+                string[] row = new string[y + 2];
                 row[0] = armors[i];
                 ArmorMods mods = GetArmorMods(armors[i]);
                 for (int j = 1; j < y + 1; j++)
@@ -1947,8 +1956,18 @@ namespace Holocron
                     }
 
                 }
+                row[y + 1] = mods.average.ToString();
                 MatrixGrid.Rows.Add(row);
             }
+            string[] lastrow = new string[y + 2];
+            lastrow[0] = "Median";
+            lastrow[y + 1] = "";
+            for (int k = 0; k < y; k++)
+            {
+                WeaponMods weaps = GetWeaponMods(damages[k]);
+                lastrow[k+1] = weaps.median.ToString();
+            }
+            MatrixGrid.Rows.Add(lastrow);
 
             //Automatically shrink (mostly) columns as needed
             for (int i = 0; i < MatrixGrid.Columns.Count; i++)
@@ -2496,6 +2515,16 @@ namespace Holocron
             {
                 UnitHpLabel.Text = "";
             }
+            if (selectedUnit.hpfail)
+            {
+                UnitHpLabel.ForeColor = Color.Red;
+                toolTip1.SetToolTip(UnitHpLabel, "Hardpoint health sum is " + gethphp(selectedUnit.consolidatedhps));
+            }
+            else
+            {
+                UnitHpLabel.ForeColor = SystemColors.ControlText;
+                toolTip1.SetToolTip(UnitHpLabel, "");
+            }
             if (selectedUnit.shield <= 0)
             {
                 UnitShieldLabel.Text = "Shields: N/A";
@@ -2813,7 +2842,7 @@ namespace Holocron
             else if (selectedUnit.sortstring != "") SortValueLabel.Text = "Sort: " + selectedUnit.sortstring;
             else SortValueLabel.Text = "Sort: " + selectedUnit.sortfloat.ToString(globals.dpsformat);
 
-            if (FactionListBox.SelectedItems.Count > 0) IncomingDamageBox_SelectedIndexChanged(IncomingDamageBox, e);
+            if (UnitListBox.SelectedItems.Count > 0) IncomingDamageBox_SelectedIndexChanged(IncomingDamageBox, e);
             if (selectedUnit.garrison_slots > 0) GarrisonSlotLabel.Text = "Garrison Slots: " + selectedUnit.garrison_slots.ToString();
             else GarrisonSlotLabel.Text = "";
             if (selectedUnit.garrison_value > 0) GarrisonValueLabel.Text = "Garrison Value: " + selectedUnit.garrison_value.ToString();
@@ -2944,19 +2973,31 @@ namespace Holocron
             populateUnitSFXList();
 
             double calcCP = 0;
-            if (selectedUnit.fightermode < 0 && (SpaceRadioButton.Checked || SpaceHeroRadioButton.Checked)) //Todo how do gunships work? Are they actually just ignored?
+            bool space = false; //todo make a better way to check this in the general case
+            if (selectedUnit.fightermode < 0 && (SpaceRadioButton.Checked || SpaceHeroRadioButton.Checked || SpaceStructureRadioButton.Checked)) //Todo how do gunships work? Are they actually just ignored?
             {
+                space = true;
                 (float range, float acctier) = hardpointExamine(selectedUnit);
                 if(entities.modid != "")
                 {
                     int resolution = 250;
-                    if (entities.modid == "rev") resolution /= 2;
                     if (range is float.NaN) UnitLengthLabel.Text = "";
                     else
                     {
                         float lower = range * 10 - resolution;
                         if (lower < 0) lower = 0;
-                        UnitLengthLabel.Text = "Length Bracket: " + (lower).ToString("0") + "-" + (range * 10 + resolution).ToString("0") + "m";
+                        float upper = range * 10 + resolution;
+                        float crewlen = (float) Math.Pow(selectedUnit.crew * selectedUnit.crew / 0.0075 / 0.0075, 1.0/3);
+                        int crewlenrnd = (int) Math.Round(crewlen, 0);
+                        if (crewlenrnd > upper) crewlenrnd = (int)Math.Round(crewlen / 2, 0);
+                        if (crewlenrnd < lower) crewlenrnd = (int)Math.Round(crewlen * 2, 0);
+                        if (entities.modid == "rev")
+                        {
+                            lower /= 2;
+                            upper /= 2;
+                            crewlenrnd /= 2;
+                        }
+                        UnitLengthLabel.Text = "Length: " + (lower).ToString("0") + "-" + (upper).ToString("0") + "m  " + crewlenrnd + "m";
                     }
                     UnitAccTierLabel.Text = "Accuracy Tier: " + acctier.ToString("0.#");
                 }
@@ -2966,10 +3007,14 @@ namespace Holocron
             {
                 UnitLengthLabel.Text = "";
                 UnitAccTierLabel.Text = "";
+
+                if(UnitRadioButton.Checked || GroundHeroRadioButton.Checked) calcCP = CalculateGroundCPfromUnit(selectedUnit);
             }
             UnitEngageRangeLabel.Text = "Engagement Range: " + selectedUnit.range;
 
-            UnitCPLabel.Text = "Combat Power: " + selectedUnit.cp + "    Calculated: " + calcCP + "    Pop: " + ((calcCP + getComplementCP(selectedUnit))/100).ToString("0");
+            UnitCPLabel.Text = "Combat Power: " + selectedUnit.cp + "    Calculated: " + calcCP;
+
+            if(space) UnitCPLabel.Text += "    Pop: " + ((calcCP + getComplementCP(selectedUnit))/100).ToString("0");
         }
 
         private void populateHostListBox()
@@ -3240,6 +3285,7 @@ namespace Holocron
                         else unit.sortfloat = shield + unit.hp;
                     }
                     else unit.sortfloat = shield + unit.hp;
+                    if (globals.UnitSortConfig.DurabilityMode >= 1) unit.sortfloat *= getDefenseMod(unit);
                     break;
                 case UnitSortTypes.HP:
                     unit.sortfloat = unit.hp;
@@ -3256,6 +3302,7 @@ namespace Holocron
                             unit.sortfloat /= getWeapMultiplier(unit.armor_type, weaps, false);
                         }
                     }
+                    if (globals.UnitSortConfig.DurabilityMode >= 1) unit.sortfloat *= getDefenseMod(unit);
                     break;
                 case UnitSortTypes.Shield:
                     unit.sortfloat = unit.shield;
@@ -3273,6 +3320,7 @@ namespace Holocron
                             unit.sortfloat /= getWeapMultiplier(unit.shield_type, weaps, false);
                         }
                     }
+                    if (globals.UnitSortConfig.DurabilityMode >= 1) unit.sortfloat *= getDefenseMod(unit);
                     break;
                 case UnitSortTypes.Regen:
                     unit.sortfloat = unit.regen;
@@ -4272,17 +4320,18 @@ namespace Holocron
                 unit selected = (unit)UnitListBox.SelectedItem;
                 IncomingDamageLabel.Text = "Effective values against damage type:";
                 bool space = (bool)IncomingDamageBox.Tag;
+                float defmod = getDefenseMod(selected);
 
                 WeaponMods weaps = GetWeaponMods(IncomingDamageBox.Text);
                 if (selected.armor_type != "")
                 {
                     float mult = getWeapMultiplier(selected.armor_type, weaps, false);
-                    IncomingDamageLabel.Text += "\nModified Health: " + (selected.hp / mult).ToString("0");
+                    IncomingDamageLabel.Text += "\nModified Health: " + (selected.hp * defmod / mult).ToString("0");
                 }
                 if (selected.shield_type != "")
                 {
                     float mult = getWeapMultiplier(selected.shield_type, weaps, true);
-                    IncomingDamageLabel.Text += "\nModified Shields: " + (selected.shield / mult).ToString("0");
+                    IncomingDamageLabel.Text += "\nModified Shields: " + (selected.shield * defmod / mult).ToString("0");
                 }
             }
 
@@ -5220,13 +5269,17 @@ namespace Holocron
                 else
                 {//Todo rename some of these to be more specific based on type
                     AbilityTimeLabel.Text = "";
-                    if (able.duration > 0 && able.type != "Force_Healing_Ability") AbilityTimeLabel.Text = "Duration: " + able.duration.ToString("0") + " ";
+                    if (able.duration > 0 && able.type != "Force_Healing_Ability" && able.type != "Absorb_Blaster_Ability") AbilityTimeLabel.Text = "Duration: " + able.duration.ToString("0") + " ";
                     if (able.recharge > 0) AbilityTimeLabel.Text += "Recharge: " + able.recharge.ToString("0");
-                    if (able.genericValue > 0 && able.type != "Force_Healing_Ability") AbilityValueLabel.Text = "Value: " + able.genericValue;
+                    if (able.genericValue > 0 && able.type != "Force_Healing_Ability" && able.type != "Redirect_Blaster_Ability") AbilityValueLabel.Text = "Value: " + able.genericValue;
                     else if (able.type == "Force_Healing_Ability")
                     {
                         if (able.genericValue > 0) AbilityValueLabel.Text = "Heal Amount: " + able.genericValue + " ";
                         if (able.duration > 0) AbilityValueLabel.Text = "Heal Percent: " + able.duration * 100 + "%";
+                    }
+                    else if (able.type == "Redirect_Blaster_Ability")
+                    {
+                        if (able.genericValue > 0) AbilityValueLabel.Text = "Redirect Chance: " + able.genericValue * 100 + "%";
                     }
                     else AbilityValueLabel.Text = "";
                     if (able.percentCredits > 0) AbilityValueLabel.Text = "Planet Income Increase: " + able.percentCredits * 100 + "%";
@@ -5237,10 +5290,17 @@ namespace Holocron
                     if (able.minradius > 0) AbilityActivationRadiusLabel.Text = "Min Activation: " + able.minradius + " ";
                     if (able.maxradius > 0) AbilityActivationRadiusLabel.Text += "Max Activation: " + able.maxradius;
                     if (able.type == "Force_Healing_Ability" && !able.genericBool) AbilityActivationRadiusLabel.Text += "Heals all units in radius";
+                    if (able.type == "Redirect_Blaster_Ability" && able.healthBonus > 0) AbilityActivationRadiusLabel.Text += "Block Chance: " + able.healthBonus * 100 + "%";
                     if (able.radius > 0) AbilityRadiusLabel.Text = "Radius: " + able.radius;
                     else AbilityRadiusLabel.Text = "";
                     if (able.linkedEntity != "") AbilityLinkedLabel.Text = "Linked Object: " + able.linkedEntity;
                     else AbilityLinkedLabel.Text = "";
+                    if (able.type == "Absorb_Blaster_Ability")
+                    {
+                        if (able.genericValue > 0) AbilityValueLabel.Text = "Absorb Chance: " + able.genericValue * 100 + "%";
+                        if (able.healthBonus > 0) AbilityActivationRadiusLabel.Text += "Absorb Percent: " + able.healthBonus * 100 + "%";
+                        if (able.duration > 0) AbilityRadiusLabel.Text += "Absorb Amount: " + able.duration.ToString();
+                    }
                 }
                 if (able.stacking >= 0) AbilityStackingLabel.Text = "Stacking Category: " + able.stacking;
                 else AbilityStackingLabel.Text = "";
@@ -5303,6 +5363,11 @@ namespace Holocron
             setTargetDPS();
             UnitHPListbox_SelectedIndexChanged(UnitHPListbox, new EventArgs());
             setAbilityDependentStats();
+            if (!UnitSFXBasicRB.Checked && !UnitSFXAmbientRB.Checked && !UnitSFXAttackRB.Checked && !UnitSFXDestroyedRB.Checked && !UnitSFXAbilityRB.Checked && !UnitSFXWeaponRB.Checked)
+            {
+                UnitSFXBasicRB.Checked = true;
+                populateUnitSFXList();
+            }
         }
 
         private void ExportButton_Click(object sender, EventArgs e)
@@ -7556,7 +7621,7 @@ namespace Holocron
                             sf.LineAlignment = StringAlignment.Center;
                             sf.Alignment = StringAlignment.Center;
 
-                            g.DrawString(planet.username, new Font(this.Font.Name, 10, this.Font.Style), brush, new Rectangle(x - 150 + planet_radius, y - 25, 300, 20), sf);
+                            g.DrawString(planet.username, new Font(this.Font.Name, (int)GalaxyMapPlanetNameBox.Value, this.Font.Style), brush, new Rectangle(x - 150 + planet_radius, y - 25, 300, 20), sf);
                         }
 
                         //g.DrawString(planet.username, font brush,);
@@ -7607,25 +7672,25 @@ namespace Holocron
 
         private void GalaxyPanLeftButton_Click(object sender, EventArgs e)
         {
-            globals.map_x -= 100;
+            globals.map_x -= globals.map_scroll_interval;
             SetGalaxyMapBackground();
         }
 
         private void GalaxyPanUpButton_Click(object sender, EventArgs e)
         {
-            globals.map_y -= 100;
+            globals.map_y -= globals.map_scroll_interval;
             SetGalaxyMapBackground();
         }
 
         private void GalaxyPanDownButton_Click(object sender, EventArgs e)
         {
-            globals.map_y += 100;
+            globals.map_y += globals.map_scroll_interval;
             SetGalaxyMapBackground();
         }
 
         private void GalaxyPanRightButton_Click(object sender, EventArgs e)
         {
-            globals.map_x += 100;
+            globals.map_x += globals.map_scroll_interval;
             SetGalaxyMapBackground();
         }
 
@@ -7658,15 +7723,196 @@ namespace Holocron
             }
         }
 
-        //todo add mouse wheel and keypress events. Probably need to do formwide and check galaxy map tab is active
-
-        private void GalaxyMapPictureBox_Keypress(object sender, System.Windows.Forms.PreviewKeyDownEventArgs e)
+        private void GalaxyMapPictureBox_MouseEnter(object sender, EventArgs e)
         {
-            var visible = e.KeyValue;
-            //switch (e.KeyValue)
-            //{
-            //    case syte
-            //}
+            globals.in_galaxy_map = true;
+        }
+
+        private void GalaxyMapPictureBox_MouseLeave(object sender, EventArgs e)
+        {
+            globals.in_galaxy_map = false;
+        }
+
+        private void GalaxyMapPictureBox_MouseMove(object sender, EventArgs e)
+        {
+            if (globals.map_mouse_down && !globals.map_box_select)
+            {
+                MouseEventArgs me = (MouseEventArgs)e;
+                globals.map_x += me.X - globals.map_mouse_x;
+                globals.map_y += me.Y - globals.map_mouse_y;
+                SetGalaxyMapBackground();
+                globals.map_mouse_x = me.X;
+                globals.map_mouse_y = me.Y;
+            }
+        }
+
+        private void GalaxyMapPictureBox_MouseDown(object sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if (me.Button != MouseButtons.Right)
+            {
+                globals.map_mouse_down = true;
+                globals.map_mouse_x = me.X;
+                globals.map_mouse_y = me.Y;
+            }
+            if (me.Button == MouseButtons.Left) globals.map_box_select = true;
+        }
+
+        private void GalaxyMapPictureBox_MouseUp(object sender, EventArgs e)
+        {
+            globals.map_mouse_down = false;
+            if (globals.map_box_select)
+            {
+                MouseEventArgs me = (MouseEventArgs)e;
+                globals.map_box_select = false;
+                float min_x = globals.map_mouse_x;
+                float max_x = me.X;
+                float min_y = globals.map_mouse_y;
+                float max_y = me.Y;
+
+                if(min_x > max_x)
+                {
+                    min_x = me.X;
+                    max_x = globals.map_mouse_x;
+                }
+                if (min_y > max_y)
+                {
+                    min_y = me.Y;
+                    max_y = globals.map_mouse_y;
+                }
+
+                float scale = (float)GalaxyMapZoomBox.Value / 100;
+                int bounds = (int)(scale * (2 * entities.PlanetBounds + globals.map_extra_edge));
+                if (bounds % 2 == 0) bounds++;
+                int buffer = 0; //Extra space larger than the rendered area, based on apparently mistaken assumptions about how robust the draw functions are on out of bounds areas
+                int origin = (bounds - 1) / 2 + buffer;
+                int dx_min = (int)(globals.map_x * scale);
+                int dy_min = (int)(globals.map_y * scale);
+
+                min_x = (min_x + dx_min - origin) / scale;
+                max_x = (max_x + dx_min - origin) / scale;
+
+                min_y = (min_y + dy_min - origin) / scale;
+                max_y = (max_y + dy_min - origin) / scale;
+
+                int xbounds = (int)(max_x - min_x);
+                int ybounds = (int)(max_y - min_y);
+                int zoom_x = (int)(GalaxyMapPictureBox.Width * 100 / xbounds); //This does crop to fit the entire bounding square as seen on the planet tab.
+                int zoom_y = (int)(GalaxyMapPictureBox.Height * 100 / ybounds); //Outliers on one coordinate will mean there may be gaps on some sides
+                if (zoom_x < zoom_y)
+                {
+                    GalaxyMapZoomBox.Value = zoom_x;
+                    globals.map_x = (int)(entities.PlanetBounds + min_x) + globals.map_extra_edge / 2;
+                    globals.map_y = (int)(entities.PlanetBounds + min_y) + (ybounds - GalaxyMapPictureBox.Height * 100 / zoom_x) / 2 + globals.map_extra_edge / 2;
+                }
+                else
+                {
+                    GalaxyMapZoomBox.Value = zoom_y;
+                    globals.map_x = (int)(entities.PlanetBounds + min_x) + (xbounds - GalaxyMapPictureBox.Width * 100 / zoom_y) / 2 + globals.map_extra_edge / 2;
+                    globals.map_y = (int)(entities.PlanetBounds + min_y) + globals.map_extra_edge / 2;
+                }
+                SetGalaxyMapBackground();
+            }
+        }
+
+        private void GalaxyMapPictureBox_MouseWheel(object sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+            if (ModifierKeys.HasFlag(Keys.Control))
+            {
+                try
+                {
+                    if (me.Delta > 0)
+                    {
+                        GalaxyMapZoomBox.Value += GalaxyMapZoomBox.Increment;
+                    }
+                    else
+                    {
+                        GalaxyMapZoomBox.Value -= GalaxyMapZoomBox.Increment;
+                    }
+                }
+                catch { } //Just need to stop it from going out of bounds
+            }
+            else if (ModifierKeys.HasFlag(Keys.Shift))
+            {
+                if (me.Delta > 0)
+                {
+                    globals.map_x -= globals.map_scroll_interval;
+                    SetGalaxyMapBackground();
+                }
+                else
+                {
+                    globals.map_x += globals.map_scroll_interval;
+                    SetGalaxyMapBackground();
+                }
+            }
+            else
+            {
+                if (me.Delta > 0)
+                {
+                    globals.map_y -= globals.map_scroll_interval;
+                    SetGalaxyMapBackground();
+                }
+                else
+                {
+                    globals.map_y += globals.map_scroll_interval;
+                    SetGalaxyMapBackground();
+                }
+            }
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (globals.in_galaxy_map)
+            {
+                if (keyData == Keys.W || keyData == Keys.Up)
+                {
+                    globals.map_y -= globals.map_scroll_interval;
+                    SetGalaxyMapBackground();
+                }
+                else if (keyData == Keys.S || keyData == Keys.Down)
+                {
+                    globals.map_y += globals.map_scroll_interval;
+                    SetGalaxyMapBackground();
+                }
+                else if (keyData == Keys.A || keyData == Keys.Left)
+                {
+                    globals.map_x -= globals.map_scroll_interval;
+                    SetGalaxyMapBackground();
+                }
+                else if (keyData == Keys.D || keyData == Keys.Right)
+                {
+                    globals.map_x += globals.map_scroll_interval;
+                    SetGalaxyMapBackground();
+                }
+                else if (keyData == Keys.Q || keyData == Keys.Home)
+                {
+                    try
+                    {
+                        GalaxyMapZoomBox.Value -= GalaxyMapZoomBox.Increment;
+                    }
+                    catch { }
+                }
+                else if (keyData == Keys.E || keyData == Keys.PageUp)
+                {
+                    try
+                    {
+                        GalaxyMapZoomBox.Value += GalaxyMapZoomBox.Increment;
+                    }
+                    catch { }
+                }
+                else if (keyData == Keys.R || keyData == Keys.Enter)
+                {
+                    GalaxyResetView();
+                }
+                else if (keyData == Keys.F || keyData == Keys.Insert)
+                {
+                    FitAll();
+                }
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
 
         private void setMapGCOptions()
@@ -7742,12 +7988,12 @@ namespace Holocron
             if (bounds % 2 == 0) bounds++;
             int unused_x = bounds - GalaxyMapPictureBox.Width;
             int unused_y = bounds - GalaxyMapPictureBox.Height;
-            globals.map_x = (int)(unused_x / 2 / scale); //Buffer needs to be subtracte from unused_x if stops being 0
+            globals.map_x = (int)(unused_x / 2 / scale); //Buffer needs to be subtracted from unused_x if stops being 0
             globals.map_y = (int)(unused_y / 2 / scale);
             SetGalaxyMapBackground();
         }
 
-        private void GalaxyFitAllButton_Click(object sender, EventArgs e)
+        private void FitAll()
         {
             float min_x = float.MaxValue;
             float max_x = float.MinValue;
@@ -7760,9 +8006,9 @@ namespace Holocron
                 if (GalaxyMapGCComboBox.SelectedIndex >= 0) checklist = ((galacticConquest)GalaxyMapGCComboBox.SelectedItem).planetObjects;
             }
 
-            foreach(planet planet in checklist)
+            foreach (planet planet in checklist)
             {
-                if(!GalaxyMapFilterCheckbox.Checked || filterPlanet(planet))
+                if (!GalaxyMapFilterCheckbox.Checked || filterPlanet(planet))
                 {
                     if (planet.x_coord < min_x) min_x = planet.x_coord;
                     if (planet.x_coord > max_x) max_x = planet.x_coord;
@@ -7792,6 +8038,11 @@ namespace Holocron
             SetGalaxyMapBackground();
         }
 
+        private void GalaxyFitAllButton_Click(object sender, EventArgs e)
+        {
+            FitAll();
+        }
+
         private void GalaxyResetButton_Click(object sender, EventArgs e)
         {
             GalaxyResetView();
@@ -7808,6 +8059,13 @@ namespace Holocron
             FactionLegend legend = new FactionLegend();
             legend.Factions = entities.factions;
             legend.Show();
+        }
+
+        private void GCMapControlsButton_Click(object sender, EventArgs e)
+        {
+            TextDetail deets = new TextDetail();
+            deets.detail = "Mouse Wheel - Pan Up/Down\nShift + Wheel - Pan Left/Right\nCtrl + Wheel - Zoom In/Out\nMiddle Click - Hold to Pan\nLeft Click - Drag area to zoom to\nRight Click - Save Image\n\n\nWASD - Pan\nQ/E - Zoom In/Out\nR - Reset Zoom\nF - Fit All\n\n\nArrows - Pan\nHome/PgUp - Zoom In/Out\nEnter - Reset Zoom\nInsert - Fit All";
+            deets.Show();
         }
 
         //Don't put any functions below here if you want it to still compile

@@ -130,7 +130,7 @@ namespace Holocron
             // ClearButton
             // 
             this.ClearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ClearButton.Location = new System.Drawing.Point(619, 409);
+            this.ClearButton.Location = new System.Drawing.Point(619, 419);
             this.ClearButton.Name = "ClearButton";
             this.ClearButton.Size = new System.Drawing.Size(104, 29);
             this.ClearButton.TabIndex = 54;
@@ -141,7 +141,7 @@ namespace Holocron
             // UnitFilterCancelButton
             // 
             this.UnitFilterCancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UnitFilterCancelButton.Location = new System.Drawing.Point(875, 409);
+            this.UnitFilterCancelButton.Location = new System.Drawing.Point(875, 419);
             this.UnitFilterCancelButton.Name = "UnitFilterCancelButton";
             this.UnitFilterCancelButton.Size = new System.Drawing.Size(104, 29);
             this.UnitFilterCancelButton.TabIndex = 53;
@@ -152,7 +152,7 @@ namespace Holocron
             // UnitFilterAcceptButton
             // 
             this.UnitFilterAcceptButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UnitFilterAcceptButton.Location = new System.Drawing.Point(750, 409);
+            this.UnitFilterAcceptButton.Location = new System.Drawing.Point(750, 419);
             this.UnitFilterAcceptButton.Name = "UnitFilterAcceptButton";
             this.UnitFilterAcceptButton.Size = new System.Drawing.Size(104, 29);
             this.UnitFilterAcceptButton.TabIndex = 52;
@@ -797,18 +797,19 @@ namespace Holocron
             "Mission Units",
             "Ground War Dummies",
             "Survival Units",
-            "Captured Versions"});
+            "Captured Versions",
+            "Templates"});
             this.SkirmishListBox.Location = new System.Drawing.Point(428, 345);
             this.SkirmishListBox.Name = "SkirmishListBox";
             this.SkirmishListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.SkirmishListBox.Size = new System.Drawing.Size(120, 95);
+            this.SkirmishListBox.Size = new System.Drawing.Size(120, 108);
             this.SkirmishListBox.TabIndex = 76;
             // 
             // UnitFilter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(991, 450);
+            this.ClientSize = new System.Drawing.Size(991, 459);
             this.Controls.Add(this.SkirmishListBox);
             this.Controls.Add(this.CommandPanel);
             this.Controls.Add(this.IncomePanel);

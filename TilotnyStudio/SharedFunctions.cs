@@ -1492,7 +1492,7 @@ public static class SharedFunctions
                 abdata = able.SelectSingleNode("descendant::Heal_Interval_In_Secs");
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.recharge = Single.Parse(abdata.LastChild.Value);
                 abdata = able.SelectSingleNode("descendant::Single_Target_Heal");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericBool = abdata.LastChild.Value.ToLower().Contains("yes");
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericBool = !abdata.LastChild.Value.ToLower().Contains("yes");
 
                 //Stun
                 abdata = able.SelectSingleNode("descendant::Stun_Range");
@@ -1510,6 +1510,21 @@ public static class SharedFunctions
 
                 abdata = able.SelectSingleNode("descendant::Bomb_Countdown_Seconds");
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value);
+
+                //Reflect/block
+                abdata = able.SelectSingleNode("descendant::Redirect_Chance");
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
+                abdata = able.SelectSingleNode("descendant::Block_Chance");
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.healthBonus = Single.Parse(abdata.LastChild.Value);
+
+                //Absorb
+                abdata = able.SelectSingleNode("descendant::Absorb_Chance");
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
+                abdata = able.SelectSingleNode("descendant::Damage_Absorb_Percentage");
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.healthBonus = Single.Parse(abdata.LastChild.Value);
+                abdata = able.SelectSingleNode("descendant::Damage_Absorb_Amount");
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value);
+
 
                 switch (forlist.type)
                 {
@@ -1721,6 +1736,7 @@ public static class SharedFunctions
             garrisonValue_baseID = -1,
             garrisonType_baseID = -1,
             maintenance_baseID = -1,
+            cp_baseID = -1,
             abilities = abilities,
             unitabilities = unitabilities,
             hero = hero,
@@ -1787,6 +1803,34 @@ public static class SharedFunctions
         float corenne = able.genericValue / able.recharge;
         if (able.applicable_categories.Contains("Fighter")) corenne *= 12;
         else if (able.genericBool) corenne *= 20;
+        return corenne;
+    }
+
+    public static float getDefenseMod(unit unit)
+    {
+        float corenne = 1; //Multiplicative identity, not additive
+        
+        foreach (ability able in unit.abilities)
+        {
+            switch (able.type)
+            {
+                case "Redirect_Blaster_Ability":
+                    bool inf = able.applicable_categories.Contains("Infantry"); //Don't count Jedi skills
+                    if (!inf || inf && able.applicable_categories.Contains("Vehicle"))
+                    {
+                        corenne += able.genericValue + able.healthBonus;
+                    }
+                    break;
+                case "Absorb_Blaster_Ability":
+                    bool inf2 = able.applicable_categories.Contains("Infantry");
+                    if (!inf2 || inf2 && able.applicable_categories.Contains("Vehicle"))
+                    {
+                        corenne += able.genericValue;
+                    }
+                    break;
+            }
+        }
+
         return corenne;
     }
 
@@ -2131,6 +2175,9 @@ public static class SharedFunctions
         entities.GroundArmors.Clear();
         entities.GroundShields.Clear();
         entities.AllArmors.Clear();
+        entities.DamageTypes.Clear();
+        entities.SpaceDamageTypes.Clear();
+        entities.GroundDamageTypes.Clear();
 
         XmlDocument consts = readModXmlOrMeg("XML\\GameConstants.xml", entities);
 
@@ -2236,6 +2283,7 @@ public static class SharedFunctions
                 else medianS = (heavyFightersSuck[(count) / 2 - 1].modifier + heavyFightersSuck[(count) / 2].modifier) / 2;
             }
             entities.ArmorMods[i].median = (medianA + medianS) / 2;
+            entities.ArmorMods[i].medianA = medianA;
         }
         for (int i = 0; i < entities.ArmorIndexedMods.Count; i++)
         {
@@ -2855,7 +2903,7 @@ public static class SharedFunctions
 
     public static bool IsHiddenObject(unit unit)
     {//Conditions that mean it should never be displayed
-        return unit.unitname.Contains("Template_") || unit.unitname.Contains("_Template") || (unit.unitname.Contains("_Dummy") || unit.unitname.Contains("_Marker") || unit.unitname.Contains("ZLayer") || unit.unitname.Contains("INFLUENCE_") || unit.unitname.Contains("Ship_Crew_Tier_") || unit.unitname.Contains("Cinematic_") || unit.datafile.Contains("Mod_Id"));
+        return (unit.unitname.Contains("_Dummy") || unit.unitname.Contains("_Marker") || unit.unitname.Contains("ZLayer") || unit.unitname.Contains("INFLUENCE_") || unit.unitname.Contains("Ship_Crew_Tier_") || unit.unitname.Contains("Cinematic_") || unit.datafile.Contains("Mod_Id"));
     }
 
     public static bool IsSkirmishObject(unit unit)
@@ -2886,6 +2934,11 @@ public static class SharedFunctions
     public static bool IsCapturedObject(unit unit)
     {
         return unit.unitname.Contains("_Captured");
+    }
+
+    public static bool IsTemplate(unit unit)
+    {
+        return unit.unitname.Contains("Template_") || unit.unitname.Contains("_Template");
     }
 
     public static bool categoryFilter(unit unit, List<int> categories)
@@ -2920,6 +2973,11 @@ public static class SharedFunctions
         {
             regular = false;
             if (!categories.Contains(6)) return false;
+        }
+        if (IsTemplate(unit))
+        {
+            regular = false;
+            if (!categories.Contains(7)) return false;
         }
         if (regular)
         {
@@ -3460,144 +3518,151 @@ public static class SharedFunctions
         foreach (XmlNode planet in planets)
         {
             string codename = planet.Attributes[0].Value;
-            string username = "";
-            string description = "";
-            string population_desc = "";
-            string fauna = "";
-            float x = 0;
-            float y = 0;
-            int credits = 0;
-            int shipyard = 0;
-            int land_structures = 0;
-            int max_starbase = 0;
-            int pop = 0;
-            string groundMap = "";
-            string spaceMap = "";
-            string weather = "";
-            bool has_ground = false;
-            bool tradehub = false;
+            try
+            {
+                string username = "";
+                string description = "";
+                string population_desc = "";
+                string fauna = "";
+                float x = 0;
+                float y = 0;
+                int credits = 0;
+                int shipyard = 0;
+                int land_structures = 0;
+                int max_starbase = 0;
+                int pop = 0;
+                string groundMap = "";
+                string spaceMap = "";
+                string weather = "";
+                bool has_ground = false;
+                bool tradehub = false;
 
-            XmlNode value = planet.SelectSingleNode("descendant::Text_ID");
-            if (!(value is null))
-            {
-                username = Find_Text_Entry(value.InnerText, entities);
-            }
-            value = planet.SelectSingleNode("descendant::Galactic_Position");
-            if (!(value is null))
-            {
-                string[] split = ReadWhiteSpaceAsCommas(value.InnerText);
-                x = Single.Parse(split[0]);
-                y = Single.Parse(split[1]);
-                entities.PlanetBounds = Math.Max(entities.PlanetBounds, x);
-                entities.PlanetBounds = Math.Max(entities.PlanetBounds, -x);
-                entities.PlanetBounds = Math.Max(entities.PlanetBounds, y);
-                entities.PlanetBounds = Math.Max(entities.PlanetBounds, -y);
-            }
-            value = planet.SelectSingleNode("descendant::Planet_Surface_Accessible");
-            if (!(value is null))
-            {
-                if (value.InnerText.ToLower().Contains("yes")) has_ground = true;
-            }
-            value = planet.SelectSingleNode("descendant::Describe_History");
-            if (!(value is null))
-            {
-                description = value.InnerText;
-            }
-            value = planet.SelectSingleNode("descendant::Describe_Population");
-            if (!(value is null))
-            {
-                population_desc = value.InnerText;
-            }
-            value = planet.SelectSingleNode("descendant::Describe_Wildlife");
-            if (!(value is null))
-            {
-                fauna = value.InnerText;
-            }
-            value = planet.SelectSingleNode("descendant::Encyclopedia_Weather_Name");
-            if (!(value is null))
-            {
-                weather = value.InnerText;
-                if (weather.Contains("_TRADE")) tradehub = true;
-
-            }
-            /*value = planet.SelectSingleNode("descendant::Terrain");
-            if (!(value is null))
-            {
-                terrain = value.InnerText;
-            }*/
-            value = planet.SelectSingleNode("descendant::Planet_Credit_Value");
-            if (!(value is null))
-            {
-                credits = Int32.Parse(value.InnerText);
-            }
-            value = planet.SelectSingleNode("descendant::Special_Structures_Land");
-            if (!(value is null))
-            {
-                land_structures = Int32.Parse(value.InnerText);
-            }
-            value = planet.SelectSingleNode("descendant::Max_Space_Base");
-            if (!(value is null))
-            {
-                max_starbase = Int32.Parse(value.InnerText);
-            }
-            value = planet.SelectSingleNode("descendant::Additional_Population_Capacity");
-            if (!(value is null))
-            {
-                pop = Int32.Parse(value.InnerText);
-            }
-            value = planet.SelectSingleNode("descendant::Planet_Ability_Name");
-            if (!(value is null))
-            {
-                switch (value.InnerText)
+                XmlNode value = planet.SelectSingleNode("descendant::Text_ID");
+                if (!(value is null))
                 {
-                    case "TEXT_PLANET_LIGHT":
-                        shipyard = 1;
-                        break;
-                    case "TEXT_PLANET_HEAVY":
-                        shipyard = 2;
-                        break;
-                    case "TEXT_PLANET_CAPITAL":
-                        shipyard = 3;
-                        break;
-                    case "TEXT_PLANET_DREAD":
-                        shipyard = 4;
-                        break;
+                    username = Find_Text_Entry(value.InnerText, entities);
                 }
-            }
-            value = planet.SelectSingleNode("descendant::Land_Tactical_Map");
-            if (!(value is null))
-            {
-                groundMap = value.InnerText;
-            }
-            value = planet.SelectSingleNode("descendant::Space_Tactical_Map");
-            if (!(value is null))
-            {
-                spaceMap = value.InnerText;
-            }
+                value = planet.SelectSingleNode("descendant::Galactic_Position");
+                if (!(value is null))
+                {
+                    string[] split = ReadWhiteSpaceAsCommas(value.InnerText);
+                    x = Single.Parse(split[0]);
+                    y = Single.Parse(split[1]);
+                    entities.PlanetBounds = Math.Max(entities.PlanetBounds, x);
+                    entities.PlanetBounds = Math.Max(entities.PlanetBounds, -x);
+                    entities.PlanetBounds = Math.Max(entities.PlanetBounds, y);
+                    entities.PlanetBounds = Math.Max(entities.PlanetBounds, -y);
+                }
+                value = planet.SelectSingleNode("descendant::Planet_Surface_Accessible");
+                if (!(value is null))
+                {
+                    if (value.InnerText.ToLower().Contains("yes")) has_ground = true;
+                }
+                value = planet.SelectSingleNode("descendant::Describe_History");
+                if (!(value is null))
+                {
+                    description = value.InnerText;
+                }
+                value = planet.SelectSingleNode("descendant::Describe_Population");
+                if (!(value is null))
+                {
+                    population_desc = value.InnerText;
+                }
+                value = planet.SelectSingleNode("descendant::Describe_Wildlife");
+                if (!(value is null))
+                {
+                    fauna = value.InnerText;
+                }
+                value = planet.SelectSingleNode("descendant::Encyclopedia_Weather_Name");
+                if (!(value is null))
+                {
+                    weather = value.InnerText;
+                    if (weather.Contains("_TRADE")) tradehub = true;
 
-            planet planet_obj = new planet
+                }
+                /*value = planet.SelectSingleNode("descendant::Terrain");
+                if (!(value is null))
+                {
+                    terrain = value.InnerText;
+                }*/
+                value = planet.SelectSingleNode("descendant::Planet_Credit_Value");
+                if (!(value is null))
+                {
+                    credits = (int)float.Parse(value.InnerText);
+                }
+                value = planet.SelectSingleNode("descendant::Special_Structures_Land");
+                if (!(value is null))
+                {
+                    land_structures = Int32.Parse(value.InnerText);
+                }
+                value = planet.SelectSingleNode("descendant::Max_Space_Base");
+                if (!(value is null))
+                {
+                    max_starbase = Int32.Parse(value.InnerText);
+                }
+                value = planet.SelectSingleNode("descendant::Additional_Population_Capacity");
+                if (!(value is null))
+                {
+                    pop = Int32.Parse(value.InnerText);
+                }
+                value = planet.SelectSingleNode("descendant::Planet_Ability_Name");
+                if (!(value is null))
+                {
+                    switch (value.InnerText)
+                    {
+                        case "TEXT_PLANET_LIGHT":
+                            shipyard = 1;
+                            break;
+                        case "TEXT_PLANET_HEAVY":
+                            shipyard = 2;
+                            break;
+                        case "TEXT_PLANET_CAPITAL":
+                            shipyard = 3;
+                            break;
+                        case "TEXT_PLANET_DREAD":
+                            shipyard = 4;
+                            break;
+                    }
+                }
+                value = planet.SelectSingleNode("descendant::Land_Tactical_Map");
+                if (!(value is null))
+                {
+                    groundMap = value.InnerText;
+                }
+                value = planet.SelectSingleNode("descendant::Space_Tactical_Map");
+                if (!(value is null))
+                {
+                    spaceMap = value.InnerText;
+                }
+
+                planet planet_obj = new planet
+                {
+                    codename = codename,
+                    username = username,
+                    desc_history = description,
+                    x_coord = x,
+                    y_coord = -y, //Inversion intentional
+                    credits = credits,
+                    groundMap = groundMap,
+                    spaceMap = spaceMap,
+                    terrain_id = -1,
+                    has_ground = has_ground,
+                    desc_pop = population_desc,
+                    shipyard = shipyard,
+                    desc_fauna = fauna,
+                    land_structures = land_structures,
+                    max_starbase = max_starbase,
+                    desc_weather = weather,
+                    tradehub = tradehub,
+                    pop = pop,
+                    sortstring = username,
+                };
+                entities.Planets.Add(planet_obj);
+            }
+            catch (Exception e)
             {
-                codename = codename,
-                username = username,
-                desc_history = description,
-                x_coord = x,
-                y_coord = -y, //Inversion intentional
-                credits = credits,
-                groundMap = groundMap,
-                spaceMap = spaceMap,
-                terrain_id = -1,
-                has_ground = has_ground,
-                desc_pop = population_desc,
-                shipyard = shipyard,
-                desc_fauna = fauna,
-                land_structures = land_structures,
-                max_starbase = max_starbase,
-                desc_weather = weather,
-                tradehub = tradehub,
-                pop = pop,
-                sortstring = username,
-            };
-            entities.Planets.Add(planet_obj);
+                MessageBox.Show("Error reading planet " + codename + "\n" + e.Message);
+            }
         }
 
         entities.Planets.Sort((s1, s2) => s1.codename.CompareTo(s2.codename));
@@ -4143,8 +4208,11 @@ public static class SharedFunctions
                                     unidad.crew = unidad2.crew;
                                     unidad.crew_baseID = unidad2.crew_baseID + 1;
                                 }
-                                if (unidad.pop < 0) unidad.pop = unidad2.pop;
-                                if (unidad.cp < 0) unidad.cp = unidad2.cp;
+                                if (unidad.cp < 0)
+                                {
+                                    unidad.cp = unidad2.cp;
+                                    unidad.cp_baseID = unidad2.cp_baseID + 1;
+                                }
                                 if (unidad.maintenance < 0)
                                 {
                                     unidad.maintenance = unidad2.maintenance;
@@ -4234,6 +4302,18 @@ public static class SharedFunctions
                                 if (unidad.abilities.Count == 0) unidad.abilities = unidad2.abilities;
                                 if (unidad.unitabilities.Count == 0) unidad.unitabilities = unidad2.unitabilities;
                                 if (unidad.builtin.hpType is null) unidad.builtin = unidad2.builtin;
+                                else {
+                                    //Handle definitions of a builtin that partially inherit
+                                    hardpoint newbiw = unidad.builtin;
+                                    if (newbiw.projectile == null || newbiw.projectile == "") newbiw.projectile = unidad2.builtin.projectile;
+                                    if (newbiw.pulseCount <= 0) newbiw.pulseCount = unidad2.builtin.pulseCount;
+                                    if (newbiw.pulseDelay <= 0) newbiw.pulseDelay = unidad2.builtin.pulseDelay;
+                                    if (newbiw.range <= 0) newbiw.range = unidad2.builtin.range;
+                                    if (newbiw.pulseDelay <= 0) newbiw.pulseDelay = unidad2.builtin.pulseDelay;
+                                    if (newbiw.range <= 0) newbiw.range = unidad2.builtin.range;
+                                    if (newbiw.recharge <= 0) newbiw.recharge = unidad2.builtin.recharge;
+                                    unidad.builtin = newbiw;
+                                }
                                 if (unidad.garrison.Count == 0) unidad.garrison = unidad2.garrison; //todo track id of variant in case editing of this field is someday enabled
                                 for(int sfxid = 0; sfxid < unidad.BasicSFXEvents.Length; sfxid++)
                                 {
@@ -4328,6 +4408,7 @@ public static class SharedFunctions
             if (unidad.shield < 0) unidad.shield_baseID = -1;
             if (unidad.regen < 0) unidad.regen_baseID = -1;
             if (unidad.hp < 0) unidad.hp_baseID = -1;
+            if (unidad.cp < 0) unidad.cp_baseID = -1;
             if (unidad.maintenance < 0) unidad.maintenance_baseID = -1;
             if (unidad.gui_row < 0) unidad.gui_row_baseID = -1;
             if (unidad.limit_concurrent < 0) unidad.concurrent_baseID = -1;
@@ -4349,13 +4430,11 @@ public static class SharedFunctions
             unidad.targetablehps = false;
             List<hardpoint> hps = new List<hardpoint>();
             unidad.consolidatedhps = consolidateHardpoints(unidad, hps);
-            foreach (hardpoint hp in hps)
+            int hphp = gethphp(unidad.consolidatedhps);
+            unidad.targetablehps = hphp > -1;
+            if (unidad.targetablehps && hphp != unidad.hp)
             {
-                if (hp.targetable)
-                {
-                    unidad.targetablehps = true;
-                }
-                break;
+                unidad.hpfail = true;
             }
 
             if (unidad.terrainMaps.Count > 0)
@@ -4365,7 +4444,7 @@ public static class SharedFunctions
                 {
                     for (int j = 0; j + 1 < unidad.terrainMaps.Count; j += 2)
                     {
-                        if (String.Equals(unidad.terrainMaps[j + 1], unidad.model, StringComparison.OrdinalIgnoreCase))//unidad.terrainMaps[j + 1].ToLower() != unidad.model.ToLower())
+                        if (!String.Equals(unidad.terrainMaps[j + 1], unidad.model, StringComparison.OrdinalIgnoreCase))//unidad.terrainMaps[j + 1].ToLower() != unidad.model.ToLower())
                         {
                             newmaps.Add(unidad.terrainMaps[j]);
                         }
@@ -4407,6 +4486,21 @@ public static class SharedFunctions
         }
     }
 
+    public static int gethphp(List<hardpoint> hps)
+    {
+        bool target = false;
+        float hphp = 0;
+        foreach (hardpoint hp in hps)
+        {
+            if (hp.targetable)
+            {
+                target = true;
+                hphp += hp.hp * hp.quantity;
+            }
+        }
+        if (!target) return -1;
+        return (int)hphp;
+    }
     public static void categorizeObjects(entities entities)
     {
         entities.spaceUnits.Clear();
@@ -5520,18 +5614,32 @@ public static class SharedFunctions
     private static List<projectileAccuracyTemplate> LightLaserAccs() //TODO we already have different acc calcs in dev vs public... You can check which is which by looking for changelog presence
     {
         List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
-        //public
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 1, tiermod = 0.1f });
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 1, tiermod = 0.1f });
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 3, tiermod = 0.3f });
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 3, tiermod = 0.3f });
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 3, tiermod = 0.3f });
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 3, tiermod = 0.3f });
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 3, tiermod = 0.3f });
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 6, tiermod = 0.6f });
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 10, tiermod = 1f });
+        if(entities.version <= 35 && entities.modid == "rev")
+        {
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 1, tiermod = 0.1f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 1, tiermod = 0.1f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 1, tiermod = 0.1f }); //These are clearly wrong, but backwards compatibility and all
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 1, tiermod = 0.1f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 3, tiermod = 0.3f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 3, tiermod = 0.3f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 3, tiermod = 0.3f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 6, tiermod = 0.6f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 10, tiermod = 1f });
+        }
+        else
+        {
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 1, tiermod = 0.1f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 1, tiermod = 0.1f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 3, tiermod = 0.3f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 3, tiermod = 0.3f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 3, tiermod = 0.3f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 3, tiermod = 0.3f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 3, tiermod = 0.3f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 6, tiermod = 0.6f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 10, tiermod = 1f });
+        }
 
-        //dev
+        //dev version bugged
         /*ExpectedAccuracy.Add(new projectileAccuracyTemplate {category = "Fighter", accuracy = 1, tiermod = 0.1f });
         ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 1, tiermod = 0.1f });
         ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 1, tiermod = 0.1f });
@@ -5592,15 +5700,31 @@ public static class SharedFunctions
     private static List<projectileAccuracyTemplate> MedIonAccs()
     {
         List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 60, tiermod = 6 });
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 60, tiermod = 6 });
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 50, tiermod = 5 });
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 50, tiermod = 5 });
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 35, tiermod = 3.5f });
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 35, tiermod = 3.5f });
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 20, tiermod = 2 });
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 10, tiermod = 1 });
-        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 5, tiermod = 0.5f });
+        if (entities.version <= 35)
+        {
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 60, tiermod = 6 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 60, tiermod = 6 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 50, tiermod = 5 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 50, tiermod = 5 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 35, tiermod = 3.5f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 35, tiermod = 3.5f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 25, tiermod = 2 }); //The difference
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 10, tiermod = 1 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 5, tiermod = 0.5f });
+        }
+        else
+        {
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 60, tiermod = 6 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 60, tiermod = 6 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 50, tiermod = 5 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 50, tiermod = 5 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 35, tiermod = 3.5f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 35, tiermod = 3.5f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 20, tiermod = 2 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 10, tiermod = 1 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 5, tiermod = 0.5f });
+        }
+
         return ExpectedAccuracy;
     }
 
@@ -5707,16 +5831,30 @@ public static class SharedFunctions
     }
 
     //todo watch for accuracy. But it mostly seems to be DPS calc mismatches. Some of those are caused by different reload rounding on sheet vs game, which are unfixable
-    public static double CalculateSpaceCP(float dps, float acctier, float healscore, float hp, string atype, float shield, string stype, float regen)
+    public static double CalculateSpaceCP(float dps, float acctier, float healscore, float hp, string atype, float shield, string stype, float regen, float defensemod)
     {
-        int modscale = 1;
-        if (entities.modid == "rev") modscale = 4;
-        double dpsheal = 1.5 * (dps * (1 + (0.05 * acctier)) + healscore);
-        ArmorMods mods = GetArmorMods(stype);
-        double modshield = (shield + 1000 * regen / 3) * mods.average;
-        mods = GetArmorMods(atype);
-        double modhp = hp * mods.average;
-        return modscale * Math.Floor(Math.Sqrt(dpsheal*(modshield + modhp))); //todo multiply by defense mod inside sqrt
+        if (entities.version > 35)
+        {
+            int modscale = 1;
+            if (entities.modid == "rev") modscale = 4;
+            double dpsheal = 1.5 * (dps * (1 + (0.05 * acctier)) + healscore);
+            ArmorMods mods = GetArmorMods(stype);
+            double modshield = (shield + 1000 * regen / 3) * mods.average;
+            mods = GetArmorMods(atype);
+            double modhp = hp * mods.average;
+            return modscale * Math.Floor(Math.Sqrt(dpsheal * (modshield + modhp))); //todo multiply by defense mod inside sqrt. Change in Tilotny from stats on page too
+        }
+        else //legacy version
+        {
+            int modscale = 1;
+            if (entities.modid == "rev") modscale = 4;
+            double dpsheal = 1.5 * (dps * (1 + (0.05 * acctier)) + healscore);
+            ArmorMods mods = GetArmorMods(stype);
+            double modshield = (shield + 1000 * regen / 3) * mods.average;
+            mods = GetArmorMods(atype);
+            double modhp = hp * mods.average;
+            return modscale * Math.Floor(Math.Sqrt(dpsheal * (modshield + modhp)));
+        }
     }
 
     public static double CalculateSpaceCPfromUnit(unit unit, float acctier)
@@ -5739,7 +5877,51 @@ public static class SharedFunctions
             healscore = getHealScore(healable);
         }
 
-        return CalculateSpaceCP(avgdps, acctier, healscore, unit.hp, unit.armor_type, unit.shield, unit.shield_type, unit.regen);
+        return CalculateSpaceCP(avgdps, acctier, healscore, unit.hp, unit.armor_type, unit.shield, unit.shield_type, unit.regen, getDefenseMod(unit));
+    }
+
+    public static double CalculateGroundCP(float dps, float hp, string atype, float shield, string stype, float regen, float defensemod)
+    {
+        if (entities.version > 35)
+        {
+            ArmorMods mods = GetArmorMods(stype);
+            double modshield = (shield) * mods.average; // + 1000 * regen / 3
+            mods = GetArmorMods(atype);
+            double modhp = hp * mods.average;
+            return Math.Floor(2 * Math.Sqrt(dps * (modshield + modhp) * defensemod));
+        }
+        else //legacy version
+        {
+            ArmorMods mods = GetArmorMods(stype);
+            double modshield = (shield) * mods.average;
+            mods = GetArmorMods(atype);
+            double modhp = hp * mods.average;
+            return Math.Floor(2 * Math.Sqrt(dps * (modshield + modhp) * defensemod));
+        }  
+    }
+
+    public static double CalculateGroundCPfromUnit(unit unit)
+    {
+        float avgdps = 0;
+        foreach (hardpoint hp in unit.consolidatedhps)
+        {
+            if (hp.damageAmount > 0)
+            {
+                WeaponMods weap = GetWeaponMods(hp.damageType);
+                float dps = hpDPS(hp);
+                if (entities.version > 35) avgdps += dps * weap.medianA; //TODO median not A. Change in Tilotny from stats on page too
+                else avgdps += dps * weap.medianA; //Legacy version bugged calc
+            }
+        }
+
+        /*float healscore = 0;
+        ability healable = unit.abilities.FirstOrDefault(s => s.type == "Force_Healing_Ability"); //todo may need to find last instead
+        if (healable.recharge > 0)
+        {
+            healscore = getHealScore(healable);
+        }*/
+
+        return CalculateGroundCP(avgdps, unit.hp, unit.armor_type, unit.shield, unit.shield_type, unit.regen, getDefenseMod(unit));
     }
 
     private static (float range, List<projectileAccuracyTemplate> accs) projectileExamine(string projectile, string damageType)
@@ -5893,7 +6075,7 @@ public static class SharedFunctions
         foreach (hardpoint hp in unit.consolidatedhps)
         {
             string dtype = hp.damageType;
-            if (hp.text.Contains("Anti-Fighter Ion")) dtype = "PD_Ion";
+            if (!(hp.text is null) && hp.text.Contains("Anti-Fighter Ion")) dtype = "PD_Ion";
             (float hprange, List<projectileAccuracyTemplate> accs) = projectileExamine(hp.projectile, dtype);
 
             if(hprange > 0)
@@ -6074,6 +6256,7 @@ public struct unit
     public int locked; //A boolean, but there needs to be an indeterminate state for inheritance
     public bool targetablehps;
     public bool hero;
+    public bool hpfail;
     public string reqstructures;
     public string reqorbit;
     public string reqtemplate;
@@ -6138,6 +6321,7 @@ public struct unit
     public int garrisonValue_baseID;
     public int garrisonType_baseID;
     public int maintenance_baseID;
+    public int cp_baseID;
     public hardpoint builtin;
     public List<string> companyunits;
     public List<quantizedObject> consolidatedUnits;
@@ -6492,6 +6676,7 @@ public class WeaponMods
     public List<ArmorMod> HpMods;
     public List<ArmorMod> ShieldMods;
     public float median;
+    public float medianA;
 }
 
 public class ArmorMod
