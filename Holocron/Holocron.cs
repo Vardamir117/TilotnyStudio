@@ -7798,6 +7798,7 @@ namespace Holocron
 
                 int xbounds = (int)(max_x - min_x);
                 int ybounds = (int)(max_y - min_y);
+                if (xbounds < 5 || ybounds < 5) return; //Don't crash dividing by 0 on a left click without movement
                 int zoom_x = (int)(GalaxyMapPictureBox.Width * 100 / xbounds); //This does crop to fit the entire bounding square as seen on the planet tab.
                 int zoom_y = (int)(GalaxyMapPictureBox.Height * 100 / ybounds); //Outliers on one coordinate will mean there may be gaps on some sides
                 if (zoom_x < zoom_y)
