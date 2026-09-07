@@ -1071,6 +1071,38 @@ namespace TilotnyStudio
             SetStatVisibility(2);
         }
 
+        private void GroundHeroRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            populateAffilUnits();
+            ATypeComboBox.Items.Clear();
+            foreach (string type in entities.GroundArmors) ATypeComboBox.Items.Add(type);
+            STypeComboBox.Items.Clear();
+            foreach (string type in entities.GroundShields) STypeComboBox.Items.Add(type);
+
+            SetStatVisibility(2);
+        }
+
+        private void HeroTeamRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            populateAffilUnits();
+            FilterComboBox.Visible = false;
+            FilterLabel.Visible = false;
+
+            SetStatVisibility(1);
+        }
+
+        private void SpaceHeroRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            populateAffilUnits();
+            ATypeComboBox.Items.Clear();
+            foreach (string type in entities.SpaceArmors) ATypeComboBox.Items.Add(type);
+            STypeComboBox.Items.Clear();
+            foreach (string type in entities.SpaceShields) STypeComboBox.Items.Add(type);
+            FilterComboBox.Visible = true;
+            FilterLabel.Visible = true;
+            SetStatVisibility(0);
+        }
+
         private void AffilSearchTextBox_TextChanged(object sender, EventArgs e)
         {
             populateAffilUnits();
@@ -1123,6 +1155,18 @@ namespace TilotnyStudio
                 {
                     units = entities.groundUnits;
                 }
+                else if (SpaceHeroRadioButton.Checked)
+                {
+                    units = entities.spaceHeroes;
+                }
+                else if (HeroTeamRadioButton.Checked)
+                {
+                    units = entities.heroCompanies;
+                }
+                else if (GroundHeroRadioButton.Checked)
+                {
+                    units = entities.groundHeroes;
+                }
                 foreach (unit unit in units)
                 {
                     if (unit.unitname == AffilListBox.SelectedItem.ToString())
@@ -1153,11 +1197,11 @@ namespace TilotnyStudio
                                 List<string> notself = new List<string>();
                                 foreach (string item in control.Items)
                                 {
-                                    if (unit.UsedStrucutures.Contains(item))
+                                    if (!(unit.UsedStrucutures is null) && unit.UsedStrucutures.Contains(item))
                                     {
                                         notself.Add(item);
                                     }
-                                    if (unit.FullStrucutures.Contains(item))
+                                    if (!(unit.FullStrucutures is null) && unit.FullStrucutures.Contains(item))
                                     {
                                         notself.Add(item);
                                     }
@@ -4003,6 +4047,7 @@ namespace TilotnyStudio
                 tabControl1.SelectedIndex = 0;
                 populateModPage();
                 setModUnselected();
+                if (subs.devmode) devModeOn();
             }
         }
 

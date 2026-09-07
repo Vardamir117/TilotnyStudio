@@ -153,7 +153,6 @@
             this.DevModeCheckBox.TabIndex = 10;
             this.DevModeCheckBox.Text = "Edit mods directly";
             this.DevModeCheckBox.UseVisualStyleBackColor = true;
-            this.DevModeCheckBox.Visible = false;
             // 
             // SubmodSetup
             // 

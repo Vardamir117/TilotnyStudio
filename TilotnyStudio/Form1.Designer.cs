@@ -450,6 +450,7 @@
             this.HeroTeamRadioButton.Text = "Hero Teams";
             this.HeroTeamRadioButton.UseVisualStyleBackColor = true;
             this.HeroTeamRadioButton.Visible = false;
+            this.HeroTeamRadioButton.CheckedChanged += new System.EventHandler(this.HeroTeamRadioButton_CheckedChanged);
             // 
             // SpaceHeroRadioButton
             // 
@@ -462,6 +463,7 @@
             this.SpaceHeroRadioButton.Text = "Space Heroes";
             this.SpaceHeroRadioButton.UseVisualStyleBackColor = true;
             this.SpaceHeroRadioButton.Visible = false;
+            this.SpaceHeroRadioButton.CheckedChanged += new System.EventHandler(this.SpaceHeroRadioButton_CheckedChanged);
             // 
             // SkirmishListBox
             // 
@@ -1685,6 +1687,7 @@
             this.GroundHeroRadioButton.Text = "Ground Heroes";
             this.GroundHeroRadioButton.UseVisualStyleBackColor = true;
             this.GroundHeroRadioButton.Visible = false;
+            this.GroundHeroRadioButton.CheckedChanged += new System.EventHandler(this.GroundHeroRadioButton_CheckedChanged);
             // 
             // tabHidePanel
             // 

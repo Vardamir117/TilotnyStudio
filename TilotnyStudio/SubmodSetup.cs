@@ -20,6 +20,7 @@ namespace TilotnyStudio
 
         public List<String> Args = new List<string>();
         public bool reload = false;
+        public bool devmode = false;
         string displayargs = "";
 
         public SubmodSetup()
@@ -114,6 +115,7 @@ namespace TilotnyStudio
         private void ReloadButton_Click(object sender, EventArgs e)
         {
             if(Args.Count > 0) reload = true;
+            devmode = DevModeCheckBox.Checked;
             this.Close();
         }
     }
