@@ -1222,10 +1222,50 @@ namespace TilotnyStudio
                                 InfluenceCheckBox.Checked = false;
                             }
                         }
-                        if (PopBox.Visible) PopBox.Value = unit.pop;
-                        if (CostBox.Visible) CostBox.Value = unit.cost;
-                        if (BuildTimeBox.Visible) BuildTimeBox.Value = unit.buildtime;
-                        if (CrewBox.Visible) CrewBox.Value = unit.crew;
+                        if (PopBox.Visible)
+                        {
+                            try
+                            {
+                                PopBox.Value = unit.pop;
+                            }
+                            catch
+                            {
+                                PopBox.Value = 1;
+                            }
+                        }
+                        if (CostBox.Visible)
+                        {
+                            try
+                            {
+                                CostBox.Value = unit.cost;
+                            }
+                            catch
+                            {
+                                CostBox.Value = 0;
+                            }
+                        }
+                        if (BuildTimeBox.Visible)
+                        {
+                            try
+                            {
+                                BuildTimeBox.Value = unit.buildtime;
+                            }
+                            catch
+                            {
+                                BuildTimeBox.Value = 0;
+                            }
+                        }
+                        if (CrewBox.Visible)
+                        {
+                            try
+                            {
+                                CrewBox.Value = unit.crew;
+                            }
+                            catch
+                            {
+                                CrewBox.Value = 0;
+                            }
+                        }
                         if (CPBox.Visible)
                         {
                             CPBox.Value = (decimal)unit.cp;
@@ -1244,7 +1284,14 @@ namespace TilotnyStudio
                                     CPCalcBox.Value = 0;
                                     PopCalcBox.Value = 0;
                                 }
-                                RangeAdjustBox.Value = (decimal)range;
+                                try
+                                {
+                                    RangeAdjustBox.Value = (decimal)range;
+                                }
+                                catch
+                                {
+                                    RangeAdjustBox.Value = 0;
+                                }
                                 try
                                 {
                                     AccTierBox.Value = (decimal)acctier;
