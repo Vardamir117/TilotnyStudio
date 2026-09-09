@@ -27,6 +27,11 @@ namespace Holocron
 
         private void DrawLegend()
         {
+            if(Factions is null)
+            {
+                //I do not understand why this matters. Somehow the Korean localization or a specific framework version is... calling this twice but somehow skipping lines? //MessageBox.Show("Null faction list");
+                return;
+            }
             Bitmap Legend = new Bitmap(FactionLegendPictureBox.Width, FactionLegendPictureBox.Height);
             Graphics g = Graphics.FromImage(Legend);
             g.FillRectangle(new SolidBrush(Color.Black), 0, 0, Legend.Width, Legend.Height);

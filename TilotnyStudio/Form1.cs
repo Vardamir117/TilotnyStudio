@@ -250,6 +250,8 @@ namespace TilotnyStudio
             public static CultureInfo UIculture = Thread.CurrentThread.CurrentCulture;
 
             public static List<int> categories = new List<int>();
+            public static bool[,] MTDArray;
+            public static bool MTDtga;
         }
 
         public static class algorithm_data
@@ -818,12 +820,14 @@ namespace TilotnyStudio
             try
             {
                 entities.MTmaster = (Bitmap)Image.FromFile(getModFile("Art\\Textures\\MT_CommandBar.tga", entities));
+                globals.MTDtga = false;
             }
             catch
             {
                 try
                 {
                     entities.MTmaster = (Bitmap)(new TGA(readModBytesOrMeg("Art\\Textures\\MT_CommandBar.tga", entities)));
+                    globals.MTDtga = true;
                 }
                 catch
                 {
@@ -831,6 +835,18 @@ namespace TilotnyStudio
                 }
             };
             entities.readerrors = "";
+            //brute force a mask of used icon space
+            globals.MTDArray = new bool[entities.MTmaster.Width, entities.MTmaster.Height];
+            foreach(IconData icon in entities.IconData)
+            {
+                for(int x = icon.origin_x; x < icon.origin_x + icon.size_x; x++)
+                {
+                    for (int y = icon.origin_y; y < icon.origin_y + icon.size_y; y++)
+                    {
+                        globals.MTDArray[x, y] = true;
+                    }
+                }
+            }
 
             loadscreen.ChangeText("Reading factions and structures");
             globals.playablefactions = new List<playablefaction>();

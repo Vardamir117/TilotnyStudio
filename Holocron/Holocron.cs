@@ -291,6 +291,7 @@ namespace Holocron
             UnitTextPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             FactionDescLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             ShipNameRichTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            ErrorCheckButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             UnitAvailPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             UnitStatPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
             UnitSubunitPanel.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Left;
@@ -2517,7 +2518,9 @@ namespace Holocron
             }
             if (selectedUnit.hpfail)
             {
-                UnitHpLabel.ForeColor = Color.Red;
+                int hphp = gethphp(selectedUnit.consolidatedhps);
+                if(hphp < selectedUnit.hp) UnitHpLabel.ForeColor = Color.Red;
+                else UnitHpLabel.ForeColor = SystemColors.ControlText;
                 toolTip1.SetToolTip(UnitHpLabel, "Hardpoint health sum is " + gethphp(selectedUnit.consolidatedhps));
             }
             else
@@ -5135,6 +5138,7 @@ namespace Holocron
             if (UnitAbilityListBox.SelectedItems.Count > 0)
             {
                 unitability able = (unitability)UnitAbilityListBox.SelectedItem;
+                UnitAbilityListBox.Tag = able;
                 AbilityPictureBox.Image = new Bitmap(IconPictureBox.Width, IconPictureBox.Height);
                 IconData icondata = DatParser.GetIconData(able.icon, entities);
                 if (icondata.size_x > 0 && entities.MTmaster != null)
@@ -8058,7 +8062,8 @@ namespace Holocron
         private void GalaxyFactionLegendButton_Click(object sender, EventArgs e)
         {
             FactionLegend legend = new FactionLegend();
-            legend.Factions = entities.factions;
+            legend.Factions = new List<faction>();//entities.factions;
+            foreach (faction faction in entities.factions) legend.Factions.Add(faction);
             legend.Show();
         }
 
@@ -8067,6 +8072,122 @@ namespace Holocron
             TextDetail deets = new TextDetail();
             deets.detail = "Mouse Wheel - Pan Up/Down\nShift + Wheel - Pan Left/Right\nCtrl + Wheel - Zoom In/Out\nMiddle Click - Hold to Pan\nLeft Click - Drag area to zoom to\nRight Click - Save Image\n\n\nWASD - Pan\nQ/E - Zoom In/Out\nR - Reset Zoom\nF - Fit All\n\n\nArrows - Pan\nHome/PgUp - Zoom In/Out\nEnter - Reset Zoom\nInsert - Fit All";
             deets.Show();
+        }
+
+        private void IconPictureBox_Click(object sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if (me.Button == MouseButtons.Right)
+            {
+                if (UnitListBox.Tag is null) return;
+                unit selectedUnit = (unit)UnitListBox.Tag;
+
+                if (IconPictureBox.Image == null) return;
+                SaveFileDialog fil = new SaveFileDialog();
+                fil.Filter = ("Bitmap files (*.bmp)|*.bmp|PNG Files (*.png)|*.png|JPEG files (*.jpg)|*.jpg");
+                fil.Title = "Icon Export";
+                fil.FileName = selectedUnit.icon;
+                if (fil.ShowDialog() == DialogResult.OK)
+                {
+                    System.Drawing.Imaging.ImageFormat format = System.Drawing.Imaging.ImageFormat.Bmp;
+                    switch (fil.FilterIndex)
+                    {
+                        case 1:
+                            format = System.Drawing.Imaging.ImageFormat.Png;
+                            break;
+                        case 2:
+                            format = System.Drawing.Imaging.ImageFormat.Jpeg;
+                            break;
+                    }
+                    IconPictureBox.Image.Save(fil.FileName, format);
+                    MessageBox.Show("Image saved");
+                }
+            }
+        }
+
+        private void AbilityPictureBox_Click(object sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if (me.Button == MouseButtons.Right)
+            {
+                if (UnitAbilityListBox.Tag is null) return;
+                unitability able = (unitability)UnitAbilityListBox.Tag;
+
+                if (IconPictureBox.Image == null) return;
+                SaveFileDialog fil = new SaveFileDialog();
+                fil.Filter = ("Bitmap files (*.bmp)|*.bmp|PNG Files (*.png)|*.png|JPEG files (*.jpg)|*.jpg");
+                fil.Title = "Icon Export";
+                fil.FileName = able.icon;
+                if (fil.ShowDialog() == DialogResult.OK)
+                {
+                    System.Drawing.Imaging.ImageFormat format = System.Drawing.Imaging.ImageFormat.Bmp;
+                    switch (fil.FilterIndex)
+                    {
+                        case 1:
+                            format = System.Drawing.Imaging.ImageFormat.Png;
+                            break;
+                        case 2:
+                            format = System.Drawing.Imaging.ImageFormat.Jpeg;
+                            break;
+                    }
+                    IconPictureBox.Image.Save(fil.FileName, format);
+                    MessageBox.Show("Image saved");
+                }
+            }
+        }
+
+        private void ErrorCheckButton_Click(object sender, EventArgs e)
+        {
+            string errors = "";
+            foreach (unit unit in UnitListBox.Items)
+            {
+                string uniterror = "";
+                if (unit.hpfail) {
+                    int hphp = gethphp(unit.consolidatedhps);
+                    if(hphp < unit.hp)
+                    {
+                        uniterror += ",Hitpoint mismatch: " + hphp + " hardpoints " + unit.hp + " base hp";
+                    }
+                    else
+                    {
+                        uniterror += ",hp warning: " + hphp + " hardpoints " + unit.hp + " base hp";
+                    }
+                }
+                if(entities.modid != "" && (SpaceRadioButton.Checked || SpaceHeroRadioButton.Checked || SpaceStructureRadioButton.Checked))
+                {
+                    (float range, float acctier) = hardpointExamine(unit);
+                    float threshold = 0.01f;
+                    if (range < 0) uniterror += ",Negative Range Adjust";
+                    else
+                    {
+                        float resolution = 50;
+                        resolution = range % resolution;
+                        if (resolution > threshold || resolution < -1*threshold) uniterror += ",Unexpected range adjust " + range;
+                    }
+                    float accmod = acctier % 1;
+                    if (accmod > threshold || accmod < -1 * threshold) uniterror += ",Unexpected accuracy tier " + acctier;
+                }
+                if (uniterror != "") errors += unit.unitname + uniterror + "\n";
+            }
+
+            if(errors == "")
+            {
+                MessageBox.Show("No errors detected");
+            }
+            SaveFileDialog fil = new SaveFileDialog();
+            fil.Filter = ("Text Files (*.txt)|*.txt|All files (*.*)|*.*");
+            fil.Title = "Export Error list";
+            fil.FileName = "Export Errors";
+            if (fil.ShowDialog() == DialogResult.OK)
+            {
+                using (StreamWriter filewrite = new StreamWriter(fil.FileName))
+                {
+                    filewrite.WriteLine(errors);
+                }
+                MessageBox.Show("Error list saved to file");
+            }
         }
 
         //Don't put any functions below here if you want it to still compile

@@ -104,6 +104,7 @@
             this.UnitSearchTextBox = new System.Windows.Forms.TextBox();
             this.UnitRadioButton = new System.Windows.Forms.RadioButton();
             this.Unitpanel = new System.Windows.Forms.Panel();
+            this.ErrorCheckButton = new System.Windows.Forms.Button();
             this.OpenUnitModelButton = new System.Windows.Forms.Button();
             this.OpenUnitFileButton = new System.Windows.Forms.Button();
             this.ExpandAllButton = new System.Windows.Forms.Button();
@@ -1363,6 +1364,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.Unitpanel.AutoScroll = true;
+            this.Unitpanel.Controls.Add(this.ErrorCheckButton);
             this.Unitpanel.Controls.Add(this.OpenUnitModelButton);
             this.Unitpanel.Controls.Add(this.OpenUnitFileButton);
             this.Unitpanel.Controls.Add(this.ExpandAllButton);
@@ -1384,6 +1386,19 @@
             this.Unitpanel.Name = "Unitpanel";
             this.Unitpanel.Size = new System.Drawing.Size(1091, 775);
             this.Unitpanel.TabIndex = 2;
+            // 
+            // ErrorCheckButton
+            // 
+            this.ErrorCheckButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ErrorCheckButton.Location = new System.Drawing.Point(944, 3);
+            this.ErrorCheckButton.Name = "ErrorCheckButton";
+            this.ErrorCheckButton.Size = new System.Drawing.Size(124, 27);
+            this.ErrorCheckButton.TabIndex = 17;
+            this.ErrorCheckButton.Tag = "";
+            this.ErrorCheckButton.Text = "Error Check List...";
+            this.toolTip1.SetToolTip(this.ErrorCheckButton, "Run a check for some inconsistencies in the filtered unit list");
+            this.ErrorCheckButton.UseVisualStyleBackColor = true;
+            this.ErrorCheckButton.Click += new System.EventHandler(this.ErrorCheckButton_Click);
             // 
             // OpenUnitModelButton
             // 
@@ -2184,6 +2199,7 @@
             this.AbilityPictureBox.Size = new System.Drawing.Size(35, 35);
             this.AbilityPictureBox.TabIndex = 11;
             this.AbilityPictureBox.TabStop = false;
+            this.AbilityPictureBox.Click += new System.EventHandler(this.AbilityPictureBox_Click);
             // 
             // AbilityListBox
             // 
@@ -3159,6 +3175,7 @@
             this.IconPictureBox.Size = new System.Drawing.Size(75, 75);
             this.IconPictureBox.TabIndex = 10;
             this.IconPictureBox.TabStop = false;
+            this.IconPictureBox.Click += new System.EventHandler(this.IconPictureBox_Click);
             // 
             // UnitTooltipLabelRichTextBox
             // 
@@ -5822,7 +5839,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Holocron";
-            this.Text = "EaWX Holocron v0.4";
+            this.Text = "EaWX Holocron v0.4a";
             this.Load += new System.EventHandler(this.Holocron_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -6344,6 +6361,7 @@
         private System.Windows.Forms.Label UnitCPLabel;
         private System.Windows.Forms.Label label36;
         private System.Windows.Forms.NumericUpDown GalaxyMapPlanetNameBox;
+        private System.Windows.Forms.Button ErrorCheckButton;
     }
 }
 

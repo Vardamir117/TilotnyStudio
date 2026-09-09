@@ -973,7 +973,7 @@ public static class SharedFunctions
             }
         }
         value = unit.SelectSingleNode("descendant::Projectile_Types");
-        if (!(value is null))
+        if (!(value is null) && value.InnerText != "")
         {
             string proj = value.InnerText.Trim().ToLower();
             builtin.name = "biw";
@@ -5926,9 +5926,10 @@ public static class SharedFunctions
 
     private static (float range, List<projectileAccuracyTemplate> accs) projectileExamine(string projectile, string damageType)
     {//todo check supers on Aggressor and Peltast
-        string lower = projectile.ToLower();
         float expectedRange = 0;
         List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        if (projectile is null) return (expectedRange, ExpectedAccuracy);
+        string lower = projectile.ToLower();
 
         bool ultraheavy = (lower.Contains("_ultraheavy") || lower.Contains("_super"));
         bool heavy = (lower.Contains("_heavy"));
