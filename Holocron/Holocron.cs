@@ -2752,6 +2752,7 @@ namespace Holocron
                 for (int i = selectedUnit.variantchain.Count - 2; i >= 0; i--) VariantLabel.Text += ", " + selectedUnit.variantchain[i];
             }
             else VariantLabel.Text = "";
+            VariantLabel.Text += "\n" + FindDescendants(selectedUnit.unitname, entities.objects);
             setDPSBreakdown(true);
 
             UnitSubunitListbox.Items.Clear();
@@ -4321,6 +4322,8 @@ namespace Holocron
             if (UnitListBox.SelectedItems.Count > 0)
             {
                 unit selected = (unit)UnitListBox.SelectedItem;
+                if (!(IncomingDamageTypeLabel.Tag is null) && (string)IncomingDamageTypeLabel.Tag == selected.unitname) return;//don't loop as selection recalcs sort, which reselects, which...
+                IncomingDamageTypeLabel.Tag = selected.unitname;
                 IncomingDamageLabel.Text = "Effective values against damage type:";
                 bool space = (bool)IncomingDamageBox.Tag;
                 float defmod = getDefenseMod(selected);
@@ -8140,6 +8143,7 @@ namespace Holocron
 
         private void ErrorCheckButton_Click(object sender, EventArgs e)
         {
+            //Todo check more thigs. Missing tags might be useful (e.g. pulse delay or recharge on hardpoints)
             string errors = "";
             foreach (unit unit in UnitListBox.Items)
             {

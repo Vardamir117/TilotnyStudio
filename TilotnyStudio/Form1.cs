@@ -1457,6 +1457,13 @@ namespace TilotnyStudio
                             LifetimeBox.Value = 0;
                             LifetimeBox.Enabled = false;
                         }
+                        if (unit.variantchain.Count > 0)
+                        {
+                            VariantChainLabel.Text = "Variant Chain: " + unit.variantchain[unit.variantchain.Count - 1];
+                            for (int i = unit.variantchain.Count - 2; i >= 0; i--) VariantChainLabel.Text += ", " + unit.variantchain[i];
+                        }
+                        else VariantChainLabel.Text = "";
+                        VariantLabel.Text = FindDescendants(unit.unitname, units);
 
                         string newname = FindNewUnitID(unit.unitname, entities);
                         //todo create funtion to check if any unit in any unit list exists, also call on saving

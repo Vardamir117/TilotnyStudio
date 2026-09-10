@@ -221,7 +221,7 @@
             this.GarrisonValueLabel = new System.Windows.Forms.Label();
             this.GarrisonSlotLabel = new System.Windows.Forms.Label();
             this.IncomingDamageLabel = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
+            this.IncomingDamageTypeLabel = new System.Windows.Forms.Label();
             this.IncomingDamageBox = new System.Windows.Forms.ComboBox();
             this.UnitShieldAvgLabel = new System.Windows.Forms.Label();
             this.UnitHpAvgLabel = new System.Windows.Forms.Label();
@@ -2499,7 +2499,7 @@
             this.UnitStatPanel.Controls.Add(this.GarrisonValueLabel);
             this.UnitStatPanel.Controls.Add(this.GarrisonSlotLabel);
             this.UnitStatPanel.Controls.Add(this.IncomingDamageLabel);
-            this.UnitStatPanel.Controls.Add(this.label3);
+            this.UnitStatPanel.Controls.Add(this.IncomingDamageTypeLabel);
             this.UnitStatPanel.Controls.Add(this.IncomingDamageBox);
             this.UnitStatPanel.Controls.Add(this.UnitShieldAvgLabel);
             this.UnitStatPanel.Controls.Add(this.UnitHpAvgLabel);
@@ -2760,14 +2760,14 @@
         "amount of raw damage that can be taken for the type.\r\nInfinite health represents" +
         " 0 damage taken");
             // 
-            // label3
+            // IncomingDamageTypeLabel
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(753, 195);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(120, 13);
-            this.label3.TabIndex = 31;
-            this.label3.Text = "Incoming Damage Type";
+            this.IncomingDamageTypeLabel.AutoSize = true;
+            this.IncomingDamageTypeLabel.Location = new System.Drawing.Point(753, 195);
+            this.IncomingDamageTypeLabel.Name = "IncomingDamageTypeLabel";
+            this.IncomingDamageTypeLabel.Size = new System.Drawing.Size(120, 13);
+            this.IncomingDamageTypeLabel.TabIndex = 31;
+            this.IncomingDamageTypeLabel.Text = "Incoming Damage Type";
             // 
             // IncomingDamageBox
             // 
@@ -3069,7 +3069,7 @@
             this.UnitTextPanel.Controls.Add(this.UnitPopLabel);
             this.UnitTextPanel.Location = new System.Drawing.Point(35, 33);
             this.UnitTextPanel.Name = "UnitTextPanel";
-            this.UnitTextPanel.Size = new System.Drawing.Size(1039, 367);
+            this.UnitTextPanel.Size = new System.Drawing.Size(1039, 377);
             this.UnitTextPanel.TabIndex = 0;
             this.UnitTextPanel.Tag = "";
             // 
@@ -3100,7 +3100,7 @@
             // 
             this.VariantLabel.AutoSize = true;
             this.VariantLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.VariantLabel.Location = new System.Drawing.Point(3, 341);
+            this.VariantLabel.Location = new System.Drawing.Point(3, 340);
             this.VariantLabel.Name = "VariantLabel";
             this.VariantLabel.Size = new System.Drawing.Size(10, 13);
             this.VariantLabel.TabIndex = 17;
@@ -5839,7 +5839,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Holocron";
-            this.Text = "EaWX Holocron v0.4a";
+            this.Text = "EaWX Holocron v0.4b";
             this.Load += new System.EventHandler(this.Holocron_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -5995,7 +5995,7 @@
         private System.Windows.Forms.Label UnitShieldAvgLabel;
         private System.Windows.Forms.Label UnitHpAvgLabel;
         private System.Windows.Forms.Label IncomingDamageLabel;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label IncomingDamageTypeLabel;
         private System.Windows.Forms.ComboBox IncomingDamageBox;
         private System.Windows.Forms.Label UnitSortTypeLabel;
         private System.Windows.Forms.Button UnitSortButton;

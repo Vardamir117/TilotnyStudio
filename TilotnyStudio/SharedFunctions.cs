@@ -6110,6 +6110,24 @@ public static class SharedFunctions
         return (range, acctier);
     }
 
+    public static string FindDescendants(string unitname, List<unit> src, bool furst = true)
+    {
+        string corenne = "";
+        bool first = furst;
+        foreach(unit unit in src)
+        {
+            if(unit.variantbase == unitname)
+            {
+                if (furst) furst = false;
+                else corenne += ", ";
+                corenne += unit.unitname;
+                corenne += FindDescendants(unit.unitname, src, false);
+            }
+        }
+        if (corenne != "" && first) corenne = "Descendants: " + corenne;
+        return corenne;
+    }
+
 }
 
 public struct MEGentry
