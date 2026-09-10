@@ -117,6 +117,9 @@ namespace Holocron
             public static bool in_galaxy_map = false;
             public static int map_mouse_x;
             public static int map_mouse_y;
+
+            public static string incomingTypeType = "";
+            public static string incomingTypeUnit = "";
         }
 
         public static class nav
@@ -4322,7 +4325,11 @@ namespace Holocron
             if (UnitListBox.SelectedItems.Count > 0)
             {
                 unit selected = (unit)UnitListBox.SelectedItem;
-                if (!(IncomingDamageTypeLabel.Tag is null) && (string)IncomingDamageTypeLabel.Tag == selected.unitname) return;//don't loop as selection recalcs sort, which reselects, which...
+                bool stoploop = false;
+                if (globals.incomingTypeUnit == selected.unitname && globals.incomingTypeType == IncomingDamageBox.Text) stoploop = true;//don't loop as selection recalcs sort, which reselects, which...
+                globals.incomingTypeUnit = selected.unitname;
+                if (IncomingDamageBox.SelectedIndex >= 0) globals.incomingTypeType = IncomingDamageBox.Text;
+                if (stoploop) return;
                 IncomingDamageTypeLabel.Tag = selected.unitname;
                 IncomingDamageLabel.Text = "Effective values against damage type:";
                 bool space = (bool)IncomingDamageBox.Tag;
