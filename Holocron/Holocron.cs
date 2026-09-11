@@ -135,12 +135,14 @@ namespace Holocron
         public struct weighted_type_entry
         {
             public string name;
+            public string typeName;
             public ulong categoryMask;
             public float weight;
         }
 
         public struct weighted_type_list
         {
+            public string enemyName;
             public ulong enemyCategoryMask;
             public List<weighted_type_entry> weightedTypes;
         }
@@ -461,6 +463,7 @@ namespace Holocron
             string[] lines = readModTextLinesOrMeg("Scripts\\Library\\PGAICommands.lua", entities);
             bool inContrastFunction = false;
 
+            string currentEnemyName = null;
             ulong currentEnemyCategoryMask = 0UL;
             List<string> currentNames = null;
             List<float> currentWeights = null;
@@ -479,7 +482,8 @@ namespace Holocron
 
                 if (line.StartsWith("EnemyContrastTypes[_e_cnt]"))
                 {
-                    currentEnemyCategoryMask = AutoResolveGetCategoryMask(LuaParser.ExtractLuaQuotedValue(line));
+                    currentEnemyName = LuaParser.ExtractLuaQuotedValue(line);
+                    currentEnemyCategoryMask = AutoResolveGetCategoryMask(currentEnemyName);
                     continue;
                 }
 
@@ -494,6 +498,7 @@ namespace Holocron
                     currentWeights = LuaParser.ParseLuaFloatArray(line);
 
                     weighted_type_list list = new weighted_type_list();
+                    list.enemyName = currentEnemyName;
                     list.enemyCategoryMask = currentEnemyCategoryMask;
                     list.weightedTypes = new List<weighted_type_entry>();
                     for (int i = 0; i < Math.Min(currentNames.Count, currentWeights.Count); i++)
@@ -501,6 +506,7 @@ namespace Holocron
                         weighted_type_entry entry = new weighted_type_entry();
                         entry.name = currentNames[i];
                         entry.categoryMask = AutoResolveGetCategoryMask(currentNames[i]);
+                        entry.typeName = entry.categoryMask == 0UL ? currentNames[i] : null;
                         entry.weight = currentWeights[i];
                         list.weightedTypes.Add(entry);
                     }
@@ -793,6 +799,15 @@ namespace Holocron
 
         private void MainTab_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (MainTab.SelectedTab == tabAutoResolve)
+            {
+                AutoResolveCreateEditableTables();
+                FillAutoResolveUnitSelection();
+                FillAutoResolveFactionSelection();
+                AutoResolveRefreshSideListboxes();
+                return;
+            }
+
             switch (MainTab.SelectedIndex)
             {
                 case (int)historymaintabs.faction:
@@ -1356,9 +1371,8 @@ namespace Holocron
                 for (int j = 0; j < weighted.weightedTypes.Count; j++)
                 {
                     weighted_type_entry weightedType = weighted.weightedTypes[j];
-                    if (weightedType.categoryMask == 0UL) continue;
-
                     TargetContrastPort.WeightedCategoryEntry entry = new TargetContrastPort.WeightedCategoryEntry();
+                    entry.TypeName = weightedType.typeName;
                     entry.CategoryMask = weightedType.categoryMask;
                     entry.Weight = weightedType.weight;
                     weights.Add(entry);
@@ -1381,6 +1395,7 @@ namespace Holocron
             {
                 weighted_type_list weighted = globals.ContrastValues.friendlyTypeLists[i];
                 string enemyCategory = AutoResolveGetDisplayCategoryFromMask(weighted.enemyCategoryMask);
+                if (string.IsNullOrWhiteSpace(enemyCategory)) enemyCategory = weighted.enemyName;
                 if (string.IsNullOrWhiteSpace(enemyCategory)) enemyCategory = "(none)";
 
                 if (weighted.weightedTypes == null || weighted.weightedTypes.Count == 0)
@@ -1451,13 +1466,16 @@ namespace Holocron
                 unit garrisonUnit;
                 if (!unitLookup.TryGetValue(spawn.unitname, out garrisonUnit)) continue;
 
-                float garrisonPower = Math.Max(0f, garrisonUnit.cp) * count;
+                float garrisonPower = garrisonUnit.cp;
                 if (garrisonPower <= 0f) continue;
 
                 ulong garrisonCategoryMask = AutoResolveGetCategoryMask(garrisonUnit.categories);
                 string garrisonCategory = AutoResolveGetDisplayCategoryFromMask(garrisonCategoryMask, garrisonUnit.categories);
 
-                entries.Add(new AutoResolveBuiltObject { CategoryMask = garrisonCategoryMask, ContrastCategory = garrisonCategory, Power = garrisonPower });
+                for (int i = 0; i < count; i++)
+                {
+                    entries.Add(new AutoResolveBuiltObject { TypeName = garrisonUnit.unitname, CategoryMask = garrisonCategoryMask, ContrastCategory = garrisonCategory, Power = garrisonPower });
+                }
             }
 
             return entries;
@@ -1577,19 +1595,31 @@ namespace Holocron
 
         private void FillAutoResolveFactionSelection()
         {
-            if (AutoResolveSideAFactionComboBox.Items.Count == 0)
+            int previousA = AutoResolveSideAFactionComboBox.SelectedIndex;
+            int previousB = AutoResolveSideBFactionComboBox.SelectedIndex;
+
+            AutoResolveSideAFactionComboBox.Items.Clear();
+            AutoResolveSideBFactionComboBox.Items.Clear();
+
+            foreach (faction faction in entities.factions)
             {
-                foreach (faction faction in entities.factions)
-                {
-                    AutoResolveSideAFactionComboBox.Items.Add(faction.textname);
-                    AutoResolveSideBFactionComboBox.Items.Add(faction.textname);
-                }
+                AutoResolveSideAFactionComboBox.Items.Add(faction.textname);
+                AutoResolveSideBFactionComboBox.Items.Add(faction.textname);
             }
 
-            if (AutoResolveSideAFactionComboBox.Items.Count == 0) return;
+            if (AutoResolveSideAFactionComboBox.Items.Count == 0)
+            {
+                autoResolveSideAOwner = -1;
+                autoResolveSideBOwner = -1;
+                AutoResolveUpdatePowerDisplay();
+                return;
+            }
 
-            if (autoResolveSideAOwner < 0 || autoResolveSideAOwner >= AutoResolveSideAFactionComboBox.Items.Count) autoResolveSideAOwner = 0;
-            if (autoResolveSideBOwner < 0 || autoResolveSideBOwner >= AutoResolveSideBFactionComboBox.Items.Count) autoResolveSideBOwner = Math.Min(1, AutoResolveSideBFactionComboBox.Items.Count - 1);
+            if (previousA >= 0 && previousA < AutoResolveSideAFactionComboBox.Items.Count) autoResolveSideAOwner = previousA;
+            else if (autoResolveSideAOwner < 0 || autoResolveSideAOwner >= AutoResolveSideAFactionComboBox.Items.Count) autoResolveSideAOwner = 0;
+
+            if (previousB >= 0 && previousB < AutoResolveSideBFactionComboBox.Items.Count) autoResolveSideBOwner = previousB;
+            else if (autoResolveSideBOwner < 0 || autoResolveSideBOwner >= AutoResolveSideBFactionComboBox.Items.Count) autoResolveSideBOwner = Math.Min(1, AutoResolveSideBFactionComboBox.Items.Count - 1);
 
             AutoResolveSideAFactionComboBox.SelectedIndex = autoResolveSideAOwner;
             AutoResolveSideBFactionComboBox.SelectedIndex = autoResolveSideBOwner;
@@ -1618,6 +1648,12 @@ namespace Holocron
             AutoResolveUpdatePowerDisplay();
         }
 
+        private bool AutoResolveIsStructure(unit sourceUnit)
+        {
+            return sourceUnit.behaviors != null && sourceUnit.behaviors.Any(x =>
+                string.Equals(x, "DUMMY_GROUND_STRUCTURE", StringComparison.OrdinalIgnoreCase));
+        }
+
         private List<AutoResolveCombatant> AutoResolveBuildCombatants(List<autoresolve_entry> entries, int owner, bool space)
         {
             List<AutoResolveCombatant> combatants = new List<AutoResolveCombatant>();
@@ -1625,21 +1661,33 @@ namespace Holocron
                 .GroupBy(x => x.unitname, StringComparer.OrdinalIgnoreCase)
                 .ToDictionary(x => x.Key, x => x.First(), StringComparer.OrdinalIgnoreCase);
 
+            int techIndex = AutoResolveGetSelectedTechLevel();
+
+            int combatantIndex = 0;
+
             foreach (autoresolve_entry entry in entries)
             {
-                for (int i = 0; i < Math.Max(1, entry.quantity); i++)
+                int entryCount = Math.Max(1, entry.quantity);
+
+                for (int i = 0; i < entryCount; i++)
                 {
                     AutoResolveCombatant combatant = new AutoResolveCombatant();
                     combatant.TypeName = entry.source.unitname;
                     combatant.OwnerId = owner;
-                    combatant.Power = Math.Max(0.01f, entry.source.cp);
+                    combatant.Power = entry.source.cp;
                     combatant.IsEscort = false;
                     combatant.IsTransport = entry.source.behaviors != null && entry.source.behaviors.Contains("TRANSPORT");
+                    combatant.ContainsNamedHero = entry.source.hero;
+                    combatant.IsDummyGroundStructure = AutoResolveIsStructure(entry.source);
+                    combatant.IsDummyStarBase = entry.source.behaviors != null && entry.source.behaviors.Contains("DUMMY_STAR_BASE");
+                    combatant.IsPlanet = string.Equals(entry.source.elementName, "Planet", StringComparison.OrdinalIgnoreCase);
+                    combatant.IsSuperWeapon = entry.source.modebehaviors != null && entry.source.modebehaviors.Contains("TACTICAL_SUPER_WEAPON");
+                    combatant.IsSuperWeaponKiller = entry.source.superweaponkiller;
+                    combatant.IsPlayableFaction = owner >= 0 && owner < entities.factions.Count ? entities.factions[owner].playable : true;
+                    combatant.AddGarrison = true;
+                    combatant.CategoryMask = AutoResolveGetCategoryMask(entry.source.categories);
+                    combatant.CombatantIndex = combatantIndex++;
 
-                    ulong combatantCategoryMask = AutoResolveGetCategoryMask(entry.source.categories);
-                    combatant.CategoryMask = combatantCategoryMask;
-
-                    int techIndex = AutoResolveGetSelectedTechLevel();
                     List<AutoResolveBuiltObject> garrisonEntries = AutoResolveBuildGarrisonEntries(entry.source, unitLookup, techIndex);
                     for (int g = 0; g < garrisonEntries.Count; g++)
                     {
@@ -1647,7 +1695,13 @@ namespace Holocron
                         if (garrisonEntry == null || garrisonEntry.Power <= 0f) continue;
 
                         combatant.GarrisonPower += garrisonEntry.Power;
-                        combatant.GarrisonEntries.Add(new AutoResolveBuiltObject { CategoryMask = garrisonEntry.CategoryMask, ContrastCategory = garrisonEntry.ContrastCategory, Power = garrisonEntry.Power });
+                        combatant.GarrisonEntries.Add(new AutoResolveBuiltObject
+                        {
+                            TypeName = garrisonEntry.TypeName,
+                            CategoryMask = garrisonEntry.CategoryMask,
+                            ContrastCategory = garrisonEntry.ContrastCategory,
+                            Power = garrisonEntry.Power
+                        });
                     }
 
                     combatants.Add(combatant);
@@ -1802,6 +1856,10 @@ namespace Holocron
 
             AutoResolveClass sim = new AutoResolveClass();
             sim.ContrastWeightProvider = AutoResolveGetContrastWeights;
+            sim.ContrastCategoryOrder = (globals.ContrastValues.friendlyTypeLists ?? new List<weighted_type_list>())
+                .Where(x => x.enemyCategoryMask != 0UL)
+                .Select(x => x.enemyCategoryMask)
+                .ToList();
             sim.CategoryMaskProvider = AutoResolveGetCategoryMask;
             sim.CategoryNameProvider = mask => AutoResolveGetDisplayCategoryFromMask(mask);
             AutoResolveApplyAttritionInputs(sim);
