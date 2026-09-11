@@ -56,11 +56,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DevChoice.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DevChoice.Designer.cs">
+      <DependentUpon>DevChoice.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="IconPickAndAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="IconPickAndAdd.Designer.cs">
+      <DependentUpon>IconPickAndAdd.cs</DependentUpon>
     </Compile>
     <Compile Include="Loading.cs">
       <SubType>Form</SubType>
@@ -77,8 +89,15 @@
     <Compile Include="SubmodSetup.designer.cs">
       <DependentUpon>SubmodSetup.cs</DependentUpon>
     </Compile>
+    <Compile Include="TGASharpLib.cs" />
+    <EmbeddedResource Include="DevChoice.resx">
+      <DependentUpon>DevChoice.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IconPickAndAdd.resx">
+      <DependentUpon>IconPickAndAdd.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Loading.resx">
       <DependentUpon>Loading.cs</DependentUpon>

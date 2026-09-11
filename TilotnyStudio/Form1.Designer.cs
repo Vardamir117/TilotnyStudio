@@ -32,6 +32,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.ShowAllModsCheckBox = new System.Windows.Forms.CheckBox();
+            this.ModStackButton = new System.Windows.Forms.Button();
             this.CopyModButton = new System.Windows.Forms.Button();
             this.DeleteButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
@@ -40,19 +42,22 @@
             this.ModListBox = new System.Windows.Forms.ListBox();
             this.button1 = new System.Windows.Forms.Button();
             this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
+            this.BoardingCheckBox = new System.Windows.Forms.CheckBox();
             this.PathfindCheckBox = new System.Windows.Forms.CheckBox();
             this.FactionPanel = new System.Windows.Forms.Panel();
             this.label4 = new System.Windows.Forms.Label();
             this.PopulationBox = new System.Windows.Forms.NumericUpDown();
             this.SaveFactionButton = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.HeroTeamRadioButton = new System.Windows.Forms.RadioButton();
+            this.SpaceHeroRadioButton = new System.Windows.Forms.RadioButton();
+            this.SkirmishListBox = new System.Windows.Forms.ListBox();
             this.UnitRadioButton = new System.Windows.Forms.RadioButton();
             this.AffilListBox = new System.Windows.Forms.ListBox();
             this.label11 = new System.Windows.Forms.Label();
             this.FactionFilterClearButton = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
-            this.FactionFilerListBox = new System.Windows.Forms.ListBox();
+            this.FactionFilterListBox = new System.Windows.Forms.ListBox();
             this.AffilClearButton = new System.Windows.Forms.Button();
             this.UnitTabControl = new System.Windows.Forms.TabControl();
             this.AffilTab = new System.Windows.Forms.TabPage();
@@ -73,6 +78,19 @@
             this.ReqStructLabel = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.StatsTab = new System.Windows.Forms.TabPage();
+            this.HPExamineFinePrintLabel = new System.Windows.Forms.Label();
+            this.CalcLabel = new System.Windows.Forms.Label();
+            this.RangeAdjustBox = new System.Windows.Forms.NumericUpDown();
+            this.RangeAdjustLabel = new System.Windows.Forms.Label();
+            this.AccTierLabel = new System.Windows.Forms.Label();
+            this.AccTierBox = new System.Windows.Forms.NumericUpDown();
+            this.ApplyCalcButton = new System.Windows.Forms.Button();
+            this.PopCalcLabel = new System.Windows.Forms.Label();
+            this.PopCalcBox = new System.Windows.Forms.NumericUpDown();
+            this.CPCalcLabel = new System.Windows.Forms.Label();
+            this.CPCalcBox = new System.Windows.Forms.NumericUpDown();
+            this.CPLabel = new System.Windows.Forms.Label();
+            this.CPBox = new System.Windows.Forms.NumericUpDown();
             this.SuperShipCheckBox = new System.Windows.Forms.CheckBox();
             this.hpFinePrintLabel = new System.Windows.Forms.Label();
             this.CrewLabel = new System.Windows.Forms.Label();
@@ -109,11 +127,29 @@
             this.hpBox = new System.Windows.Forms.NumericUpDown();
             this.label6 = new System.Windows.Forms.Label();
             this.StatTemplateCheckBox = new System.Windows.Forms.CheckBox();
+            this.UnitCopyTab = new System.Windows.Forms.TabPage();
+            this.label16 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
+            this.CopyUnitDescTextBox = new System.Windows.Forms.RichTextBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.CopyUnitUsernameTextBox = new System.Windows.Forms.TextBox();
+            this.UnitNewStatsCheckBox = new System.Windows.Forms.CheckBox();
+            this.label13 = new System.Windows.Forms.Label();
+            this.CopyUnitNameTextBox = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
+            this.NewUnitHPFileTextBox = new System.Windows.Forms.TextBox();
+            this.NewUnitHPFileCheckBox = new System.Windows.Forms.CheckBox();
+            this.UnitHPCopyFileComboBox = new System.Windows.Forms.ComboBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.NewUnitFileTextBox = new System.Windows.Forms.TextBox();
+            this.NewUnitFileCheckBox = new System.Windows.Forms.CheckBox();
+            this.UnitCopyFileComboBox = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
             this.AffilSearchTextBox = new System.Windows.Forms.TextBox();
             this.GroundRadioButton = new System.Windows.Forms.RadioButton();
             this.SpaceRadioButton = new System.Windows.Forms.RadioButton();
             this.SaveUnitButton = new System.Windows.Forms.Button();
+            this.GroundHeroRadioButton = new System.Windows.Forms.RadioButton();
             this.tabHidePanel = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.LaunchOptionsIndicator = new System.Windows.Forms.TextBox();
@@ -123,6 +159,9 @@
             this.VersionComboBox = new System.Windows.Forms.ComboBox();
             this.ModFilesButton = new System.Windows.Forms.Button();
             this.SuperToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.VariantChainLabel = new System.Windows.Forms.Label();
+            this.VariantLabel = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -132,6 +171,11 @@
             this.AffilTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.InfluenceNumericUpDown)).BeginInit();
             this.StatsTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.RangeAdjustBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AccTierBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PopCalcBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CPCalcBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CPBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.CrewBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.LifetimeBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ConcurrentBox)).BeginInit();
@@ -145,6 +189,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.CostBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.PopBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.hpBox)).BeginInit();
+            this.UnitCopyTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -164,6 +209,8 @@
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.ShowAllModsCheckBox);
+            this.tabPage1.Controls.Add(this.ModStackButton);
             this.tabPage1.Controls.Add(this.CopyModButton);
             this.tabPage1.Controls.Add(this.DeleteButton);
             this.tabPage1.Controls.Add(this.label3);
@@ -179,6 +226,32 @@
             this.tabPage1.Text = "Mod";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // ShowAllModsCheckBox
+            // 
+            this.ShowAllModsCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ShowAllModsCheckBox.AutoSize = true;
+            this.ShowAllModsCheckBox.Location = new System.Drawing.Point(3, 631);
+            this.ShowAllModsCheckBox.Name = "ShowAllModsCheckBox";
+            this.ShowAllModsCheckBox.Size = new System.Drawing.Size(130, 17);
+            this.ShowAllModsCheckBox.TabIndex = 8;
+            this.ShowAllModsCheckBox.Text = "Show All Tilotny Mods";
+            this.SuperToolTip.SetToolTip(this.ShowAllModsCheckBox, "Wthout this checked, only Tilotny mods made with the same highest priority mod st" +
+        "ack entry will be shown");
+            this.ShowAllModsCheckBox.UseVisualStyleBackColor = true;
+            this.ShowAllModsCheckBox.CheckedChanged += new System.EventHandler(this.ShowAllModsCheckBox_CheckedChanged);
+            // 
+            // ModStackButton
+            // 
+            this.ModStackButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ModStackButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ModStackButton.Location = new System.Drawing.Point(254, 631);
+            this.ModStackButton.Name = "ModStackButton";
+            this.ModStackButton.Size = new System.Drawing.Size(182, 35);
+            this.ModStackButton.TabIndex = 7;
+            this.ModStackButton.Text = "Change Mod Stack...";
+            this.ModStackButton.UseVisualStyleBackColor = true;
+            this.ModStackButton.Click += new System.EventHandler(this.ModStackButton_Click);
+            // 
             // CopyModButton
             // 
             this.CopyModButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -188,7 +261,6 @@
             this.CopyModButton.TabIndex = 6;
             this.CopyModButton.Text = "Copy Submod...";
             this.CopyModButton.UseVisualStyleBackColor = true;
-            this.CopyModButton.Visible = false;
             this.CopyModButton.Click += new System.EventHandler(this.CopyModButton_Click);
             // 
             // DeleteButton
@@ -254,7 +326,7 @@
             // 
             // tabPage2
             // 
-            this.tabPage2.Controls.Add(this.checkBox1);
+            this.tabPage2.Controls.Add(this.BoardingCheckBox);
             this.tabPage2.Controls.Add(this.PathfindCheckBox);
             this.tabPage2.Controls.Add(this.FactionPanel);
             this.tabPage2.Controls.Add(this.label4);
@@ -268,18 +340,18 @@
             this.tabPage2.Text = "Faction/Pop";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // BoardingCheckBox
             // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox1.Location = new System.Drawing.Point(952, 9);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(182, 24);
-            this.checkBox1.TabIndex = 9;
-            this.checkBox1.Text = "Guaranteed Boarding";
-            this.SuperToolTip.SetToolTip(this.checkBox1, "Toggle 100% capture chance on Boarding Shuttles");
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.Visible = false;
+            this.BoardingCheckBox.AutoSize = true;
+            this.BoardingCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BoardingCheckBox.Location = new System.Drawing.Point(952, 9);
+            this.BoardingCheckBox.Name = "BoardingCheckBox";
+            this.BoardingCheckBox.Size = new System.Drawing.Size(182, 24);
+            this.BoardingCheckBox.TabIndex = 9;
+            this.BoardingCheckBox.Text = "Guaranteed Boarding";
+            this.SuperToolTip.SetToolTip(this.BoardingCheckBox, "Toggle 100% capture chance on Boarding Shuttles");
+            this.BoardingCheckBox.UseVisualStyleBackColor = true;
+            this.BoardingCheckBox.Visible = false;
             // 
             // PathfindCheckBox
             // 
@@ -345,12 +417,15 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.HeroTeamRadioButton);
+            this.tabPage3.Controls.Add(this.SpaceHeroRadioButton);
+            this.tabPage3.Controls.Add(this.SkirmishListBox);
             this.tabPage3.Controls.Add(this.UnitRadioButton);
             this.tabPage3.Controls.Add(this.AffilListBox);
             this.tabPage3.Controls.Add(this.label11);
             this.tabPage3.Controls.Add(this.FactionFilterClearButton);
             this.tabPage3.Controls.Add(this.label7);
-            this.tabPage3.Controls.Add(this.FactionFilerListBox);
+            this.tabPage3.Controls.Add(this.FactionFilterListBox);
             this.tabPage3.Controls.Add(this.AffilClearButton);
             this.tabPage3.Controls.Add(this.UnitTabControl);
             this.tabPage3.Controls.Add(this.label5);
@@ -358,6 +433,7 @@
             this.tabPage3.Controls.Add(this.GroundRadioButton);
             this.tabPage3.Controls.Add(this.SpaceRadioButton);
             this.tabPage3.Controls.Add(this.SaveUnitButton);
+            this.tabPage3.Controls.Add(this.GroundHeroRadioButton);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Size = new System.Drawing.Size(1318, 672);
@@ -365,11 +441,56 @@
             this.tabPage3.Text = "Units";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // HeroTeamRadioButton
+            // 
+            this.HeroTeamRadioButton.AutoSize = true;
+            this.HeroTeamRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HeroTeamRadioButton.Location = new System.Drawing.Point(0, 248);
+            this.HeroTeamRadioButton.Name = "HeroTeamRadioButton";
+            this.HeroTeamRadioButton.Size = new System.Drawing.Size(109, 22);
+            this.HeroTeamRadioButton.TabIndex = 79;
+            this.HeroTeamRadioButton.Text = "Hero Teams";
+            this.HeroTeamRadioButton.UseVisualStyleBackColor = true;
+            this.HeroTeamRadioButton.Visible = false;
+            this.HeroTeamRadioButton.CheckedChanged += new System.EventHandler(this.HeroTeamRadioButton_CheckedChanged);
+            // 
+            // SpaceHeroRadioButton
+            // 
+            this.SpaceHeroRadioButton.AutoSize = true;
+            this.SpaceHeroRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SpaceHeroRadioButton.Location = new System.Drawing.Point(0, 223);
+            this.SpaceHeroRadioButton.Name = "SpaceHeroRadioButton";
+            this.SpaceHeroRadioButton.Size = new System.Drawing.Size(121, 22);
+            this.SpaceHeroRadioButton.TabIndex = 78;
+            this.SpaceHeroRadioButton.Text = "Space Heroes";
+            this.SpaceHeroRadioButton.UseVisualStyleBackColor = true;
+            this.SpaceHeroRadioButton.Visible = false;
+            this.SpaceHeroRadioButton.CheckedChanged += new System.EventHandler(this.SpaceHeroRadioButton_CheckedChanged);
+            // 
+            // SkirmishListBox
+            // 
+            this.SkirmishListBox.FormattingEnabled = true;
+            this.SkirmishListBox.Items.AddRange(new object[] {
+            "Standard Units",
+            "Skirmish Units",
+            "Company Transports",
+            "Mission Units",
+            "Ground War Dummies",
+            "Survival Units",
+            "Captured Versions",
+            "Templates"});
+            this.SkirmishListBox.Location = new System.Drawing.Point(3, 301);
+            this.SkirmishListBox.Name = "SkirmishListBox";
+            this.SkirmishListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.SkirmishListBox.Size = new System.Drawing.Size(120, 108);
+            this.SkirmishListBox.TabIndex = 77;
+            this.SkirmishListBox.SelectedIndexChanged += new System.EventHandler(this.SkirmishListBox_SelectedIndexChanged);
+            // 
             // UnitRadioButton
             // 
             this.UnitRadioButton.AutoSize = true;
             this.UnitRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UnitRadioButton.Location = new System.Drawing.Point(3, 150);
+            this.UnitRadioButton.Location = new System.Drawing.Point(0, 198);
             this.UnitRadioButton.Name = "UnitRadioButton";
             this.UnitRadioButton.Size = new System.Drawing.Size(114, 22);
             this.UnitRadioButton.TabIndex = 43;
@@ -392,9 +513,10 @@
             // 
             // label11
             // 
+            this.label11.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label11.AutoSize = true;
             this.label11.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label11.Location = new System.Drawing.Point(5, 594);
+            this.label11.Location = new System.Drawing.Point(5, 653);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(115, 12);
             this.label11.TabIndex = 42;
@@ -403,7 +525,7 @@
             // FactionFilterClearButton
             // 
             this.FactionFilterClearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FactionFilterClearButton.Location = new System.Drawing.Point(8, 268);
+            this.FactionFilterClearButton.Location = new System.Drawing.Point(11, 431);
             this.FactionFilterClearButton.Name = "FactionFilterClearButton";
             this.FactionFilterClearButton.Size = new System.Drawing.Size(97, 27);
             this.FactionFilterClearButton.TabIndex = 33;
@@ -415,26 +537,28 @@
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(4, 249);
+            this.label7.Location = new System.Drawing.Point(7, 412);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(105, 20);
             this.label7.TabIndex = 30;
             this.label7.Text = "Faction Filter:";
             // 
-            // FactionFilerListBox
+            // FactionFilterListBox
             // 
-            this.FactionFilerListBox.FormattingEnabled = true;
-            this.FactionFilerListBox.Location = new System.Drawing.Point(3, 301);
-            this.FactionFilerListBox.Name = "FactionFilerListBox";
-            this.FactionFilerListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.FactionFilerListBox.Size = new System.Drawing.Size(120, 290);
-            this.FactionFilerListBox.TabIndex = 29;
-            this.FactionFilerListBox.SelectedIndexChanged += new System.EventHandler(this.FactionFilerListBox_SelectedIndexChanged);
+            this.FactionFilterListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.FactionFilterListBox.FormattingEnabled = true;
+            this.FactionFilterListBox.Location = new System.Drawing.Point(3, 464);
+            this.FactionFilterListBox.Name = "FactionFilterListBox";
+            this.FactionFilterListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.FactionFilterListBox.Size = new System.Drawing.Size(120, 186);
+            this.FactionFilterListBox.TabIndex = 29;
+            this.FactionFilterListBox.SelectedIndexChanged += new System.EventHandler(this.FactionFilterListBox_SelectedIndexChanged);
             // 
             // AffilClearButton
             // 
             this.AffilClearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AffilClearButton.Location = new System.Drawing.Point(16, 178);
+            this.AffilClearButton.Location = new System.Drawing.Point(17, 95);
             this.AffilClearButton.Name = "AffilClearButton";
             this.AffilClearButton.Size = new System.Drawing.Size(89, 52);
             this.AffilClearButton.TabIndex = 28;
@@ -449,6 +573,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.UnitTabControl.Controls.Add(this.AffilTab);
             this.UnitTabControl.Controls.Add(this.StatsTab);
+            this.UnitTabControl.Controls.Add(this.UnitCopyTab);
             this.UnitTabControl.Location = new System.Drawing.Point(387, 3);
             this.UnitTabControl.Name = "UnitTabControl";
             this.UnitTabControl.SelectedIndex = 0;
@@ -671,6 +796,21 @@
             // 
             // StatsTab
             // 
+            this.StatsTab.Controls.Add(this.VariantLabel);
+            this.StatsTab.Controls.Add(this.VariantChainLabel);
+            this.StatsTab.Controls.Add(this.HPExamineFinePrintLabel);
+            this.StatsTab.Controls.Add(this.CalcLabel);
+            this.StatsTab.Controls.Add(this.RangeAdjustBox);
+            this.StatsTab.Controls.Add(this.RangeAdjustLabel);
+            this.StatsTab.Controls.Add(this.AccTierLabel);
+            this.StatsTab.Controls.Add(this.AccTierBox);
+            this.StatsTab.Controls.Add(this.ApplyCalcButton);
+            this.StatsTab.Controls.Add(this.PopCalcLabel);
+            this.StatsTab.Controls.Add(this.PopCalcBox);
+            this.StatsTab.Controls.Add(this.CPCalcLabel);
+            this.StatsTab.Controls.Add(this.CPCalcBox);
+            this.StatsTab.Controls.Add(this.CPLabel);
+            this.StatsTab.Controls.Add(this.CPBox);
             this.StatsTab.Controls.Add(this.SuperShipCheckBox);
             this.StatsTab.Controls.Add(this.hpFinePrintLabel);
             this.StatsTab.Controls.Add(this.CrewLabel);
@@ -714,11 +854,183 @@
             this.StatsTab.Text = "Stats";
             this.StatsTab.UseVisualStyleBackColor = true;
             // 
+            // HPExamineFinePrintLabel
+            // 
+            this.HPExamineFinePrintLabel.AutoSize = true;
+            this.HPExamineFinePrintLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HPExamineFinePrintLabel.Location = new System.Drawing.Point(18, 267);
+            this.HPExamineFinePrintLabel.Name = "HPExamineFinePrintLabel";
+            this.HPExamineFinePrintLabel.Size = new System.Drawing.Size(415, 12);
+            this.HPExamineFinePrintLabel.TabIndex = 87;
+            this.HPExamineFinePrintLabel.Text = "Range Adjust and Accuracy Tier are used to calculate new weapon values and are no" +
+    "t saved directly\r\n";
+            // 
+            // CalcLabel
+            // 
+            this.CalcLabel.AutoSize = true;
+            this.CalcLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CalcLabel.Location = new System.Drawing.Point(720, 56);
+            this.CalcLabel.Name = "CalcLabel";
+            this.CalcLabel.Size = new System.Drawing.Size(156, 20);
+            this.CalcLabel.TabIndex = 86;
+            this.CalcLabel.Text = "Calculated Changes:";
+            // 
+            // RangeAdjustBox
+            // 
+            this.RangeAdjustBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.RangeAdjustBox.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.RangeAdjustBox.Location = new System.Drawing.Point(129, 233);
+            this.RangeAdjustBox.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.RangeAdjustBox.Name = "RangeAdjustBox";
+            this.RangeAdjustBox.Size = new System.Drawing.Size(71, 26);
+            this.RangeAdjustBox.TabIndex = 84;
+            this.RangeAdjustBox.Visible = false;
+            // 
+            // RangeAdjustLabel
+            // 
+            this.RangeAdjustLabel.AutoSize = true;
+            this.RangeAdjustLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.RangeAdjustLabel.Location = new System.Drawing.Point(16, 235);
+            this.RangeAdjustLabel.Name = "RangeAdjustLabel";
+            this.RangeAdjustLabel.Size = new System.Drawing.Size(110, 20);
+            this.RangeAdjustLabel.TabIndex = 85;
+            this.RangeAdjustLabel.Text = "Range Adjust:";
+            this.RangeAdjustLabel.Visible = false;
+            // 
+            // AccTierLabel
+            // 
+            this.AccTierLabel.AutoSize = true;
+            this.AccTierLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AccTierLabel.Location = new System.Drawing.Point(250, 235);
+            this.AccTierLabel.Name = "AccTierLabel";
+            this.AccTierLabel.Size = new System.Drawing.Size(108, 20);
+            this.AccTierLabel.TabIndex = 83;
+            this.AccTierLabel.Text = "Accuracy Tier:";
+            // 
+            // AccTierBox
+            // 
+            this.AccTierBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AccTierBox.Location = new System.Drawing.Point(390, 233);
+            this.AccTierBox.Maximum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.AccTierBox.Minimum = new decimal(new int[] {
+            2,
+            0,
+            0,
+            -2147483648});
+            this.AccTierBox.Name = "AccTierBox";
+            this.AccTierBox.Size = new System.Drawing.Size(71, 26);
+            this.AccTierBox.TabIndex = 82;
+            this.AccTierBox.ValueChanged += new System.EventHandler(this.RecalcCPHook);
+            // 
+            // ApplyCalcButton
+            // 
+            this.ApplyCalcButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ApplyCalcButton.Location = new System.Drawing.Point(701, 236);
+            this.ApplyCalcButton.Name = "ApplyCalcButton";
+            this.ApplyCalcButton.Size = new System.Drawing.Size(207, 35);
+            this.ApplyCalcButton.TabIndex = 81;
+            this.ApplyCalcButton.Text = "Apply Calculated Changes";
+            this.ApplyCalcButton.UseVisualStyleBackColor = true;
+            this.ApplyCalcButton.Click += new System.EventHandler(this.ApplyCalcButton_Click);
+            // 
+            // PopCalcLabel
+            // 
+            this.PopCalcLabel.AutoSize = true;
+            this.PopCalcLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PopCalcLabel.Location = new System.Drawing.Point(723, 93);
+            this.PopCalcLabel.Name = "PopCalcLabel";
+            this.PopCalcLabel.Size = new System.Drawing.Size(88, 20);
+            this.PopCalcLabel.TabIndex = 41;
+            this.PopCalcLabel.Text = "Population:";
+            // 
+            // PopCalcBox
+            // 
+            this.PopCalcBox.Enabled = false;
+            this.PopCalcBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PopCalcBox.Location = new System.Drawing.Point(836, 91);
+            this.PopCalcBox.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.PopCalcBox.Name = "PopCalcBox";
+            this.PopCalcBox.Size = new System.Drawing.Size(72, 26);
+            this.PopCalcBox.TabIndex = 40;
+            // 
+            // CPCalcLabel
+            // 
+            this.CPCalcLabel.AutoSize = true;
+            this.CPCalcLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CPCalcLabel.Location = new System.Drawing.Point(697, 203);
+            this.CPCalcLabel.Name = "CPCalcLabel";
+            this.CPCalcLabel.Size = new System.Drawing.Size(117, 20);
+            this.CPCalcLabel.TabIndex = 39;
+            this.CPCalcLabel.Text = "Combat Power:";
+            // 
+            // CPCalcBox
+            // 
+            this.CPCalcBox.Enabled = false;
+            this.CPCalcBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CPCalcBox.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.CPCalcBox.Location = new System.Drawing.Point(837, 201);
+            this.CPCalcBox.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.CPCalcBox.Name = "CPCalcBox";
+            this.CPCalcBox.Size = new System.Drawing.Size(71, 26);
+            this.CPCalcBox.TabIndex = 38;
+            // 
+            // CPLabel
+            // 
+            this.CPLabel.AutoSize = true;
+            this.CPLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CPLabel.Location = new System.Drawing.Point(250, 199);
+            this.CPLabel.Name = "CPLabel";
+            this.CPLabel.Size = new System.Drawing.Size(117, 20);
+            this.CPLabel.TabIndex = 37;
+            this.CPLabel.Text = "Combat Power:";
+            // 
+            // CPBox
+            // 
+            this.CPBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CPBox.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.CPBox.Location = new System.Drawing.Point(390, 197);
+            this.CPBox.Maximum = new decimal(new int[] {
+            999999,
+            0,
+            0,
+            0});
+            this.CPBox.Name = "CPBox";
+            this.CPBox.Size = new System.Drawing.Size(71, 26);
+            this.CPBox.TabIndex = 36;
+            // 
             // SuperShipCheckBox
             // 
             this.SuperShipCheckBox.AutoSize = true;
             this.SuperShipCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SuperShipCheckBox.Location = new System.Drawing.Point(656, 12);
+            this.SuperShipCheckBox.Location = new System.Drawing.Point(463, 56);
             this.SuperShipCheckBox.Name = "SuperShipCheckBox";
             this.SuperShipCheckBox.Size = new System.Drawing.Size(229, 24);
             this.SuperShipCheckBox.TabIndex = 35;
@@ -731,7 +1043,7 @@
             // 
             this.hpFinePrintLabel.AutoSize = true;
             this.hpFinePrintLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.hpFinePrintLabel.Location = new System.Drawing.Point(21, 254);
+            this.hpFinePrintLabel.Location = new System.Drawing.Point(21, 349);
             this.hpFinePrintLabel.Name = "hpFinePrintLabel";
             this.hpFinePrintLabel.Size = new System.Drawing.Size(202, 12);
             this.hpFinePrintLabel.TabIndex = 34;
@@ -741,7 +1053,7 @@
             // 
             this.CrewLabel.AutoSize = true;
             this.CrewLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CrewLabel.Location = new System.Drawing.Point(16, 155);
+            this.CrewLabel.Location = new System.Drawing.Point(16, 199);
             this.CrewLabel.Name = "CrewLabel";
             this.CrewLabel.Size = new System.Drawing.Size(86, 20);
             this.CrewLabel.TabIndex = 33;
@@ -756,7 +1068,7 @@
             0,
             0,
             0});
-            this.CrewBox.Location = new System.Drawing.Point(129, 153);
+            this.CrewBox.Location = new System.Drawing.Point(129, 197);
             this.CrewBox.Maximum = new decimal(new int[] {
             999999,
             0,
@@ -771,7 +1083,7 @@
             // 
             this.LifetimeLabel.AutoSize = true;
             this.LifetimeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LifetimeLabel.Location = new System.Drawing.Point(556, 366);
+            this.LifetimeLabel.Location = new System.Drawing.Point(556, 461);
             this.LifetimeLabel.Name = "LifetimeLabel";
             this.LifetimeLabel.Size = new System.Drawing.Size(145, 20);
             this.LifetimeLabel.TabIndex = 31;
@@ -780,7 +1092,7 @@
             // LifetimeBox
             // 
             this.LifetimeBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LifetimeBox.Location = new System.Drawing.Point(724, 364);
+            this.LifetimeBox.Location = new System.Drawing.Point(724, 459);
             this.LifetimeBox.Name = "LifetimeBox";
             this.LifetimeBox.Size = new System.Drawing.Size(72, 26);
             this.LifetimeBox.TabIndex = 30;
@@ -789,7 +1101,7 @@
             // 
             this.ConcurrentLabel.AutoSize = true;
             this.ConcurrentLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ConcurrentLabel.Location = new System.Drawing.Point(556, 323);
+            this.ConcurrentLabel.Location = new System.Drawing.Point(556, 418);
             this.ConcurrentLabel.Name = "ConcurrentLabel";
             this.ConcurrentLabel.Size = new System.Drawing.Size(168, 20);
             this.ConcurrentLabel.TabIndex = 29;
@@ -798,7 +1110,7 @@
             // ConcurrentBox
             // 
             this.ConcurrentBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ConcurrentBox.Location = new System.Drawing.Point(724, 321);
+            this.ConcurrentBox.Location = new System.Drawing.Point(724, 416);
             this.ConcurrentBox.Name = "ConcurrentBox";
             this.ConcurrentBox.Size = new System.Drawing.Size(72, 26);
             this.ConcurrentBox.TabIndex = 28;
@@ -807,7 +1119,7 @@
             // 
             this.TurnLabel.AutoSize = true;
             this.TurnLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TurnLabel.Location = new System.Drawing.Point(19, 358);
+            this.TurnLabel.Location = new System.Drawing.Point(19, 453);
             this.TurnLabel.Name = "TurnLabel";
             this.TurnLabel.Size = new System.Drawing.Size(45, 20);
             this.TurnLabel.TabIndex = 27;
@@ -817,7 +1129,7 @@
             // 
             this.TurnBox.DecimalPlaces = 2;
             this.TurnBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TurnBox.Location = new System.Drawing.Point(127, 356);
+            this.TurnBox.Location = new System.Drawing.Point(127, 451);
             this.TurnBox.Name = "TurnBox";
             this.TurnBox.Size = new System.Drawing.Size(72, 26);
             this.TurnBox.TabIndex = 26;
@@ -826,7 +1138,7 @@
             // 
             this.AccelLabel.AutoSize = true;
             this.AccelLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AccelLabel.Location = new System.Drawing.Point(19, 401);
+            this.AccelLabel.Location = new System.Drawing.Point(19, 496);
             this.AccelLabel.Name = "AccelLabel";
             this.AccelLabel.Size = new System.Drawing.Size(101, 20);
             this.AccelLabel.TabIndex = 25;
@@ -836,7 +1148,7 @@
             // 
             this.AccelBox.DecimalPlaces = 2;
             this.AccelBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AccelBox.Location = new System.Drawing.Point(127, 399);
+            this.AccelBox.Location = new System.Drawing.Point(127, 494);
             this.AccelBox.Name = "AccelBox";
             this.AccelBox.Size = new System.Drawing.Size(72, 26);
             this.AccelBox.TabIndex = 24;
@@ -845,7 +1157,7 @@
             // 
             this.MinSpeedLabel.AutoSize = true;
             this.MinSpeedLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MinSpeedLabel.Location = new System.Drawing.Point(232, 315);
+            this.MinSpeedLabel.Location = new System.Drawing.Point(232, 410);
             this.MinSpeedLabel.Name = "MinSpeedLabel";
             this.MinSpeedLabel.Size = new System.Drawing.Size(89, 20);
             this.MinSpeedLabel.TabIndex = 23;
@@ -861,7 +1173,7 @@
             0,
             0,
             65536});
-            this.MinSpeedBox.Location = new System.Drawing.Point(336, 313);
+            this.MinSpeedBox.Location = new System.Drawing.Point(336, 408);
             this.MinSpeedBox.Name = "MinSpeedBox";
             this.MinSpeedBox.Size = new System.Drawing.Size(72, 26);
             this.MinSpeedBox.TabIndex = 22;
@@ -871,7 +1183,7 @@
             // 
             this.SpeedLabel.AutoSize = true;
             this.SpeedLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SpeedLabel.Location = new System.Drawing.Point(19, 315);
+            this.SpeedLabel.Location = new System.Drawing.Point(19, 410);
             this.SpeedLabel.Name = "SpeedLabel";
             this.SpeedLabel.Size = new System.Drawing.Size(60, 20);
             this.SpeedLabel.TabIndex = 21;
@@ -881,7 +1193,7 @@
             // 
             this.SpeedBox.DecimalPlaces = 2;
             this.SpeedBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SpeedBox.Location = new System.Drawing.Point(127, 313);
+            this.SpeedBox.Location = new System.Drawing.Point(127, 408);
             this.SpeedBox.Name = "SpeedBox";
             this.SpeedBox.Size = new System.Drawing.Size(72, 26);
             this.SpeedBox.TabIndex = 20;
@@ -890,7 +1202,7 @@
             // 
             this.RegenLabel.AutoSize = true;
             this.RegenLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RegenLabel.Location = new System.Drawing.Point(556, 276);
+            this.RegenLabel.Location = new System.Drawing.Point(556, 371);
             this.RegenLabel.Name = "RegenLabel";
             this.RegenLabel.Size = new System.Drawing.Size(158, 20);
             this.RegenLabel.TabIndex = 19;
@@ -900,7 +1212,7 @@
             // 
             this.RegenBox.DecimalPlaces = 1;
             this.RegenBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RegenBox.Location = new System.Drawing.Point(724, 274);
+            this.RegenBox.Location = new System.Drawing.Point(724, 369);
             this.RegenBox.Maximum = new decimal(new int[] {
             99999,
             0,
@@ -909,12 +1221,13 @@
             this.RegenBox.Name = "RegenBox";
             this.RegenBox.Size = new System.Drawing.Size(72, 26);
             this.RegenBox.TabIndex = 18;
+            this.RegenBox.ValueChanged += new System.EventHandler(this.RecalcCPHook);
             // 
             // ShieldLabel
             // 
             this.ShieldLabel.AutoSize = true;
             this.ShieldLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ShieldLabel.Location = new System.Drawing.Point(19, 272);
+            this.ShieldLabel.Location = new System.Drawing.Point(19, 367);
             this.ShieldLabel.Name = "ShieldLabel";
             this.ShieldLabel.Size = new System.Drawing.Size(105, 20);
             this.ShieldLabel.TabIndex = 17;
@@ -928,7 +1241,7 @@
             0,
             0,
             0});
-            this.ShieldBox.Location = new System.Drawing.Point(127, 270);
+            this.ShieldBox.Location = new System.Drawing.Point(127, 365);
             this.ShieldBox.Maximum = new decimal(new int[] {
             999999999,
             0,
@@ -937,12 +1250,13 @@
             this.ShieldBox.Name = "ShieldBox";
             this.ShieldBox.Size = new System.Drawing.Size(72, 26);
             this.ShieldBox.TabIndex = 16;
+            this.ShieldBox.ValueChanged += new System.EventHandler(this.RecalcCPHook);
             // 
             // STypeLabel
             // 
             this.STypeLabel.AutoSize = true;
             this.STypeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.STypeLabel.Location = new System.Drawing.Point(232, 272);
+            this.STypeLabel.Location = new System.Drawing.Point(232, 367);
             this.STypeLabel.Name = "STypeLabel";
             this.STypeLabel.Size = new System.Drawing.Size(95, 20);
             this.STypeLabel.TabIndex = 15;
@@ -953,16 +1267,17 @@
             this.STypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.STypeComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.STypeComboBox.FormattingEnabled = true;
-            this.STypeComboBox.Location = new System.Drawing.Point(336, 268);
+            this.STypeComboBox.Location = new System.Drawing.Point(336, 363);
             this.STypeComboBox.Name = "STypeComboBox";
             this.STypeComboBox.Size = new System.Drawing.Size(207, 28);
             this.STypeComboBox.TabIndex = 14;
+            this.STypeComboBox.SelectedIndexChanged += new System.EventHandler(this.RecalcCPHook);
             // 
             // ATypeLabel
             // 
             this.ATypeLabel.AutoSize = true;
             this.ATypeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ATypeLabel.Location = new System.Drawing.Point(232, 228);
+            this.ATypeLabel.Location = new System.Drawing.Point(232, 323);
             this.ATypeLabel.Name = "ATypeLabel";
             this.ATypeLabel.Size = new System.Drawing.Size(94, 20);
             this.ATypeLabel.TabIndex = 13;
@@ -973,16 +1288,17 @@
             this.ATypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ATypeComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ATypeComboBox.FormattingEnabled = true;
-            this.ATypeComboBox.Location = new System.Drawing.Point(336, 225);
+            this.ATypeComboBox.Location = new System.Drawing.Point(336, 320);
             this.ATypeComboBox.Name = "ATypeComboBox";
             this.ATypeComboBox.Size = new System.Drawing.Size(207, 28);
             this.ATypeComboBox.TabIndex = 12;
+            this.ATypeComboBox.SelectedIndexChanged += new System.EventHandler(this.RecalcCPHook);
             // 
             // BuildTimeLabel
             // 
             this.BuildTimeLabel.AutoSize = true;
             this.BuildTimeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BuildTimeLabel.Location = new System.Drawing.Point(16, 115);
+            this.BuildTimeLabel.Location = new System.Drawing.Point(16, 159);
             this.BuildTimeLabel.Name = "BuildTimeLabel";
             this.BuildTimeLabel.Size = new System.Drawing.Size(110, 20);
             this.BuildTimeLabel.TabIndex = 11;
@@ -996,7 +1312,7 @@
             0,
             0,
             0});
-            this.BuildTimeBox.Location = new System.Drawing.Point(129, 113);
+            this.BuildTimeBox.Location = new System.Drawing.Point(129, 157);
             this.BuildTimeBox.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -1010,7 +1326,7 @@
             // 
             this.CostLabel.AutoSize = true;
             this.CostLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CostLabel.Location = new System.Drawing.Point(16, 81);
+            this.CostLabel.Location = new System.Drawing.Point(16, 125);
             this.CostLabel.Name = "CostLabel";
             this.CostLabel.Size = new System.Drawing.Size(46, 20);
             this.CostLabel.TabIndex = 9;
@@ -1024,7 +1340,7 @@
             0,
             0,
             0});
-            this.CostBox.Location = new System.Drawing.Point(129, 79);
+            this.CostBox.Location = new System.Drawing.Point(129, 123);
             this.CostBox.Maximum = new decimal(new int[] {
             9999999,
             0,
@@ -1038,7 +1354,7 @@
             // 
             this.PopLabel.AutoSize = true;
             this.PopLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PopLabel.Location = new System.Drawing.Point(15, 45);
+            this.PopLabel.Location = new System.Drawing.Point(15, 89);
             this.PopLabel.Name = "PopLabel";
             this.PopLabel.Size = new System.Drawing.Size(88, 20);
             this.PopLabel.TabIndex = 7;
@@ -1047,7 +1363,7 @@
             // PopBox
             // 
             this.PopBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PopBox.Location = new System.Drawing.Point(128, 43);
+            this.PopBox.Location = new System.Drawing.Point(128, 87);
             this.PopBox.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -1061,7 +1377,7 @@
             // 
             this.GUIRowLabel.AutoSize = true;
             this.GUIRowLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GUIRowLabel.Location = new System.Drawing.Point(250, 40);
+            this.GUIRowLabel.Location = new System.Drawing.Point(250, 84);
             this.GUIRowLabel.Name = "GUIRowLabel";
             this.GUIRowLabel.Size = new System.Drawing.Size(84, 20);
             this.GUIRowLabel.TabIndex = 5;
@@ -1075,7 +1391,7 @@
             this.GUIRowComboBox.Items.AddRange(new object[] {
             "Top Row",
             "Bottom Row"});
-            this.GUIRowComboBox.Location = new System.Drawing.Point(340, 37);
+            this.GUIRowComboBox.Location = new System.Drawing.Point(340, 81);
             this.GUIRowComboBox.Name = "GUIRowComboBox";
             this.GUIRowComboBox.Size = new System.Drawing.Size(121, 28);
             this.GUIRowComboBox.TabIndex = 4;
@@ -1084,7 +1400,7 @@
             // 
             this.hpLabel.AutoSize = true;
             this.hpLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.hpLabel.Location = new System.Drawing.Point(19, 229);
+            this.hpLabel.Location = new System.Drawing.Point(19, 324);
             this.hpLabel.Name = "hpLabel";
             this.hpLabel.Size = new System.Drawing.Size(81, 20);
             this.hpLabel.TabIndex = 3;
@@ -1098,7 +1414,7 @@
             0,
             0,
             0});
-            this.hpBox.Location = new System.Drawing.Point(127, 227);
+            this.hpBox.Location = new System.Drawing.Point(127, 322);
             this.hpBox.Maximum = new decimal(new int[] {
             999999999,
             0,
@@ -1107,12 +1423,13 @@
             this.hpBox.Name = "hpBox";
             this.hpBox.Size = new System.Drawing.Size(72, 26);
             this.hpBox.TabIndex = 2;
+            this.hpBox.ValueChanged += new System.EventHandler(this.RecalcCPHook);
             // 
             // label6
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(15, 193);
+            this.label6.Location = new System.Drawing.Point(15, 288);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(424, 20);
             this.label6.TabIndex = 1;
@@ -1122,12 +1439,192 @@
             // 
             this.StatTemplateCheckBox.AutoSize = true;
             this.StatTemplateCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.StatTemplateCheckBox.Location = new System.Drawing.Point(17, 12);
+            this.StatTemplateCheckBox.Location = new System.Drawing.Point(17, 56);
             this.StatTemplateCheckBox.Name = "StatTemplateCheckBox";
             this.StatTemplateCheckBox.Size = new System.Drawing.Size(306, 24);
             this.StatTemplateCheckBox.TabIndex = 0;
             this.StatTemplateCheckBox.Text = "Apply edits to all templates and variants";
             this.StatTemplateCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // UnitCopyTab
+            // 
+            this.UnitCopyTab.Controls.Add(this.label16);
+            this.UnitCopyTab.Controls.Add(this.label15);
+            this.UnitCopyTab.Controls.Add(this.CopyUnitDescTextBox);
+            this.UnitCopyTab.Controls.Add(this.label14);
+            this.UnitCopyTab.Controls.Add(this.CopyUnitUsernameTextBox);
+            this.UnitCopyTab.Controls.Add(this.UnitNewStatsCheckBox);
+            this.UnitCopyTab.Controls.Add(this.label13);
+            this.UnitCopyTab.Controls.Add(this.CopyUnitNameTextBox);
+            this.UnitCopyTab.Controls.Add(this.label12);
+            this.UnitCopyTab.Controls.Add(this.NewUnitHPFileTextBox);
+            this.UnitCopyTab.Controls.Add(this.NewUnitHPFileCheckBox);
+            this.UnitCopyTab.Controls.Add(this.UnitHPCopyFileComboBox);
+            this.UnitCopyTab.Controls.Add(this.label10);
+            this.UnitCopyTab.Controls.Add(this.NewUnitFileTextBox);
+            this.UnitCopyTab.Controls.Add(this.NewUnitFileCheckBox);
+            this.UnitCopyTab.Controls.Add(this.UnitCopyFileComboBox);
+            this.UnitCopyTab.Location = new System.Drawing.Point(4, 22);
+            this.UnitCopyTab.Name = "UnitCopyTab";
+            this.UnitCopyTab.Size = new System.Drawing.Size(920, 634);
+            this.UnitCopyTab.TabIndex = 2;
+            this.UnitCopyTab.Text = "Copy";
+            this.UnitCopyTab.UseVisualStyleBackColor = true;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label16.Location = new System.Drawing.Point(216, 135);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(242, 16);
+            this.label16.TabIndex = 15;
+            this.label16.Text = "New unit will have its affiiliations cleared";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label15.Location = new System.Drawing.Point(25, 225);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(124, 20);
+            this.label15.TabIndex = 14;
+            this.label15.Text = "New Description";
+            // 
+            // CopyUnitDescTextBox
+            // 
+            this.CopyUnitDescTextBox.Location = new System.Drawing.Point(220, 223);
+            this.CopyUnitDescTextBox.Name = "CopyUnitDescTextBox";
+            this.CopyUnitDescTextBox.Size = new System.Drawing.Size(476, 171);
+            this.CopyUnitDescTextBox.TabIndex = 13;
+            this.CopyUnitDescTextBox.Text = "";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label14.Location = new System.Drawing.Point(25, 176);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(180, 20);
+            this.label14.TabIndex = 12;
+            this.label14.Text = "New User Facing Name:";
+            // 
+            // CopyUnitUsernameTextBox
+            // 
+            this.CopyUnitUsernameTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CopyUnitUsernameTextBox.Location = new System.Drawing.Point(220, 173);
+            this.CopyUnitUsernameTextBox.Name = "CopyUnitUsernameTextBox";
+            this.CopyUnitUsernameTextBox.Size = new System.Drawing.Size(476, 26);
+            this.CopyUnitUsernameTextBox.TabIndex = 11;
+            // 
+            // UnitNewStatsCheckBox
+            // 
+            this.UnitNewStatsCheckBox.AutoSize = true;
+            this.UnitNewStatsCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitNewStatsCheckBox.Location = new System.Drawing.Point(29, 146);
+            this.UnitNewStatsCheckBox.Name = "UnitNewStatsCheckBox";
+            this.UnitNewStatsCheckBox.Size = new System.Drawing.Size(149, 24);
+            this.UnitNewStatsCheckBox.TabIndex = 10;
+            this.UnitNewStatsCheckBox.Text = "Deep Copy Stats";
+            this.SuperToolTip.SetToolTip(this.UnitNewStatsCheckBox, "Make a complete copy of the unit stats so they can be changed independently of th" +
+        "e original");
+            this.UnitNewStatsCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label13.Location = new System.Drawing.Point(25, 99);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(123, 20);
+            this.label13.TabIndex = 9;
+            this.label13.Text = "New Unit Name:";
+            // 
+            // CopyUnitNameTextBox
+            // 
+            this.CopyUnitNameTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CopyUnitNameTextBox.Location = new System.Drawing.Point(220, 96);
+            this.CopyUnitNameTextBox.Name = "CopyUnitNameTextBox";
+            this.CopyUnitNameTextBox.Size = new System.Drawing.Size(476, 26);
+            this.CopyUnitNameTextBox.TabIndex = 8;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.Location = new System.Drawing.Point(24, 514);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(190, 20);
+            this.label12.TabIndex = 7;
+            this.label12.Text = "File to copy hardpoints to:";
+            // 
+            // NewUnitHPFileTextBox
+            // 
+            this.NewUnitHPFileTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NewUnitHPFileTextBox.Location = new System.Drawing.Point(220, 542);
+            this.NewUnitHPFileTextBox.Name = "NewUnitHPFileTextBox";
+            this.NewUnitHPFileTextBox.Size = new System.Drawing.Size(476, 26);
+            this.NewUnitHPFileTextBox.TabIndex = 6;
+            // 
+            // NewUnitHPFileCheckBox
+            // 
+            this.NewUnitHPFileCheckBox.AutoSize = true;
+            this.NewUnitHPFileCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NewUnitHPFileCheckBox.Location = new System.Drawing.Point(29, 544);
+            this.NewUnitHPFileCheckBox.Name = "NewUnitHPFileCheckBox";
+            this.NewUnitHPFileCheckBox.Size = new System.Drawing.Size(166, 24);
+            this.NewUnitHPFileCheckBox.TabIndex = 5;
+            this.NewUnitHPFileCheckBox.Text = "Create New HP File";
+            this.NewUnitHPFileCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // UnitHPCopyFileComboBox
+            // 
+            this.UnitHPCopyFileComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.UnitHPCopyFileComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitHPCopyFileComboBox.FormattingEnabled = true;
+            this.UnitHPCopyFileComboBox.Location = new System.Drawing.Point(220, 511);
+            this.UnitHPCopyFileComboBox.Name = "UnitHPCopyFileComboBox";
+            this.UnitHPCopyFileComboBox.Size = new System.Drawing.Size(476, 28);
+            this.UnitHPCopyFileComboBox.TabIndex = 4;
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label10.Location = new System.Drawing.Point(24, 17);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(141, 20);
+            this.label10.TabIndex = 3;
+            this.label10.Text = "File to copy unit to:";
+            // 
+            // NewUnitFileTextBox
+            // 
+            this.NewUnitFileTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NewUnitFileTextBox.Location = new System.Drawing.Point(220, 45);
+            this.NewUnitFileTextBox.Name = "NewUnitFileTextBox";
+            this.NewUnitFileTextBox.Size = new System.Drawing.Size(476, 26);
+            this.NewUnitFileTextBox.TabIndex = 2;
+            // 
+            // NewUnitFileCheckBox
+            // 
+            this.NewUnitFileCheckBox.AutoSize = true;
+            this.NewUnitFileCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NewUnitFileCheckBox.Location = new System.Drawing.Point(29, 47);
+            this.NewUnitFileCheckBox.Name = "NewUnitFileCheckBox";
+            this.NewUnitFileCheckBox.Size = new System.Drawing.Size(173, 24);
+            this.NewUnitFileCheckBox.TabIndex = 1;
+            this.NewUnitFileCheckBox.Text = "Create New Unit File";
+            this.NewUnitFileCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // UnitCopyFileComboBox
+            // 
+            this.UnitCopyFileComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.UnitCopyFileComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitCopyFileComboBox.FormattingEnabled = true;
+            this.UnitCopyFileComboBox.Location = new System.Drawing.Point(220, 14);
+            this.UnitCopyFileComboBox.Name = "UnitCopyFileComboBox";
+            this.UnitCopyFileComboBox.Size = new System.Drawing.Size(476, 28);
+            this.UnitCopyFileComboBox.TabIndex = 0;
             // 
             // label5
             // 
@@ -1152,7 +1649,7 @@
             // 
             this.GroundRadioButton.AutoSize = true;
             this.GroundRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.GroundRadioButton.Location = new System.Drawing.Point(3, 119);
+            this.GroundRadioButton.Location = new System.Drawing.Point(0, 173);
             this.GroundRadioButton.Name = "GroundRadioButton";
             this.GroundRadioButton.Size = new System.Drawing.Size(126, 22);
             this.GroundRadioButton.TabIndex = 12;
@@ -1164,7 +1661,7 @@
             // 
             this.SpaceRadioButton.AutoSize = true;
             this.SpaceRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SpaceRadioButton.Location = new System.Drawing.Point(3, 89);
+            this.SpaceRadioButton.Location = new System.Drawing.Point(0, 148);
             this.SpaceRadioButton.Name = "SpaceRadioButton";
             this.SpaceRadioButton.Size = new System.Drawing.Size(106, 22);
             this.SpaceRadioButton.TabIndex = 11;
@@ -1182,6 +1679,19 @@
             this.SaveUnitButton.Text = "Save Changes";
             this.SaveUnitButton.UseVisualStyleBackColor = true;
             this.SaveUnitButton.Click += new System.EventHandler(this.SaveUnitButton_Click);
+            // 
+            // GroundHeroRadioButton
+            // 
+            this.GroundHeroRadioButton.AutoSize = true;
+            this.GroundHeroRadioButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GroundHeroRadioButton.Location = new System.Drawing.Point(0, 273);
+            this.GroundHeroRadioButton.Name = "GroundHeroRadioButton";
+            this.GroundHeroRadioButton.Size = new System.Drawing.Size(129, 22);
+            this.GroundHeroRadioButton.TabIndex = 80;
+            this.GroundHeroRadioButton.Text = "Ground Heroes";
+            this.GroundHeroRadioButton.UseVisualStyleBackColor = true;
+            this.GroundHeroRadioButton.Visible = false;
+            this.GroundHeroRadioButton.CheckedChanged += new System.EventHandler(this.GroundHeroRadioButton_CheckedChanged);
             // 
             // tabHidePanel
             // 
@@ -1204,11 +1714,11 @@
             // LaunchOptionsIndicator
             // 
             this.LaunchOptionsIndicator.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.LaunchOptionsIndicator.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.LaunchOptionsIndicator.Location = new System.Drawing.Point(569, 720);
+            this.LaunchOptionsIndicator.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.LaunchOptionsIndicator.Location = new System.Drawing.Point(562, 725);
             this.LaunchOptionsIndicator.Name = "LaunchOptionsIndicator";
             this.LaunchOptionsIndicator.ReadOnly = true;
-            this.LaunchOptionsIndicator.Size = new System.Drawing.Size(401, 26);
+            this.LaunchOptionsIndicator.Size = new System.Drawing.Size(423, 20);
             this.LaunchOptionsIndicator.TabIndex = 8;
             // 
             // ModNameLabel
@@ -1269,6 +1779,31 @@
             this.ModFilesButton.UseVisualStyleBackColor = true;
             this.ModFilesButton.Click += new System.EventHandler(this.ModFilesButton_Click);
             // 
+            // contextMenuStrip2
+            // 
+            this.contextMenuStrip2.Name = "contextMenuStrip2";
+            this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
+            // 
+            // VariantChainLabel
+            // 
+            this.VariantChainLabel.AutoSize = true;
+            this.VariantChainLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.VariantChainLabel.Location = new System.Drawing.Point(17, 10);
+            this.VariantChainLabel.Name = "VariantChainLabel";
+            this.VariantChainLabel.Size = new System.Drawing.Size(10, 13);
+            this.VariantChainLabel.TabIndex = 88;
+            this.VariantChainLabel.Text = ".";
+            // 
+            // VariantLabel
+            // 
+            this.VariantLabel.AutoSize = true;
+            this.VariantLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.VariantLabel.Location = new System.Drawing.Point(16, 35);
+            this.VariantLabel.Name = "VariantLabel";
+            this.VariantLabel.Size = new System.Drawing.Size(10, 13);
+            this.VariantLabel.TabIndex = 89;
+            this.VariantLabel.Text = ".";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1284,7 +1819,7 @@
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "Tilotny Submodding Studio";
+            this.Text = "Tilotny Submodding Studio v0.4b";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
@@ -1301,6 +1836,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.InfluenceNumericUpDown)).EndInit();
             this.StatsTab.ResumeLayout(false);
             this.StatsTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.RangeAdjustBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.AccTierBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PopCalcBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CPCalcBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CPBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.CrewBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.LifetimeBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ConcurrentBox)).EndInit();
@@ -1314,6 +1854,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.CostBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.PopBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.hpBox)).EndInit();
+            this.UnitCopyTab.ResumeLayout(false);
+            this.UnitCopyTab.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1366,7 +1908,7 @@
         private System.Windows.Forms.Panel UnitAffilPanel;
         private System.Windows.Forms.Label CorpLabel;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.ListBox FactionFilerListBox;
+        private System.Windows.Forms.ListBox FactionFilterListBox;
         private System.Windows.Forms.Button FactionFilterClearButton;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label FilterLabel;
@@ -1409,11 +1951,50 @@
         private System.Windows.Forms.Label CrewLabel;
         private System.Windows.Forms.NumericUpDown CrewBox;
         private System.Windows.Forms.Label hpFinePrintLabel;
-        private System.Windows.Forms.CheckBox checkBox1;
+        private System.Windows.Forms.CheckBox BoardingCheckBox;
         private System.Windows.Forms.ToolTip SuperToolTip;
         private System.Windows.Forms.Button CopyModButton;
         private System.Windows.Forms.CheckBox SuperShipCheckBox;
         private System.Windows.Forms.CheckBox SuppressCheckBox;
+        private System.Windows.Forms.Button ModStackButton;
+        private System.Windows.Forms.ListBox SkirmishListBox;
+        private System.Windows.Forms.RadioButton HeroTeamRadioButton;
+        private System.Windows.Forms.RadioButton SpaceHeroRadioButton;
+        private System.Windows.Forms.RadioButton GroundHeroRadioButton;
+        private System.Windows.Forms.CheckBox ShowAllModsCheckBox;
+        private System.Windows.Forms.TabPage UnitCopyTab;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox NewUnitFileTextBox;
+        private System.Windows.Forms.CheckBox NewUnitFileCheckBox;
+        private System.Windows.Forms.ComboBox UnitCopyFileComboBox;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox NewUnitHPFileTextBox;
+        private System.Windows.Forms.CheckBox NewUnitHPFileCheckBox;
+        private System.Windows.Forms.ComboBox UnitHPCopyFileComboBox;
+        private System.Windows.Forms.CheckBox UnitNewStatsCheckBox;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.TextBox CopyUnitNameTextBox;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.TextBox CopyUnitUsernameTextBox;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.RichTextBox CopyUnitDescTextBox;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Button ApplyCalcButton;
+        private System.Windows.Forms.Label PopCalcLabel;
+        private System.Windows.Forms.NumericUpDown PopCalcBox;
+        private System.Windows.Forms.Label CPCalcLabel;
+        private System.Windows.Forms.NumericUpDown CPCalcBox;
+        private System.Windows.Forms.Label CPLabel;
+        private System.Windows.Forms.NumericUpDown CPBox;
+        private System.Windows.Forms.Label CalcLabel;
+        private System.Windows.Forms.NumericUpDown RangeAdjustBox;
+        private System.Windows.Forms.Label RangeAdjustLabel;
+        private System.Windows.Forms.Label AccTierLabel;
+        private System.Windows.Forms.NumericUpDown AccTierBox;
+        private System.Windows.Forms.Label HPExamineFinePrintLabel;
+        private System.Windows.Forms.Label VariantLabel;
+        private System.Windows.Forms.Label VariantChainLabel;
     }
 }
 

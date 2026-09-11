@@ -5,6 +5,9 @@ using System.Linq;
 using System.IO;
 using System.Xml;
 using System.Drawing;
+using System.Windows.Forms;
+
+//todo wrap file reading in exceptions to say which file it is
 
 //https://modtools.petrolution.net/docs/MegFileFormat 
 //todo not finding cin_projectiles in vanilla, not handiling weapons swap that defines two projectiles
@@ -23,6 +26,8 @@ using System.Drawing;
 //add unit/hero/structure radio to where used. Go ahead and parse the latter two? Hero can cover ground and space with the open tab telling me which
 
 //convert various touppers and tolowers to String.Equals(, , StringComparison.OrdinalIgnoreCase) for that sweet microoptimization in key locations
+
+//reqfile should be folded into the general system used for other required files
 
 public static class SharedFunctions
 {
@@ -83,11 +88,76 @@ public static class SharedFunctions
         return corenne;
     }
 
+    public static string readModTextOrMeg(string corepath, entities entities)
+    {
+        string corenne = "";
+
+        string filepath = getModFile(corepath, entities);
+        if (filepath != "") corenne = File.ReadAllText(filepath);
+        else {
+            byte[] megfile = SharedFunctions.getFileFromMegs(corepath, entities);
+            if (megfile.Length > 0)
+            {
+                corenne = System.Text.Encoding.Default.GetString(megfile);
+            }
+            else
+            {
+                entities.readerrors += "\n" + corepath + "cannot be found in loose files or megs";
+            }
+        }
+
+        return corenne;
+    }
+
+    public static string[] readModTextLinesOrMeg(string corepath, entities entities)
+    {
+        string[] corenne = new string[0];
+
+        string filepath = getModFile(corepath, entities);
+        if (filepath != "") corenne = File.ReadAllLines(filepath);
+        else
+        {
+            byte[] megfile = SharedFunctions.getFileFromMegs(corepath, entities);
+            if (megfile.Length > 0)
+            {
+                corenne = System.Text.Encoding.Default.GetString(megfile).Split('\n');
+            }
+            else
+            {
+                entities.readerrors += "\n" + corepath + "cannot be found in loose files or megs";
+            }
+        }
+
+        return corenne;
+    }
+
+    public static byte[] readModBytesOrMeg(string corepath, entities entities)
+    {
+        byte[] corenne = new byte[0];
+
+        string filepath = getModFile(corepath, entities);
+        if (filepath != "") corenne = File.ReadAllBytes(filepath);
+        else
+        {
+            byte[] megfile = SharedFunctions.getFileFromMegs(corepath, entities);
+            if (megfile.Length > 0)
+            {
+                corenne = megfile;
+            }
+            else
+            {
+                entities.readerrors += "\n" + corepath + "cannot be found in loose files or megs";
+            }
+        }
+
+        return corenne;
+    }
+
     public static XmlDocument readModXmlOrMeg(string corepath, entities entities) //todo probably want a Lua/txt version eventually
     {
         XmlDocument doc = new XmlDocument();
 
-        string filepath = getModFile(corepath);
+        string filepath = getModFile(corepath, entities);
         if (filepath != "") doc.Load(filepath);
         else
         {
@@ -105,22 +175,26 @@ public static class SharedFunctions
         return doc;
     }
 
-    public static string getModFile(string corepath)
+    public static string getModFile(string corepath, entities entities)
     {
-        string corenne = "";
-        foreach (string modpath in entities.modpaths)
+        try
         {
-            string test = Path.Combine(modpath, corepath);
-            if (File.Exists(test))
+            string corenne = "";
+            foreach (string modpath in entities.modpaths)
             {
-                corenne = test;
-                break;
+                string test = Path.Combine(modpath, corepath);
+                if (File.Exists(test))
+                {
+                    corenne = test;
+                    break;
+                }
             }
+            return corenne;
         }
-        return corenne;
+        catch { return ""; }
     }
 
-    public static List<string> getModFiles(string corepath, string extension)
+    public static List<string> getModFiles(string corepath, string extension, entities entities)
     {
         List<string> corenne = new List<string>();
         List<string> prefound = new List<string>();
@@ -146,7 +220,7 @@ public static class SharedFunctions
         return corenne;
     }
 
-    public static string Find_Text_Entry(string textid)
+    public static string Find_Text_Entry(string textid, entities entities)
     {
         foreach (Text_Entry entry in entities.Text)
         {
@@ -230,6 +304,7 @@ public static class SharedFunctions
 
     public static string[] SplitXMLWhitespaceList (string list)
     {
+        if (list is null) return new string[0];
         string trimmedtt = list.Trim();
         trimmedtt = trimmedtt.Replace("\t", " ").Replace("\r", " ").Replace("\n", " ");
         while (trimmedtt.Contains("  ")) trimmedtt = trimmedtt.Replace("  ", " ");
@@ -246,6 +321,20 @@ public static class SharedFunctions
         if (codename == "CCoGM") return codename;
         faction fac = entities.factions.FirstOrDefault(s => s.codename == codename);
         return fac.textname;
+    }
+
+    public static string getLoadQuote(entities entities)
+    {
+        Random rnd = new Random();
+        for (int i = 0; i < 1000; i++) //Don't search too long
+        {
+            string quote = entities.Text[rnd.Next(0, entities.Text.Count - 1)].entry;
+            if (quote.Length > 149)
+            {//any filtering based on id or entry goes in this if
+                return quote;
+            }
+        }
+        return "Sorry, you got really unlucky when trying to find an interesting text from the mod";
     }
 
     public static float getWeapMultiplier(string type, WeaponMods weap, bool shield)
@@ -395,6 +484,19 @@ public static class SharedFunctions
         List<ability> abilities = new List<ability>();
         List<unitability> unitabilities = new List<unitability>();
         List<garrison_entry> garrison = new List<garrison_entry>();
+        string[] basicSFXEvents = new string[(int)basicSoundTypes.Max];
+        int[] basicSFXEvents_baseID = new int[(int)basicSoundTypes.Max];
+        for (int sfxid = 0; sfxid < basicSFXEvents.Length; sfxid++)
+        {
+            basicSFXEvents[sfxid] = "";
+            basicSFXEvents_baseID[sfxid] = -1;
+        }
+        List<string> SFXEvent_Attack_Hardpoint = new List<string>();
+        List<string> SFXEvent_Attack_Hardpoint_Type = new List<string>();
+        List<string> SFXEvent_Hardpoint_Destroyed = new List<string>();
+        List<string> SFXEvent_Hardpoint_Destroyed_Type = new List<string>();
+        List<int> SFXEvent_Attack_Hardpoint_BaseID = new List<int>();
+        List<int> SFXEvent_Hardpoint_Destroyed_BaseID = new List<int>();
 
         System.Xml.XmlNode value = unit.SelectSingleNode("descendant::Tech_Level");
         if (!(value is null))
@@ -413,7 +515,7 @@ public static class SharedFunctions
         value = unit.SelectSingleNode("descendant::Text_ID");
         if (!(value is null))
         {
-            if (!(value.LastChild is null)) username = value.LastChild.Value;
+            if (!(value.LastChild is null)) username = value.InnerText.Trim();
         }
         value = unit.SelectSingleNode("descendant::Build_Cost_Credits");
         if (!(value is null))
@@ -559,6 +661,11 @@ public static class SharedFunctions
                 }
             }
         }
+        value = unit.SelectSingleNode("descendant::Space_Model_Name");
+        if (!(value is null))
+        {
+            if (!(value.LastChild is null)) model = value.LastChild.Value;
+        }
         value = unit.SelectSingleNode("descendant::Affiliation");
         if (!(value is null))
         {
@@ -576,6 +683,14 @@ public static class SharedFunctions
         if (!(value is null))
         {
             Hardpoints = ReadWhiteSpaceAsCommas(value.InnerText);
+        }
+        else
+        {
+            value = unit.SelectSingleNode("descendant::Hardpoints");
+            if (!(value is null))
+            {
+                Hardpoints = ReadWhiteSpaceAsCommas(value.InnerText);
+            }
         }
         /*if (name == "T4A_Company") //parse debug
         {
@@ -865,7 +980,7 @@ public static class SharedFunctions
             }
         }
         value = unit.SelectSingleNode("descendant::Projectile_Types");
-        if (!(value is null))
+        if (!(value is null) && value.InnerText != "")
         {
             string proj = value.InnerText.Trim().ToLower();
             builtin.name = "biw";
@@ -879,6 +994,8 @@ public static class SharedFunctions
                 builtin.range = 250; //Todo: read gravity tags properly instead of hardcoding
             }
             builtin.projectile = proj;
+            builtin.firesound = "";
+            builtin.diesound = "";
             builtin.inaccuracyAmounts = new List<float>();
             builtin.inaccuracyTypes = new List<string>();
             bool notfound = true;
@@ -909,6 +1026,7 @@ public static class SharedFunctions
             {
                 builtin.pulseCount = Single.Parse(value.LastChild.Value);
             }
+            else builtin.pulseCount = 1;
             value = unit.SelectSingleNode("descendant::Projectile_Fire_Pulse_Delay_Seconds");
             if (!(value is null))
             {
@@ -928,6 +1046,8 @@ public static class SharedFunctions
                     }
                 }
             }
+            value = unit.SelectSingleNode("descendant::SFXEvent_Fire");
+            if (!(value is null)) builtin.firesound = value.InnerText.Trim();
             XmlNodeList inaccs = unit.SelectNodes("descendant::Targeting_Fire_Inaccuracy");
             foreach (XmlNode inacc in inaccs)
             {
@@ -956,6 +1076,7 @@ public static class SharedFunctions
                 forlist.username = "";
                 forlist.ability = "";
                 forlist.desc = "";
+                forlist.sound = "";
                 forlist.damageMod = 1;
                 forlist.defenseMod = 1;
                 forlist.reloadMod = 1;
@@ -974,7 +1095,7 @@ public static class SharedFunctions
                         {//These seem to be consistent, unlike icon names
                             forlist.username = "TEXT_TOOLTIP_ABILITY_" + forlist.type + "_NAME";
                         }
-                        forlist.username = Find_Text_Entry(forlist.username);
+                        forlist.username = Find_Text_Entry(forlist.username, entities);
                         abdata = able.SelectSingleNode("descendant::Alternate_Description_Text");
                         if (!(abdata is null) && !(abdata.LastChild is null)) forlist.desc = abdata.LastChild.Value;
                         else
@@ -991,6 +1112,15 @@ public static class SharedFunctions
                         if (!(abdata is null) && !(abdata.LastChild is null)) forlist.radius = Single.Parse(abdata.LastChild.Value.Replace("f", "").Replace("F", ""));
                         abdata = able.SelectSingleNode("descendant::Damage_Percent_When_Activated");
                         if (!(abdata is null) && !(abdata.LastChild is null)) forlist.selfdamage = Single.Parse(abdata.LastChild.Value.Replace("f", "").Replace("F", ""));
+                        abdata = able.SelectSingleNode("descendant::SFXEvent_Target_Ability");
+                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
+                        if(forlist.sound == "") //Todo check if these are all the sound fields and if they can ever exist simultaneously
+                        {
+                            abdata = able.SelectSingleNode("descendant::SFXEvent_GUI_Unit_Ability_Activated");
+                            if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
+                        }
+                        abdata = able.SelectSingleNode("descendant::SFXEvent_GUI_Unit_Ability_Deactivated");
+                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.deactivatesound = abdata.InnerText.Trim();
                         XmlNodeList mods = able.SelectNodes("descendant::Mod_Multiplier");
                         foreach (XmlNode mod in mods)
                         {
@@ -1265,6 +1395,7 @@ public static class SharedFunctions
                     applicable_categories = new string[0],
                     excluded_types = new string[0],
                     linkedEntity = "",
+                    sound = "",
                     recharge = -1,
                     radius = -1,
                     minradius = -1,
@@ -1308,6 +1439,19 @@ public static class SharedFunctions
                 abdata = able.SelectSingleNode("descendant::Spawned_Object_Type");
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.linkedEntity = abdata.LastChild.Value.Trim();
 
+                abdata = able.SelectSingleNode("descendant::SFXEvent_Target_Affected");
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
+                if (forlist.sound == "") //Todo check if these are all the sound fields and if they can ever exist simultaneously
+                {
+                    abdata = able.SelectSingleNode("descendant::SFXEvent_Activate");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
+                }
+                if (forlist.sound == "") //Todo check if these are all the sound fields and if they can ever exist simultaneously
+                {
+                    abdata = able.SelectSingleNode("descendant::Activate_SFX");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
+                }
+
                 //command bonus
                 abdata = able.SelectSingleNode("descendant::Damage_Bonus_Percentage");
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.damageBonus = Single.Parse(abdata.LastChild.Value);
@@ -1326,7 +1470,7 @@ public static class SharedFunctions
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
 
                 //admin
-                abdata = able.SelectSingleNode("descendant::Price_Reduction_Percentage"); //todo these probably need to go to different variables
+                abdata = able.SelectSingleNode("descendant::Price_Reduction_Percentage");
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.priceReduction = Single.Parse(abdata.LastChild.Value);
                 abdata = able.SelectSingleNode("descendant::Time_Reduction_Percentage");
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.timeReduction = Single.Parse(abdata.LastChild.Value);
@@ -1348,12 +1492,14 @@ public static class SharedFunctions
                 //Heal
                 abdata = able.SelectSingleNode("descendant::Heal_Amount");
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
+                abdata = able.SelectSingleNode("descendant::Heal_Percent");
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value); //Might want another variable for this
                 abdata = able.SelectSingleNode("descendant::Heal_Range");
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.radius = Single.Parse(abdata.LastChild.Value);
                 abdata = able.SelectSingleNode("descendant::Heal_Interval_In_Secs");
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.recharge = Single.Parse(abdata.LastChild.Value);
                 abdata = able.SelectSingleNode("descendant::Single_Target_Heal");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericBool = abdata.LastChild.Value.ToLower().Contains("yes");
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericBool = !abdata.LastChild.Value.ToLower().Contains("yes");
 
                 //Stun
                 abdata = able.SelectSingleNode("descendant::Stun_Range");
@@ -1372,6 +1518,21 @@ public static class SharedFunctions
                 abdata = able.SelectSingleNode("descendant::Bomb_Countdown_Seconds");
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value);
 
+                //Reflect/block
+                abdata = able.SelectSingleNode("descendant::Redirect_Chance");
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
+                abdata = able.SelectSingleNode("descendant::Block_Chance");
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.healthBonus = Single.Parse(abdata.LastChild.Value);
+
+                //Absorb
+                abdata = able.SelectSingleNode("descendant::Absorb_Chance");
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
+                abdata = able.SelectSingleNode("descendant::Damage_Absorb_Percentage");
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.healthBonus = Single.Parse(abdata.LastChild.Value);
+                abdata = able.SelectSingleNode("descendant::Damage_Absorb_Amount");
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value);
+
+
                 switch (forlist.type)
                 {
                     case "Laser_Defense_Ability": //todo, save PD stats to fields in main unit?
@@ -1389,7 +1550,104 @@ public static class SharedFunctions
                 abilities.Add(forlist);
             }
         }
-
+        value = unit.SelectSingleNode("descendant::SFXEvent_Build_Started");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Started] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Build_Cancelled");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Cancelled] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Build_Complete");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Complete] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Bombard_Select_Target");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Bombard_Select_Target] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Bombard_Incoming");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Bombard_Incoming] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Tactical_Build_Started");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Started] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Tactical_Build_Complete");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Complete] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Tactical_Build_Cancelled");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Cancelled] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Select");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Select] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Move");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Fleet_Move");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Fleet_Move] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Attack");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Attack] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Guard");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Move] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Assist_Move");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Guard] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Assist_Attack");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Attack] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Health_Low_Warning");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Low_Warning] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Health_Critical_Warning");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Critical_Warning] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Move_Into_Nebula");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Nebula] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Move_Into_Asteroid_Field");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Asteroid_Field] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Engine_Idle_Loop");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Idle_Loop] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Engine_Moving_Loop");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Moving_Loop] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Engine_Cinematic_Focus_Loop");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Cinematic_Focus_Loop] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Damaged_By_Asteroid");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Damaged_By_Asteroid] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Turret_Rotating_Loop");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Turret_Rotating_Loop] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::Death_SFXEvent_Start_Die");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.Death_SFXEvent_Start_Die] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::SFXEvent_Ambient_Moving");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Ambient_Moving] = value.InnerText.Trim();
+        value = unit.SelectSingleNode("descendant::Spin_Away_On_Death_SFXEvent_Start_Die");
+        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.Spin_Away_On_Death_SFXEvent_Start_Die] = value.InnerText.Trim();
+        values = unit.SelectNodes("descendant::SFXEvent_Attack_Hardpoint");
+        if (values.Count > 0)
+        {
+            foreach (XmlNode effect in values)
+            {
+                {
+                    if (!(effect.LastChild is null))
+                    {
+                        string[] types = ReadWhiteSpaceAsCommas(effect.InnerText);
+                        if(types.Length > 1)
+                        {
+                            if (!SFXEvent_Attack_Hardpoint_Type.Contains(types[0]))
+                            {
+                                SFXEvent_Attack_Hardpoint.Add(types[1]);
+                                SFXEvent_Attack_Hardpoint_Type.Add(types[0]);
+                                SFXEvent_Attack_Hardpoint_BaseID.Add(-1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        values = unit.SelectNodes("descendant::SFXEvent_Hardpoint_Destroyed");
+        if (values.Count > 0)
+        {
+            foreach (XmlNode effect in values)
+            {
+                {
+                    if (!(effect.LastChild is null))
+                    {
+                        string[] types = ReadWhiteSpaceAsCommas(effect.InnerText);
+                        if (types.Length > 1)
+                        {
+                            if (!SFXEvent_Hardpoint_Destroyed_Type.Contains(types[0]))
+                            {
+                                SFXEvent_Hardpoint_Destroyed.Add(types[1]);
+                                SFXEvent_Hardpoint_Destroyed_Type.Add(types[0]);
+                                SFXEvent_Hardpoint_Destroyed_BaseID.Add(-1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         value = unit.SelectSingleNode("descendant::Variant_Of_Existing_Type");
         if (!(value is null))
@@ -1485,12 +1743,21 @@ public static class SharedFunctions
             garrisonValue_baseID = -1,
             garrisonType_baseID = -1,
             maintenance_baseID = -1,
+            cp_baseID = -1,
             abilities = abilities,
             unitabilities = unitabilities,
             hero = hero,
             superweaponkiller = superweaponkiller,
             builtin = builtin,
             garrison = garrison,
+            BasicSFXEvents = basicSFXEvents,
+            BasicSFXEvents_baseID = basicSFXEvents_baseID,
+            SFXEvent_Attack_Hardpoint = SFXEvent_Attack_Hardpoint,
+            SFXEvent_Attack_Hardpoint_Type = SFXEvent_Attack_Hardpoint_Type,
+            SFXEvent_Attack_Hardpoint_BaseID = SFXEvent_Attack_Hardpoint_BaseID,
+            SFXEvent_Hardpoint_Destroyed = SFXEvent_Hardpoint_Destroyed,
+            SFXEvent_Hardpoint_Destroyed_Type = SFXEvent_Hardpoint_Destroyed_Type,
+            SFXEvent_Hardpoint_Destroyed_BaseID = SFXEvent_Hardpoint_Destroyed_BaseID,
         };
 
         entities.objects.Add(unidad);
@@ -1539,27 +1806,71 @@ public static class SharedFunctions
         return false;
     }
 
+    public static float getHealScore(ability able)
+    {
+        float corenne = able.genericValue / able.recharge;
+        if (able.applicable_categories.Contains("Fighter")) corenne *= 12;
+        else if (able.genericBool) corenne *= 20;
+        return corenne;
+    }
+
+    public static float getDefenseMod(unit unit)
+    {
+        float corenne = 1; //Multiplicative identity, not additive
+        
+        foreach (ability able in unit.abilities)
+        {
+            switch (able.type)
+            {
+                case "Redirect_Blaster_Ability":
+                    bool inf = able.applicable_categories.Contains("Infantry"); //Don't count Jedi skills
+                    if (!inf || inf && able.applicable_categories.Contains("Vehicle"))
+                    {
+                        corenne += able.genericValue + able.healthBonus;
+                    }
+                    break;
+                case "Absorb_Blaster_Ability":
+                    bool inf2 = able.applicable_categories.Contains("Infantry");
+                    if (!inf2 || inf2 && able.applicable_categories.Contains("Vehicle"))
+                    {
+                        corenne += able.genericValue;
+                    }
+                    break;
+            }
+        }
+
+        return corenne;
+    }
+
     public static void parseObjectFile(string objectfile, entities entities)
     {
-        string path = getModFile(objectfile);
+        string path = getModFile(objectfile, entities);
         if (path == "") path = "*" + objectfile;
 
-        XmlDocument doc = readModXmlOrMeg(objectfile, entities);
-        XmlNode root = doc.DocumentElement;
-        if (root is null) return;
-
-        XmlNodeList objects = root.SelectNodes("*");
-        foreach (XmlNode entity in objects)
+        try
         {
-            if (!(entity is null))
+            XmlDocument doc = readModXmlOrMeg(objectfile, entities);
+            XmlNode root = doc.DocumentElement;
+            if (root is null) return;
+
+            XmlNodeList objects = root.SelectNodes("*");
+            foreach (XmlNode entity in objects)
             {
-                if (!(entity.LastChild is null))
+                if (!(entity is null))
                 {
-                    if (parseUnit(entity, entities, path)) break;
+                    if (!(entity.LastChild is null))
+                    {
+                        if (parseUnit(entity, entities, path)) break;
+                    }
                 }
+                //parseUnit(file, entities);
             }
-            //parseUnit(file, entities);
         }
+        catch (Exception e)
+        {
+            MessageBox.Show("Error parsing file " + LastFolderOrFile(path) + "\n" + e.Message + "\n\nParsing will continue, but data will be missing");
+        }
+        
     }
 
     public static void parseObjects(entities entities)
@@ -1576,10 +1887,10 @@ public static class SharedFunctions
             {
                 if (!(file.LastChild is null))
                 {
-                    string filepath = file.LastChild.Value.Trim().ToUpper();
+                    string filepath = file.InnerText.Trim().ToUpper();
                     if (!(filepath.Contains("DEBUG_DUMMIES") || filepath.Contains("PROPS\\") || filepath.Contains("\\DEATH_CLONES") || filepath.Contains("PLANET") || filepath.Contains("PROJECTILE")))
                     {//Further effiency gains can probably be made. But segregating hardpoints might not be ok in the general case
-                        parseObjectFile("XML\\" + filepath, entities);
+                        parseObjectFile("XML\\" + file.InnerText.Trim(), entities);
                     }
                 }
             }
@@ -1663,7 +1974,7 @@ public static class SharedFunctions
 
     public static void parseHeroFolder(entities entities)
     {
-        List<string> files = getModFiles("XML\\Heroes", "*.xml");
+        List<string> files = getModFiles("XML\\Heroes", "*.xml", entities);
         foreach (string file in files)
         {
             XmlDocument doc = new XmlDocument();
@@ -1712,7 +2023,7 @@ public static class SharedFunctions
 
     public static void parseStructureFolder(entities entities)
     {
-        List<string> files = getModFiles("XML\\Structures", "*.xml");
+        List<string> files = getModFiles("XML\\Structures", "*.xml", entities);
         foreach (string file in files)
         {
             XmlDocument doc = new XmlDocument();
@@ -1731,121 +2042,136 @@ public static class SharedFunctions
         entities.structures.Sort((s1, s2) => s1.unitname.CompareTo(s2.unitname));
     }
 
-    public static void parseMEGs(entities entities)
+    public static void parseMEGs(entities entities, string vanillapath)
     {
         entities.MEGdata.Clear();
         entities.MEGentries.Clear();
         entities.MEGhashes.Clear();
-        string path = getModFile("Megafiles.xml");
+        string path = getModFile("Megafiles.xml", entities); //todo add optional third arg to alway use vanilla? But get sound files working on vanilla first
         XmlDocument doc = new XmlDocument();
         doc.PreserveWhitespace = true;
+        if (path == "")
+        {
+            MessageBox.Show("Meg data not found. Data may be missing");
+            return;
+        }
         doc.Load(path);
 
         XmlNode root = doc.DocumentElement;
         XmlNodeList megs = root.SelectNodes("*");
         int megindex = 0;
+        List<string> megfiles = new List<string>();
         foreach (XmlNode meg in megs)
         {
-            if(!(meg is null))
+            if (!(meg is null))
             {
-                string megpath = getModFile(LastFolderOrFile(meg.InnerText));
+                string megpath = getModFile(LastFolderOrFile(meg.InnerText), entities);
                 if (File.Exists(megpath))
                 {
-                    bool saveMeg = false;
-                    int overwriteindex = -1;
-                    List<MEGentry> entriesinFile = new List<MEGentry>(); //Store new files separately until completion to catch new megs overwriting old
-                    byte[] megbytes = File.ReadAllBytes(megpath);
-                    int filenamecount = DatParser.make32(megbytes, 0);
-                    bool[] saveFiles = new bool[filenamecount];
-                    int[] finalindices = new int[filenamecount];
-                    int filecount = DatParser.make32(megbytes, 0);
-                    int byteid = 8;
-                    int finalindex = 0;
-                    for (int file = 0; file < filenamecount; file++)
-                    {
-                        int strlen = DatParser.make16(megbytes, byteid);
-                        byteid += 2;
-                        byte[] dest = new byte[strlen];
-                        Buffer.BlockCopy(megbytes, byteid,dest,0, strlen);
-                        string str = RemoveTopLevelFolder(System.Text.Encoding.Default.GetString(dest)).ToUpper();
-                        byteid += strlen;
-
-                        string ext = Extension(str);
-                        if (ext == "XML" || ext == "LUA" || ext == "MTD" || ext == "TED" || ext == "TGA") //todo ignore TGA except for MTCommandbar, don't save the whole meg for teds
-                        {
-                            saveMeg = true; //Don't set for TED eventually
-                            int hash = LookupUntemplateID(str);
-                            overwriteindex = entities.MEGentries.FindIndex(x => x.hash == hash);
-                            if (overwriteindex > -1)
-                            {
-                                bool loopit = true;
-                                while(loopit)
-                                {
-                                    int readhash = entities.MEGentries[overwriteindex].hash;
-                                    if (hash == readhash)
-                                    {
-                                        if (str == entities.MEGentries[overwriteindex].filename) loopit = false; //found matching hash and string
-                                        else overwriteindex++; //Hash collision, see if the next matches
-                                    }
-                                    else
-                                    {
-                                        loopit = false;
-                                        overwriteindex = -1; //there were only collisions
-                                    }
-                                }
-                            }
-
-                            if (overwriteindex < 0)
-                            {
-                                finalindices[file] = finalindex;
-                                finalindex++;
-                                saveFiles[file] = true;
-                                MEGentry entry = new MEGentry
-                                {
-                                    filename = str,
-                                    hash = hash,
-                                    MEGid = megindex,
-                                };
-                                entriesinFile.Add(entry);
-                            }
-                            //handled in the loop for file size data
-                        }
-                    }
-                    for (int file = 0; file < filecount; file++)
-                    {
-                        byteid += 8;
-                        int len = DatParser.make32(megbytes, byteid);
-                        byteid += 4;
-                        int start = DatParser.make32(megbytes, byteid);
-                        byteid += 4;
-                        int nameindex = DatParser.make32(megbytes, byteid);
-                        byteid += 4;
-                        if (saveFiles[nameindex])
-                        {//todo read ted terrain byte here
-                            int final = finalindices[nameindex]; //Used vs total in the file
-                            MEGentry entry = entriesinFile[final];
-                            entry.startindex = start;
-                            entry.length = len;
-                            entriesinFile[final] = entry;
-                        }
-                        if(overwriteindex > -1)
-                        {
-                            MEGentry entry = entities.MEGentries[overwriteindex];
-                            entry.MEGid = megindex;
-                            entry.startindex = start;
-                            entry.length = len;
-                            entities.MEGentries[overwriteindex] = entry;
-                        }
-                    }
-
-                    if (saveMeg)
-                    {
-                        foreach (MEGentry entry in entriesinFile) entities.MEGentries.Add(entry);
-                        entities.MEGdata.Add(megbytes);
-                        megindex++;
-                        entities.MEGentries.Sort((s1, s2) => s1.hash.CompareTo(s2.hash));
-                    }
+                    megfiles.Add(megpath);
                 }
+            }
+        }
+        string[] soundmegs = Directory.GetFiles(vanillapath + "\\corruption\\Data\\Audio\\SFX");
+        foreach(string megpath in soundmegs) megfiles.Add(megpath);
+        soundmegs = Directory.GetFiles(vanillapath + "\\gamedata\\Data\\Audio\\SFX");
+        foreach (string megpath in soundmegs) megfiles.Add(megpath);
+
+        foreach (string megpath in megfiles)
+        {
+            bool saveMeg = false;
+            int overwriteindex = -1;
+            List<MEGentry> entriesinFile = new List<MEGentry>(); //Store new files separately until completion to catch new megs overwriting old
+            byte[] megbytes = File.ReadAllBytes(megpath);
+            int filenamecount = DatParser.make32(megbytes, 0);
+            bool[] saveFiles = new bool[filenamecount];
+            int[] finalindices = new int[filenamecount];
+            int filecount = DatParser.make32(megbytes, 0);
+            int byteid = 8;
+            int finalindex = 0;
+            for (int file = 0; file < filenamecount; file++)
+            {
+                int strlen = DatParser.make16(megbytes, byteid);
+                byteid += 2;
+                byte[] dest = new byte[strlen];
+                Buffer.BlockCopy(megbytes, byteid, dest, 0, strlen);
+                string str = RemoveTopLevelFolder(System.Text.Encoding.Default.GetString(dest)).ToUpper();
+                byteid += strlen;
+
+                string ext = Extension(str);
+                if (ext == "XML" || ext == "LUA" || ext == "MTD" || ext == "TED" || ext == "TGA" || ext == "WAV") //todo ignore TGA except for MTCommandbar, don't save the whole meg for teds
+                {
+                    saveMeg = true; //Don't set for TED eventually
+                    int hash = LookupUntemplateID(str);
+                    overwriteindex = entities.MEGentries.FindIndex(x => x.hash == hash);
+                    if (overwriteindex > -1)
+                    {
+                        bool loopit = true;
+                        while (loopit)
+                        {
+                            int readhash = entities.MEGentries[overwriteindex].hash;
+                            if (hash == readhash)
+                            {
+                                if (str == entities.MEGentries[overwriteindex].filename) loopit = false; //found matching hash and string
+                                else overwriteindex++; //Hash collision, see if the next matches
+                            }
+                            else
+                            {
+                                loopit = false;
+                                overwriteindex = -1; //there were only collisions
+                            }
+                        }
+                    }
+
+                    if (overwriteindex < 0)
+                    {
+                        finalindices[file] = finalindex;
+                        finalindex++;
+                        saveFiles[file] = true;
+                        MEGentry entry = new MEGentry
+                        {
+                            filename = str,
+                            hash = hash,
+                            MEGid = megindex,
+                        };
+                        entriesinFile.Add(entry);
+                    }
+                    //handled in the loop for file size data
+                }
+            }
+            for (int file = 0; file < filecount; file++)
+            {
+                byteid += 8;
+                int len = DatParser.make32(megbytes, byteid);
+                byteid += 4;
+                int start = DatParser.make32(megbytes, byteid);
+                byteid += 4;
+                int nameindex = DatParser.make32(megbytes, byteid);
+                byteid += 4;
+                if (saveFiles[nameindex])
+                {//todo read ted terrain byte here
+                    int final = finalindices[nameindex]; //Used vs total in the file
+                    MEGentry entry = entriesinFile[final];
+                    entry.startindex = start;
+                    entry.length = len;
+                    entriesinFile[final] = entry;
+                }
+                if (overwriteindex > -1)
+                {
+                    MEGentry entry = entities.MEGentries[overwriteindex];
+                    entry.MEGid = megindex;
+                    entry.startindex = start;
+                    entry.length = len;
+                    entities.MEGentries[overwriteindex] = entry;
+                }
+            }
+
+            if (saveMeg)
+            {
+                foreach (MEGentry entry in entriesinFile) entities.MEGentries.Add(entry);
+                entities.MEGdata.Add(megbytes);
+                megindex++;
+                entities.MEGentries.Sort((s1, s2) => s1.hash.CompareTo(s2.hash));
             }
         }
     }
@@ -1857,6 +2183,9 @@ public static class SharedFunctions
         entities.GroundArmors.Clear();
         entities.GroundShields.Clear();
         entities.AllArmors.Clear();
+        entities.DamageTypes.Clear();
+        entities.SpaceDamageTypes.Clear();
+        entities.GroundDamageTypes.Clear();
 
         XmlDocument consts = readModXmlOrMeg("XML\\GameConstants.xml", entities);
 
@@ -1962,6 +2291,7 @@ public static class SharedFunctions
                 else medianS = (heavyFightersSuck[(count) / 2 - 1].modifier + heavyFightersSuck[(count) / 2].modifier) / 2;
             }
             entities.ArmorMods[i].median = (medianA + medianS) / 2;
+            entities.ArmorMods[i].medianA = medianA;
         }
         for (int i = 0; i < entities.ArmorIndexedMods.Count; i++)
         {
@@ -2050,9 +2380,10 @@ public static class SharedFunctions
         }
     }
 
-    public static void parsemodid(string path, entities entities)
+    public static void parsemodid(entities entities)
     {
-        if(path == "")
+        string path = getModFile("XML\\Mod_Id.xml", entities);
+        if (path == "")
         {
             entities.modid = "";
             return;
@@ -2065,6 +2396,28 @@ public static class SharedFunctions
         foreach (XmlNode id in objects)
         {
             entities.modid = id.Attributes[0].Value;
+        }
+
+        switch (entities.modid)
+        {
+            case "icw":
+                entities.version = 34;
+                if (File.Exists(getModFile("..\\TRChangelog35.txt", entities))) entities.version = 35;
+                if (File.Exists(getModFile("..\\TRChangelog36.txt", entities))) entities.version = 40;
+                if (File.Exists(getModFile("..\\TRChangelog40.txt", entities))) entities.version = 40;
+                break;
+            case "fotr":
+                entities.version = 34;
+                if (File.Exists(getModFile("..\\FotRChangelog15.txt", entities))) entities.version = 35;
+                if (File.Exists(getModFile("..\\FotRChangelog16.txt", entities))) entities.version = 40;
+                if (File.Exists(getModFile("..\\FotRChangelog20.txt", entities))) entities.version = 40;
+                break;
+            case "rev":
+                entities.version = 34;
+                if (File.Exists(getModFile("..\\RevChangelog05.txt", entities))) entities.version = 35;
+                if (File.Exists(getModFile("..\\RevChangelog06.txt", entities))) entities.version = 40;
+                if (File.Exists(getModFile("..\\RevChangelog10.txt", entities))) entities.version = 40;
+                break;
         }
     }
 
@@ -2135,7 +2488,7 @@ public static class SharedFunctions
                             if (!(value.LastChild is null))
                             {//Overrides Projectile_Damage if nonzero
                                 float amount = float.Parse(value.LastChild.Value);
-                                if(amount > 0) damageAmount = amount;
+                                if(damageAmount <= 0) damageAmount = amount;
                             }
                         }
                         value = proj.SelectSingleNode("descendant::Projectile_Blast_Area_Range");
@@ -2233,7 +2586,7 @@ public static class SharedFunctions
         }
     }
 
-    public static void parseHardpoints(entities entities, List<Text_Entry> Text)
+    public static void parseHardpoints(entities entities)
     {//Must parse after projectiles
         entities.hardpoints.Clear();
         XmlDocument hpdoc = readModXmlOrMeg("XML\\HardPointDataFiles.xml", entities);
@@ -2247,7 +2600,8 @@ public static class SharedFunctions
             {
                 if (!(file.LastChild is null))
                 {
-                    XmlDocument doc = readModXmlOrMeg("XML\\" + file.LastChild.Value.Trim(), entities);
+                    string datafile = file.InnerText.Trim();
+                    XmlDocument doc = readModXmlOrMeg("XML\\" + datafile, entities);
                     
                     XmlNode root = doc.DocumentElement;
                     if (root is null) continue; //Skip files that don't exist
@@ -2260,6 +2614,8 @@ public static class SharedFunctions
                         string text = "";
                         string damageType = "Damage_Default";
                         string hpType = "";
+                        string firesound = "";
+                        string diesound = "";
                         float health = -1;
                         float damageAmount = -1;
                         float blastRadius = -1;
@@ -2270,6 +2626,7 @@ public static class SharedFunctions
                         //float coneHeight = -1;
                         float fullsalvomod = 1;
                         float range = -1;
+                        string proj = "";
                         List<float> inaccuracyAmounts = new List<float>();
                         List<string> inaccuracyTypes = new List<string>();
                         XmlNode value = hp.SelectSingleNode("descendant::Is_Targetable");
@@ -2299,7 +2656,7 @@ public static class SharedFunctions
                             {
                                 if (!(value.LastChild is null))
                                 {
-                                    string proj = fullTrim(value.LastChild.Value);
+                                    proj = fullTrim(value.LastChild.Value);
                                     string lower = proj.ToLower();
                                     bool notfound = true;
                                     int index = LookupUntemplateID(proj);
@@ -2421,6 +2778,16 @@ public static class SharedFunctions
                                     }
                                 }
                             }
+                            value = hp.SelectSingleNode("descendant::Fire_SFXEvent");
+                            if (!(value is null))
+                            {
+                                if (!(value.LastChild is null)) firesound = value.InnerText.Trim();
+                            }
+                            value = hp.SelectSingleNode("descendant::Death_Explosion_SFXEvent");
+                            if (!(value is null))
+                            {
+                                if (!(value.LastChild is null)) diesound = value.InnerText.Trim();
+                            }
                             XmlNodeList inaccs = hp.SelectNodes("descendant::Fire_Inaccuracy_Distance");
                             foreach (XmlNode inacc in inaccs)
                             {
@@ -2442,7 +2809,8 @@ public static class SharedFunctions
                         hardpoint hard = new hardpoint
                         {
                             name = name,
-                            projectile = Find_Text_Entry(text),
+                            text = Find_Text_Entry(text, entities),
+                            projectile = proj,
                             quantity = 1,
                             damageType = damageType,
                             hpType = hpType,
@@ -2459,6 +2827,9 @@ public static class SharedFunctions
                             inaccuracyTypes = inaccuracyTypes,
                             inaccuracyAmounts = inaccuracyAmounts,
                             fullsalvomod = fullsalvomod,
+                            firesound = firesound,
+                            diesound = diesound,
+                            datafile = datafile,
                         };
                         entities.hardpoints.Add(hard);
                     }
@@ -2479,14 +2850,148 @@ public static class SharedFunctions
         }
     }
 
+    public static void parseSFX(entities entities)
+    {
+        entities.sfx.Clear();
+        XmlDocument hpdoc = readModXmlOrMeg("XML\\SFXEventFiles.xml", entities);
+        XmlNode hproot = hpdoc.DocumentElement;
+
+        XmlNodeList files = hproot.SelectNodes("*");
+
+        foreach (XmlNode file in files)
+        {
+            if (!(file is null))
+            {
+                if (!(file.LastChild is null))
+                {
+                    string sourcefile = file.InnerText.Trim();
+                    XmlDocument doc = readModXmlOrMeg("XML\\" + sourcefile, entities);
+
+                    XmlNode root = doc.DocumentElement;
+                    if (root is null) continue; //Skip files that don't exist
+                    XmlNodeList effects = root.SelectNodes("*");
+
+                    foreach (XmlNode effect in effects)
+                    {
+                        string name = effect.Attributes[0].Value;
+                        int minpitch = -1;
+                        int maxpitch = -1;
+                        string[] samples = new string[0];
+                        XmlNode value = effect.SelectSingleNode("descendant::Samples");
+                        try
+                        {
+                            if (!(value is null))
+                            {
+                                samples = ReadWhiteSpaceAsCommas(value.InnerText);
+                            }
+                            value = effect.SelectSingleNode("descendant::Min_Pitch");
+                            if (!(value is null))
+                            {
+                                minpitch = int.Parse(value.InnerText);
+                            }
+                            value = effect.SelectSingleNode("descendant::Max_Pitch");
+                            if (!(value is null))
+                            {
+                                maxpitch = int.Parse(value.InnerText);
+                            }
+                        }
+                        catch { }
+                        sfx sfx = new sfx
+                        {
+                            name = name,
+                            sourcefile = sourcefile,
+                            samples = samples,
+                        };
+                        entities.sfx.Add(sfx);
+                    }
+                }
+            }
+        }
+    }
+
     public static bool IsHiddenObject(unit unit)
     {//Conditions that mean it should never be displayed
-        return unit.unitname.Contains("Template_") || (unit.unitname.Contains("_Dummy") || unit.unitname.Contains("_Marker") || unit.unitname.Contains("ZLayer"));
+        return (unit.unitname.Contains("_Dummy") || unit.unitname.Contains("_Marker") || unit.unitname.Contains("ZLayer") || unit.unitname.Contains("INFLUENCE_") || unit.unitname.Contains("Ship_Crew_Tier_") || unit.unitname.Contains("Cinematic_") || unit.datafile.Contains("Mod_Id"));
     }
 
     public static bool IsSkirmishObject(unit unit)
     {
-        return unit.unitname.Contains("Skirmish_") || (unit.unitname.Contains("_MP") && !unit.unitname.Contains("_MP_"));
+        return unit.unitname.Contains("Skirmish_") || unit.unitname.Contains("_Buildable") || (unit.unitname.Contains("_MP") && !unit.unitname.Contains("_MP_"));
+    }
+
+    public static bool IsTransportObject(unit unit)
+    {
+        return unit.behaviors.Contains("TRANSPORT");
+    }
+
+    public static bool IsGroundWar(unit unit)
+    {
+        return unit.unitname.Contains("GROUNDWAR_") || unit.unitname.Contains("GW_");
+    }
+
+    public static bool IsSurvivalObject(unit unit)
+    {
+        return unit.unitname.Contains("Survival_");
+    }
+
+    public static bool IsMissionObject(unit unit)
+    {
+        return unit.unitname.Contains("Convoy_") || (unit.unitname.Contains("Mission_") && !unit.username.Contains("Mission")); //Need to catch Mission_Ajuur but not Mission_Vao
+    }
+
+    public static bool IsCapturedObject(unit unit)
+    {
+        return unit.unitname.Contains("_Captured");
+    }
+
+    public static bool IsTemplate(unit unit)
+    {
+        return unit.unitname.Contains("Template_") || unit.unitname.Contains("_Template");
+    }
+
+    public static bool categoryFilter(unit unit, List<int> categories)
+    {
+        bool regular = true;
+        if (IsSkirmishObject(unit))
+        {
+            regular = false;
+            if (!categories.Contains(1)) return false;
+        }
+        if (IsTransportObject(unit))
+        {
+            regular = false;
+            if (!categories.Contains(2)) return false;
+        }
+        if (IsMissionObject(unit))
+        {
+            regular = false;
+            if (!categories.Contains(3)) return false;
+        }
+        if (IsGroundWar(unit))
+        {
+            regular = false;
+            if (!categories.Contains(4)) return false;
+        }
+        if (IsSurvivalObject(unit))
+        {
+            regular = false;
+            if (!categories.Contains(5)) return false;
+        }
+        if (IsCapturedObject(unit))
+        {
+            regular = false;
+            if (!categories.Contains(6)) return false;
+        }
+        if (IsTemplate(unit))
+        {
+            regular = false;
+            if (!categories.Contains(7)) return false;
+        }
+        if (regular)
+        {
+            if (!categories.Contains(0)) return false;
+        }
+        return true;
     }
 
     public static string ReadXMLElement(string line)
@@ -2499,7 +3004,7 @@ public static class SharedFunctions
 
     public static bool CheckLuaIndex(string ID, string line)
     {
-        return line.Contains(ID + " = ") || line.Contains("[\"" + ID + "\"]");
+        return (line.Contains(ID + " = ") && !line.Contains("_" + ID)) || line.Contains("[\"" + ID + "\"]"); //The second bit hopefully catches all such cases like EMPIRE matching ETERNAL_EMPIRE.
     }
 
     public static void parseFactions(entities entities)
@@ -2513,8 +3018,8 @@ public static class SharedFunctions
 
         string[] gameconstants = new string[0];
         List<string> paths = new List<string>();//Check several old ways of doing this fr backwards compatibility
-        paths.Add(getModFile("Scripts\\Library\\GameConstants.lua"));//TODO I am only guessing this is the final version after mod content loader is dead
-        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\GameConstants.lua"));
+        paths.Add(getModFile("Scripts\\Library\\GameConstants.lua", entities));//TODO I am only guessing this is the final version after mod content loader is dead
+        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\GameConstants.lua", entities));
 
         foreach (string path in paths)
         {
@@ -2561,7 +3066,7 @@ public static class SharedFunctions
                     int[] tcol = ReadXMLCSV(taccolor);
 
                     newfaction.codename = name;
-                    newfaction.textname = Find_Text_Entry(id);
+                    newfaction.textname = Find_Text_Entry(id, entities);
                     newfaction.color = col;
                     newfaction.tcolor = tcol;
                     newfaction.playable = playable;
@@ -2602,6 +3107,19 @@ public static class SharedFunctions
                             break;
                         }
                     }
+                    newfaction.alias = newfaction.codename;
+                    for (int i = factionAliasStart; i < factionAliasStart + limit; i++)
+                    {
+                        string line = gameconstants[i];
+                        if (line.Contains("}")) break;
+                        if (CheckLuaIndex(LuaName, line))
+                        {
+                            line = line.Trim();
+                            newfaction.alias = line.Substring(line.IndexOf("=") + 3, line.LastIndexOf("\"") - line.IndexOf("=") - 3);
+                            break;
+                        }
+
+                    }
                     newfaction.lcolor = new int[] { 0, 0, 0, 255 };
                     for (int i = factionColorStart; i < factionColorStart + limit; i++)
                     {
@@ -2631,7 +3149,7 @@ public static class SharedFunctions
     {//beating builtin functions for efficiency turns out to be quite difficult
         string path;
         if (allplanets) path = entities.modpaths[entities.modpaths.Count - 1] + "\\XML\\Planets.xml";
-        else path = getModFile("XML\\Planets.xml");
+        else path = getModFile("XML\\Planets.xml", entities);
         entities.Planets.Clear();
         entities.PlanetBounds = 0;
         string[] lines = File.ReadAllLines(path);
@@ -2687,7 +3205,7 @@ public static class SharedFunctions
                 };
                 entities.Planets.Add(planet_obj);
             }
-            else if (line.Contains("<Text_ID>")) username = Find_Text_Entry(ReadXMLElement(line));
+            else if (line.Contains("<Text_ID>")) username = Find_Text_Entry(ReadXMLElement(line), entities);
             else if (line.Contains("<Galactic_Position>"))
             {
                 string[] split = ReadWhiteSpaceAsCommas(ReadXMLElement(line));
@@ -2723,7 +3241,7 @@ public static class SharedFunctions
                 groundMap = ReadXMLElement(line);
                 if (groundMap != "")
                 {
-                    string mappath = getModFile("Art\\Maps\\" + groundMap);
+                    string mappath = getModFile("Art\\Maps\\" + groundMap, entities);
                     if (mappath != "")
                     {
                         byte[] data = File.ReadAllBytes(mappath); //byte 46 is terrain type
@@ -2767,7 +3285,7 @@ public static class SharedFunctions
     {//If there were any gains, they were modest
         string path;
         if (allplanets) path = entities.modpaths[entities.modpaths.Count-1] + "\\XML\\Planets.xml";
-        else path = getModFile("XML\\Planets.xml");
+        else path = getModFile("XML\\Planets.xml", entities);
         entities.Planets.Clear();
         entities.PlanetBounds = 0;
         XmlDocument doc = new XmlDocument();
@@ -2797,7 +3315,7 @@ public static class SharedFunctions
                 switch (value.Name)
                 {
                     case "Text_ID":
-                        username = Find_Text_Entry(value.InnerText);
+                        username = Find_Text_Entry(value.InnerText, entities);
                         break;
                     case "Galactic_Position":
                         string[] split = ReadWhiteSpaceAsCommas(value.InnerText);
@@ -2841,7 +3359,7 @@ public static class SharedFunctions
                         groundMap = value.InnerText;
                         if (groundMap != "")
                         {
-                            string mappath = getModFile("Art\\Maps\\" + groundMap);
+                            string mappath = getModFile("Art\\Maps\\" + groundMap, entities);
                             if (mappath != "")
                             {
                                 byte[] data = File.ReadAllBytes(mappath); //byte 46 is terrain type
@@ -2902,11 +3420,44 @@ public static class SharedFunctions
         entities.Planets.Sort((s1, s2) => s1.codename.CompareTo(s2.codename));
     }
 
-    public static string getTerrainType(string map)
+    public static string getTerrainType(string map, entities entities)
     {
-        int terraintype = getTerrainIndex(map);
+        int terraintype = getTerrainIndex(map, entities);
 
         return getTerrainName(terraintype); ;
+    }
+
+    public static Color getTerrainColor(int terraintype)
+    {
+        Color corenne = new Color();
+        switch (terraintype)
+        {
+            default:
+                corenne = Color.LawnGreen; //"Temperate"
+                break;
+            case 1:
+                corenne = Color.Snow; //"Arctic"
+                break;
+            case 2:
+                corenne = Color.SandyBrown; //"Desert"
+                break;
+            case 3:
+                corenne = Color.ForestGreen; //"Forest"
+                break;
+            case 4:
+                corenne = Color.SaddleBrown; //"Swamp"
+                break;
+            case 5:
+                corenne = Color.Red; //"Volcanic"
+                break;
+            case 6:
+                corenne = Color.Gray; //"Urban"
+                break;
+            case 7:
+                corenne = Color.Blue; //"Space"
+                break;
+        }
+        return corenne;
     }
 
     public static string getTerrainName(int terraintype)
@@ -2942,7 +3493,7 @@ public static class SharedFunctions
         return mapTerrain;
     }
 
-    public static int getTerrainIndex(string map)
+    public static int getTerrainIndex(string map, entities entities)
     {
         int terraintype = -1;
         
@@ -2950,7 +3501,7 @@ public static class SharedFunctions
         if (presaved >= 0) terraintype = entities.terraincache[presaved];
         else
         {
-            string mappath = getModFile("Art\\Maps\\" + map); //todo get preread value from meg
+            string mappath = getModFile("Art\\Maps\\" + map, entities); //todo get preread value from meg
             if (mappath != "")
             {
                 byte[] data = File.ReadAllBytes(mappath); //byte 46 is terrain type
@@ -2975,144 +3526,151 @@ public static class SharedFunctions
         foreach (XmlNode planet in planets)
         {
             string codename = planet.Attributes[0].Value;
-            string username = "";
-            string description = "";
-            string population_desc = "";
-            string fauna = "";
-            float x = 0;
-            float y = 0;
-            int credits = 0;
-            int shipyard = 0;
-            int land_structures = 0;
-            int max_starbase = 0;
-            int pop = 0;
-            string groundMap = "";
-            string spaceMap = "";
-            string weather = "";
-            bool has_ground = false;
-            bool tradehub = false;
+            try
+            {
+                string username = "";
+                string description = "";
+                string population_desc = "";
+                string fauna = "";
+                float x = 0;
+                float y = 0;
+                int credits = 0;
+                int shipyard = 0;
+                int land_structures = 0;
+                int max_starbase = 0;
+                int pop = 0;
+                string groundMap = "";
+                string spaceMap = "";
+                string weather = "";
+                bool has_ground = false;
+                bool tradehub = false;
 
-            XmlNode value = planet.SelectSingleNode("descendant::Text_ID");
-            if (!(value is null))
-            {
-                username = Find_Text_Entry(value.InnerText);
-            }
-            value = planet.SelectSingleNode("descendant::Galactic_Position");
-            if (!(value is null))
-            {
-                string[] split = ReadWhiteSpaceAsCommas(value.InnerText);
-                x = Single.Parse(split[0]);
-                y = Single.Parse(split[1]);
-                entities.PlanetBounds = Math.Max(entities.PlanetBounds, x);
-                entities.PlanetBounds = Math.Max(entities.PlanetBounds, -x);
-                entities.PlanetBounds = Math.Max(entities.PlanetBounds, y);
-                entities.PlanetBounds = Math.Max(entities.PlanetBounds, -y);
-            }
-            value = planet.SelectSingleNode("descendant::Planet_Surface_Accessible");
-            if (!(value is null))
-            {
-                if (value.InnerText.ToLower().Contains("yes")) has_ground = true;
-            }
-            value = planet.SelectSingleNode("descendant::Describe_History");
-            if (!(value is null))
-            {
-                description = value.InnerText;
-            }
-            value = planet.SelectSingleNode("descendant::Describe_Population");
-            if (!(value is null))
-            {
-                population_desc = value.InnerText;
-            }
-            value = planet.SelectSingleNode("descendant::Describe_Wildlife");
-            if (!(value is null))
-            {
-                fauna = value.InnerText;
-            }
-            value = planet.SelectSingleNode("descendant::Encyclopedia_Weather_Name");
-            if (!(value is null))
-            {
-                weather = value.InnerText;
-                if (weather.Contains("_TRADE")) tradehub = true;
-
-            }
-            /*value = planet.SelectSingleNode("descendant::Terrain");
-            if (!(value is null))
-            {
-                terrain = value.InnerText;
-            }*/
-            value = planet.SelectSingleNode("descendant::Planet_Credit_Value");
-            if (!(value is null))
-            {
-                credits = Int32.Parse(value.InnerText);
-            }
-            value = planet.SelectSingleNode("descendant::Special_Structures_Land");
-            if (!(value is null))
-            {
-                land_structures = Int32.Parse(value.InnerText);
-            }
-            value = planet.SelectSingleNode("descendant::Max_Space_Base");
-            if (!(value is null))
-            {
-                max_starbase = Int32.Parse(value.InnerText);
-            }
-            value = planet.SelectSingleNode("descendant::Additional_Population_Capacity");
-            if (!(value is null))
-            {
-                pop = Int32.Parse(value.InnerText);
-            }
-            value = planet.SelectSingleNode("descendant::Planet_Ability_Name");
-            if (!(value is null))
-            {
-                switch (value.InnerText)
+                XmlNode value = planet.SelectSingleNode("descendant::Text_ID");
+                if (!(value is null))
                 {
-                    case "TEXT_PLANET_LIGHT":
-                        shipyard = 1;
-                        break;
-                    case "TEXT_PLANET_HEAVY":
-                        shipyard = 2;
-                        break;
-                    case "TEXT_PLANET_CAPITAL":
-                        shipyard = 3;
-                        break;
-                    case "TEXT_PLANET_DREAD":
-                        shipyard = 4;
-                        break;
+                    username = Find_Text_Entry(value.InnerText, entities);
                 }
-            }
-            value = planet.SelectSingleNode("descendant::Land_Tactical_Map");
-            if (!(value is null))
-            {
-                groundMap = value.InnerText;
-            }
-            value = planet.SelectSingleNode("descendant::Space_Tactical_Map");
-            if (!(value is null))
-            {
-                spaceMap = value.InnerText;
-            }
+                value = planet.SelectSingleNode("descendant::Galactic_Position");
+                if (!(value is null))
+                {
+                    string[] split = ReadWhiteSpaceAsCommas(value.InnerText);
+                    x = Single.Parse(split[0]);
+                    y = Single.Parse(split[1]);
+                    entities.PlanetBounds = Math.Max(entities.PlanetBounds, x);
+                    entities.PlanetBounds = Math.Max(entities.PlanetBounds, -x);
+                    entities.PlanetBounds = Math.Max(entities.PlanetBounds, y);
+                    entities.PlanetBounds = Math.Max(entities.PlanetBounds, -y);
+                }
+                value = planet.SelectSingleNode("descendant::Planet_Surface_Accessible");
+                if (!(value is null))
+                {
+                    if (value.InnerText.ToLower().Contains("yes")) has_ground = true;
+                }
+                value = planet.SelectSingleNode("descendant::Describe_History");
+                if (!(value is null))
+                {
+                    description = value.InnerText;
+                }
+                value = planet.SelectSingleNode("descendant::Describe_Population");
+                if (!(value is null))
+                {
+                    population_desc = value.InnerText;
+                }
+                value = planet.SelectSingleNode("descendant::Describe_Wildlife");
+                if (!(value is null))
+                {
+                    fauna = value.InnerText;
+                }
+                value = planet.SelectSingleNode("descendant::Encyclopedia_Weather_Name");
+                if (!(value is null))
+                {
+                    weather = value.InnerText;
+                    if (weather.Contains("_TRADE")) tradehub = true;
 
-            planet planet_obj = new planet
+                }
+                /*value = planet.SelectSingleNode("descendant::Terrain");
+                if (!(value is null))
+                {
+                    terrain = value.InnerText;
+                }*/
+                value = planet.SelectSingleNode("descendant::Planet_Credit_Value");
+                if (!(value is null))
+                {
+                    credits = (int)float.Parse(value.InnerText);
+                }
+                value = planet.SelectSingleNode("descendant::Special_Structures_Land");
+                if (!(value is null))
+                {
+                    land_structures = Int32.Parse(value.InnerText);
+                }
+                value = planet.SelectSingleNode("descendant::Max_Space_Base");
+                if (!(value is null))
+                {
+                    max_starbase = Int32.Parse(value.InnerText);
+                }
+                value = planet.SelectSingleNode("descendant::Additional_Population_Capacity");
+                if (!(value is null))
+                {
+                    pop = Int32.Parse(value.InnerText);
+                }
+                value = planet.SelectSingleNode("descendant::Planet_Ability_Name");
+                if (!(value is null))
+                {
+                    switch (value.InnerText)
+                    {
+                        case "TEXT_PLANET_LIGHT":
+                            shipyard = 1;
+                            break;
+                        case "TEXT_PLANET_HEAVY":
+                            shipyard = 2;
+                            break;
+                        case "TEXT_PLANET_CAPITAL":
+                            shipyard = 3;
+                            break;
+                        case "TEXT_PLANET_DREAD":
+                            shipyard = 4;
+                            break;
+                    }
+                }
+                value = planet.SelectSingleNode("descendant::Land_Tactical_Map");
+                if (!(value is null))
+                {
+                    groundMap = value.InnerText;
+                }
+                value = planet.SelectSingleNode("descendant::Space_Tactical_Map");
+                if (!(value is null))
+                {
+                    spaceMap = value.InnerText;
+                }
+
+                planet planet_obj = new planet
+                {
+                    codename = codename,
+                    username = username,
+                    desc_history = description,
+                    x_coord = x,
+                    y_coord = -y, //Inversion intentional
+                    credits = credits,
+                    groundMap = groundMap,
+                    spaceMap = spaceMap,
+                    terrain_id = -1,
+                    has_ground = has_ground,
+                    desc_pop = population_desc,
+                    shipyard = shipyard,
+                    desc_fauna = fauna,
+                    land_structures = land_structures,
+                    max_starbase = max_starbase,
+                    desc_weather = weather,
+                    tradehub = tradehub,
+                    pop = pop,
+                    sortstring = username,
+                };
+                entities.Planets.Add(planet_obj);
+            }
+            catch (Exception e)
             {
-                codename = codename,
-                username = username,
-                desc_history = description,
-                x_coord = x,
-                y_coord = -y, //Inversion intentional
-                credits = credits,
-                groundMap = groundMap,
-                spaceMap = spaceMap,
-                terrain_id = -1,
-                has_ground = has_ground,
-                desc_pop = population_desc,
-                shipyard = shipyard,
-                desc_fauna = fauna,
-                land_structures = land_structures,
-                max_starbase = max_starbase,
-                desc_weather = weather,
-                tradehub = tradehub,
-                pop = pop,
-                sortstring = username,
-            };
-            entities.Planets.Add(planet_obj);
+                MessageBox.Show("Error reading planet " + codename + "\n" + e.Message);
+            }
         }
 
         entities.Planets.Sort((s1, s2) => s1.codename.CompareTo(s2.codename));
@@ -3186,7 +3744,7 @@ public static class SharedFunctions
                                 {
                                     if (!(value.LastChild is null))
                                     {
-                                        username = Find_Text_Entry(fullTrim(value.LastChild.Value));
+                                        username = Find_Text_Entry(fullTrim(value.LastChild.Value), entities);
                                     }
                                 }
                             }
@@ -3411,7 +3969,7 @@ public static class SharedFunctions
                                 username = username,
                                 factionsPlayable = new List<string> { faction },
                                 campaign_set = set,
-                                desc = Find_Text_Entry(desc),
+                                desc = Find_Text_Entry(desc, entities),
                                 factionsPresent = factionsPresent,
                                 planets = planets,
                                 traderoutes = routes,
@@ -3585,7 +4143,7 @@ public static class SharedFunctions
                         foreach (int cachedindex in entities.objecthashes[index]) //(unit unidad2 in entities.objects)
                         {
                             unit unidad2 = entities.objects[cachedindex];
-                            if (unidad2.unitname == unidad.variantof)
+                            if (String.Equals(unidad2.unitname, unidad.variantof, StringComparison.OrdinalIgnoreCase))
                             {
                                 if (unidad.affiliations.Count == 0) unidad.affiliations = unidad2.affiliations;
                                 if (unidad.companyunits.Count == 0) unidad.companyunits = unidad2.companyunits;
@@ -3659,8 +4217,11 @@ public static class SharedFunctions
                                     unidad.crew = unidad2.crew;
                                     unidad.crew_baseID = unidad2.crew_baseID + 1;
                                 }
-                                if (unidad.pop < 0) unidad.pop = unidad2.pop;
-                                if (unidad.cp < 0) unidad.cp = unidad2.cp;
+                                if (unidad.cp < 0)
+                                {
+                                    unidad.cp = unidad2.cp;
+                                    unidad.cp_baseID = unidad2.cp_baseID + 1;
+                                }
                                 if (unidad.maintenance < 0)
                                 {
                                     unidad.maintenance = unidad2.maintenance;
@@ -3750,7 +4311,48 @@ public static class SharedFunctions
                                 if (unidad.abilities.Count == 0) unidad.abilities = unidad2.abilities;
                                 if (unidad.unitabilities.Count == 0) unidad.unitabilities = unidad2.unitabilities;
                                 if (unidad.builtin.hpType is null) unidad.builtin = unidad2.builtin;
+                                else {
+                                    //Handle definitions of a builtin that partially inherit
+                                    hardpoint newbiw = unidad.builtin;
+                                    if (newbiw.projectile == null || newbiw.projectile == "") newbiw.projectile = unidad2.builtin.projectile;
+                                    if (newbiw.pulseCount <= 0) newbiw.pulseCount = unidad2.builtin.pulseCount;
+                                    if (newbiw.pulseDelay <= 0) newbiw.pulseDelay = unidad2.builtin.pulseDelay;
+                                    if (newbiw.range <= 0) newbiw.range = unidad2.builtin.range;
+                                    if (newbiw.pulseDelay <= 0) newbiw.pulseDelay = unidad2.builtin.pulseDelay;
+                                    if (newbiw.range <= 0) newbiw.range = unidad2.builtin.range;
+                                    if (newbiw.recharge <= 0) newbiw.recharge = unidad2.builtin.recharge;
+                                    unidad.builtin = newbiw;
+                                }
                                 if (unidad.garrison.Count == 0) unidad.garrison = unidad2.garrison; //todo track id of variant in case editing of this field is someday enabled
+                                for(int sfxid = 0; sfxid < unidad.BasicSFXEvents.Length; sfxid++)
+                                {
+                                    if (unidad.BasicSFXEvents[sfxid] == "")
+                                    {
+                                        unidad.BasicSFXEvents[sfxid] = unidad2.BasicSFXEvents[sfxid];
+                                        unidad.BasicSFXEvents_baseID[sfxid] = unidad2.BasicSFXEvents_baseID[sfxid] + 1;
+                                    }
+                                }
+                                for (int sfxid = 0; sfxid < unidad2.SFXEvent_Attack_Hardpoint.Count; sfxid++) //Since what should exist is unknown, check if the template has any hardpoint types the variant doesn't and inherit any such cases.
+                                {//Note that null sounds are left intact so they prevent inheritance
+                                    int unidad1id = unidad.SFXEvent_Attack_Hardpoint_Type.FindIndex(s => s == unidad2.SFXEvent_Attack_Hardpoint_Type[sfxid]);
+                                    if (unidad1id < 0)
+                                    {
+                                        unidad.SFXEvent_Attack_Hardpoint.Add(unidad2.SFXEvent_Attack_Hardpoint[sfxid]);
+                                        unidad.SFXEvent_Attack_Hardpoint_Type.Add(unidad2.SFXEvent_Attack_Hardpoint_Type[sfxid]);
+                                        unidad.SFXEvent_Attack_Hardpoint_BaseID.Add(unidad2.SFXEvent_Attack_Hardpoint_BaseID[sfxid]+1);
+                                    }
+                                }
+                                for (int sfxid = 0; sfxid < unidad2.SFXEvent_Hardpoint_Destroyed.Count; sfxid++)
+                                {
+                                    int unidad1id = unidad.SFXEvent_Hardpoint_Destroyed_Type.FindIndex(s => s == unidad2.SFXEvent_Hardpoint_Destroyed_Type[sfxid]);
+                                    if (unidad1id < 0)
+                                    {
+                                        unidad.SFXEvent_Hardpoint_Destroyed.Add(unidad2.SFXEvent_Hardpoint_Destroyed[sfxid]);
+                                        unidad.SFXEvent_Hardpoint_Destroyed_Type.Add(unidad2.SFXEvent_Hardpoint_Destroyed_Type[sfxid]);
+                                        unidad.SFXEvent_Hardpoint_Destroyed_BaseID.Add(unidad2.SFXEvent_Hardpoint_Destroyed_BaseID[sfxid] + 1);
+                                    }
+                                }
+
                                 entities.objects[i] = unidad;
                                 break;
                             }
@@ -3766,7 +4368,8 @@ public static class SharedFunctions
             if (unidad.reqstructures == null) unidad.reqstructures = "";
             if (unidad.locked < 0) unidad.locked = 0; //undefined evaluates to not locked
             unidad.structid = i;
-            unidad.username = Find_Text_Entry(unidad.username);
+            unidad.usernameID = unidad.username;
+            unidad.username = Find_Text_Entry(unidad.username, entities);
             unidad.sortstring = unidad.username; //Default to no extra sort value display
 
             //can't create the variant chain in the main detemplating loop because the order is undefined:
@@ -3814,6 +4417,7 @@ public static class SharedFunctions
             if (unidad.shield < 0) unidad.shield_baseID = -1;
             if (unidad.regen < 0) unidad.regen_baseID = -1;
             if (unidad.hp < 0) unidad.hp_baseID = -1;
+            if (unidad.cp < 0) unidad.cp_baseID = -1;
             if (unidad.maintenance < 0) unidad.maintenance_baseID = -1;
             if (unidad.gui_row < 0) unidad.gui_row_baseID = -1;
             if (unidad.limit_concurrent < 0) unidad.concurrent_baseID = -1;
@@ -3824,20 +4428,22 @@ public static class SharedFunctions
             if (unidad.accel < 0) unidad.accel_baseID = -1;
             if (unidad.turn < 0) unidad.turn_baseID = -1;
             if (unidad.range < 0) unidad.range_baseID = -1;
-            if (unidad.garrisonSlots_baseID < 0) unidad.garrisonSlots_baseID = -1;
-            if (unidad.garrisonType_baseID < 0) unidad.garrisonType_baseID = -1;
-            if (unidad.garrisonValue_baseID < 0) unidad.garrisonValue_baseID = -1;
+            if (unidad.garrison_slots < 0) unidad.garrisonSlots_baseID = -1;
+            if (unidad.garrison_type == "") unidad.garrisonType_baseID = -1;
+            if (unidad.garrison_value < 0) unidad.garrisonValue_baseID = -1;
+            for (int sfxid = 0; sfxid < unidad.BasicSFXEvents.Length; sfxid++)
+            {
+                if (unidad.BasicSFXEvents[sfxid] == "") unidad.BasicSFXEvents_baseID[sfxid] = -1;
+            }
 
             unidad.targetablehps = false;
             List<hardpoint> hps = new List<hardpoint>();
             unidad.consolidatedhps = consolidateHardpoints(unidad, hps);
-            foreach (hardpoint hp in hps)
+            int hphp = gethphp(unidad.consolidatedhps);
+            unidad.targetablehps = hphp > -1;
+            if (unidad.targetablehps && hphp != unidad.hp)
             {
-                if (hp.targetable)
-                {
-                    unidad.targetablehps = true;
-                }
-                break;
+                unidad.hpfail = true;
             }
 
             if (unidad.terrainMaps.Count > 0)
@@ -3847,7 +4453,7 @@ public static class SharedFunctions
                 {
                     for (int j = 0; j + 1 < unidad.terrainMaps.Count; j += 2)
                     {
-                        if (String.Equals(unidad.terrainMaps[j + 1], unidad.model, StringComparison.OrdinalIgnoreCase))//unidad.terrainMaps[j + 1].ToLower() != unidad.model.ToLower())
+                        if (!String.Equals(unidad.terrainMaps[j + 1], unidad.model, StringComparison.OrdinalIgnoreCase))//unidad.terrainMaps[j + 1].ToLower() != unidad.model.ToLower())
                         {
                             newmaps.Add(unidad.terrainMaps[j]);
                         }
@@ -3889,6 +4495,21 @@ public static class SharedFunctions
         }
     }
 
+    public static int gethphp(List<hardpoint> hps)
+    {
+        bool target = false;
+        float hphp = 0;
+        foreach (hardpoint hp in hps)
+        {
+            if (hp.targetable)
+            {
+                target = true;
+                hphp += hp.hp * hp.quantity;
+            }
+        }
+        if (!target) return -1;
+        return (int)hphp;
+    }
     public static void categorizeObjects(entities entities)
     {
         entities.spaceUnits.Clear();
@@ -3902,36 +4523,39 @@ public static class SharedFunctions
 
         foreach(unit entity in entities.objects) //I love consistency!
         {
-            if (entity.behaviors.Contains("DUMMY_GROUND_STRUCTURE") || entity.modebehaviors.Contains("DUMMY_GROUND_STRUCTURE"))
+            if (!IsHiddenObject(entity))
             {
-                entities.structures.Add(entity);
-            }
-            else if ((entity.behaviors.Contains("DUMMY_ORBITAL_STRUCTURE") || entity.modebehaviors.Contains("DUMMY_ORBITAL_STRUCTURE")) && (entity.elementName != "W_DummyStructure" || entity.elementName != "MiscObject"))
-            {
-                entities.spaceStructures.Add(entity);
-            }
-            else if (entity.fightermode == 0 || entity.behaviors.Contains("SIMPLE_SPACE_LOCOMOTOR") || entity.modebehaviors.Contains("SIMPLE_SPACE_LOCOMOTOR"))
-            {
-                if (entity.hero) entities.spaceHeroes.Add(entity);
-                else entities.spaceUnits.Add(entity);
-            }
-            else if (entity.fightermode > 0 || entity.behaviors.Contains("DUMMY_SPACE_FIGHTER_SQUADRON") || entity.modebehaviors.Contains("DUMMY_SPACE_FIGHTER_SQUADRON"))
-            {
-                entities.fighters.Add(entity);
-            }
-            else if (entity.percompany > 0)
-            {
-                if (entity.hero) entities.heroCompanies.Add(entity);
-                else entities.groundCompanies.Add(entity);
-            }
-            else if (entity.behaviors.Contains("LAND_TEAM_CONTAINER_LOCOMOTOR") || entity.modebehaviors.Contains("LAND_TEAM_CONTAINER_LOCOMOTOR"))
-            {
-                entities.containers.Add(entity);
-            }
-            else if (entity.behaviors.Contains("WALK_LOCOMOTOR") || entity.behaviors.Contains("LAND_TEAM_INFANTRY_LOCOMOTOR") || entity.behaviors.Contains("FLYING_LOCOMOTOR") || entity.modebehaviors.Contains("WALK_LOCOMOTOR") || entity.modebehaviors.Contains("LAND_TEAM_INFANTRY_LOCOMOTOR") || entity.modebehaviors.Contains("FLYING_LOCOMOTOR") || entity.categories.Contains("NonCombatHero"))
-            {
-                if (entity.hero) entities.groundHeroes.Add(entity);
-                else entities.groundUnits.Add(entity);
+                if (entity.behaviors.Contains("DUMMY_GROUND_STRUCTURE") || entity.modebehaviors.Contains("DUMMY_GROUND_STRUCTURE"))
+                {
+                    entities.structures.Add(entity);
+                }
+                else if ((entity.behaviors.Contains("DUMMY_ORBITAL_STRUCTURE") || entity.modebehaviors.Contains("DUMMY_ORBITAL_STRUCTURE")) && (entity.elementName != "W_DummyStructure" || entity.elementName != "MiscObject"))
+                {
+                    entities.spaceStructures.Add(entity);
+                }
+                else if (entity.fightermode == 0 || entity.behaviors.Contains("SIMPLE_SPACE_LOCOMOTOR") || entity.modebehaviors.Contains("SIMPLE_SPACE_LOCOMOTOR"))
+                {
+                    if (entity.hero) entities.spaceHeroes.Add(entity);
+                    else entities.spaceUnits.Add(entity);
+                }
+                else if (entity.fightermode > 0 || entity.behaviors.Contains("DUMMY_SPACE_FIGHTER_SQUADRON") || entity.modebehaviors.Contains("DUMMY_SPACE_FIGHTER_SQUADRON"))
+                {
+                    entities.fighters.Add(entity);
+                }
+                else if (entity.percompany > 0)
+                {
+                    if (entity.hero) entities.heroCompanies.Add(entity);
+                    else entities.groundCompanies.Add(entity);
+                }
+                else if (entity.behaviors.Contains("LAND_TEAM_CONTAINER_LOCOMOTOR") || entity.modebehaviors.Contains("LAND_TEAM_CONTAINER_LOCOMOTOR"))
+                {
+                    entities.containers.Add(entity);
+                }
+                else if (entity.behaviors.Contains("WALK_LOCOMOTOR") || entity.behaviors.Contains("LAND_TEAM_INFANTRY_LOCOMOTOR") || entity.behaviors.Contains("FLYING_LOCOMOTOR") || entity.modebehaviors.Contains("WALK_LOCOMOTOR") || entity.modebehaviors.Contains("LAND_TEAM_INFANTRY_LOCOMOTOR") || entity.modebehaviors.Contains("FLYING_LOCOMOTOR") || entity.categories.Contains("NonCombatHero"))
+                {
+                    if (entity.hero) entities.groundHeroes.Add(entity);
+                    else entities.groundUnits.Add(entity);
+                }
             }
         }
 
@@ -4039,38 +4663,287 @@ public static class SharedFunctions
         return corenne;
     }
 
-    public static List<String> getGroundUnitLibrary(string unitname)
+    public static string getGroundUnitLibraryPath(string unitname, entities entities)
+    {
+        List<string> paths = new List<string>();//Check several old ways of doing this for backwards compatibility
+        paths.Add(getModFile("Scripts\\Library\\gameobjects\\ground\\company-objects\\" + unitname + ".lua", entities));//TODO I am only guessing this is the final version after mod content loader is dead
+        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\gameobjects\\ground\\company-objects\\" + unitname + ".lua", entities));
+        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\gameobjects\\company-objects\\" + unitname + ".lua", entities));
+
+        foreach (string path in paths)
+        {
+            if (path != "") return path;
+        }
+        return "";
+    }
+
+    public static List<string> getGroundUnitLibrary(string unitname, entities entities)
     {
         List<string> corenne = new List<string>();
-        List<string> paths = new List<string>();//Check several old ways of doing this fr backwards compatibility
-        paths.Add(getModFile("Scripts\\Library\\gameobjects\\ground\\company-objects\\" + unitname + ".lua"));//TODO I am only guessing this is the final version after mod content loader is dead
-        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\gameobjects\\ground\\company-objects\\" + unitname + ".lua"));
-        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\gameobjects\\company-objects\\" + unitname + ".lua"));
-
-        foreach(string path in paths)
+        string path = getGroundUnitLibraryPath(unitname, entities);
+        if (path != "") //fail return for getModFile
         {
-            if (path != "") //fail return for getModFile
-            {
-                string[] UnitLib = File.ReadAllLines(path);
-                corenne = readLuaSpawnLibrary(UnitLib);
-            }
+            string[] UnitLib = File.ReadAllLines(path);
+            corenne = readLuaSpawnLibrary(UnitLib);
         }
         return corenne;
     }
 
-    public static List<String> getSpaceUnitLibrary(string unitname)
+    public static string getSpaceUnitLibraryPath(string unitname, entities entities)
     {
-        List<string> corenne = new List<string>();
-        List<string> paths = new List<string>();//Check several old ways of doing this fr backwards compatibility
-        paths.Add(getModFile("Scripts\\Library\\gameobjects\\" + unitname + ".lua"));//TODO I am only guessing this is the final version after mod content loader is dead
-        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\gameobjects\\" + unitname + ".lua"));
+        List<string> paths = new List<string>();//Check several old ways of doing this for backwards compatibility
+        paths.Add(getModFile("Scripts\\Library\\gameobjects\\" + unitname + ".lua", entities));//TODO I am only guessing this is the final version after mod content loader is dead
+        paths.Add(getModFile("Scripts\\Library\\eawx-mod-" + entities.modid + "\\gameobjects\\" + unitname + ".lua", entities));
 
         foreach (string path in paths)
         {
-            if (path != "") //fail return for getModFile
+            if (path != "") return path;
+        }
+        return "";
+    }
+
+    public static List<string> getSpaceUnitLibrary(string unitname, entities entities)
+    {
+        List<string> corenne = new List<string>();
+        string path = getSpaceUnitLibraryPath(unitname, entities);
+        if (path != "") //fail return for getModFile
+        {
+            string[] UnitLib = File.ReadAllLines(path);
+            corenne = readLuaSpawnLibrary(UnitLib);
+        }
+        return corenne;
+    }
+
+    public static int nextLuaLibSection(string line, int startindex)
+    {
+        int corenne = startindex;
+        for (int c = startindex; c < line.Length; c++)
+        {
+            if (line[c] == ',' || line[c] == '}') return corenne;
+                corenne++;
+        }
+        return corenne; //This is probably really bad if reached
+    }
+
+    public static List<garrison_lua> readObjectLuaLibrary(string unitname, entities entities) //todo: change this to edit the unit so it can save other properties like 
+    {
+        List<garrison_lua> corenne = new List<garrison_lua>();
+        string path = getSpaceUnitLibraryPath(unitname, entities);
+        if (path != "") //fail return for getModFile
+        {
+            string[] UnitLib = File.ReadAllLines(path);
+            string spawn = "";
+            int initial = 0;
+            int reserve = 0;
+            int indentlevel = 0;
+            bool checkfighters = false;
+            foreach (string line in UnitLib)
             {
-                string[] UnitLib = File.ReadAllLines(path);
-                corenne = readLuaSpawnLibrary(UnitLib);
+                indentlevel += line.Count(c => c == '{') - line.Count(c => c == '}');
+                if (checkfighters)
+                {
+                    if (line.Contains("[\""))
+                    {//Between [" and "] is the spawn name. May need to handle the version without that in the future
+                        spawn = line.Substring(line.IndexOf("[") + 2, line.IndexOf("]") - line.IndexOf("[") - 3);
+                    } //todo the future has arrived
+                    if (spawn == "" && line.Contains("="))
+                    {
+                        spawn = line.Substring(0, line.IndexOf("=") - 1).Trim();
+                    }
+                    if (line.Contains("Initial"))
+                    {
+                        List<string> rtrue = new List<string>();
+                        List<string> rfalse = new List<string>();
+                        List<string> htrue = new List<string>();
+                        List<string> hfalse = new List<string>();
+
+                        string trimmed = fullTrim(line);
+                        string faction = line.Substring(0, line.IndexOf("=") - 1).Trim();
+
+                        int amount = trimmed.IndexOf("Initial=");                            
+                        string qty = trimmed.Substring(amount + 8, nextLuaLibSection(trimmed, amount) - amount - 8);
+                        initial = Int32.Parse(qty);
+
+                        if (line.Contains("Reserve"))
+                        {
+                            amount = trimmed.IndexOf("Reserve=");
+                            qty = trimmed.Substring(amount + 8, nextLuaLibSection(trimmed, amount) - amount - 8);
+                            reserve = Int32.Parse(qty);
+                        }
+
+                        bool[] tech = new bool[16]; //Probably enough for futureproofing. Maybe it fits into 2 bytes this way?
+                        tech = Enumerable.Repeat(true, tech.Length).ToArray(); //Assume all true
+                        if (line.Contains("TechLevel"))
+                        {
+                            tech = new bool[16]; //unless a techlevel is defined
+                            try
+                            {
+                                if (line.Contains("(99)") ) continue; //Often used to disable a particular fighter spawn for a faction
+                                amount = trimmed.IndexOf("TechLevel=");
+                                string comp = trimmed.Substring(amount + 10, trimmed.IndexOf(")") - amount - 10);
+                                if (comp.Contains("GreaterOrEqualTo"))
+                                {
+                                    qty = comp.Substring(17, comp.Length - 17); //Length of comparator name + opening paren
+                                    amount = Int32.Parse(qty);
+                                    for (int t = amount; t < tech.Length; t++) tech[t] = true;
+                                }
+                                else if (comp.Contains("GreaterThan"))
+                                {
+                                    qty = comp.Substring(12, comp.Length - 12);
+                                    amount = Int32.Parse(qty);
+                                    for (int t = amount + 1; t < tech.Length; t++) tech[t] = true;
+                                }
+                                else if (comp.Contains("LessThan"))
+                                {
+                                    qty = comp.Substring(9, comp.Length - 9);
+                                    amount = Int32.Parse(qty);
+                                    for (int t = 0; t < amount; t++) tech[t] = true;
+                                }
+                                else if (comp.Contains("LessOrEqualTo"))
+                                {
+                                    qty = comp.Substring(14, comp.Length - 14);
+                                    amount = Int32.Parse(qty);
+                                    for (int t = 0; t <= amount; t++) tech[t] = true;
+                                }
+                                else if (comp.Contains("EqualTo")) //Else is mostly a microoptimization, but it also blocks EqualTo from matching to GreaterOrEqualTo/LessOrEqualTo and triggering an exception/skip
+                                {
+                                    qty = comp.Substring(8, comp.Length - 8);
+                                    amount = Int32.Parse(qty);
+                                    tech[amount] = true;
+                                }
+                                else if (comp.Contains("InInterval"))
+                                {
+                                    qty = comp.Substring(11, comp.Length - 11);
+                                    string[] split = qty.Split(',');
+                                    amount = Int32.Parse(split[0]);
+                                    int end = Int32.Parse(split[1]);
+                                    for (int t = amount; t <= end; t++) tech[t] = true;
+                                }
+                                else if (comp.Contains("IsOneOf"))
+                                {
+                                    qty = comp.Substring(9, comp.Length - 10); //Trim one extra off each side for the { }
+                                    string[] split = qty.Split(',');
+                                    foreach(string oneof in split)
+                                    {
+                                        amount = Int32.Parse(oneof);
+                                        tech[amount] = true;
+                                    }
+                                }
+                            }
+                            catch { continue; } //Generalize the 99 clause
+                        }
+                        if (line.Contains("ResearchType"))
+                        {
+                            amount = trimmed.IndexOf("ResearchType=");
+                            qty = trimmed.Substring(amount + 13, nextLuaLibSection(trimmed, amount) - amount - 13).Replace("\"","");
+                            if (qty.Contains("{"))
+                            {
+                                string[] split = qty.Substring(1,qty.Length - 2).Split(',');
+                                foreach(string rtype in split)
+                                {
+                                    if (rtype.Contains("~")) rfalse.Add(rtype.Replace("~", ""));
+                                    else rtrue.Add(rtype);
+                                }
+                            }
+                            else
+                            {
+                                if (qty.Contains("~")) rfalse.Add(qty.Replace("~", ""));
+                                else rtrue.Add(qty);
+                            }
+                        }
+                        //todo hero overrides
+                        string cut = spawn;
+                        bool standard = false;
+                        bool random = false;
+
+                        float squad_size = 1;
+                        if (spawn.Contains("_DOUBLE"))
+                        {
+                            squad_size = 2;
+                            cut = spawn.Replace("_DOUBLE","");
+                        }
+                        else if (spawn.Contains("_HALF"))
+                        {
+                            squad_size = 0.5f;
+                            cut = spawn.Replace("_HALF", "");
+                        }
+                        else if (spawn.Contains("_THIRD"))
+                        {
+                            squad_size = 1f / 3;
+                            cut = spawn.Replace("_THIRD", "");
+                        }
+                        else if (spawn.Contains("_TRIPLE"))
+                        {
+                            squad_size = 3;
+                            cut = spawn.Replace("_TRIPLE", "");
+                        }
+
+                        string name = spawn.Replace("_", " ");
+                        int fightermode = 1; //Technically standard/random types should check if this is 0, but that currently only applies to Eyttyrmin Batiiv and probably has to waint if/until types are evaluated anyway
+                        float cp = 0;
+                        if (getModFile("Scripts\\Library\\standard-fighters\\" + cut + ".lua", entities) != "") standard = true;
+                        else if (getModFile("Scripts\\Library\\random-fighters\\" + cut + ".lua", entities) != "") random = true;
+                        else
+                        {
+                            int index = LookupUntemplateID(spawn);
+                            if (index < entities.objecthashes.Count)
+                            {
+                                foreach (int cachedindex in entities.objecthashes[index])
+                                {
+                                    unit spawntype = entities.objects[cachedindex];
+                                    if (spawntype.unitname.ToUpper() == spawn)
+                                    {
+                                        name = spawntype.username;
+                                        cp = spawntype.cp;
+                                    }
+                                }
+                            }
+                        }
+                        if(cp == 0)
+                        {
+                            if (spawn.Contains("BOMBER")) fightermode = 2;
+                        }
+
+                        garrison_lua entry = new garrison_lua
+                        {
+                            unitname = spawn,
+                            username = name,
+                            ownerAlias = faction,
+                            upfront = initial,
+                            reserve = reserve,
+                            squad_size = squad_size,
+                            cp = cp,
+                            fightermode = fightermode,
+                            standard = standard,
+                            random = random,
+                            tech = tech,
+                            ResearchRequired = rtrue,
+                            ResearchForbidden = rfalse,
+                            HeroesToEnable = htrue,
+                            HeroesToDisable = hfalse,
+                        };
+                        corenne.Add(entry);
+                    }
+                        
+                    if (line.Contains("}") && indentlevel == 2)
+                    {
+                        //todo handle standard fighters, get size from name in general and in the case of them in specific
+                            
+                        spawn = "";
+                    }
+
+                    if (indentlevel == 1) break;
+                }
+                else
+                {
+                    if (line.Contains("Spawn_Units") || line.Contains("Fighters")) checkfighters = true;
+                    if (line.Contains("FULLINHERIT") || line.Contains("FIGHTERINHERIT"))
+                    {
+                        int index = line.IndexOf("\"") + 1;
+                        string inherit = line.Substring(index, nextLuaLibSection(line, index) - index - 1);
+                        return readObjectLuaLibrary(inherit, entities);
+                    }
+                }
             }
         }
         return corenne;
@@ -4078,7 +4951,7 @@ public static class SharedFunctions
 
     public static void unitToCompanyData(entities entities)
     {//todo hash units, companies, and containers. But even in TR this is ~2 seconds and a minor gain
-        string limpath = getModFile("Scripts\\Library\\BuildLimitLibrary.lua");
+        string limpath = getModFile("Scripts\\Library\\BuildLimitLibrary.lua", entities);
         string[] luabuild = new string[0];
         if (limpath != "") luabuild = File.ReadAllLines(limpath);
         for (int i = 0; i < entities.objects.Count; i++)
@@ -4133,7 +5006,7 @@ public static class SharedFunctions
                 {
                     if (target.Contains("_Dummy"))
                     {
-                        List<string> returned = getGroundUnitLibrary(target);
+                        List<string> returned = getGroundUnitLibrary(target, entities);
                         foreach (string unit in returned) newcompanyunits.Add(unit);
                     }
                     //else newcompanyunits.Add(target); //Will need this if spawners are ever mixed with regular units
@@ -4141,7 +5014,7 @@ public static class SharedFunctions
                 }
                 if (company.unitname.Contains("_Group"))
                 {
-                    List<string> returned = getSpaceUnitLibrary(company.unitname);
+                    List<string> returned = getSpaceUnitLibrary(company.unitname, entities);
                     foreach (string unit in returned) newcompanyunits.Add(unit);
                     if (newcompanyunits.Count > 0)
                     {
@@ -4328,7 +5201,6 @@ public static class SharedFunctions
                         }
                     }
                 }
-                entities.objects[i] = company;
             }
             if (company.garrison.Count > 0)
             {
@@ -4362,7 +5234,7 @@ public static class SharedFunctions
                             new_gar.upfront[newtech] = initial_entry.parsingupfront;
                             new_gar.reserve[newtech] = initial_entry.parsingreserve;
                             new_garrison[j] = new_gar;
-                            if (new_gar.bomber) lastbomber = landTypes[bomberTypes.FindIndex(s => s == new_gar.unitname)];
+                            if (new_gar.fightermode == 2) lastbomber = landTypes[bomberTypes.FindIndex(s => s == new_gar.unitname)];
                             //do not break or any skipped units will not have tech updated
                         }
                     }
@@ -4396,7 +5268,7 @@ public static class SharedFunctions
                             reserve = new int[6],
                             squad_size = squad_size,
                             username = spawned.username,
-                            bomber = !(spawned.bombingRunUnit is null) && spawned.bombingRunUnit != "",
+                            fightermode = spawned.fightermode,
                             cp = spawned.cp,
                         };
                         //todo get user facing name, squad size float, is bomber from unit data
@@ -4404,7 +5276,7 @@ public static class SharedFunctions
                         new_garr.upfront[newtech] = initial_entry.parsingupfront;
                         new_garr.reserve[newtech] = initial_entry.parsingreserve;
                         new_garrison.Add(new_garr);
-                        if (new_garr.bomber)
+                        if (new_garr.fightermode == 2)
                         {
                             lastbomber = spawned.bombingRunUnit;
                             bomberTypes.Add(initial_entry.unitname);
@@ -4432,15 +5304,17 @@ public static class SharedFunctions
                 if (lastbomber != "" && !finalBombers.Contains(lastbomber)) finalBombers.Add(lastbomber); //Save the last bomber loaded into memory if it isn't already saved from an earlier tech level
                 company.bombingRunUnit = SerializeStringArray(finalBombers);
                 company.garrison = new_garrison;
-
-                entities.objects[i] = company;
             }
+
+            company.garrison_lua = readObjectLuaLibrary(company.unitname, entities);
+
+            entities.objects[i] = company;
         }
     }
 
-    public static List<unit> unitToCompanyDataForSorted(List<unit> companies, List<unit> units, List<unit> containers, bool skip_step2 = false)
+    public static List<unit> unitToCompanyDataForSorted(List<unit> companies, List<unit> units, List<unit> containers, entities entities, bool skip_step2 = false)
     {//todo hash units, companies, and containers. But even in TR this is ~2 seconds and a minor gain
-        string limpath = getModFile("Scripts\\Library\\BuildLimitLibrary.lua");
+        string limpath = getModFile("Scripts\\Library\\BuildLimitLibrary.lua", entities);
         string[] luabuild = new string[0];
         if (limpath != "") luabuild = File.ReadAllLines(limpath);
         for (int i = 0; i < companies.Count; i++)
@@ -4493,7 +5367,7 @@ public static class SharedFunctions
                 {
                     if (target.Contains("_Dummy"))
                     {
-                        List<string> returned = getGroundUnitLibrary(target);
+                        List<string> returned = getGroundUnitLibrary(target, entities);
                         foreach (string unit in returned) newcompanyunits.Add(unit);
                     }
                     //else newcompanyunits.Add(target); //Will need this if spawners are ever mixed with regular units
@@ -4663,13 +5537,13 @@ public static class SharedFunctions
         return companies;
     }
 
-    public static string[] findUnitNameFile(unit unit, entities entities)
+    public static string findUnitNameFilePath(unit unit, entities entities)
     {
-        string[] corenne = new string[0];
+        string corenne = "";
 
         string lowername = unit.unitname.ToLower();
         string transport = unit.transport.ToLower();
-        string path = getModFile("XML\\GameConstants.xml");
+        string path = getModFile("XML\\GameConstants.xml", entities);
         XmlDocument consts = readModXmlOrMeg("XML\\GameConstants.xml", entities);
         XmlNodeList listsets = consts.DocumentElement.SelectNodes("descendant::ShipNameTextFiles");
         foreach (XmlNode listset in listsets)
@@ -4682,8 +5556,8 @@ public static class SharedFunctions
                     string low = types[i].ToLower();
                     if (low == lowername || low == transport)
                     {
-                        string namepath = getModFile(RemoveTopLevelFolder(types[i + 1]));
-                        if (File.Exists(namepath)) return File.ReadAllLines(namepath);
+                        string namepath = getModFile(RemoveTopLevelFolder(types[i + 1]), entities);
+                        if (File.Exists(namepath)) return namepath;
                     }
                 }
             }
@@ -4691,10 +5565,19 @@ public static class SharedFunctions
         return corenne;
     }
 
+    public static string[] findUnitNameFile(unit unit, entities entities)
+    {
+        string[] corenne = new string[0];
+        string namepath = findUnitNameFilePath(unit, entities);
+        if (File.Exists(namepath)) return File.ReadAllLines(namepath);
+        return corenne;
+
+    }
+
     public static void readPlanetSpawnTables(entities entities)
     {
         entities.spawnSets.Clear();
-        string namepath = getModFile("Scripts\\Library\\UnitSpawnerTables.lua");
+        string namepath = getModFile("Scripts\\Library\\UnitSpawnerTables.lua", entities);
         if (namepath != "")
         {
             string[] Lib = File.ReadAllLines(namepath);
@@ -4725,6 +5608,537 @@ public static class SharedFunctions
         }
     }
 
+    public static string convertProjectileToName(string projectile)
+    {
+        if (projectile is null) return "";
+        string proj = projectile.Replace("Proj_", "").Replace("proj_", "").Replace("ship_", ""); //TODO I'm sure I've missed some colors
+        proj = proj.Replace("_Blue", "").Replace("_blue", "");
+        proj = proj.Replace("_Red", "").Replace("_red", "");
+        proj = proj.Replace("_Green", "").Replace("_green", "");
+        proj = proj.Replace("_Yellow", "").Replace("_yellow", "");
+        proj = proj.Replace("_Purple", "").Replace("_purple", "");
+        proj = proj.Replace("_Silver", "").Replace("_silver", "");
+
+        return proj;
+    }
+
+    private static List<projectileAccuracyTemplate> LightLaserAccs() //TODO we already have different acc calcs in dev vs public... You can check which is which by looking for changelog presence
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        if(entities.version <= 35 && entities.modid == "rev")
+        {
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 1, tiermod = 0.1f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 1, tiermod = 0.1f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 1, tiermod = 0.1f }); //These are clearly wrong, but backwards compatibility and all
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 1, tiermod = 0.1f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 3, tiermod = 0.3f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 3, tiermod = 0.3f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 3, tiermod = 0.3f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 6, tiermod = 0.6f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 10, tiermod = 1f });
+        }
+        else
+        {
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 1, tiermod = 0.1f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 1, tiermod = 0.1f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 3, tiermod = 0.3f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 3, tiermod = 0.3f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 3, tiermod = 0.3f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 3, tiermod = 0.3f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 3, tiermod = 0.3f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 6, tiermod = 0.6f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 10, tiermod = 1f });
+        }
+
+        //dev version bugged
+        /*ExpectedAccuracy.Add(new projectileAccuracyTemplate {category = "Fighter", accuracy = 1, tiermod = 0.1f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 1, tiermod = 0.1f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 1, tiermod = 0.1f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 1, tiermod = 0.1f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 3, tiermod = 0.3f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 3, tiermod = 0.3f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 3, tiermod = 0.3f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 3, tiermod = 0.3f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 6, tiermod = 0.6f });*/
+        return ExpectedAccuracy;
+    }
+
+    private static List<projectileAccuracyTemplate> MedLaserAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 1.5f, tiermod = 0.15f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 1.5f, tiermod = 0.15f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 4.5f, tiermod = 0.45f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 4.5f, tiermod = 0.45f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 4.5f, tiermod = 0.45f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 4.5f, tiermod = 0.45f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 4.5f, tiermod = 0.45f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 7, tiermod = 0.7f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 10, tiermod = 1f });
+        return ExpectedAccuracy;
+    }
+
+    private static List<projectileAccuracyTemplate> HeavyLaserAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 2, tiermod = 0.2f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 2, tiermod = 0.2f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 6, tiermod = 0.6f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 6, tiermod = 0.6f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 6, tiermod = 0.6f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 6, tiermod = 0.6f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 6, tiermod = 0.6f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 8, tiermod = 0.8f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 10, tiermod = 1f });
+        return ExpectedAccuracy;
+    }
+
+    private static List<projectileAccuracyTemplate> LightIonAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 50, tiermod = 5 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 50, tiermod = 5 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 40, tiermod = 4 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 40, tiermod = 4 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 30, tiermod = 3 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 30, tiermod = 3 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 15, tiermod = 1.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 10, tiermod = 1 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 5, tiermod = 0.5f });
+        return ExpectedAccuracy;
+    }
+
+    private static List<projectileAccuracyTemplate> MedIonAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        if (entities.version <= 35)
+        {
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 60, tiermod = 6 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 60, tiermod = 6 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 50, tiermod = 5 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 50, tiermod = 5 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 35, tiermod = 3.5f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 35, tiermod = 3.5f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 25, tiermod = 2 }); //The difference
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 10, tiermod = 1 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 5, tiermod = 0.5f });
+        }
+        else
+        {
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 60, tiermod = 6 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 60, tiermod = 6 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 50, tiermod = 5 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 50, tiermod = 5 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 35, tiermod = 3.5f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 35, tiermod = 3.5f });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 20, tiermod = 2 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 10, tiermod = 1 });
+            ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 5, tiermod = 0.5f });
+        }
+
+        return ExpectedAccuracy;
+    }
+
+    private static List<projectileAccuracyTemplate> HeavyIonAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 70, tiermod = 7 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 70, tiermod = 7 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 60, tiermod = 6 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 60, tiermod = 6 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 40, tiermod = 4 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 40, tiermod = 4 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 25, tiermod = 2.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 10, tiermod = 1 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 5, tiermod = 0.5f });
+        return ExpectedAccuracy;
+    }
+
+    private static List<projectileAccuracyTemplate> LightTurboAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 40, tiermod = 4 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 40, tiermod = 4 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 20, tiermod = 2 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 20, tiermod = 2 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 20, tiermod = 2 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 20, tiermod = 2 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 10, tiermod = 1 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 5, tiermod = 0.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 1, tiermod = 0.1f });
+        return ExpectedAccuracy;
+    }
+
+    private static List<projectileAccuracyTemplate> MedTurboAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 50, tiermod = 5 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 50, tiermod = 5 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 25, tiermod = 2.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 25, tiermod = 2.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 25, tiermod = 2.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 25, tiermod = 2.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 15, tiermod = 1.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 5, tiermod = 0.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 1, tiermod = 0.1f });
+        return ExpectedAccuracy;
+    }
+
+    private static List<projectileAccuracyTemplate> HeavyTurboAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 60, tiermod = 6 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 60, tiermod = 6 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 30, tiermod = 3 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 30, tiermod = 3 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 30, tiermod = 3 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 30, tiermod = 3 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 20, tiermod = 2 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 5, tiermod = 0.5f });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 1, tiermod = 0.1f });
+        return ExpectedAccuracy;
+    }
+
+    private static List<projectileAccuracyTemplate> ArchaicAccs()
+    {
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Fighter", accuracy = 50, tiermod = 5 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Bomber", accuracy = 50, tiermod = 5 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Transport", accuracy = 40, tiermod = 4 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SpaceHero", accuracy = 40, tiermod = 4 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Gunship", accuracy = 30, tiermod = 3 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Corvette", accuracy = 30, tiermod = 3 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Frigate", accuracy = 20, tiermod = 2 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "Capital", accuracy = 10, tiermod = 1 });
+        ExpectedAccuracy.Add(new projectileAccuracyTemplate { category = "SuperCapital", accuracy = 5, tiermod = 0.5f });
+        return ExpectedAccuracy;
+    }
+
+    public static float hpDPS(hardpoint hardpoint, bool suppressQty = false, bool alpha = false, float AOEmult = 1)
+    {
+        float reload = hardpoint.recharge + (hardpoint.pulseCount - 1) * hardpoint.pulseDelay;
+        if (alpha) reload = (float)Math.Log10(reload);
+        float corenne = hardpoint.damageAmount * hardpoint.pulseCount / reload;
+        if (hardpoint.blastRadius > 0) corenne *= AOEmult;
+        if (!suppressQty) corenne *= hardpoint.quantity;
+        return corenne;
+    }
+
+    public static float getComplementCP(unit unit)
+    {
+        float corenne = 0;
+        foreach (garrison_entry gar in unit.garrison)
+        {
+            if (gar.tech[1])
+            {
+                float upfrontcp = gar.cp * gar.upfront[1]; //For debug purposes
+                float reserveratio = (float)Math.Pow(0.5, (double)gar.reserve[1] / gar.upfront[1]);
+                if (gar.reserve[1] == -1) reserveratio = 0;
+                float reservecp = upfrontcp * (1 - reserveratio);
+                corenne += upfrontcp + reservecp;
+            }
+        }
+        return corenne;
+    }
+
+    //todo watch for accuracy. But it mostly seems to be DPS calc mismatches. Some of those are caused by different reload rounding on sheet vs game, which are unfixable
+    public static double CalculateSpaceCP(float dps, float acctier, float healscore, float hp, string atype, float shield, string stype, float regen, float defensemod)
+    {
+        if (entities.version > 35)
+        {
+            int modscale = 1;
+            if (entities.modid == "rev") modscale = 4;
+            double dpsheal = 1.5 * (dps * (1 + (0.05 * acctier)) + healscore);
+            ArmorMods mods = GetArmorMods(stype);
+            double modshield = (shield + 1000 * regen / 3) * mods.average;
+            mods = GetArmorMods(atype);
+            double modhp = hp * mods.average;
+            return modscale * Math.Floor(Math.Sqrt(dpsheal * (modshield + modhp))); //todo multiply by defense mod inside sqrt. Change in Tilotny from stats on page too
+        }
+        else //legacy version
+        {
+            int modscale = 1;
+            if (entities.modid == "rev") modscale = 4;
+            double dpsheal = 1.5 * (dps * (1 + (0.05 * acctier)) + healscore);
+            ArmorMods mods = GetArmorMods(stype);
+            double modshield = (shield + 1000 * regen / 3) * mods.average;
+            mods = GetArmorMods(atype);
+            double modhp = hp * mods.average;
+            return modscale * Math.Floor(Math.Sqrt(dpsheal * (modshield + modhp)));
+        }
+    }
+
+    public static double CalculateSpaceCPfromUnit(unit unit, float acctier)
+    {
+        float avgdps = 0;
+        foreach (hardpoint hp in unit.consolidatedhps)
+        {
+            if(hp.damageAmount > 0)
+            {
+                WeaponMods weap = GetWeaponMods(hp.damageType);
+                float dps = hpDPS(hp);
+                avgdps += dps * weap.median;
+            }
+        }
+
+        float healscore = 0;
+        ability healable = unit.abilities.FirstOrDefault(s => s.type == "Force_Healing_Ability"); //todo may need to find last instead
+        if (healable.recharge > 0)
+        {
+            healscore = getHealScore(healable);
+        }
+
+        return CalculateSpaceCP(avgdps, acctier, healscore, unit.hp, unit.armor_type, unit.shield, unit.shield_type, unit.regen, getDefenseMod(unit));
+    }
+
+    public static double CalculateGroundCP(float dps, float hp, string atype, float shield, string stype, float regen, float defensemod)
+    {
+        if (entities.version > 35)
+        {
+            ArmorMods mods = GetArmorMods(stype);
+            double modshield = (shield) * mods.average; // + 1000 * regen / 3
+            mods = GetArmorMods(atype);
+            double modhp = hp * mods.average;
+            return Math.Floor(2 * Math.Sqrt(dps * (modshield + modhp) * defensemod));
+        }
+        else //legacy version
+        {
+            ArmorMods mods = GetArmorMods(stype);
+            double modshield = (shield) * mods.average;
+            mods = GetArmorMods(atype);
+            double modhp = hp * mods.average;
+            return Math.Floor(2 * Math.Sqrt(dps * (modshield + modhp) * defensemod));
+        }  
+    }
+
+    public static double CalculateGroundCPfromUnit(unit unit)
+    {
+        float avgdps = 0;
+        foreach (hardpoint hp in unit.consolidatedhps)
+        {
+            if (hp.damageAmount > 0)
+            {
+                WeaponMods weap = GetWeaponMods(hp.damageType);
+                float dps = hpDPS(hp);
+                if (entities.version > 35) avgdps += dps * weap.medianA; //TODO median not A. Change in Tilotny from stats on page too
+                else avgdps += dps * weap.medianA; //Legacy version bugged calc
+            }
+        }
+
+        /*float healscore = 0;
+        ability healable = unit.abilities.FirstOrDefault(s => s.type == "Force_Healing_Ability"); //todo may need to find last instead
+        if (healable.recharge > 0)
+        {
+            healscore = getHealScore(healable);
+        }*/
+
+        return CalculateGroundCP(avgdps, unit.hp, unit.armor_type, unit.shield, unit.shield_type, unit.regen, getDefenseMod(unit));
+    }
+
+    private static (float range, List<projectileAccuracyTemplate> accs) projectileExamine(string projectile, string damageType)
+    {//todo check supers on Aggressor and Peltast
+        float expectedRange = 0;
+        List<projectileAccuracyTemplate> ExpectedAccuracy = new List<projectileAccuracyTemplate>();
+        if (projectile is null) return (expectedRange, ExpectedAccuracy);
+        string lower = projectile.ToLower();
+
+        bool ultraheavy = (lower.Contains("_ultraheavy") || lower.Contains("_super"));
+        bool heavy = (lower.Contains("_heavy"));
+        bool light = (lower.Contains("_light"));
+
+        switch (damageType)
+        {
+            case "DamageS_Laser":
+                bool maser = lower.Contains("maser_");
+                if (lower.Contains("rapid_"))
+                {//masers have different range?
+                    if (light)
+                    {
+                        if (maser) expectedRange = 1800;
+                        else expectedRange = 1500;
+                        ExpectedAccuracy = LightLaserAccs();
+                    }
+                    else if (heavy)
+                    {
+                        if (maser) expectedRange = 2200;
+                        else expectedRange = 2000;
+                        ExpectedAccuracy = HeavyLaserAccs();
+                    }
+                    else
+                    {
+                        if (maser) expectedRange = 2000;
+                        else expectedRange = 1750;
+                        ExpectedAccuracy = MedLaserAccs();
+                    }
+                }
+                else
+                {
+                    if (light)
+                    {
+                        if (maser) expectedRange = 1800;
+                        else expectedRange = 1750;
+                        ExpectedAccuracy = LightLaserAccs();
+                    }
+                    else if (heavy)
+                    {
+                        if (maser) expectedRange = 2200;
+                        else expectedRange = 2250;
+                        ExpectedAccuracy = HeavyLaserAccs();
+                    }
+                    else
+                    {
+                        expectedRange = 2000;
+                        ExpectedAccuracy = MedLaserAccs();
+                    }
+                }
+                break;
+            case "PD_Ion":
+                expectedRange = 1500;
+                ExpectedAccuracy = MedLaserAccs();
+                break;
+            case "DamageS_Turbolaser":
+                if (light)
+                {
+                    expectedRange = 2500;
+                    ExpectedAccuracy = LightTurboAccs();
+                }
+                else if (ultraheavy)
+                {
+                    expectedRange = 4000;
+                    ExpectedAccuracy = HeavyTurboAccs();
+                }
+                else if (heavy)
+                {
+                    expectedRange = 3500;
+                    ExpectedAccuracy = HeavyTurboAccs();
+                }
+                else
+                {
+                    expectedRange = 3000;
+                    ExpectedAccuracy = MedTurboAccs();
+                }
+                break;
+            case "DamageS_TurboIon":
+                if (light)
+                {
+                    expectedRange = 2500;
+                    ExpectedAccuracy = LightIonAccs();
+                }
+                else if (ultraheavy)
+                {
+                    expectedRange = 4000;
+                    ExpectedAccuracy = HeavyIonAccs();
+                }
+                else if (heavy)
+                {
+                    expectedRange = 3500;
+                    ExpectedAccuracy = HeavyIonAccs();
+                }
+                else
+                {
+                    expectedRange = 3000;
+                    ExpectedAccuracy = MedIonAccs();
+                }
+                break;
+            case "DamageS_Concussion":
+                if (lower.Contains("assault_"))
+                {
+                    expectedRange = 3500;
+                }
+                else if (lower.Contains("_sphere"))
+                {
+                    expectedRange = 2500;
+                    ExpectedAccuracy = ArchaicAccs();
+                }
+                else
+                {
+                    expectedRange = 2000;
+                }
+                break;
+            case "DamageS_Proton":
+                if (lower.Contains("mass_driver"))
+                {
+                    expectedRange = 3500;
+                    ExpectedAccuracy = ArchaicAccs();
+                }
+                else
+                {
+                    if(lower.Contains("torpedo_siege_platform")) expectedRange = 3500; //todo: care about the accuracy mods on these?
+                    else expectedRange = 2500;
+                }
+                break;
+            case "DamageS_Flechette":
+                expectedRange = 1500;
+                ExpectedAccuracy = MedLaserAccs();
+                break;
+        }
+
+        return (expectedRange, ExpectedAccuracy);
+        //todo return -1 range if hardpoint doesn't count (engine, grav well, dummy...)
+    }
+
+    public static (float range, float acctier) hardpointExamine(unit unit)
+    {
+        float range = 0;
+        float acctier = 0;
+        int weaponcount = 0;
+        int accweaponcount = 0;
+
+        foreach (hardpoint hp in unit.consolidatedhps)
+        {
+            string dtype = hp.damageType;
+            if (!(hp.text is null) && hp.text.Contains("Anti-Fighter Ion")) dtype = "PD_Ion";
+            (float hprange, List<projectileAccuracyTemplate> accs) = projectileExamine(hp.projectile, dtype);
+
+            if(hprange > 0)
+            {
+                range += (hp.range - hprange) * hp.quantity;
+                float tier = 0;
+                int tiercount = 0;
+                foreach(projectileAccuracyTemplate acc in accs)
+                {
+                    int id = hp.inaccuracyTypes.FindIndex(s => String.Equals(s, acc.category, StringComparison.OrdinalIgnoreCase));
+                    if(id >= 0)
+                    {
+                        float hpacc = hp.inaccuracyAmounts[id];
+                        tier += (acc.accuracy - hpacc) / acc.tiermod; //todo can just use acc/10?
+                        tiercount++;
+                    }
+                }
+                if (tiercount > 0)
+                {
+                    acctier += tier * hp.quantity / tiercount;
+                    accweaponcount += hp.quantity;
+                }
+                weaponcount += hp.quantity;
+            }
+        }
+
+        range /= weaponcount;
+        acctier /= accweaponcount;
+
+        //return unit;
+        return (range, acctier);
+    }
+
+    public static string FindDescendants(string unitname, List<unit> src, bool furst = true)
+    {
+        string corenne = "";
+        bool first = furst;
+        foreach(unit unit in src)
+        {
+            if(unit.variantbase == unitname)
+            {
+                if (furst) furst = false;
+                else corenne += ", ";
+                corenne += unit.unitname;
+                corenne += FindDescendants(unit.unitname, src, false);
+            }
+        }
+        if (corenne != "" && first) corenne = "Descendants: " + corenne;
+        return corenne;
+    }
+
 }
 
 public struct MEGentry
@@ -4746,12 +6160,23 @@ public struct projectile
     public float speed;
     public float turn;
 }
+
+public struct projectileAccuracyTemplate
+{
+    public string category;
+    public float accuracy;
+    public float tiermod;
+}
 public struct hardpoint
 {
     public string name;
+    public string text;
     public string projectile;
     public string damageType;
     public string hpType;
+    public string firesound;
+    public string diesound;
+    public string datafile;
     public int quantity;
     public bool targetable;
     public float hp;
@@ -4769,14 +6194,8 @@ public struct hardpoint
 
     public override string ToString()
     {
-        if (range < 0) return quantity.ToString() + "x " + projectile;
-        string proj = projectile.Replace("Proj_", "").Replace("proj_", "").Replace("ship_", ""); //TODO I'm sure I've missed some colors
-        proj = proj.Replace("_Blue", "").Replace("_blue", "");
-        proj = proj.Replace("_Red", "").Replace("_red", "");
-        proj = proj.Replace("_Green", "").Replace("_green", "");
-        proj = proj.Replace("_Yellow", "").Replace("_yellow", "");
-        proj = proj.Replace("_Purple", "").Replace("_purple", "");
-        proj = proj.Replace("_Silver", "").Replace("_silver", "");
+        if (range < 0) return quantity.ToString() + "x " + text;
+        string proj = SharedFunctions.convertProjectileToName(projectile);
         return quantity.ToString() + "x " + proj.Replace("_", " ") + ": " + pulseCount.ToString() + " / " + recharge.ToString("0.0") + "s / " + range.ToString();
     }
 }
@@ -4800,6 +6219,7 @@ public struct faction
     public string luaname;
     public string abbreviation;
     public string ai;
+    public string alias;
     public string BTS;
     public bool playable;
 
@@ -4813,12 +6233,45 @@ public struct faction
     }
 }
 
+public enum basicSoundTypes {
+    SFXEvent_Select,
+    SFXEvent_Move,
+    SFXEvent_Fleet_Move,
+    SFXEvent_Attack,
+    SFXEvent_Guard,
+    SFXEvent_Assist_Move,
+    SFXEvent_Assist_Attack,
+    SFXEvent_Health_Low_Warning,
+    SFXEvent_Health_Critical_Warning,
+    SFXEvent_Move_Into_Nebula,
+    SFXEvent_Move_Into_Asteroid_Field,
+    SFXEvent_Engine_Idle_Loop,
+    SFXEvent_Engine_Moving_Loop,
+    SFXEvent_Engine_Cinematic_Focus_Loop,
+    SFXEvent_Damaged_By_Asteroid,
+    SFXEvent_Turret_Rotating_Loop,
+    Death_SFXEvent_Start_Die,
+    SFXEvent_Ambient_Moving,
+    Spin_Away_On_Death_SFXEvent_Start_Die,
+
+    SFXEvent_Build_Started, //Usually boilerplate, put last for sorting purposes here and for extracting sound bts
+    SFXEvent_Build_Cancelled,
+    SFXEvent_Build_Complete,
+    SFXEvent_Bombard_Select_Target,
+    SFXEvent_Bombard_Incoming,
+    SFXEvent_Tactical_Build_Started,
+    SFXEvent_Tactical_Build_Complete,
+    SFXEvent_Tactical_Build_Cancelled,
+    Max //Keep this last 
+}
+
 public struct unit
 {
     public string variantof;
     public string variantbase;
     public string unitname;
     public string username;
+    public string usernameID;
     public string datafile;
     public string elementName;
     public string bombingRunUnit;
@@ -4834,6 +6287,7 @@ public struct unit
     public bool targetablehps;
     public bool hero;
     public bool superweaponkiller;
+    public bool hpfail;
     public string reqstructures;
     public string reqorbit;
     public string reqtemplate;
@@ -4898,6 +6352,7 @@ public struct unit
     public int garrisonValue_baseID;
     public int garrisonType_baseID;
     public int maintenance_baseID;
+    public int cp_baseID;
     public hardpoint builtin;
     public List<string> companyunits;
     public List<quantizedObject> consolidatedUnits;
@@ -4918,6 +6373,16 @@ public struct unit
     public List<ability> abilities;
     public List<unitability> unitabilities;
     public List<garrison_entry> garrison;
+    public List<garrison_lua> garrison_lua;
+    public string[] BasicSFXEvents;
+    public List<string> SFXEvent_Attack_Hardpoint;
+    public List<string> SFXEvent_Attack_Hardpoint_Type;
+    public List<string> SFXEvent_Hardpoint_Destroyed;
+    public List<string> SFXEvent_Hardpoint_Destroyed_Type;
+    public int[] BasicSFXEvents_baseID;
+    public List<int> SFXEvent_Attack_Hardpoint_BaseID;
+    public List<int> SFXEvent_Hardpoint_Destroyed_BaseID;
+    //public string Land_Damage_SFX; Saving until I understand it better
     //public string weather;
     //public string movementclass;
     //public string lua_script;
@@ -4930,12 +6395,28 @@ public struct unit
     }
 }
 
+public struct sfx
+{
+    public string name;
+    public string displayname;
+    public string sourcefile;
+    public string[] samples;
+    public int minpitch;
+    public int maxpitch;
+
+    public override string ToString()
+    {
+        return displayname;
+    }
+}
+
 public struct ability
 {
     public string name;
     public string type;
     public string activation;
     public string linkedEntity;
+    public string sound;
     public string[] applicable_categories;
     public string[] applicable_types;
     public string[] excluded_types;
@@ -4971,6 +6452,8 @@ public struct unitability
     public string desc; //Alternate_Description_Text
     public string icon; //Alternate_Icon_Name
     public string ability; //GUI_Activated_Ability_Name
+    public string sound;
+    public string deactivatesound;
 
     public float recharge;
     public float expiration;
@@ -4999,7 +6482,7 @@ public struct garrison_entry
     public int parsingtech;
     public int parsingupfront;
     public int parsingreserve;
-    public bool bomber;
+    public int fightermode;
     public bool[] tech;
 }
 
@@ -5007,17 +6490,24 @@ public struct garrison_lua
 {
     public string unitname;
     public string username;
+    public string ownerAlias;
     public int upfront;
     public int reserve;
     public float squad_size;
     public float cp;
-    public bool bomber;
+    public int fightermode;
     public bool standard;
+    public bool random;
     public bool[] tech;
-    public bool[] era; //also regime
     public List<string> ResearchRequired;
     public List<string> ResearchForbidden;
-    public List<string> HeroOverrides;
+    public List<string> HeroesToEnable;
+    public List<string> HeroesToDisable;
+
+    public override string ToString()
+    {
+        return username + ": " + (upfront * squad_size).ToString("0.##") + " / " + (reserve * squad_size).ToString("0.##");
+    }
 }
 
 public struct container
@@ -5162,6 +6652,8 @@ public struct entities {
 
     public static List<unit> containers = new List<unit>();
 
+    public static List<sfx> sfx = new List<sfx>();
+
     //public static List<List<int>> containerhashes = new List<List<int>>();
 
     public static List<string> SpaceArmors = new List<string>();
@@ -5198,6 +6690,7 @@ public struct entities {
     public static AutoResolveSettings AutoResolveSettings = new AutoResolveSettings();
 
     public static string modid; //Should be deprecated in Rev 1.0, but keep around for compatibility
+    public static float version; //Standardize on TR version, but may need to work in conjuction with modid
     public static string readerrors = "";
 }
 
@@ -5214,6 +6707,7 @@ public class WeaponMods
     public List<ArmorMod> HpMods;
     public List<ArmorMod> ShieldMods;
     public float median;
+    public float medianA;
 }
 
 public class ArmorMod
@@ -5274,6 +6768,18 @@ public class Text_Entry : IComparable<Text_Entry>
         return corenne;
     }
 
+    public static uint calculateCRC(string id)
+    {
+        uint check = 0xFFFFFFFF;
+        byte[] win1252Bytes = Encoding.Convert(Encoding.Unicode, Encoding.GetEncoding("windows-1252"), toBytes(id.ToCharArray(0, id.Length)));
+        for (int j = 0; j < win1252Bytes.Length; j++)
+        {
+            check = ((check >> 8) & 0x00FFFFFF) ^ crcGlobals.crcTable[(check ^ win1252Bytes[j]) & 0xFF];
+        }
+        check ^= 0xFFFFFFFF;
+        return check;
+    }
+
     public static Text_Entry FromCsv(string csvLine, char delimiter)
     {
         if (csvLine.Length == 0 || !csvLine.Contains(delimiter))
@@ -5286,14 +6792,8 @@ public class Text_Entry : IComparable<Text_Entry>
         entry.identifier = csvLine.Substring(0, firstdelimit);
         entry.entry = csvLine.Substring(firstdelimit + 1, csvLine.Length - firstdelimit - 1);
 
-        uint check = 0xFFFFFFFF;
-        byte[] win1252Bytes = Encoding.Convert(Encoding.Unicode, Encoding.GetEncoding("windows-1252"), toBytes(entry.identifier.ToCharArray(0, entry.identifier.Length)));
-        for (int j = 0; j < win1252Bytes.Length; j++)
-        {
-            check = ((check >> 8) & 0x00FFFFFF) ^ crcGlobals.crcTable[(check ^ win1252Bytes[j]) & 0xFF];
-        }
-        check ^= 0xFFFFFFFF;
-        entry.crc = check;
+        
+        entry.crc = calculateCRC(entry.identifier);
 
         return entry;
     }
@@ -5376,7 +6876,7 @@ public static class DatParser
         List<IconData> corenne = new List<IconData>();
         string source = "Art\\Textures\\MT_CommandBar.mtd";
         byte[] mtdfile;
-        string filesource = SharedFunctions.getModFile("Art\\Textures\\MT_CommandBar.mtd");
+        string filesource = SharedFunctions.getModFile("Art\\Textures\\MT_CommandBar.mtd", entities);
         if(filesource != "") mtdfile = System.IO.File.ReadAllBytes(filesource);
         else mtdfile = SharedFunctions.getFileFromMegs(source, entities);
 
@@ -5477,5 +6977,62 @@ public static class DatParser
         }
 
         return entries;
+    }
+
+
+    public static void compileDat(List<Text_Entry> Entries, string outFile)
+    {
+        uint total_entries = (uint)Entries.Count;
+
+        File.Delete(outFile);
+        List<byte> datfile = new List<byte>();
+
+
+        byte[] bytes = tobytesLE(total_entries);
+        for (int i = 0; i < 4; i++)
+        {
+            datfile.Add(bytes[i]);
+        }
+
+
+        for (int i = 0; i < total_entries; i++)
+        {
+            byte[] crcbytes = tobytesLE(Entries[i].crc);
+            for (int j = 0; j < 4; j++)
+            {
+                datfile.Add(crcbytes[j]);
+            }
+            crcbytes = tobytesLE(Convert.ToUInt32(Entries[i].entry.Length));
+            for (int j = 0; j < 4; j++)
+            {
+                datfile.Add(crcbytes[j]);
+            }
+            crcbytes = tobytesLE(Convert.ToUInt32(Entries[i].identifier.Length));
+            for (int j = 0; j < 4; j++)
+            {
+                datfile.Add(crcbytes[j]);
+            }
+        }
+
+        for (int i = 0; i < total_entries; i++)
+        {
+            byte[] letters = Encoding.Convert(Encoding.Unicode, Encoding.Unicode, Text_Entry.toBytes(Entries[i].entry.ToCharArray(0, Entries[i].entry.Length)));
+            for (int j = 0; j < letters.Length; j++)
+            {
+                datfile.Add(Convert.ToByte(letters[j]));
+            }
+        }
+
+        for (int i = 0; i < total_entries; i++)
+        {
+            byte[] letters = Encoding.Convert(Encoding.Unicode, Encoding.GetEncoding("windows-1252"), Text_Entry.toBytes(Entries[i].identifier.ToCharArray(0, Entries[i].identifier.Length)));
+            for (int j = 0; j < letters.Length; j++)
+            {
+                datfile.Add(Convert.ToByte(letters[j]));
+            }
+        }
+
+
+        System.IO.File.WriteAllBytes(outFile, datfile.ToArray());
     }
 }

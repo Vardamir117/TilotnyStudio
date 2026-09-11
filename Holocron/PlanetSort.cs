@@ -44,6 +44,12 @@ namespace Holocron
             X,
             Y,
             R,
+            SharingGround,
+            SharingSpace,
+            NearestGround,
+            NearestSpace,
+            UsageGround,
+            UsageSpace,
         }
 
         public struct PlanetSortClass
@@ -51,6 +57,7 @@ namespace Holocron
             public PlanetSortTypes SortType;
             public int productionMode;
             public int usageMode;
+            public int sharedMapMode;
             public bool Descending;
         }
 
@@ -106,6 +113,24 @@ namespace Holocron
                 case PlanetSortTypes.R:
                     RRB.Checked = true;
                     break;
+                case PlanetSortTypes.SharingGround:
+                    SharingGroundRB.Checked = true;
+                    break;
+                case PlanetSortTypes.SharingSpace:
+                    SharingSpaceRB.Checked = true;
+                    break;
+                case PlanetSortTypes.NearestGround:
+                    NearestGroundRB.Checked = true;
+                    break;
+                case PlanetSortTypes.NearestSpace:
+                    NearestSpaceRB.Checked = true;
+                    break;
+                case PlanetSortTypes.UsageGround:
+                    GroundUsageRB.Checked = true;
+                    break;
+                case PlanetSortTypes.UsageSpace:
+                    SpaceUsageRB.Checked = true;
+                    break;
             }
 
             if (sortConfig.Descending) AscComboBox.SelectedIndex = 1;
@@ -113,6 +138,7 @@ namespace Holocron
 
             ProductionBox.SelectedIndex = sortConfig.productionMode;
             UsageBox.SelectedIndex = sortConfig.usageMode;
+            SharedMapModeBox.SelectedIndex = sortConfig.sharedMapMode;
         }
 
         private void PlanetSortAcceptButton_Click(object sender, EventArgs e)
@@ -145,12 +171,21 @@ namespace Holocron
             else if (XRB.Checked) sortConfig.SortType = PlanetSortTypes.X;
             else if (YRB.Checked) sortConfig.SortType = PlanetSortTypes.Y;
             else if (RRB.Checked) sortConfig.SortType = PlanetSortTypes.R;
+            else if (SharingGroundRB.Checked) sortConfig.SortType = PlanetSortTypes.SharingGround;
+            else if (SharingSpaceRB.Checked) sortConfig.SortType = PlanetSortTypes.SharingSpace;
+            else if (NearestGroundRB.Checked) sortConfig.SortType = PlanetSortTypes.NearestGround;
+            else if (NearestSpaceRB.Checked) sortConfig.SortType = PlanetSortTypes.NearestSpace;
+            else if (GroundUsageRB.Checked) sortConfig.SortType = PlanetSortTypes.UsageGround;
+            else if (SpaceUsageRB.Checked) sortConfig.SortType = PlanetSortTypes.UsageSpace;
 
             sortConfig.productionMode = ProductionBox.SelectedIndex;
             if(ProductionRB.Checked) sortDocumentation += " " + ProductionBox.Text;
 
             sortConfig.usageMode = UsageBox.SelectedIndex;
             if (UsageRB.Checked) sortDocumentation += ", " + UsageBox.Text;
+
+            sortConfig.sharedMapMode = SharedMapModeBox.SelectedIndex;
+            if (SharingGroundRB.Checked || SharingSpaceRB.Checked || NearestGroundRB.Checked ||  NearestSpaceRB.Checked) sortDocumentation += " " + SharedMapModeBox.Text;
 
             if (AscComboBox.SelectedIndex > 0) sortConfig.Descending = true;
             else sortConfig.Descending = false;
@@ -172,6 +207,7 @@ namespace Holocron
             corenne.SortType = PlanetSortTypes.Name;
             sortConfig.productionMode = 0;
             sortConfig.usageMode = 0;
+            sortConfig.sharedMapMode = 0;
 
             return corenne;
         }

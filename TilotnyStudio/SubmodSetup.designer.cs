@@ -39,6 +39,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.ClearButton = new System.Windows.Forms.Button();
             this.CloseButton = new System.Windows.Forms.Button();
+            this.DevModeCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // SubmodButton
@@ -107,7 +108,7 @@
             this.ReloadButton.Name = "ReloadButton";
             this.ReloadButton.Size = new System.Drawing.Size(204, 30);
             this.ReloadButton.TabIndex = 6;
-            this.ReloadButton.Text = "Reload Holocron Data";
+            this.ReloadButton.Text = "Save Mod Stack";
             this.ReloadButton.UseVisualStyleBackColor = true;
             this.ReloadButton.Click += new System.EventHandler(this.ReloadButton_Click);
             // 
@@ -139,15 +140,26 @@
             this.CloseButton.Name = "CloseButton";
             this.CloseButton.Size = new System.Drawing.Size(111, 30);
             this.CloseButton.TabIndex = 9;
-            this.CloseButton.Text = "Close";
+            this.CloseButton.Text = "Cancel";
             this.CloseButton.UseVisualStyleBackColor = true;
             this.CloseButton.Click += new System.EventHandler(this.CloseButton_Click);
+            // 
+            // DevModeCheckBox
+            // 
+            this.DevModeCheckBox.AutoSize = true;
+            this.DevModeCheckBox.Location = new System.Drawing.Point(611, 272);
+            this.DevModeCheckBox.Name = "DevModeCheckBox";
+            this.DevModeCheckBox.Size = new System.Drawing.Size(108, 17);
+            this.DevModeCheckBox.TabIndex = 10;
+            this.DevModeCheckBox.Text = "Edit mods directly";
+            this.DevModeCheckBox.UseVisualStyleBackColor = true;
             // 
             // SubmodSetup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(740, 380);
+            this.Controls.Add(this.DevModeCheckBox);
             this.Controls.Add(this.CloseButton);
             this.Controls.Add(this.ClearButton);
             this.Controls.Add(this.label1);
@@ -179,5 +191,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button ClearButton;
         private System.Windows.Forms.Button CloseButton;
+        private System.Windows.Forms.CheckBox DevModeCheckBox;
     }
 }
