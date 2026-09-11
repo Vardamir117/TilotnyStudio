@@ -365,6 +365,7 @@ public static class SharedFunctions
         float range = -1;
         int techlevel = -1;
         bool hero = false;
+        bool superweaponkiller = false;
         int locked = -1;
         int cost = -1;
         int buildtime = -1;
@@ -796,6 +797,12 @@ public static class SharedFunctions
                     if (value.LastChild.Value.ToLower().Contains("yes")) hero = true;
                 }
             }
+        }
+        value = unit.SelectSingleNode("descendant::Is_Super_Weapon_Killer");
+        if (!(value is null) && !(value.LastChild is null))
+        {
+            superweaponkiller = value.LastChild.Value.Equals("yes", StringComparison.OrdinalIgnoreCase) ||
+                value.LastChild.Value.Equals("true", StringComparison.OrdinalIgnoreCase);
         }
         value = unit.SelectSingleNode("descendant::Create_Team_Type");
         if (!(value is null))
@@ -1481,6 +1488,7 @@ public static class SharedFunctions
             abilities = abilities,
             unitabilities = unitabilities,
             hero = hero,
+            superweaponkiller = superweaponkiller,
             builtin = builtin,
             garrison = garrison,
         };
@@ -3640,6 +3648,7 @@ public static class SharedFunctions
                                 if (unidad.model == "") unidad.model = unidad2.model;
                                 if (unidad.terrainMaps.Count == 0) unidad.terrainMaps = unidad2.terrainMaps;
                                 if (!unidad.hero) unidad.hero = unidad2.hero; //todo might want an indeterminate ternary in theory, but a generic unit varianting off a hero should be rare
+                                if (!unidad.superweaponkiller) unidad.superweaponkiller = unidad2.superweaponkiller;
                                 if (unidad.BTS == "" && (unidad.hero == unidad2.hero)) unidad.BTS = unidad2.BTS; //BTS should not be inherited from units to heroes
                                 if (unidad.bombingRunUnit == "") unidad.bombingRunUnit = unidad2.bombingRunUnit;
                                 if (unidad.transport == "") unidad.transport = unidad2.transport;
@@ -4217,6 +4226,7 @@ public static class SharedFunctions
                                     if (company.flags.Count == 0) company.flags = unit.flags;
                                     if (company.fightermode < 0) company.fightermode = unit.fightermode;
                                     if (company.bombingRunUnit == "") company.bombingRunUnit = unit.bombingRunUnit;
+                                    if (unit.superweaponkiller) company.superweaponkiller = true;
                                     if (company.abilities.Count == 0) company.abilities = unit.abilities;
                                     if (company.unitabilities.Count == 0) company.unitabilities = unit.unitabilities;
                                     foreach (string behavior in unit.behaviors)
@@ -4295,6 +4305,7 @@ public static class SharedFunctions
                                 if (company.flags.Count == 0) company.flags = subcompany.flags;
                                 if (company.fightermode < 0) company.fightermode = subcompany.fightermode;
                                 if (company.bombingRunUnit == "") company.bombingRunUnit = subcompany.bombingRunUnit;
+                                if (subcompany.superweaponkiller) company.superweaponkiller = true;
                                 if (company.abilities.Count == 0) company.abilities = subcompany.abilities;
                                 if (company.unitabilities.Count == 0) company.unitabilities = subcompany.unitabilities;
                                 foreach (string behavior in subcompany.behaviors)
@@ -4822,6 +4833,7 @@ public struct unit
     public int locked; //A boolean, but there needs to be an indeterminate state for inheritance
     public bool targetablehps;
     public bool hero;
+    public bool superweaponkiller;
     public string reqstructures;
     public string reqorbit;
     public string reqtemplate;
