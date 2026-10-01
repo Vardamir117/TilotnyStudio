@@ -65,10 +65,12 @@ namespace Holocron
         public Dictionary<string, float> SpecialAbilityUnitStrengthFactors = new Dictionary<string, float>(StringComparer.OrdinalIgnoreCase);
 
         public ulong CategoryMask;
+        public int CombatantIndex = -1;
     }
 
     public class AutoResolveBuiltObject
     {
+        public string TypeName;
         public string ContrastCategory;
         public ulong CategoryMask;
         public float Power;
@@ -146,13 +148,7 @@ namespace Holocron
             public void AddCombatant(AutoResolveCombatant combatant)
             {
                 Queue.Add(combatant);
-                SortQueue();
                 UpdatePositions();
-            }
-
-            public void SortQueue()
-            {
-                Queue = Queue.OrderByDescending(x => x.IsAlive).ThenByDescending(x => x.Power).ToList();
             }
 
             public void UpdatePositions()
@@ -178,22 +174,25 @@ namespace Holocron
         private int mBattleID = -1;
         private readonly List<AutoResolveEngagementReport> mLastEngagements = new List<AutoResolveEngagementReport>();
         private readonly List<AutoResolveAttritionReport> mLastAttritionReports = new List<AutoResolveAttritionReport>();
-        private readonly Random mAttritionRandom = new Random(1);
+        private readonly Random mAttritionRandom = new Random();
         private bool mBattleFought;
         private string mLastWinnerDecision = "(not evaluated)";
 
         public bool MidTactical { get; set; }
-        public float TacticalMultiplier { get; set; } = 1.0f;
+        public float TacticalMultiplier { get; set; }
 
-        public float LoserAttrition { get; set; } = 0.35f;
-        public float WinnerAttrition { get; set; } = 0.15f;
-        public float RetreatLoserAttrition { get; set; } = 0.35f;
-        public float RetreatWinnerAttrition { get; set; } = 0.15f;
-        public float AttritionAllowanceFactor { get; set; } = 0.333333f;
-        public float TransportLosses { get; set; } = 0.333333f;
+        public float LoserAttrition { get; set; }
+        public float WinnerAttrition { get; set; }
+        public float RetreatLoserAttrition { get; set; }
+        public float RetreatWinnerAttrition { get; set; }
+        public float AttritionAllowanceFactor { get; set; }
+        public float TransportLosses { get; set; }
+        public Func<int, int, int> SynchronizedRandomProvider { get; set; }
+        public Func<int, bool> IsHumanPlayerProvider { get; set; }
 
         // Provider for PGAICommands weighted contrast entries by enemy category mask.
         public Func<ulong, List<TargetContrastPort.WeightedCategoryEntry>> ContrastWeightProvider { get; set; }
+        public List<ulong> ContrastCategoryOrder { get; set; }
         public Func<string, ulong> CategoryMaskProvider { get; set; }
         public Func<ulong, string> CategoryNameProvider { get; set; }
 
@@ -214,6 +213,14 @@ namespace Holocron
 
         public AutoResolveClass()
         {
+            TacticalMultiplier = 1.0f;
+            LoserAttrition = 0.35f;
+            WinnerAttrition = 0.15f;
+            RetreatLoserAttrition = 0.35f;
+            RetreatWinnerAttrition = 0.15f;
+            AttritionAllowanceFactor = 0.333333f;
+            TransportLosses = 0.333333f;
+            ContrastCategoryOrder = new List<ulong>();
             for (int i = 0; i < MAX_HISTORY; i++) mBattleHistory[i] = new AutoResolveBattle();
         }
 
@@ -474,7 +481,7 @@ namespace Holocron
 
             // Mirrors C++ static left_overs container for survivors retained after attrition.
             List<AutoResolveCombatant> leftOvers = new List<AutoResolveCombatant>();
-            List<AutoResolveCombatant> working = units.Where(x => x != null && x.IsAlive).ToList();
+            List<AutoResolveCombatant> working = new List<AutoResolveCombatant>(units);
 
             while (working.Count != 0)
             {
@@ -498,7 +505,13 @@ namespace Holocron
                     }
                 }
 
-                if (unitIndex < 0) unitIndex = mAttritionRandom.Next(0, working.Count);
+                if (unitIndex < 0)
+                {
+                    unitIndex = SynchronizedRandomProvider != null
+                        ? SynchronizedRandomProvider(0, working.Count - 1)
+                        : mAttritionRandom.Next(0, working.Count);
+                    unitIndex = Math.Max(0, Math.Min(unitIndex, working.Count - 1));
+                }
 
                 AutoResolveCombatant unit = working[unitIndex];
                 bool killUnit = false;
@@ -739,7 +752,7 @@ namespace Holocron
             return anyLeft;
         }
 
-        public void Find_Contrast_Index(float remainingPower, ulong categoryMask, TargetResult current, out int bestCategoryIndex)
+        public void Find_Contrast_Index(float remainingPower, string typeName, ulong categoryMask, TargetResult current, out int bestCategoryIndex)
         {
             bestCategoryIndex = -1;
 
@@ -752,7 +765,7 @@ namespace Holocron
                 float remaining = current[i].Force;
                 if (remaining <= 0.0f) continue;
 
-                float contrastWeight = TargetContrastPort.Get_Average_Contrast_Factor(categoryMask, ContrastWeightProvider(enemyCategory));
+                float contrastWeight = TargetContrastPort.Get_Average_Contrast_Factor(typeName, categoryMask, ContrastWeightProvider(enemyCategory));
                 if (contrastWeight <= 0.0f) continue;
 
                 float denominator = Math.Max(remaining, remainingPower * contrastWeight);
@@ -770,7 +783,7 @@ namespace Holocron
             }
         }
 
-        public void Apply_Unit_Contrast(ref float remainingPower, ulong categoryMask, ref TargetResult current, int bestCategoryIndex, List<float> factorTable, MapEnvironmentType terrain, AutoResolveEngagementReport engagement)
+        public void Apply_Unit_Contrast(ref float remainingPower, string typeName, ulong categoryMask, ref TargetResult current, int bestCategoryIndex, List<float> factorTable, MapEnvironmentType terrain, AutoResolveEngagementReport engagement)
         {
             float originalPower = remainingPower;
             float factor = 0.0f;
@@ -800,7 +813,7 @@ namespace Holocron
             if (bestCategoryIndex > 0)
             {
                 ulong targetMask = current[bestCategoryIndex].Category;
-                float contrastWeight = TargetContrastPort.Get_Average_Contrast_Factor(categoryMask, ContrastWeightProvider(targetMask));
+                float contrastWeight = TargetContrastPort.Get_Average_Contrast_Factor(typeName, categoryMask, ContrastWeightProvider(targetMask));
                 // C++ code has a terrain effectiveness scaling here, but nobody uses it
                 remainingPower *= contrastWeight;
                 contrastMultiplier = contrastWeight;
@@ -808,7 +821,7 @@ namespace Holocron
 
                 if (string.IsNullOrWhiteSpace(engagement.SourceCategory))
                 {
-                    engagement.SourceCategory = Get_Best_Source_Category_For_Target(categoryMask, targetMask);
+                    engagement.SourceCategory = Get_Best_Source_Category_For_Target(typeName, categoryMask, targetMask);
                 }
 
                 float modifiedForceApplied = Math.Min(current[bestCategoryIndex].Force, remainingPower);
@@ -839,7 +852,7 @@ namespace Holocron
                 }
 
                 engagement.ScaledPower = remainingPower;
-                engagement.SourceCategory = Get_Best_Source_Category_For_Target(categoryMask, 0UL);
+                engagement.SourceCategory = Get_Best_Source_Category_For_Target(typeName, categoryMask, 0UL);
                 engagement.AppliedCombatPower = remainingPower;
                 remainingPower = 0.0f;
             }
@@ -851,7 +864,7 @@ namespace Holocron
         }
            
         // logging util
-        private string Get_Best_Source_Category_For_Target(ulong unitCategoryMask, ulong targetMask)
+        private string Get_Best_Source_Category_For_Target(string typeName, ulong unitCategoryMask, ulong targetMask)
         {
             string fallback = Get_Display_Category_Name(unitCategoryMask);
             string bestCategory = fallback;
@@ -863,6 +876,7 @@ namespace Holocron
                 if ((unitCategoryMask & friendlyMask) == 0UL) continue;
 
                 float weight = TargetContrastPort.Get_Average_Contrast_Factor(
+                    typeName,
                     friendlyMask,
                     ContrastWeightProvider(targetMask));
 
@@ -904,7 +918,7 @@ namespace Holocron
 
             foreach (AutoResolveCombatant unit in units.Where(x => x.IsAlive))
             {
-                int unitIndex = units.IndexOf(unit);
+                int unitIndex = unit.CombatantIndex >= 0 ? unit.CombatantIndex : units.IndexOf(unit);
                 int bestCategoryIndex = -1;
 
                 if (!mIsSpace && unit.IsPlanet)
@@ -918,7 +932,7 @@ namespace Holocron
                             float remainingPower = built.Power;
                             while (remainingPower > 0.0f && bestCategoryIndex != 0)
                             {
-                                Find_Contrast_Index(remainingPower, built.CategoryMask, result, out bestCategoryIndex);
+                                Find_Contrast_Index(remainingPower, built.TypeName, built.CategoryMask, result, out bestCategoryIndex);
 
                                 AutoResolveEngagementReport engagement = new AutoResolveEngagementReport();
                                 engagement.AttackerOwnerId = playerId;
@@ -932,7 +946,7 @@ namespace Holocron
                                 engagement.TargetCategoryBefore = result[targetIndex].Force;
                                 engagement.TargetGlobalBefore = result[globalIndex].Force;
 
-                                Apply_Unit_Contrast(ref remainingPower, built.CategoryMask, ref result, bestCategoryIndex, catTable, mIsSpace ? MapEnvironmentType.Space : MapEnvironmentType.Ground, engagement);
+                                Apply_Unit_Contrast(ref remainingPower, built.TypeName, built.CategoryMask, ref result, bestCategoryIndex, catTable, mIsSpace ? MapEnvironmentType.Space : MapEnvironmentType.Ground, engagement);
 
                                 engagement.TargetCategoryAfter = result[targetIndex].Force;
                                 engagement.TargetGlobalAfter = result[globalIndex].Force;
@@ -961,7 +975,7 @@ namespace Holocron
                         float remainingPower = garrisonEntry.Power;
                         while (remainingPower > 0.0f && bestCategoryIndex != 0)
                         {
-                            Find_Contrast_Index(remainingPower, garrisonEntry.CategoryMask, result, out bestCategoryIndex);
+                            Find_Contrast_Index(remainingPower, garrisonEntry.TypeName, garrisonEntry.CategoryMask, result, out bestCategoryIndex);
 
                             AutoResolveEngagementReport engagement = new AutoResolveEngagementReport();
                             engagement.AttackerOwnerId = playerId;
@@ -976,7 +990,7 @@ namespace Holocron
                             engagement.TargetCategoryBefore = result[targetIndex].Force;
                             engagement.TargetGlobalBefore = result[globalIndex].Force;
 
-                            Apply_Unit_Contrast(ref remainingPower, garrisonEntry.CategoryMask, ref result, bestCategoryIndex, catTable, mIsSpace ? MapEnvironmentType.Space : MapEnvironmentType.Ground, engagement);
+                            Apply_Unit_Contrast(ref remainingPower, garrisonEntry.TypeName, garrisonEntry.CategoryMask, ref result, bestCategoryIndex, catTable, mIsSpace ? MapEnvironmentType.Space : MapEnvironmentType.Ground, engagement);
 
                             engagement.TargetCategoryAfter = result[targetIndex].Force;
                             engagement.TargetGlobalAfter = result[globalIndex].Force;
@@ -992,7 +1006,7 @@ namespace Holocron
                 float unitRemainingPower = unit.Power;
                 while (unitRemainingPower > 0.0f && bestCategoryIndex != 0)
                 {
-                    Find_Contrast_Index(unitRemainingPower, unit.CategoryMask, result, out bestCategoryIndex);
+                    Find_Contrast_Index(unitRemainingPower, unit.TypeName, unit.CategoryMask, result, out bestCategoryIndex);
 
                     AutoResolveEngagementReport engagement = new AutoResolveEngagementReport();
                     engagement.AttackerOwnerId = playerId;
@@ -1006,7 +1020,7 @@ namespace Holocron
                     engagement.TargetCategoryBefore = result[targetIndex].Force;
                     engagement.TargetGlobalBefore = result[globalIndex].Force;
 
-                    Apply_Unit_Contrast(ref unitRemainingPower, unit.CategoryMask, ref result, bestCategoryIndex, catTable, mIsSpace ? MapEnvironmentType.Space : MapEnvironmentType.Ground, engagement);
+                    Apply_Unit_Contrast(ref unitRemainingPower, unit.TypeName, unit.CategoryMask, ref result, bestCategoryIndex, catTable, mIsSpace ? MapEnvironmentType.Space : MapEnvironmentType.Ground, engagement);
 
                     engagement.TargetCategoryAfter = result[targetIndex].Force;
                     engagement.TargetGlobalAfter = result[globalIndex].Force;
@@ -1036,13 +1050,14 @@ namespace Holocron
                         foreach (AutoResolveBuiltObject built in unit.PlanetBuiltObjects)
                         {
                             if (built.Power <= 0f || built.CategoryMask == 0UL) continue;
-                            int builtIndex = mContrastCategoryToIndex[built.CategoryMask];
-                            result[builtIndex].Force += built.Power;
-                            result[builtIndex].Ground = true;
-
-                            int groundIndex = GLOBAL_GROUND_INDEX;
-                            result[groundIndex].Force += built.Power;
-                            result[groundIndex].Ground = true;
+                            int builtIndex = Find_Force_Category_Index(built.CategoryMask);
+                            if (builtIndex >= 0)
+                            {
+                                result[builtIndex].Force += built.Power;
+                                result[builtIndex].Ground = true;
+                                result[GLOBAL_GROUND_INDEX].Force += built.Power;
+                                result[GLOBAL_GROUND_INDEX].Ground = true;
+                            }
                         }
                     }
                     continue;
@@ -1059,12 +1074,14 @@ namespace Holocron
                         AutoResolveBuiltObject garrisonEntry = unit.GarrisonEntries[g];
                         if (garrisonEntry.Power <= 0f || garrisonEntry.CategoryMask == 0UL) continue;
 
-                        int garrisonIndex = mContrastCategoryToIndex[garrisonEntry.CategoryMask];
-                        result[garrisonIndex].Force += garrisonEntry.Power;
-                        result[garrisonIndex].Ground = !mIsSpace;
-
-                        result[globalIndex].Force += garrisonEntry.Power;
-                        result[globalIndex].Ground = !mIsSpace;
+                        int garrisonIndex = Find_Force_Category_Index(garrisonEntry.CategoryMask);
+                        if (garrisonIndex >= 0)
+                        {
+                            result[garrisonIndex].Force += garrisonEntry.Power;
+                            result[garrisonIndex].Ground = !mIsSpace;
+                            result[globalIndex].Force += garrisonEntry.Power;
+                            result[globalIndex].Ground = !mIsSpace;
+                        }
                     }
                 }
 
@@ -1076,19 +1093,16 @@ namespace Holocron
                     weakestVal = unit.Power;
                 }
 
-                ulong ctype = unit.CategoryMask;
-                int cval = Get_First_Bit_Set(ctype);
-                if (cval > -1)
+                int unitCategoryIndex = Find_Force_Category_Index(unit.CategoryMask);
+                if (unitCategoryIndex >= 0)
                 {
-                    ulong category = 1UL << cval;
-                    int unitCategoryIndex = mContrastCategoryToIndex[category];
                     result[unitCategoryIndex].Force += unit.Power;
                     result[unitCategoryIndex].Ground = !mIsSpace;
-                }
 
-                int unitGlobalIndex = mIsSpace ? GLOBAL_SPACE_INDEX : GLOBAL_GROUND_INDEX;
-                result[unitGlobalIndex].Force += unit.Power;
-                result[unitGlobalIndex].Ground = !mIsSpace;
+                    int unitGlobalIndex = mIsSpace ? GLOBAL_SPACE_INDEX : GLOBAL_GROUND_INDEX;
+                    result[unitGlobalIndex].Force += unit.Power;
+                    result[unitGlobalIndex].Ground = !mIsSpace;
+                }
             }
         }
 
@@ -1162,12 +1176,24 @@ namespace Holocron
 
             if (anyPositiveA && anyPositiveB)
             {
-                // Placeholder: human-vs-ai and playable-faction tie-breaks require full PlayerClass/Faction data.
+                bool eitherHuman = IsHumanPlayerProvider == null ||
+                    IsHumanPlayerProvider(mSides[0].OwnerId) || IsHumanPlayerProvider(mSides[1].OwnerId);
+                if (!eitherHuman && !Side_Is_Playable(0))
+                {
+                    mLastWinnerDecision = "Both sides have positive force; playable AI faction on side B wins over non-playable side A.";
+                    return 1;
+                }
+                if (!eitherHuman && !Side_Is_Playable(1))
+                {
+                    mLastWinnerDecision = "Both sides have positive force; playable AI faction on side A wins over non-playable side B.";
+                    return 0;
+                }
+
                 int winner = totalA > totalB ? 0 : 1;
                 mLastWinnerDecision = "Both sides have positive force; compare totals A=" + totalA.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) + " vs B=" + totalB.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) + ".";
                 return winner;
             }
-            else if ((anyPositiveA || anyPositiveB) && Math.Abs(totalA - totalB) > 0.0001f)
+            else if ((anyPositiveA || anyPositiveB) && totalA != totalB)
             {
                 int winner = totalA > totalB ? 0 : 1;
                 mLastWinnerDecision = "Only one side has effective remaining force; compare totals A=" + totalA.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) + " vs B=" + totalB.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) + ".";
@@ -1187,6 +1213,12 @@ namespace Holocron
             return mSides[side].Queue.Any(x => x != null && x.IsAlive && x.IsSuperWeaponKiller);
         }
 
+        private bool Side_Is_Playable(int side)
+        {
+            AutoResolveCombatant combatant = mSides[side].Queue.FirstOrDefault(x => x != null && x.IsAlive);
+            return combatant == null || combatant.IsPlayableFaction;
+        }
+
         private void Build_Contrast_Index_Map()
         {
             mContrastCategoryToIndex.Clear();
@@ -1196,50 +1228,22 @@ namespace Holocron
             Add_Contrast_Index(GLOBAL_GROUND_MASK, "(global)", true);
             Add_Contrast_Index(GLOBAL_SPACE_MASK, "(global space)", false);
 
-            Add_Contrast_Categories_From_Side(mSides[0]);
-            Add_Contrast_Categories_From_Side(mSides[1]);
+            if (ContrastCategoryOrder == null) return;
+            for (int i = 0; i < ContrastCategoryOrder.Count; i++)
+            {
+                ulong categoryMask = ContrastCategoryOrder[i];
+                if (categoryMask != 0UL) Add_Contrast_Index(categoryMask, Get_Display_Category_Name(categoryMask), !mIsSpace);
+            }
         }
 
-        private void Add_Contrast_Categories_From_Side(SideStruct side)
+        private int Find_Force_Category_Index(ulong categoryMask)
         {
-            for (int i = 0; i < side.Queue.Count; i++)
+            for (int i = GLOBAL_SPACE_INDEX + 1; i < mContrastIndexToCategory.Count; i++)
             {
-                AutoResolveCombatant combatant = side.Queue[i];
-
-                ulong ctype = combatant.CategoryMask;
-                for (int bit = 0; bit < 64; bit++)
-                {
-                    ulong categoryMask = 1UL << bit;
-                    if ((ctype & categoryMask) != 0UL)
-                    {
-                        Add_Contrast_Index(categoryMask, Get_Display_Category_Name(categoryMask), !mIsSpace);
-                    }
-                }
-
-                if (combatant.PlanetBuiltObjects != null)
-                {
-                    for (int j = 0; j < combatant.PlanetBuiltObjects.Count; j++)
-                    {
-                        AutoResolveBuiltObject built = combatant.PlanetBuiltObjects[j];
-                        if (built.CategoryMask != 0UL)
-                        {
-                            Add_Contrast_Index(built.CategoryMask, Get_Display_Category_Name(built.CategoryMask), true);
-                        }
-                    }
-                }
-
-                if (combatant.GarrisonEntries != null)
-                {
-                    for (int j = 0; j < combatant.GarrisonEntries.Count; j++)
-                    {
-                        AutoResolveBuiltObject garrison = combatant.GarrisonEntries[j];
-                        if (garrison.CategoryMask != 0UL)
-                        {
-                            Add_Contrast_Index(garrison.CategoryMask, Get_Display_Category_Name(garrison.CategoryMask), !mIsSpace);
-                        }
-                    }
-                }
+                if ((categoryMask & mContrastIndexToCategory[i]) != 0UL) return i;
             }
+
+            return -1;
         }
 
         private void Add_Contrast_Index(ulong categoryMask, string displayName, bool ground)
