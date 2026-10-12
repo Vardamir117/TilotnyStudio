@@ -41,6 +41,7 @@
             this.CloseButton = new System.Windows.Forms.Button();
             this.FoCButton = new System.Windows.Forms.Button();
             this.EaWButton = new System.Windows.Forms.Button();
+            this.AdvancedDataFileButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // SubmodButton
@@ -167,11 +168,23 @@
             this.EaWButton.UseVisualStyleBackColor = true;
             this.EaWButton.Click += new System.EventHandler(this.EaWButton_Click);
             // 
+            // AdvancedDataFileButton
+            // 
+            this.AdvancedDataFileButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AdvancedDataFileButton.Location = new System.Drawing.Point(645, 7);
+            this.AdvancedDataFileButton.Name = "AdvancedDataFileButton";
+            this.AdvancedDataFileButton.Size = new System.Drawing.Size(77, 22);
+            this.AdvancedDataFileButton.TabIndex = 12;
+            this.AdvancedDataFileButton.Text = "Advanced...";
+            this.AdvancedDataFileButton.UseVisualStyleBackColor = true;
+            this.AdvancedDataFileButton.Click += new System.EventHandler(this.AdvancedDataFileButton_Click);
+            // 
             // SubmodSetup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(740, 398);
+            this.Controls.Add(this.AdvancedDataFileButton);
             this.Controls.Add(this.EaWButton);
             this.Controls.Add(this.FoCButton);
             this.Controls.Add(this.CloseButton);
@@ -207,5 +220,6 @@
         private System.Windows.Forms.Button CloseButton;
         private System.Windows.Forms.Button FoCButton;
         private System.Windows.Forms.Button EaWButton;
+        private System.Windows.Forms.Button AdvancedDataFileButton;
     }
 }

@@ -460,6 +460,8 @@ namespace Holocron
             parseTradeRoutes(entities);
             loadscreen.ChangeText("Parsing galactic conquests");
             parseGCs(entities);
+            loadscreen.ChangeText("Parsing movies");
+            parseMovies(entities);
 
             loadscreen.ChangeText("Reading AI contrast values");
             globals.ContrastValues = ReadContrastValues();
@@ -581,6 +583,7 @@ namespace Holocron
             lkStandard,
             lkRandom,
             lkRegional,
+            lkGuides,
         }
 
         private void insert_history(int main, int secondary, string entity, bool go_to = false)
@@ -835,6 +838,7 @@ namespace Holocron
                 case (int)historymaintabs.galaxy:
                     if (GalaxyMapPictureBox.Image == null) GalaxyResetView();
                     if (GalaxyMapGCComboBox.Items.Count == 0) setMapGCOptions();
+                    insert_history((int)historymaintabs.galaxy, 0, "");
                     break;
                 case (int)historymaintabs.lookups:
                     FillMatrixLookup();
@@ -858,7 +862,7 @@ namespace Holocron
             {
                 //case 0: The matrix doesn't need filling from here, actually
                 //break;
-                case 2:
+                case (int)lookupsubtabs.lkName:
                     //todo - more sorting and filtering? filter by unit and hero names only? Filter out dropship and/or cadet?
                     //How are there two acclamator_I instances for Acclamator? Because it's in the list twice. Probably leave that in
                     //Do ground heroes? There are so few with names...
@@ -1010,7 +1014,7 @@ namespace Holocron
                     }
                     FillShipnameListbox();
                     break;
-                case 3:
+                case (int)lookupsubtabs.lkNameFile:
                     if (NameListBox.Items.Count == 0) //todo ensure other histories have such conditions cleared by load_mods
                     {
                         List<string> namefiles = getModFiles("ShipNames", "*.txt", entities);
@@ -1022,7 +1026,7 @@ namespace Holocron
                         }
                     }
                     break;
-                case 4:
+                case (int)lookupsubtabs.lkReward:
                     if (MissionListBox.Items.Count == 0)
                     {
                         List<string> missionfiles = getModFiles("Scripts\\Library\\eawx-plugins\\intervention-missions\\rewards", "*.lua", entities);
@@ -1032,7 +1036,7 @@ namespace Holocron
                         }
                     }
                     break;
-                case 5:
+                case (int)lookupsubtabs.lkSpawn:
                     if (SpawnListBox.Items.Count == 0) //todo may have to check a new location after modcontent loader dies
                     {
                         List<string> missionfiles = getModFiles("Scripts\\Library\\spawn-sets", "*.lua", entities);
@@ -1042,7 +1046,7 @@ namespace Holocron
                         }
                     }
                     break;
-                case 8:
+                case (int)lookupsubtabs.lkStandard:
                     if (StandardFListBox.Items.Count == 0)
                     {
                         List<string> missionfiles = getModFiles("Scripts\\Library\\standard-fighters", "*.lua", entities);
@@ -1052,7 +1056,7 @@ namespace Holocron
                         }
                     }
                     break;
-                case 9:
+                case (int)lookupsubtabs.lkRandom:
                     if (RandomFListBox.Items.Count == 0)
                     {
                         List<string> missionfiles = getModFiles("Scripts\\Library\\random-fighters", "*.lua", entities);
@@ -1061,6 +1065,9 @@ namespace Holocron
                             RandomFListBox.Items.Add(LastFolderOrFile(file).ToUpper().Replace(".LUA", ""));
                         }
                     }
+                    break;
+                case (int)lookupsubtabs.lkGuides:
+                    if (!rbTiersTraits.Checked && !rbStory.Checked && !rbInfluence.Checked && !rbGovernment.Checked) rbTiersTraits.Checked = true;
                     break;
                 default:
                     // code block
@@ -2595,10 +2602,8 @@ namespace Holocron
             UnitListBox.Tag = selectedUnit;
 
             //abilities
-            UnitAbilityListBox.Items.Clear();
             bool pd = false;
             bool heal = false;
-            foreach (unitability able in selectedUnit.unitabilities) UnitAbilityListBox.Items.Add(able);
             AbilityListBox.Items.Clear();
             foreach (ability able in selectedUnit.abilities)
             {
@@ -2631,6 +2636,20 @@ namespace Holocron
                 HealAmountLabel.Text = "";
                 HealRechargeLabel.Text = "";
                 HealRadiusLabel.Text = "";
+            }
+            //After regular abilities to put Battle Meditation-like abilities at the end of the list
+            UnitAbilityListBox.Items.Clear();
+            foreach (unitability able in selectedUnit.unitabilities)
+            {
+                UnitAbilityListBox.Items.Add(able);
+                if (able.linkedEntity != "")
+                {
+                    unit linked = entities.objects.FirstOrDefault(s => s.unitname == able.linkedEntity);
+                    if (!(linked.unitname is null))
+                    {
+                        foreach (ability able2 in linked.abilities) AbilityListBox.Items.Add(able2);
+                    }
+                }
             }
             ResetAbilitySelection();
 
@@ -3093,8 +3112,8 @@ namespace Holocron
 
             foreach (unit unidad in entities.objects)
             {
-                //bool found = false;
-                if (unidad.companyunits.Count > 0)
+                bool found = false;
+                if (unidad.companyunits.Count > 0 && !singlemode || unidad.affiliations.Contains(singlefaction))
                 {
                     if (unidad.companyunits.Contains(selectedUnit.unitname))
                     {
@@ -3110,7 +3129,7 @@ namespace Holocron
                         }
                     }
                 }
-                if (unidad.garrison.Count > 0)
+                if (unidad.garrison.Count > 0 && !singlemode || unidad.affiliations.Contains(singlefaction))
                 {
                     /*if (unidad.garrison.FindIndex(s => s.unitname == selectedUnit.unitname) >= 0)
                     {
@@ -3122,10 +3141,12 @@ namespace Holocron
                         if (unidad.garrison.FindIndex(s => string.Equals(s.unitname, xmlname + suffix, StringComparison.OrdinalIgnoreCase)) >= 0)
                         {
                             UnitHostListbox.Items.Add(unidad);
+                            found = true;
                             continue;
                         }
                     }
                 }
+                if (found) continue;
                 if (unidad.garrison_lua.Count > 0 && !singlemode || unidad.affiliations.Contains(singlefaction))
                 {
                     foreach (string suffix in upperSuffixes)
@@ -5254,6 +5275,17 @@ namespace Holocron
                             UnitSFXListbox.Items.Add(sfx);
                         }
                     }
+
+                    if (able.linkedEntity != "")
+                    {
+                        projectile linked = entities.projectiles.FirstOrDefault(s => s.name == able.linkedEntity);
+                        if (!(linked.name is null))
+                        {
+                            AbilityLinkedLabel.Text = "Linked Object: " + able.linkedEntity + " (" + linked.damageType + ": " + linked.damageAmount.ToString("0");
+                            if (linked.blastRadius > 0) AbilityLinkedLabel.Text += " Radius: " + linked.blastRadius.ToString();
+                            AbilityLinkedLabel.Text += ")";
+                        }
+                    }
                 }
             }
         }
@@ -5331,7 +5363,20 @@ namespace Holocron
                     if (able.type == "Redirect_Blaster_Ability" && able.healthBonus > 0) AbilityActivationRadiusLabel.Text += "Block Chance: " + able.healthBonus * 100 + "%";
                     if (able.radius > 0) AbilityRadiusLabel.Text = "Radius: " + able.radius;
                     else AbilityRadiusLabel.Text = "";
-                    if (able.linkedEntity != "") AbilityLinkedLabel.Text = "Linked Object: " + able.linkedEntity;
+                    if (able.linkedEntity != "")
+                    {
+                        AbilityLinkedLabel.Text = "Linked Object: " + able.linkedEntity;
+                        unit linked = entities.objects.FirstOrDefault(s => s.unitname == able.linkedEntity);
+                        if (!(linked.unitname is null))
+                        {
+                            if(linked.consolidatedhps.Count > 0)
+                            {
+                                AbilityLinkedLabel.Text += " (" + linked.consolidatedhps[0].damageType + ": " + linked.consolidatedhps[0].damageAmount.ToString("0");
+                                if (linked.consolidatedhps[0].blastRadius > 0) AbilityLinkedLabel.Text += " Radius: " + linked.consolidatedhps[0].blastRadius.ToString();
+                                AbilityLinkedLabel.Text += ")";
+                            }
+                        }
+                    }
                     else AbilityLinkedLabel.Text = "";
                     if (able.type == "Absorb_Blaster_Ability")
                     {
@@ -6777,6 +6822,8 @@ namespace Holocron
         {
             public string title;
             public string speech;
+            public string movie;
+            public string sfx;
             public override string ToString()
             {
                 return title;
@@ -6862,10 +6909,24 @@ namespace Holocron
                                             if (!(param is null))
                                             {
                                                 string text = param.InnerText.Trim();
+                                                string movie = "";
+                                                string sound = "";
+                                                param = even.SelectSingleNode("descendant::Reward_Param9");
+                                                if (!(param is null))
+                                                {
+                                                    movie = param.InnerText.Trim();
+                                                }
+                                                param = even.SelectSingleNode("descendant::Reward_Param8");
+                                                if (!(param is null))
+                                                {
+                                                    sound = param.InnerText.Trim();
+                                                }
                                                 speechevent entry = new speechevent
                                                 {
                                                     title = title.Replace("_", " "),
                                                     speech = Find_Text_Entry(text, entities),
+                                                    movie = movie,
+                                                    sfx = sound,
                                                 };
                                                 speechevents.Add(entry);
                                             }
@@ -7405,6 +7466,8 @@ namespace Holocron
             string[] dialogfile = File.ReadAllLines(getDialogPath((string)GCDialogListBox.SelectedItem));
             bool active = false;
             string dialogtext = "";
+            OpenMovieButton.Tag = "";
+            OpenMovieButton.Visible = false;
             foreach (string line in dialogfile)
             {
                 if (line.Contains("[CHAPTER " + (string)GCChapterListBox.SelectedItem + "]")) active = true;
@@ -7412,6 +7475,13 @@ namespace Holocron
 
                 if (active)
                 {
+                    if (line.Contains("MOVIE "))
+                    {
+                        string speech = line.Replace("MOVIE ", "");
+                        toolTip1.SetToolTip(OpenMovieButton, speech);
+                        OpenMovieButton.Tag = speech;
+                        OpenMovieButton.Visible = true;
+                    }
                     if (line.Length > 6)
                     {
                         //if (line.Substring(0, 5) == "TITLE") dialogtext += Find_Text_Entry(line.Substring(6, line.Length - 6)) + "\n"; Theoretically valid, but tends to be duplicated in the first line anyway
@@ -7427,7 +7497,11 @@ namespace Holocron
         {
             if (GCSpeechListBox.SelectedItems.Count > 0)
             {
-                GCStoryTextBox.Text = ((speechevent)GCSpeechListBox.SelectedItem).speech;
+                speechevent speech = (speechevent)GCSpeechListBox.SelectedItem;
+                GCStoryTextBox.Text = speech.speech;
+                OpenMovieButton.Tag = speech.movie;
+                OpenMovieButton.Visible = speech.movie != "";
+                toolTip1.SetToolTip(OpenMovieButton, speech.movie);
             }
         }
 
@@ -7449,6 +7523,28 @@ namespace Holocron
             GCDialogListBox.Visible = !SpeechCheckBox.Checked;
             GCChapterListBox.Visible = !SpeechCheckBox.Checked;
             GCChapterLabel.Visible = !SpeechCheckBox.Checked;
+        }
+
+        private void OpenMovieButton_Click(object sender, EventArgs e)
+        {
+            if (OpenMovieButton.Tag is null) return;
+            string loop = (string)OpenMovieButton.Tag;
+            if (loop == "") return;
+            movieLoop mov = entities.movies.FirstOrDefault(s => s.name == loop);
+            if(mov.name is null)
+            {
+                MessageBox.Show("No loop definition named " + loop + " could be found.");
+                return;
+            }
+            if (mov.file is null)
+            {
+                MessageBox.Show("No loop definition " + loop + " is missing a file path.");
+                return;
+            }
+            string shortfile = LastFolderOrFile(mov.file);
+            string file = getModFile(RemoveTopLevelFolder(mov.file), entities);
+            if (File.Exists(file)) System.Diagnostics.Process.Start(@file);
+            else MessageBox.Show("Could not find " + shortfile + ". Is it in a MEG?");
         }
 
         private void CheckWeaponMismatchButton_Click(object sender, EventArgs e)
@@ -8321,6 +8417,150 @@ namespace Holocron
         private void RandomFSearchTextBox_TextChanged(object sender, EventArgs e)
         {
             HighlightRichText(RandomFSearchTextBox.Text, RandomFText);
+        }
+
+        private void rbTiersTraits_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbTiersTraits.Checked)
+            {
+                DocumentationTextBox.Text = "";
+                string[] dialogfile = File.ReadAllLines(getDialogPath("Documentation_TiersandTraits"));
+                foreach (string line in dialogfile)
+                {
+                    if (line.Length > 6)
+                    {
+                        if (line.Substring(0, 5) == "TEXT ") DocumentationTextBox.Text += Find_Text_Entry(line.Substring(5, line.Length - 5), entities) + "\n";
+                        else if (line.Substring(0, 7) == "NEWLINE") DocumentationTextBox.Text += "\n";
+                    }
+                }
+            }
+        }
+
+        private void rbInfluence_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbInfluence.Checked)
+            {
+                DocumentationTextBox.Text = "";
+                string[] dialogfile = File.ReadAllLines(getDialogPath("Documentation_Influence"));
+                foreach (string line in dialogfile)
+                {
+                    if (line.Length > 6)
+                    {
+                        if (line.Substring(0, 5) == "TEXT ") DocumentationTextBox.Text += Find_Text_Entry(line.Substring(5, line.Length - 5), entities) + "\n";
+                        else if (line.Substring(0, 7) == "NEWLINE") DocumentationTextBox.Text += "\n";
+                    }
+                }
+                string docfile = getModFile("Scripts\\Library\\eawx-plugins\\ui\\planet-guide\\PlanetGuide.lua", entities);
+                if (docfile == "") return;
+                dialogfile = File.ReadAllLines(docfile);
+                foreach (string line in dialogfile)
+                {
+                    string nocomment = line;
+                    int comm = nocomment.IndexOf("--");
+                    if (comm >= 0)
+                    {
+                        nocomment = nocomment.Substring(0, comm);
+                    }
+                    if (nocomment.Contains("Create_Influence_Entry"))
+                    {
+                        try
+                        {
+                            string[] split = nocomment.Replace("{", "").Replace("}", "").Split(',');
+                            string planetname = split[0].Substring(split[0].IndexOf('\"') + 1, split[0].LastIndexOf('\"') - 1 - split[0].IndexOf('\"'));
+                            planet planet = entities.Planets.FirstOrDefault(x => string.Equals(x.codename, planetname, StringComparison.OrdinalIgnoreCase));
+                            bool furst = true;
+                            DocumentationTextBox.Text += planet.username + ": Can build ";
+                            int startOfInf = split.Length / 2;
+                            for (int i = 1; i < startOfInf; i++)
+                            {
+                                if (furst) furst = false;
+                                else DocumentationTextBox.Text += ", ";
+                                DocumentationTextBox.Text += split[i].Replace("\"", "") + " at " + split[i + startOfInf - 1].Replace("\"", "") + " influence";
+                            }
+                            DocumentationTextBox.Text += "\n";
+                        }
+                        catch { }
+                    }
+                    else if (nocomment.Contains("Create_Corp_Entry"))
+                    {
+                        try
+                        {
+                            string[] split = nocomment.Split('{');
+                            DocumentationTextBox.Text += split[0].Substring(split[0].IndexOf('\"') + 1, split[0].LastIndexOf('\"') - 1 - split[0].IndexOf('\"')) + " - ";
+                            
+                            string[] planetlist = split[2].Substring(0, split[2].IndexOf("}") - 1).Replace("\"","").Replace(" ", "").Split(',');
+                            bool furst = true;
+                            foreach (string planetname in planetlist)
+                            {
+                                planet planet = entities.Planets.FirstOrDefault(x => string.Equals(x.codename, planetname, StringComparison.OrdinalIgnoreCase));
+                                if (furst) furst = false;
+                                else DocumentationTextBox.Text += ", ";
+                                DocumentationTextBox.Text += planet.username;
+                            }
+                            DocumentationTextBox.Text += " | ";
+
+                            string[] corplist = split[1].Substring(0, split[1].IndexOf("}") - 1).Replace("\"", "").Split(',');
+                            List<string> abbrevs = new List<string>();
+                            foreach (string corpname in corplist)
+                            {
+                                unit corp = entities.objects.FirstOrDefault(x => string.Equals(x.unitname, corpname, StringComparison.OrdinalIgnoreCase));
+                                foreach(string affil in corp.affiliations)
+                                {
+                                    faction faction = entities.factions.FirstOrDefault(x => string.Equals(x.codename, affil, StringComparison.OrdinalIgnoreCase));
+                                    if (!abbrevs.Contains(faction.abbreviation)) abbrevs.Add(faction.abbreviation);
+                                }
+                            }
+                            DocumentationTextBox.Text += SerializeStringArray(abbrevs) + "\n";
+                        }
+                        catch { }
+                    }
+                    else if (nocomment.Contains("Add_Dialog_Text")) //Only check this after Create_Influence_Entry since those lines also have it but need more processing
+                    {
+                        string[] split = nocomment.Split('\"');
+                        if (split.Length > 2) DocumentationTextBox.Text += Find_Text_Entry(split[1], entities);
+                        if (nocomment.Contains("Create_Planet_List"))
+                        {
+                            try
+                            {
+                                string list = nocomment.Substring(nocomment.IndexOf('{') + 1, nocomment.IndexOf('}') - 1 - nocomment.IndexOf('{')).Replace("\"","").Replace(" ", "");
+                                string[] planets = list.Split(',');
+                                bool furst = true;
+                                foreach (string planetname in planets)
+                                {
+                                    planet planet = entities.Planets.FirstOrDefault(x => string.Equals(x.codename, planetname, StringComparison.OrdinalIgnoreCase));
+                                    if (furst) furst = false;
+                                    else DocumentationTextBox.Text += ", ";
+                                    DocumentationTextBox.Text += planet.username;
+                                }
+                            }
+                            catch { }
+                        }
+                        DocumentationTextBox.Text += "\n";
+                    }
+                }
+            }
+        }
+
+        private void rbStory_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbStory.Checked)
+            {
+                DocumentationTextBox.Text = "";
+                string[] dialogfile = File.ReadAllLines(getDialogPath("Documentation_StoryOverview"));
+                foreach (string line in dialogfile)
+                {
+                    if (line.Length > 6)
+                    {
+                        if (line.Substring(0, 5) == "TEXT ") DocumentationTextBox.Text += Find_Text_Entry(line.Substring(5, line.Length - 5), entities) + "\n";
+                        else if (line.Substring(0, 7) == "NEWLINE") DocumentationTextBox.Text += "\n";
+                    }
+                }
+            }
+        }
+
+        private void rbGovernment_CheckedChanged(object sender, EventArgs e)
+        {
+            //todo - possibly only read nondynamic text
         }
 
         //Don't put any functions below here if you want it to still compile

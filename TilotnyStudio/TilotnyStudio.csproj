@@ -90,6 +90,12 @@
       <DependentUpon>SubmodSetup.cs</DependentUpon>
     </Compile>
     <Compile Include="TGASharpLib.cs" />
+    <Compile Include="TierPick.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TierPick.Designer.cs">
+      <DependentUpon>TierPick.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="DevChoice.resx">
       <DependentUpon>DevChoice.cs</DependentUpon>
     </EmbeddedResource>
@@ -114,6 +120,9 @@
     </Compile>
     <EmbeddedResource Include="SubmodSetup.resx">
       <DependentUpon>SubmodSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TierPick.resx">
+      <DependentUpon>TierPick.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

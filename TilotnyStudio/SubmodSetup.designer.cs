@@ -40,6 +40,7 @@
             this.ClearButton = new System.Windows.Forms.Button();
             this.CloseButton = new System.Windows.Forms.Button();
             this.DevModeCheckBox = new System.Windows.Forms.CheckBox();
+            this.AdvancedDataFileButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // SubmodButton
@@ -154,11 +155,23 @@
             this.DevModeCheckBox.Text = "Edit mods directly";
             this.DevModeCheckBox.UseVisualStyleBackColor = true;
             // 
+            // AdvancedDataFileButton
+            // 
+            this.AdvancedDataFileButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AdvancedDataFileButton.Location = new System.Drawing.Point(645, 7);
+            this.AdvancedDataFileButton.Name = "AdvancedDataFileButton";
+            this.AdvancedDataFileButton.Size = new System.Drawing.Size(77, 22);
+            this.AdvancedDataFileButton.TabIndex = 13;
+            this.AdvancedDataFileButton.Text = "Advanced...";
+            this.AdvancedDataFileButton.UseVisualStyleBackColor = true;
+            this.AdvancedDataFileButton.Click += new System.EventHandler(this.AdvancedDataFileButton_Click);
+            // 
             // SubmodSetup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(740, 380);
+            this.Controls.Add(this.AdvancedDataFileButton);
             this.Controls.Add(this.DevModeCheckBox);
             this.Controls.Add(this.CloseButton);
             this.Controls.Add(this.ClearButton);
@@ -192,5 +205,6 @@
         private System.Windows.Forms.Button ClearButton;
         private System.Windows.Forms.Button CloseButton;
         private System.Windows.Forms.CheckBox DevModeCheckBox;
+        private System.Windows.Forms.Button AdvancedDataFileButton;
     }
 }

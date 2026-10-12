@@ -150,32 +150,36 @@
             this.UnitCopyFileComboBox = new System.Windows.Forms.ComboBox();
             this.HeroCreateTab = new System.Windows.Forms.TabPage();
             this.HeroCreatePanel = new System.Windows.Forms.Panel();
+            this.NewHeroAffilListBox = new System.Windows.Forms.ListBox();
+            this.label27 = new System.Windows.Forms.Label();
+            this.button6 = new System.Windows.Forms.Button();
+            this.textBox3 = new System.Windows.Forms.TextBox();
             this.button5 = new System.Windows.Forms.Button();
             this.label26 = new System.Windows.Forms.Label();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.label25 = new System.Windows.Forms.Label();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.NewHeroFighterListBox = new System.Windows.Forms.ListBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.label24 = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.button4 = new System.Windows.Forms.Button();
+            this.HeroIconPictureBox = new System.Windows.Forms.PictureBox();
+            this.ChangeHeroIconButtonStats = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.SetHeroBaseUnitButton = new System.Windows.Forms.Button();
             this.label22 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
+            this.BaseHeroTextBox = new System.Windows.Forms.TextBox();
+            this.GenericHeroCheckBox = new System.Windows.Forms.CheckBox();
             this.label17 = new System.Windows.Forms.Label();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
+            this.CopyHeroDescTextBox = new System.Windows.Forms.RichTextBox();
             this.label18 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.CopyHeroNameTextBox = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
             this.NewHeroFileTextBox = new System.Windows.Forms.TextBox();
             this.NewHeroFileCheckBox = new System.Windows.Forms.CheckBox();
@@ -196,6 +200,9 @@
             this.ModFilesButton = new System.Windows.Forms.Button();
             this.SuperToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.NewClassCheckBox = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -228,7 +235,7 @@
             this.HeroCreateTab.SuspendLayout();
             this.HeroCreatePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.HeroIconPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -1720,32 +1727,39 @@
             // HeroCreatePanel
             // 
             this.HeroCreatePanel.AutoScroll = true;
+            this.HeroCreatePanel.Controls.Add(this.NewClassCheckBox);
+            this.HeroCreatePanel.Controls.Add(this.comboBox1);
+            this.HeroCreatePanel.Controls.Add(this.textBox2);
+            this.HeroCreatePanel.Controls.Add(this.NewHeroAffilListBox);
+            this.HeroCreatePanel.Controls.Add(this.label27);
+            this.HeroCreatePanel.Controls.Add(this.button6);
+            this.HeroCreatePanel.Controls.Add(this.textBox3);
             this.HeroCreatePanel.Controls.Add(this.button5);
             this.HeroCreatePanel.Controls.Add(this.label26);
             this.HeroCreatePanel.Controls.Add(this.comboBox2);
             this.HeroCreatePanel.Controls.Add(this.label25);
             this.HeroCreatePanel.Controls.Add(this.numericUpDown1);
             this.HeroCreatePanel.Controls.Add(this.checkBox4);
-            this.HeroCreatePanel.Controls.Add(this.listBox1);
+            this.HeroCreatePanel.Controls.Add(this.NewHeroFighterListBox);
             this.HeroCreatePanel.Controls.Add(this.checkBox3);
             this.HeroCreatePanel.Controls.Add(this.label24);
             this.HeroCreatePanel.Controls.Add(this.label23);
-            this.HeroCreatePanel.Controls.Add(this.pictureBox1);
-            this.HeroCreatePanel.Controls.Add(this.button4);
+            this.HeroCreatePanel.Controls.Add(this.HeroIconPictureBox);
+            this.HeroCreatePanel.Controls.Add(this.ChangeHeroIconButtonStats);
             this.HeroCreatePanel.Controls.Add(this.button3);
             this.HeroCreatePanel.Controls.Add(this.textBox5);
             this.HeroCreatePanel.Controls.Add(this.richTextBox2);
-            this.HeroCreatePanel.Controls.Add(this.button2);
+            this.HeroCreatePanel.Controls.Add(this.SetHeroBaseUnitButton);
             this.HeroCreatePanel.Controls.Add(this.label22);
             this.HeroCreatePanel.Controls.Add(this.label21);
-            this.HeroCreatePanel.Controls.Add(this.textBox4);
-            this.HeroCreatePanel.Controls.Add(this.checkBox2);
+            this.HeroCreatePanel.Controls.Add(this.BaseHeroTextBox);
+            this.HeroCreatePanel.Controls.Add(this.GenericHeroCheckBox);
             this.HeroCreatePanel.Controls.Add(this.label17);
-            this.HeroCreatePanel.Controls.Add(this.richTextBox1);
+            this.HeroCreatePanel.Controls.Add(this.CopyHeroDescTextBox);
             this.HeroCreatePanel.Controls.Add(this.label18);
             this.HeroCreatePanel.Controls.Add(this.textBox1);
             this.HeroCreatePanel.Controls.Add(this.label19);
-            this.HeroCreatePanel.Controls.Add(this.textBox2);
+            this.HeroCreatePanel.Controls.Add(this.CopyHeroNameTextBox);
             this.HeroCreatePanel.Controls.Add(this.label20);
             this.HeroCreatePanel.Controls.Add(this.NewHeroFileTextBox);
             this.HeroCreatePanel.Controls.Add(this.NewHeroFileCheckBox);
@@ -1755,10 +1769,50 @@
             this.HeroCreatePanel.Size = new System.Drawing.Size(914, 628);
             this.HeroCreatePanel.TabIndex = 30;
             // 
+            // NewHeroAffilListBox
+            // 
+            this.NewHeroAffilListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.NewHeroAffilListBox.FormattingEnabled = true;
+            this.NewHeroAffilListBox.Location = new System.Drawing.Point(31, 602);
+            this.NewHeroAffilListBox.Name = "NewHeroAffilListBox";
+            this.NewHeroAffilListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.NewHeroAffilListBox.Size = new System.Drawing.Size(120, 368);
+            this.NewHeroAffilListBox.TabIndex = 107;
+            // 
+            // label27
+            // 
+            this.label27.AutoSize = true;
+            this.label27.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label27.Location = new System.Drawing.Point(22, 362);
+            this.label27.Name = "label27";
+            this.label27.Size = new System.Drawing.Size(178, 20);
+            this.label27.TabIndex = 106;
+            this.label27.Text = "Sound Source Override:";
+            // 
+            // button6
+            // 
+            this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button6.Location = new System.Drawing.Point(708, 354);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(158, 31);
+            this.button6.TabIndex = 105;
+            this.button6.Text = "Set Sound Source";
+            this.button6.UseVisualStyleBackColor = true;
+            // 
+            // textBox3
+            // 
+            this.textBox3.Enabled = false;
+            this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox3.Location = new System.Drawing.Point(208, 359);
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(485, 26);
+            this.textBox3.TabIndex = 104;
+            // 
             // button5
             // 
             this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button5.Location = new System.Drawing.Point(334, 529);
+            this.button5.Location = new System.Drawing.Point(334, 563);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(110, 31);
             this.button5.TabIndex = 103;
@@ -1769,7 +1823,7 @@
             // 
             this.label26.AutoSize = true;
             this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label26.Location = new System.Drawing.Point(591, 529);
+            this.label26.Location = new System.Drawing.Point(591, 563);
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(111, 20);
             this.label26.TabIndex = 102;
@@ -1792,7 +1846,7 @@
             "Jedi Advisor",
             "Infantry Specialist",
             "Cooperative"});
-            this.comboBox2.Location = new System.Drawing.Point(708, 526);
+            this.comboBox2.Location = new System.Drawing.Point(708, 560);
             this.comboBox2.Name = "comboBox2";
             this.comboBox2.Size = new System.Drawing.Size(121, 28);
             this.comboBox2.TabIndex = 101;
@@ -1801,7 +1855,7 @@
             // 
             this.label25.AutoSize = true;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label25.Location = new System.Drawing.Point(21, 534);
+            this.label25.Location = new System.Drawing.Point(21, 568);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(116, 20);
             this.label25.TabIndex = 100;
@@ -1810,7 +1864,7 @@
             // numericUpDown1
             // 
             this.numericUpDown1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.numericUpDown1.Location = new System.Drawing.Point(208, 532);
+            this.numericUpDown1.Location = new System.Drawing.Point(208, 566);
             this.numericUpDown1.Maximum = new decimal(new int[] {
             11,
             0,
@@ -1824,7 +1878,7 @@
             // 
             this.checkBox4.AutoSize = true;
             this.checkBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox4.Location = new System.Drawing.Point(570, 390);
+            this.checkBox4.Location = new System.Drawing.Point(570, 424);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.Size = new System.Drawing.Size(192, 24);
             this.checkBox4.TabIndex = 98;
@@ -1832,19 +1886,19 @@
             this.checkBox4.UseVisualStyleBackColor = true;
             this.checkBox4.Visible = false;
             // 
-            // listBox1
+            // NewHeroFighterListBox
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(208, 390);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(353, 134);
-            this.listBox1.TabIndex = 97;
+            this.NewHeroFighterListBox.FormattingEnabled = true;
+            this.NewHeroFighterListBox.Location = new System.Drawing.Point(208, 424);
+            this.NewHeroFighterListBox.Name = "NewHeroFighterListBox";
+            this.NewHeroFighterListBox.Size = new System.Drawing.Size(353, 134);
+            this.NewHeroFighterListBox.TabIndex = 97;
             // 
             // checkBox3
             // 
             this.checkBox3.AutoSize = true;
             this.checkBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox3.Location = new System.Drawing.Point(26, 403);
+            this.checkBox3.Location = new System.Drawing.Point(26, 437);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(184, 24);
             this.checkBox3.TabIndex = 96;
@@ -1865,34 +1919,35 @@
             // 
             this.label23.AutoSize = true;
             this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label23.Location = new System.Drawing.Point(22, 361);
+            this.label23.Location = new System.Drawing.Point(22, 395);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(181, 20);
             this.label23.TabIndex = 94;
             this.label23.Text = "Fighter Source Override:";
             // 
-            // pictureBox1
+            // HeroIconPictureBox
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(25, 245);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(75, 75);
-            this.pictureBox1.TabIndex = 93;
-            this.pictureBox1.TabStop = false;
+            this.HeroIconPictureBox.Location = new System.Drawing.Point(25, 245);
+            this.HeroIconPictureBox.Name = "HeroIconPictureBox";
+            this.HeroIconPictureBox.Size = new System.Drawing.Size(75, 75);
+            this.HeroIconPictureBox.TabIndex = 93;
+            this.HeroIconPictureBox.TabStop = false;
             // 
-            // button4
+            // ChangeHeroIconButtonStats
             // 
-            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button4.Location = new System.Drawing.Point(16, 326);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(130, 31);
-            this.button4.TabIndex = 92;
-            this.button4.Text = "Change Icon...";
-            this.button4.UseVisualStyleBackColor = true;
+            this.ChangeHeroIconButtonStats.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ChangeHeroIconButtonStats.Location = new System.Drawing.Point(16, 326);
+            this.ChangeHeroIconButtonStats.Name = "ChangeHeroIconButtonStats";
+            this.ChangeHeroIconButtonStats.Size = new System.Drawing.Size(130, 31);
+            this.ChangeHeroIconButtonStats.TabIndex = 92;
+            this.ChangeHeroIconButtonStats.Text = "Change Icon...";
+            this.ChangeHeroIconButtonStats.UseVisualStyleBackColor = true;
+            this.ChangeHeroIconButtonStats.Click += new System.EventHandler(this.ChangeHeroIconButtonStats_Click);
             // 
             // button3
             // 
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(708, 353);
+            this.button3.Location = new System.Drawing.Point(708, 387);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(158, 31);
             this.button3.TabIndex = 48;
@@ -1903,7 +1958,7 @@
             // 
             this.textBox5.Enabled = false;
             this.textBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox5.Location = new System.Drawing.Point(208, 358);
+            this.textBox5.Location = new System.Drawing.Point(208, 392);
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(485, 26);
             this.textBox5.TabIndex = 46;
@@ -1916,15 +1971,16 @@
             this.richTextBox2.TabIndex = 45;
             this.richTextBox2.Text = "";
             // 
-            // button2
+            // SetHeroBaseUnitButton
             // 
-            this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button2.Location = new System.Drawing.Point(708, 91);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(158, 31);
-            this.button2.TabIndex = 44;
-            this.button2.Text = "Set Base Unit";
-            this.button2.UseVisualStyleBackColor = true;
+            this.SetHeroBaseUnitButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SetHeroBaseUnitButton.Location = new System.Drawing.Point(708, 91);
+            this.SetHeroBaseUnitButton.Name = "SetHeroBaseUnitButton";
+            this.SetHeroBaseUnitButton.Size = new System.Drawing.Size(158, 31);
+            this.SetHeroBaseUnitButton.TabIndex = 44;
+            this.SetHeroBaseUnitButton.Text = "Set Base Unit";
+            this.SetHeroBaseUnitButton.UseVisualStyleBackColor = true;
+            this.SetHeroBaseUnitButton.Click += new System.EventHandler(this.SetHeroBaseUnitButton_Click);
             // 
             // label22
             // 
@@ -1947,26 +2003,27 @@
             this.label21.TabIndex = 42;
             this.label21.Text = "Base Unit:";
             // 
-            // textBox4
+            // BaseHeroTextBox
             // 
-            this.textBox4.Enabled = false;
-            this.textBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox4.Location = new System.Drawing.Point(208, 93);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(485, 26);
-            this.textBox4.TabIndex = 41;
+            this.BaseHeroTextBox.Enabled = false;
+            this.BaseHeroTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BaseHeroTextBox.Location = new System.Drawing.Point(208, 93);
+            this.BaseHeroTextBox.Name = "BaseHeroTextBox";
+            this.BaseHeroTextBox.Size = new System.Drawing.Size(485, 26);
+            this.BaseHeroTextBox.TabIndex = 41;
             // 
-            // checkBox2
+            // GenericHeroCheckBox
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox2.Location = new System.Drawing.Point(710, 15);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(123, 24);
-            this.checkBox2.TabIndex = 40;
-            this.checkBox2.Text = "Generic Hero";
-            this.checkBox2.UseVisualStyleBackColor = true;
-            this.checkBox2.Visible = false;
+            this.GenericHeroCheckBox.AutoSize = true;
+            this.GenericHeroCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GenericHeroCheckBox.Location = new System.Drawing.Point(710, 15);
+            this.GenericHeroCheckBox.Name = "GenericHeroCheckBox";
+            this.GenericHeroCheckBox.Size = new System.Drawing.Size(123, 24);
+            this.GenericHeroCheckBox.TabIndex = 40;
+            this.GenericHeroCheckBox.Text = "Generic Hero";
+            this.SuperToolTip.SetToolTip(this.GenericHeroCheckBox, "Check to create a minor hero that only shows the icon in tactical mode");
+            this.GenericHeroCheckBox.UseVisualStyleBackColor = true;
+            this.GenericHeroCheckBox.Visible = false;
             // 
             // label17
             // 
@@ -1978,19 +2035,19 @@
             this.label17.TabIndex = 39;
             this.label17.Text = "New Description";
             // 
-            // richTextBox1
+            // CopyHeroDescTextBox
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(208, 220);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(658, 105);
-            this.richTextBox1.TabIndex = 38;
-            this.richTextBox1.Text = "";
+            this.CopyHeroDescTextBox.Location = new System.Drawing.Point(208, 223);
+            this.CopyHeroDescTextBox.Name = "CopyHeroDescTextBox";
+            this.CopyHeroDescTextBox.Size = new System.Drawing.Size(658, 105);
+            this.CopyHeroDescTextBox.TabIndex = 38;
+            this.CopyHeroDescTextBox.Text = "";
             // 
             // label18
             // 
             this.label18.AutoSize = true;
             this.label18.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label18.Location = new System.Drawing.Point(22, 173);
+            this.label18.Location = new System.Drawing.Point(22, 163);
             this.label18.Name = "label18";
             this.label18.Size = new System.Drawing.Size(180, 20);
             this.label18.TabIndex = 37;
@@ -1999,7 +2056,7 @@
             // textBox1
             // 
             this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(208, 170);
+            this.textBox1.Location = new System.Drawing.Point(208, 160);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(485, 26);
             this.textBox1.TabIndex = 36;
@@ -2008,19 +2065,19 @@
             // 
             this.label19.AutoSize = true;
             this.label19.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label19.Location = new System.Drawing.Point(22, 135);
+            this.label19.Location = new System.Drawing.Point(22, 130);
             this.label19.Name = "label19";
             this.label19.Size = new System.Drawing.Size(129, 20);
             this.label19.TabIndex = 35;
             this.label19.Text = "New Hero Name:";
             // 
-            // textBox2
+            // CopyHeroNameTextBox
             // 
-            this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox2.Location = new System.Drawing.Point(208, 132);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(485, 26);
-            this.textBox2.TabIndex = 34;
+            this.CopyHeroNameTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CopyHeroNameTextBox.Location = new System.Drawing.Point(208, 127);
+            this.CopyHeroNameTextBox.Name = "CopyHeroNameTextBox";
+            this.CopyHeroNameTextBox.Size = new System.Drawing.Size(485, 26);
+            this.CopyHeroNameTextBox.TabIndex = 34;
             // 
             // label20
             // 
@@ -2219,6 +2276,35 @@
             this.contextMenuStrip2.Name = "contextMenuStrip2";
             this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
             // 
+            // textBox2
+            // 
+            this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBox2.Location = new System.Drawing.Point(372, 191);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(321, 26);
+            this.textBox2.TabIndex = 108;
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(25, 190);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(161, 28);
+            this.comboBox1.TabIndex = 109;
+            // 
+            // NewClassCheckBox
+            // 
+            this.NewClassCheckBox.AutoSize = true;
+            this.NewClassCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NewClassCheckBox.Location = new System.Drawing.Point(208, 195);
+            this.NewClassCheckBox.Name = "NewClassCheckBox";
+            this.NewClassCheckBox.Size = new System.Drawing.Size(158, 24);
+            this.NewClassCheckBox.TabIndex = 110;
+            this.NewClassCheckBox.Text = "Create New Class:";
+            this.NewClassCheckBox.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2276,7 +2362,7 @@
             this.HeroCreatePanel.ResumeLayout(false);
             this.HeroCreatePanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.HeroIconPictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2420,17 +2506,17 @@
         private System.Windows.Forms.PictureBox IconPictureBox;
         private System.Windows.Forms.TabPage HeroCreateTab;
         private System.Windows.Forms.Panel HeroCreatePanel;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button SetHeroBaseUnitButton;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.TextBox textBox4;
-        private System.Windows.Forms.CheckBox checkBox2;
+        private System.Windows.Forms.TextBox BaseHeroTextBox;
+        private System.Windows.Forms.CheckBox GenericHeroCheckBox;
         private System.Windows.Forms.Label label17;
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.RichTextBox CopyHeroDescTextBox;
         private System.Windows.Forms.Label label18;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox CopyHeroNameTextBox;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.TextBox NewHeroFileTextBox;
         private System.Windows.Forms.CheckBox NewHeroFileCheckBox;
@@ -2441,15 +2527,22 @@
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.CheckBox checkBox4;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox NewHeroFighterListBox;
         private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.Label label23;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.PictureBox HeroIconPictureBox;
+        private System.Windows.Forms.Button ChangeHeroIconButtonStats;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.TextBox textBox5;
         private System.Windows.Forms.RichTextBox richTextBox2;
+        private System.Windows.Forms.Label label27;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.ListBox NewHeroAffilListBox;
+        private System.Windows.Forms.CheckBox NewClassCheckBox;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.TextBox textBox2;
     }
 }
 

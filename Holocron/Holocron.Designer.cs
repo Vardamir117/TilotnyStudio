@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Holocron));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -72,9 +72,13 @@
             this.NameText = new System.Windows.Forms.RichTextBox();
             this.NameListBox = new System.Windows.Forms.ListBox();
             this.MissionTab = new System.Windows.Forms.TabPage();
+            this.label37 = new System.Windows.Forms.Label();
+            this.MissionSearchTextBox = new System.Windows.Forms.TextBox();
             this.MissionText = new System.Windows.Forms.RichTextBox();
             this.MissionListBox = new System.Windows.Forms.ListBox();
             this.SpawnTab = new System.Windows.Forms.TabPage();
+            this.label38 = new System.Windows.Forms.Label();
+            this.SpawnListSearchTextBox = new System.Windows.Forms.TextBox();
             this.label22 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
             this.SpawnGoTo = new System.Windows.Forms.Button();
@@ -84,12 +88,22 @@
             this.CorporationTab = new System.Windows.Forms.TabPage();
             this.HeroFTab = new System.Windows.Forms.TabPage();
             this.StandardFTab = new System.Windows.Forms.TabPage();
+            this.label39 = new System.Windows.Forms.Label();
+            this.StandardFSearchTextBox = new System.Windows.Forms.TextBox();
             this.StandardFText = new System.Windows.Forms.RichTextBox();
             this.StandardFListBox = new System.Windows.Forms.ListBox();
             this.RandomFTab = new System.Windows.Forms.TabPage();
+            this.label40 = new System.Windows.Forms.Label();
+            this.RandomFSearchTextBox = new System.Windows.Forms.TextBox();
             this.RandomFText = new System.Windows.Forms.RichTextBox();
             this.RandomFListBox = new System.Windows.Forms.ListBox();
             this.RegionalTab = new System.Windows.Forms.TabPage();
+            this.DocumentationTab = new System.Windows.Forms.TabPage();
+            this.rbGovernment = new System.Windows.Forms.RadioButton();
+            this.rbStory = new System.Windows.Forms.RadioButton();
+            this.DocumentationTextBox = new System.Windows.Forms.RichTextBox();
+            this.rbInfluence = new System.Windows.Forms.RadioButton();
+            this.rbTiersTraits = new System.Windows.Forms.RadioButton();
             this.tabUnits = new System.Windows.Forms.TabPage();
             this.UnitListBox = new System.Windows.Forms.ListBox();
             this.SpaceStructureRadioButton = new System.Windows.Forms.RadioButton();
@@ -333,6 +347,7 @@
             this.tabGCs = new System.Windows.Forms.TabPage();
             this.GCListBox = new System.Windows.Forms.ListBox();
             this.GCPanel = new System.Windows.Forms.Panel();
+            this.OpenMovieButton = new System.Windows.Forms.Button();
             this.GCgotoMapButton = new System.Windows.Forms.Button();
             this.GCMapSortByLabel = new System.Windows.Forms.Label();
             this.GCMapSortNameRB = new System.Windows.Forms.RadioButton();
@@ -487,14 +502,6 @@
             this.AutoResolveBattleTypeLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.label37 = new System.Windows.Forms.Label();
-            this.MissionSearchTextBox = new System.Windows.Forms.TextBox();
-            this.label38 = new System.Windows.Forms.Label();
-            this.SpawnListSearchTextBox = new System.Windows.Forms.TextBox();
-            this.label39 = new System.Windows.Forms.Label();
-            this.StandardFSearchTextBox = new System.Windows.Forms.TextBox();
-            this.label40 = new System.Windows.Forms.Label();
-            this.RandomFSearchTextBox = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.tabLookups.SuspendLayout();
             this.LookupTabControl.SuspendLayout();
@@ -507,6 +514,7 @@
             this.SpawnTab.SuspendLayout();
             this.StandardFTab.SuspendLayout();
             this.RandomFTab.SuspendLayout();
+            this.DocumentationTab.SuspendLayout();
             this.tabUnits.SuspendLayout();
             this.Unitpanel.SuspendLayout();
             this.UnitSFXPanel.SuspendLayout();
@@ -626,6 +634,7 @@
             this.LookupTabControl.Controls.Add(this.StandardFTab);
             this.LookupTabControl.Controls.Add(this.RandomFTab);
             this.LookupTabControl.Controls.Add(this.RegionalTab);
+            this.LookupTabControl.Controls.Add(this.DocumentationTab);
             this.LookupTabControl.Location = new System.Drawing.Point(3, 3);
             this.LookupTabControl.Name = "LookupTabControl";
             this.LookupTabControl.SelectedIndex = 0;
@@ -678,34 +687,34 @@
             this.MatrixGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle10.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.MatrixGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.MatrixGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.MatrixGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle11.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.MatrixGrid.DefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.MatrixGrid.DefaultCellStyle = dataGridViewCellStyle2;
             this.MatrixGrid.Location = new System.Drawing.Point(3, 24);
             this.MatrixGrid.Name = "MatrixGrid";
             this.MatrixGrid.ReadOnly = true;
-            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle12.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle12.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle12.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.MatrixGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.MatrixGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.MatrixGrid.Size = new System.Drawing.Size(1470, 722);
             this.MatrixGrid.TabIndex = 1;
             // 
@@ -1019,6 +1028,25 @@
             this.MissionTab.Text = "Rewards";
             this.MissionTab.UseVisualStyleBackColor = true;
             // 
+            // label37
+            // 
+            this.label37.AutoSize = true;
+            this.label37.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label37.Location = new System.Drawing.Point(4, 9);
+            this.label37.Name = "label37";
+            this.label37.Size = new System.Drawing.Size(64, 20);
+            this.label37.TabIndex = 7;
+            this.label37.Text = "Search:";
+            // 
+            // MissionSearchTextBox
+            // 
+            this.MissionSearchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.MissionSearchTextBox.Location = new System.Drawing.Point(74, 6);
+            this.MissionSearchTextBox.Name = "MissionSearchTextBox";
+            this.MissionSearchTextBox.Size = new System.Drawing.Size(222, 26);
+            this.MissionSearchTextBox.TabIndex = 6;
+            this.MissionSearchTextBox.TextChanged += new System.EventHandler(this.MissionSearchTextBox_TextChanged);
+            // 
             // MissionText
             // 
             this.MissionText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -1057,6 +1085,25 @@
             this.SpawnTab.TabIndex = 3;
             this.SpawnTab.Text = "Spawn Sets";
             this.SpawnTab.UseVisualStyleBackColor = true;
+            // 
+            // label38
+            // 
+            this.label38.AutoSize = true;
+            this.label38.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label38.Location = new System.Drawing.Point(4, 10);
+            this.label38.Name = "label38";
+            this.label38.Size = new System.Drawing.Size(64, 20);
+            this.label38.TabIndex = 97;
+            this.label38.Text = "Search:";
+            // 
+            // SpawnListSearchTextBox
+            // 
+            this.SpawnListSearchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SpawnListSearchTextBox.Location = new System.Drawing.Point(74, 7);
+            this.SpawnListSearchTextBox.Name = "SpawnListSearchTextBox";
+            this.SpawnListSearchTextBox.Size = new System.Drawing.Size(222, 26);
+            this.SpawnListSearchTextBox.TabIndex = 96;
+            this.SpawnListSearchTextBox.TextChanged += new System.EventHandler(this.SpawnListSearchTextBox_TextChanged);
             // 
             // label22
             // 
@@ -1150,6 +1197,25 @@
             this.StandardFTab.Text = "Standard Fighters";
             this.StandardFTab.UseVisualStyleBackColor = true;
             // 
+            // label39
+            // 
+            this.label39.AutoSize = true;
+            this.label39.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label39.Location = new System.Drawing.Point(4, 10);
+            this.label39.Name = "label39";
+            this.label39.Size = new System.Drawing.Size(64, 20);
+            this.label39.TabIndex = 7;
+            this.label39.Text = "Search:";
+            // 
+            // StandardFSearchTextBox
+            // 
+            this.StandardFSearchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.StandardFSearchTextBox.Location = new System.Drawing.Point(74, 7);
+            this.StandardFSearchTextBox.Name = "StandardFSearchTextBox";
+            this.StandardFSearchTextBox.Size = new System.Drawing.Size(222, 26);
+            this.StandardFSearchTextBox.TabIndex = 6;
+            this.StandardFSearchTextBox.TextChanged += new System.EventHandler(this.StandardFSearchTextBox_TextChanged);
+            // 
             // StandardFText
             // 
             this.StandardFText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -1185,6 +1251,25 @@
             this.RandomFTab.Text = "Random Fighters";
             this.RandomFTab.UseVisualStyleBackColor = true;
             // 
+            // label40
+            // 
+            this.label40.AutoSize = true;
+            this.label40.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label40.Location = new System.Drawing.Point(4, 10);
+            this.label40.Name = "label40";
+            this.label40.Size = new System.Drawing.Size(64, 20);
+            this.label40.TabIndex = 7;
+            this.label40.Text = "Search:";
+            // 
+            // RandomFSearchTextBox
+            // 
+            this.RandomFSearchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.RandomFSearchTextBox.Location = new System.Drawing.Point(74, 7);
+            this.RandomFSearchTextBox.Name = "RandomFSearchTextBox";
+            this.RandomFSearchTextBox.Size = new System.Drawing.Size(222, 26);
+            this.RandomFSearchTextBox.TabIndex = 6;
+            this.RandomFSearchTextBox.TextChanged += new System.EventHandler(this.RandomFSearchTextBox_TextChanged);
+            // 
             // RandomFText
             // 
             this.RandomFText.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -1215,6 +1300,76 @@
             this.RegionalTab.TabIndex = 6;
             this.RegionalTab.Text = "Regional Fighters";
             this.RegionalTab.UseVisualStyleBackColor = true;
+            // 
+            // DocumentationTab
+            // 
+            this.DocumentationTab.Controls.Add(this.rbGovernment);
+            this.DocumentationTab.Controls.Add(this.rbStory);
+            this.DocumentationTab.Controls.Add(this.DocumentationTextBox);
+            this.DocumentationTab.Controls.Add(this.rbInfluence);
+            this.DocumentationTab.Controls.Add(this.rbTiersTraits);
+            this.DocumentationTab.Location = new System.Drawing.Point(4, 22);
+            this.DocumentationTab.Name = "DocumentationTab";
+            this.DocumentationTab.Size = new System.Drawing.Size(1476, 749);
+            this.DocumentationTab.TabIndex = 11;
+            this.DocumentationTab.Text = "Guides";
+            this.DocumentationTab.UseVisualStyleBackColor = true;
+            // 
+            // rbGovernment
+            // 
+            this.rbGovernment.AutoSize = true;
+            this.rbGovernment.Location = new System.Drawing.Point(3, 72);
+            this.rbGovernment.Name = "rbGovernment";
+            this.rbGovernment.Size = new System.Drawing.Size(83, 17);
+            this.rbGovernment.TabIndex = 8;
+            this.rbGovernment.Text = "Government";
+            this.rbGovernment.UseVisualStyleBackColor = true;
+            this.rbGovernment.Visible = false;
+            this.rbGovernment.CheckedChanged += new System.EventHandler(this.rbGovernment_CheckedChanged);
+            // 
+            // rbStory
+            // 
+            this.rbStory.AutoSize = true;
+            this.rbStory.Location = new System.Drawing.Point(3, 49);
+            this.rbStory.Name = "rbStory";
+            this.rbStory.Size = new System.Drawing.Size(49, 17);
+            this.rbStory.TabIndex = 7;
+            this.rbStory.Text = "Story";
+            this.rbStory.UseVisualStyleBackColor = true;
+            this.rbStory.CheckedChanged += new System.EventHandler(this.rbStory_CheckedChanged);
+            // 
+            // DocumentationTextBox
+            // 
+            this.DocumentationTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.DocumentationTextBox.Location = new System.Drawing.Point(107, 3);
+            this.DocumentationTextBox.Name = "DocumentationTextBox";
+            this.DocumentationTextBox.Size = new System.Drawing.Size(1365, 743);
+            this.DocumentationTextBox.TabIndex = 6;
+            this.DocumentationTextBox.Text = "";
+            // 
+            // rbInfluence
+            // 
+            this.rbInfluence.AutoSize = true;
+            this.rbInfluence.Location = new System.Drawing.Point(3, 26);
+            this.rbInfluence.Name = "rbInfluence";
+            this.rbInfluence.Size = new System.Drawing.Size(69, 17);
+            this.rbInfluence.TabIndex = 5;
+            this.rbInfluence.Text = "Influence";
+            this.rbInfluence.UseVisualStyleBackColor = true;
+            this.rbInfluence.CheckedChanged += new System.EventHandler(this.rbInfluence_CheckedChanged);
+            // 
+            // rbTiersTraits
+            // 
+            this.rbTiersTraits.AutoSize = true;
+            this.rbTiersTraits.Location = new System.Drawing.Point(3, 3);
+            this.rbTiersTraits.Name = "rbTiersTraits";
+            this.rbTiersTraits.Size = new System.Drawing.Size(98, 17);
+            this.rbTiersTraits.TabIndex = 4;
+            this.rbTiersTraits.Text = "Tiers and Traits";
+            this.rbTiersTraits.UseVisualStyleBackColor = true;
+            this.rbTiersTraits.CheckedChanged += new System.EventHandler(this.rbTiersTraits_CheckedChanged);
             // 
             // tabUnits
             // 
@@ -1676,8 +1831,8 @@
             this.UnitSampleListBox.Name = "UnitSampleListBox";
             this.UnitSampleListBox.Size = new System.Drawing.Size(259, 277);
             this.UnitSampleListBox.TabIndex = 2;
-            this.toolTip1.SetToolTip(this.UnitSampleListBox, "The activated abiltiies on teh unit. Selecting one that affects stats will change" +
-        " them accordingly");
+            this.toolTip1.SetToolTip(this.UnitSampleListBox, "The different possibilities for a sound file that can be played by the trigger ev" +
+        "ent");
             this.UnitSampleListBox.SelectedIndexChanged += new System.EventHandler(this.UnitSampleListBox_SelectedIndexChanged);
             // 
             // UnitSFXListbox
@@ -1687,8 +1842,7 @@
             this.UnitSFXListbox.Name = "UnitSFXListbox";
             this.UnitSFXListbox.Size = new System.Drawing.Size(259, 277);
             this.UnitSFXListbox.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.UnitSFXListbox, "The activated abiltiies on teh unit. Selecting one that affects stats will change" +
-        " them accordingly");
+            this.toolTip1.SetToolTip(this.UnitSFXListbox, "The events that can trigger a sound");
             this.UnitSFXListbox.SelectedIndexChanged += new System.EventHandler(this.UnitSFXListbox_SelectedIndexChanged);
             // 
             // CollapseUnitSFXPanel
@@ -2263,6 +2417,8 @@
             this.AbilityListBox.Name = "AbilityListBox";
             this.AbilityListBox.Size = new System.Drawing.Size(245, 121);
             this.AbilityListBox.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.AbilityListBox, "The abilities triggered passively or by events not directly caused by clicking an" +
+        " ability button");
             this.AbilityListBox.SelectedIndexChanged += new System.EventHandler(this.AbilityListBox_SelectedIndexChanged);
             // 
             // UnitAbilityListBox
@@ -2272,8 +2428,9 @@
             this.UnitAbilityListBox.Name = "UnitAbilityListBox";
             this.UnitAbilityListBox.Size = new System.Drawing.Size(259, 30);
             this.UnitAbilityListBox.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.UnitAbilityListBox, "The activated abiltiies on teh unit. Selecting one that affects stats will change" +
-        " them accordingly");
+            this.toolTip1.SetToolTip(this.UnitAbilityListBox, "The activated abiltiies on the unit. Selecting one that affects stats will change" +
+        " them accordingly\r\nMay trigger the other kind of ability, which will select it i" +
+        "n the other listbox");
             this.UnitAbilityListBox.SelectedIndexChanged += new System.EventHandler(this.UnitAbilityListBox_SelectedIndexChanged);
             // 
             // CollapseUnitSubunitPanel
@@ -3998,6 +4155,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.GCPanel.AutoScroll = true;
+            this.GCPanel.Controls.Add(this.OpenMovieButton);
             this.GCPanel.Controls.Add(this.GCgotoMapButton);
             this.GCPanel.Controls.Add(this.GCMapSortByLabel);
             this.GCPanel.Controls.Add(this.GCMapSortNameRB);
@@ -4047,6 +4205,19 @@
             this.GCPanel.Name = "GCPanel";
             this.GCPanel.Size = new System.Drawing.Size(1081, 769);
             this.GCPanel.TabIndex = 64;
+            // 
+            // OpenMovieButton
+            // 
+            this.OpenMovieButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OpenMovieButton.Location = new System.Drawing.Point(489, 847);
+            this.OpenMovieButton.Name = "OpenMovieButton";
+            this.OpenMovieButton.Size = new System.Drawing.Size(135, 24);
+            this.OpenMovieButton.TabIndex = 112;
+            this.OpenMovieButton.Tag = "";
+            this.OpenMovieButton.Text = "Open Movie Loop...";
+            this.toolTip1.SetToolTip(this.OpenMovieButton, "Open the movie file for the selected speech in the default program for bik files");
+            this.OpenMovieButton.UseVisualStyleBackColor = true;
+            this.OpenMovieButton.Click += new System.EventHandler(this.OpenMovieButton_Click);
             // 
             // GCgotoMapButton
             // 
@@ -5942,82 +6113,6 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
-            // label37
-            // 
-            this.label37.AutoSize = true;
-            this.label37.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label37.Location = new System.Drawing.Point(4, 9);
-            this.label37.Name = "label37";
-            this.label37.Size = new System.Drawing.Size(64, 20);
-            this.label37.TabIndex = 7;
-            this.label37.Text = "Search:";
-            // 
-            // MissionSearchTextBox
-            // 
-            this.MissionSearchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.MissionSearchTextBox.Location = new System.Drawing.Point(74, 6);
-            this.MissionSearchTextBox.Name = "MissionSearchTextBox";
-            this.MissionSearchTextBox.Size = new System.Drawing.Size(222, 26);
-            this.MissionSearchTextBox.TabIndex = 6;
-            this.MissionSearchTextBox.TextChanged += new System.EventHandler(this.MissionSearchTextBox_TextChanged);
-            // 
-            // label38
-            // 
-            this.label38.AutoSize = true;
-            this.label38.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label38.Location = new System.Drawing.Point(4, 10);
-            this.label38.Name = "label38";
-            this.label38.Size = new System.Drawing.Size(64, 20);
-            this.label38.TabIndex = 97;
-            this.label38.Text = "Search:";
-            // 
-            // SpawnListSearchTextBox
-            // 
-            this.SpawnListSearchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SpawnListSearchTextBox.Location = new System.Drawing.Point(74, 7);
-            this.SpawnListSearchTextBox.Name = "SpawnListSearchTextBox";
-            this.SpawnListSearchTextBox.Size = new System.Drawing.Size(222, 26);
-            this.SpawnListSearchTextBox.TabIndex = 96;
-            this.SpawnListSearchTextBox.TextChanged += new System.EventHandler(this.SpawnListSearchTextBox_TextChanged);
-            // 
-            // label39
-            // 
-            this.label39.AutoSize = true;
-            this.label39.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label39.Location = new System.Drawing.Point(4, 10);
-            this.label39.Name = "label39";
-            this.label39.Size = new System.Drawing.Size(64, 20);
-            this.label39.TabIndex = 7;
-            this.label39.Text = "Search:";
-            // 
-            // StandardFSearchTextBox
-            // 
-            this.StandardFSearchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.StandardFSearchTextBox.Location = new System.Drawing.Point(74, 7);
-            this.StandardFSearchTextBox.Name = "StandardFSearchTextBox";
-            this.StandardFSearchTextBox.Size = new System.Drawing.Size(222, 26);
-            this.StandardFSearchTextBox.TabIndex = 6;
-            this.StandardFSearchTextBox.TextChanged += new System.EventHandler(this.StandardFSearchTextBox_TextChanged);
-            // 
-            // label40
-            // 
-            this.label40.AutoSize = true;
-            this.label40.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label40.Location = new System.Drawing.Point(4, 10);
-            this.label40.Name = "label40";
-            this.label40.Size = new System.Drawing.Size(64, 20);
-            this.label40.TabIndex = 7;
-            this.label40.Text = "Search:";
-            // 
-            // RandomFSearchTextBox
-            // 
-            this.RandomFSearchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.RandomFSearchTextBox.Location = new System.Drawing.Point(74, 7);
-            this.RandomFSearchTextBox.Name = "RandomFSearchTextBox";
-            this.RandomFSearchTextBox.Size = new System.Drawing.Size(222, 26);
-            this.RandomFSearchTextBox.TabIndex = 6;
-            this.RandomFSearchTextBox.TextChanged += new System.EventHandler(this.RandomFSearchTextBox_TextChanged);
-            // 
             // Holocron
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -6052,6 +6147,8 @@
             this.StandardFTab.PerformLayout();
             this.RandomFTab.ResumeLayout(false);
             this.RandomFTab.PerformLayout();
+            this.DocumentationTab.ResumeLayout(false);
+            this.DocumentationTab.PerformLayout();
             this.tabUnits.ResumeLayout(false);
             this.tabUnits.PerformLayout();
             this.Unitpanel.ResumeLayout(false);
@@ -6574,6 +6671,13 @@
         private System.Windows.Forms.TextBox StandardFSearchTextBox;
         private System.Windows.Forms.Label label40;
         private System.Windows.Forms.TextBox RandomFSearchTextBox;
+        private System.Windows.Forms.Button OpenMovieButton;
+        private System.Windows.Forms.TabPage DocumentationTab;
+        private System.Windows.Forms.RichTextBox DocumentationTextBox;
+        private System.Windows.Forms.RadioButton rbInfluence;
+        private System.Windows.Forms.RadioButton rbTiersTraits;
+        private System.Windows.Forms.RadioButton rbGovernment;
+        private System.Windows.Forms.RadioButton rbStory;
     }
 }
 

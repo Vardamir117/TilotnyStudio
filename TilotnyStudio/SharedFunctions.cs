@@ -102,7 +102,7 @@ public static class SharedFunctions
             }
             else
             {
-                entities.readerrors += "\n" + corepath + "cannot be found in loose files or megs";
+                entities.readerrors += "\n" + corepath + " cannot be found in loose files or megs";
             }
         }
 
@@ -124,7 +124,7 @@ public static class SharedFunctions
             }
             else
             {
-                entities.readerrors += "\n" + corepath + "cannot be found in loose files or megs";
+                entities.readerrors += "\n" + corepath + " cannot be found in loose files or megs";
             }
         }
 
@@ -146,7 +146,7 @@ public static class SharedFunctions
             }
             else
             {
-                entities.readerrors += "\n" + corepath + "cannot be found in loose files or megs";
+                entities.readerrors += "\n" + corepath + " cannot be found in loose files or megs";
             }
         }
 
@@ -168,7 +168,7 @@ public static class SharedFunctions
             }
             else
             {
-                entities.readerrors += "\n" + corepath + "cannot be found in loose files or megs";
+                entities.readerrors += "\n" + corepath + " cannot be found in loose files or megs";
             }
         }
 
@@ -772,6 +772,20 @@ public static class SharedFunctions
                 bombingRunUnit = value.LastChild.Value;
             }
         }
+        if(bombingRunUnit == "")
+        {
+            value = unit.SelectSingleNode("descendant::Ship_Class");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null))
+                {
+                    if (String.Equals(value.LastChild.Value, "bomber", StringComparison.OrdinalIgnoreCase))
+                    {
+                        entities.readerrors += "\nUnit " + name + " is categorized as a bomber but does not have a Land_Bomber_Type defined.";
+                    }
+                }
+            }
+        }
         value = unit.SelectSingleNode("descendant::Shield_Points");
         if (!(value is null))
         {
@@ -1058,6 +1072,43 @@ public static class SharedFunctions
                 }
             }
         }
+        value = unit.SelectSingleNode("descendant::Death_Explosions");
+        if (!(value is null) && value.InnerText != "")
+        {
+            string proj = value.InnerText.Trim().ToLower();
+            builtin.name = "dest";
+            builtin.hpType = "DESTRUCTION";
+            builtin.hp = -1;
+            builtin.targetable = false;
+            builtin.quantity = 1;
+            builtin.range = range;
+            builtin.projectile = proj;
+            builtin.firesound = "";
+            builtin.diesound = "";
+            builtin.inaccuracyAmounts = new List<float>();
+            builtin.inaccuracyTypes = new List<string>();
+            builtin.recharge = 1;
+            builtin.pulseCount = 1;
+            builtin.pulseDelay = 0;
+            bool notfound = true;
+            int index = LookupUntemplateID(proj);
+            if (index < entities.projectilehashes.Count)
+            {
+                for (int j = 0; j < entities.projectilehashes[index].Count; j++)
+                {
+                    projectile project = entities.projectiles[entities.projectilehashes[index][j]];
+                    if (project.name.ToLower() == proj)
+                    {
+                        builtin.damageType = project.damageType;
+                        builtin.damageAmount = project.damageAmount;
+                        builtin.blastRadius = project.blastRadius;
+                        notfound = false;
+                        break;
+                    }
+                }
+            }
+            //if (notfound && proj != "") entities.readerrors += "\nCannot find death explosion type " + value.InnerText.Trim() + " for unit " + name; //Comes up way too often while reading mormal particles is skipped for optimizations
+        }
         value = unit.SelectSingleNode("descendant::Unit_Abilities_Data");
         if (!(value is null))
         {
@@ -1070,6 +1121,7 @@ public static class SharedFunctions
                 forlist.ability = "";
                 forlist.desc = "";
                 forlist.sound = "";
+                forlist.linkedEntity = "";
                 forlist.damageMod = 1;
                 forlist.defenseMod = 1;
                 forlist.reloadMod = 1;
@@ -1153,6 +1205,10 @@ public static class SharedFunctions
                                 }
                             }
                         }
+                        abdata = able.SelectSingleNode("descendant::Particle_Effect");
+                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.linkedEntity = abdata.InnerText.Trim();
+                        abdata = able.SelectSingleNode("descendant::Spawned_Object_Type");
+                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.linkedEntity = abdata.InnerText.Trim();
 
                         abdata = able.SelectSingleNode("descendant::Alternate_Icon_Name");
                         if (!(abdata is null) && !(abdata.LastChild is null)) forlist.icon = abdata.LastChild.Value;
@@ -1444,6 +1500,9 @@ public static class SharedFunctions
                     abdata = able.SelectSingleNode("descendant::Activate_SFX");
                     if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
                 }
+
+                abdata = able.SelectSingleNode("descendant::Mine_Type");
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.linkedEntity = abdata.LastChild.Value.Trim();
 
                 //command bonus
                 abdata = able.SelectSingleNode("descendant::Damage_Bonus_Percentage");
@@ -4026,6 +4085,33 @@ public static class SharedFunctions
 
     }
 
+    public static void parseMovies(entities entities)
+    {
+        entities.movies.Clear();
+        XmlDocument mvdoc = readModXmlOrMeg("XML\\Movies.xml", entities);
+        XmlNode mvroot = mvdoc.DocumentElement;
+
+        XmlNodeList mvdata = mvroot.SelectNodes("*");
+
+        foreach (XmlNode mvdat in mvdata)
+        {
+            string name = mvdat.Attributes[0].Value;
+            string file = "";
+            System.Xml.XmlNode value = mvdat.SelectSingleNode("descendant::Movie_File");
+            if (!(value is null))
+            {
+                file = value.LastChild.Value.Trim();
+            }
+            movieLoop movie = new movieLoop
+            {
+                name = name,
+                file = file,
+            };
+            entities.movies.Add(movie);
+        }
+    }
+
+
     public static List<quantizedObject> quantizedAdd(List<quantizedObject> l, quantizedObject q)
     {
         for(int i = 0; i < l.Count; i++)
@@ -4532,6 +4618,24 @@ public static class SharedFunctions
                 else if (entity.fightermode > 0 || entity.behaviors.Contains("DUMMY_SPACE_FIGHTER_SQUADRON") || entity.modebehaviors.Contains("DUMMY_SPACE_FIGHTER_SQUADRON"))
                 {
                     entities.fighters.Add(entity);
+
+                    //random error checking section!
+                    if(entity.bombingRunUnit != "") //todo check actual bomber trigger. Is_Bomber?
+                    {
+                        unit land = entities.objects.FirstOrDefault(x => String.Equals(entity.bombingRunUnit, x.unitname, StringComparison.OrdinalIgnoreCase));
+                        if(land.unitname is null) entities.readerrors += "\nCannot find land bombing run unit " + entity.bombingRunUnit + " for bomber type " + entity.unitname;
+                        else
+                        {
+                            if(!(land.behaviors.Contains("LANDBOMBER_LOCOMOTOR") || land.modebehaviors.Contains("LANDBOMBER_LOCOMOTOR"))) entities.readerrors += "\nNo LANDBOMBER_LOCOMOTOR on " + land.unitname + " linked to  " + entity.unitname;
+                            if (land.model == "") entities.readerrors += "\nNo model defined for unit " + land.unitname;
+                            else
+                            {
+                                string datafile = getModFile("Art\\Models\\" + land.model, entities);
+                                if(datafile == "") entities.readerrors += "\nCannot find model " + land.model + " for unit " + land.unitname;
+                            }
+                        }
+                    }
+                    
                 }
                 else if (entity.percompany > 0)
                 {
@@ -6622,6 +6726,7 @@ public struct unitability
     public string ability; //GUI_Activated_Ability_Name
     public string sound;
     public string deactivatesound;
+    public string linkedEntity;
 
     public float recharge;
     public float expiration;
@@ -6727,6 +6832,12 @@ public struct tradeRoute
 {
     public string name;
     public string[] planets;
+}
+
+public struct movieLoop
+{
+    public string name;
+    public string file;
 }
 
 public enum GCType
@@ -6852,6 +6963,7 @@ public struct entities {
     public static Dictionary<string, ulong> CategoryBitMasks = new Dictionary<string, ulong>(StringComparer.OrdinalIgnoreCase);
 
     public static List<spawnSet> spawnSets = new List<spawnSet>();
+    public static List<movieLoop> movies = new List<movieLoop>();
 
     public static Bitmap MTmaster;
     public static List<IconData> IconData = new List<IconData>();
@@ -7050,7 +7162,7 @@ public static class DatParser
 
         int total_entries = make32(mtdfile, 0);
         for (int index = 4; index < total_entries*81+4; index+=5) //cover last 32 bit and 8 bit alpha boolean
-        {//Todo compare charge with and without offset, check rev icons
+        {
             IconData ico = new IconData();
             for(int i = index; i<index+64; i++)
             {
@@ -7058,7 +7170,7 @@ public static class DatParser
                 ico.id += (char)mtdfile[i];
             }
             index += 64;
-            ico.origin_x = make32(mtdfile, index); //appears to be 1 indexed?
+            ico.origin_x = make32(mtdfile, index);
             index += 4;
             ico.origin_y = make32(mtdfile, index);
             index += 4;

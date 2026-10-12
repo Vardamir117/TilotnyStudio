@@ -118,5 +118,12 @@ namespace TilotnyStudio
             devmode = DevModeCheckBox.Checked;
             this.Close();
         }
+
+        private void AdvancedDataFileButton_Click(object sender, EventArgs e)
+        {
+            //TextDetail deets = new TextDetail();
+            MessageBox.Show("If a debugpaths.cfg file is placed in the same folder as the Tilotny executable, arbitrary paths may be defined in it.\nThe first line must be the local mod folder, the second the Steam workshop folder, then any number of mod paths. E.g.\n\nC:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\nC:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470\nC:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470\\3417277973\\Data");
+            //deets.Show();
+        }
     }
 }
