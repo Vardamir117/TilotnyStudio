@@ -83,14 +83,19 @@ namespace TilotnyStudio
             this.Close();
         }
 
+        private void AddMod(string modPath, string modName)
+        {
+            Args.Add(Path.Combine(modPath, modName, "Data"));
+            string optionalSpace = displayargs.Length > 0 ? " " : "";
+            displayargs += optionalSpace + modName;
+            ShortcutLabel.Text = "Mod stack: " + displayargs;
+        }
+
         private void LocalButton_Click(object sender, EventArgs e)
         {
-            if(LocalListbox.SelectedItems.Count > 0)
+            if (LocalListbox.SelectedItems.Count > 0)
             {
-                Args.Add(Path.Combine(localmodpath, LocalListbox.Text,"Data"));
-                displayargs += LocalListbox.Text;
-
-                ShortcutLabel.Text = "Mod stack: " + displayargs;
+                AddMod(localmodpath, LocalListbox.Text);
             }
         }
 
@@ -98,11 +103,8 @@ namespace TilotnyStudio
         {
             if (WorkshopListbox.SelectedItems.Count > 0)
             {
-                Args.Add(Path.Combine(steammodpath, WorkshopListbox.Text,"Data"));
-                displayargs += WorkshopListbox.Text;
-
-                ShortcutLabel.Text = "Mod stack: " + displayargs;
-            } 
+                AddMod(steammodpath, WorkshopListbox.Text);
+            }
         }
 
         private void ClearButton_Click(object sender, EventArgs e)
