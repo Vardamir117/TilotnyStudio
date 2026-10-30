@@ -9,16 +9,30 @@ namespace Holocron
     {
         public struct WeightedCategoryEntry
         {
+            public string TypeName;
             public ulong CategoryMask;
             public float Weight;
         }
 
-        // Mirrors TargetContrastClass::Get_Average_Contrast_Factor semantics for bitmask categories.
+        // Mirrors exact-type priority and category averaging from Get_Average_Contrast_Factor.
         public static float Get_Average_Contrast_Factor(
+            string friendlyTypeName,
             ulong friendlyCategoryMask,
             List<WeightedCategoryEntry> weightList)
         {
-            if (friendlyCategoryMask == 0UL || weightList == null || weightList.Count == 0) return 0.0f;
+            if (weightList == null || weightList.Count == 0) return 0.0f;
+
+            for (int i = 0; i < weightList.Count; i++)
+            {
+                WeightedCategoryEntry entry = weightList[i];
+                if (!string.IsNullOrWhiteSpace(entry.TypeName) &&
+                    string.Equals(entry.TypeName, friendlyTypeName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return entry.Weight;
+                }
+            }
+
+            if (friendlyCategoryMask == 0UL) return 0.0f;
 
             float totalWeight = 0.0f;
             int weightCount = 0;
@@ -33,7 +47,7 @@ namespace Holocron
 
                 // C++ parity: ignore weights of exactly 1.0f when computing average,
                 // but still mark that the contrast matched.
-                if (Math.Abs(entry.Weight - 1.0f) > 0.0001f)
+                if (entry.Weight != 1.0f)
                 {
                     totalWeight += entry.Weight;
                     weightCount++;
