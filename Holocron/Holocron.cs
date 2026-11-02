@@ -8825,7 +8825,7 @@ namespace Holocron
         private void rbGovernment_CheckedChanged(object sender, EventArgs e)
         {
             //todo - possibly only read nondynamic text
-            //How do coorectly determine which faction opens which gov guide?
+            //How do correctly determine which faction opens which gov guide?
         }
 
         private void checkedErrorTypesToolStripMenuItem_Click(object sender, EventArgs e)

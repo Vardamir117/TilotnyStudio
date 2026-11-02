@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Holocron));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -743,34 +743,34 @@
             this.MatrixGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.MatrixGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.MatrixGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
             this.MatrixGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.MatrixGrid.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle8.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.MatrixGrid.DefaultCellStyle = dataGridViewCellStyle8;
             this.MatrixGrid.Location = new System.Drawing.Point(3, 24);
             this.MatrixGrid.Name = "MatrixGrid";
             this.MatrixGrid.ReadOnly = true;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.MatrixGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.MatrixGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle9;
             this.MatrixGrid.Size = new System.Drawing.Size(1470, 722);
             this.MatrixGrid.TabIndex = 1;
             // 
@@ -5581,6 +5581,7 @@
             this.FavorSupportNameLabel.Size = new System.Drawing.Size(11, 16);
             this.FavorSupportNameLabel.TabIndex = 89;
             this.FavorSupportNameLabel.Text = ".";
+            this.toolTip1.SetToolTip(this.FavorSupportNameLabel, "The internal name of the unit");
             // 
             // FavorIntegratesRichTextBox
             // 
@@ -5589,6 +5590,7 @@
             this.FavorIntegratesRichTextBox.Size = new System.Drawing.Size(650, 152);
             this.FavorIntegratesRichTextBox.TabIndex = 88;
             this.FavorIntegratesRichTextBox.Text = "";
+            this.toolTip1.SetToolTip(this.FavorIntegratesRichTextBox, "The speech associated with integrating the target faction");
             this.FavorIntegratesRichTextBox.Visible = false;
             // 
             // FavorIntegratesLabel
@@ -5600,6 +5602,7 @@
             this.FavorIntegratesLabel.Size = new System.Drawing.Size(82, 20);
             this.FavorIntegratesLabel.TabIndex = 87;
             this.FavorIntegratesLabel.Text = "Integrates";
+            this.toolTip1.SetToolTip(this.FavorIntegratesLabel, "The listed planets are converted to your faction when increasing favor");
             // 
             // FavorDescRichTextBox
             // 
@@ -5610,6 +5613,7 @@
             this.FavorDescRichTextBox.Size = new System.Drawing.Size(337, 231);
             this.FavorDescRichTextBox.TabIndex = 86;
             this.FavorDescRichTextBox.Text = "";
+            this.toolTip1.SetToolTip(this.FavorDescRichTextBox, "The full description of the unit");
             // 
             // FavorSpawnGotoButton
             // 
@@ -5644,10 +5648,10 @@
             // FavorTagSLabel
             // 
             this.FavorTagSLabel.AutoSize = true;
-            this.FavorTagSLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FavorTagSLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FavorTagSLabel.Location = new System.Drawing.Point(1126, 373);
             this.FavorTagSLabel.Name = "FavorTagSLabel";
-            this.FavorTagSLabel.Size = new System.Drawing.Size(36, 20);
+            this.FavorTagSLabel.Size = new System.Drawing.Size(33, 16);
             this.FavorTagSLabel.TabIndex = 82;
             this.FavorTagSLabel.Text = "Tag";
             // 
@@ -5660,14 +5664,15 @@
             this.FavorSpawnLabel.Size = new System.Drawing.Size(136, 20);
             this.FavorSpawnLabel.TabIndex = 81;
             this.FavorSpawnLabel.Text = "Spawn Threshold:";
+            this.toolTip1.SetToolTip(this.FavorSpawnLabel, "The favor value at which the unit is spawned");
             // 
             // FavorTagULabel
             // 
             this.FavorTagULabel.AutoSize = true;
-            this.FavorTagULabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FavorTagULabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FavorTagULabel.Location = new System.Drawing.Point(460, 373);
             this.FavorTagULabel.Name = "FavorTagULabel";
-            this.FavorTagULabel.Size = new System.Drawing.Size(36, 20);
+            this.FavorTagULabel.Size = new System.Drawing.Size(33, 16);
             this.FavorTagULabel.TabIndex = 80;
             this.FavorTagULabel.Text = "Tag";
             // 
@@ -5680,6 +5685,7 @@
             this.FavorUnlockLabel.Size = new System.Drawing.Size(136, 20);
             this.FavorUnlockLabel.TabIndex = 79;
             this.FavorUnlockLabel.Text = "Unlock Threshold:";
+            this.toolTip1.SetToolTip(this.FavorUnlockLabel, "The favor value at which the unit is unlocked");
             // 
             // FavorLocksLabel
             // 
@@ -5700,6 +5706,7 @@
             this.FavorSupportLabel.Size = new System.Drawing.Size(113, 20);
             this.FavorSupportLabel.TabIndex = 77;
             this.FavorSupportLabel.Text = "Favor Change:";
+            this.toolTip1.SetToolTip(this.FavorSupportLabel, "The amount of favor change associated with building the unit");
             // 
             // FavorRenameLabel
             // 
@@ -5730,6 +5737,7 @@
             this.FavorFactionLabel.Size = new System.Drawing.Size(62, 20);
             this.FavorFactionLabel.TabIndex = 74;
             this.FavorFactionLabel.Text = "Faction";
+            this.toolTip1.SetToolTip(this.FavorFactionLabel, "The faction who uses this favor track");
             // 
             // FavorNameLabel
             // 
@@ -5780,6 +5788,7 @@
             this.FavorSpawnListBox.Name = "FavorSpawnListBox";
             this.FavorSpawnListBox.Size = new System.Drawing.Size(255, 407);
             this.FavorSpawnListBox.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.FavorSpawnListBox, "Units spawned by increasing favor");
             this.FavorSpawnListBox.SelectedIndexChanged += new System.EventHandler(this.FavorSpawnListBox_SelectedIndexChanged);
             // 
             // FavorContributorsListBox
@@ -5789,6 +5798,7 @@
             this.FavorContributorsListBox.Name = "FavorContributorsListBox";
             this.FavorContributorsListBox.Size = new System.Drawing.Size(255, 277);
             this.FavorContributorsListBox.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.FavorContributorsListBox, "Units that contribute favor to the track when built");
             this.FavorContributorsListBox.SelectedIndexChanged += new System.EventHandler(this.FavorContributorsListBox_SelectedIndexChanged);
             // 
             // FavorUnlockListBox
@@ -5800,6 +5810,7 @@
             this.FavorUnlockListBox.Name = "FavorUnlockListBox";
             this.FavorUnlockListBox.Size = new System.Drawing.Size(255, 407);
             this.FavorUnlockListBox.TabIndex = 2;
+            this.toolTip1.SetToolTip(this.FavorUnlockListBox, "Units unlocked by increasing favor");
             this.FavorUnlockListBox.SelectedIndexChanged += new System.EventHandler(this.FavorUnlockListBox_SelectedIndexChanged);
             // 
             // FavorListBox
@@ -6675,7 +6686,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Holocron";
-            this.Text = "EaWX Holocron v0.4d";
+            this.Text = "EaWX Holocron v0.5";
             this.Load += new System.EventHandler(this.Holocron_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

@@ -1824,6 +1824,7 @@
             this.TierCodeTestButton.Size = new System.Drawing.Size(186, 31);
             this.TierCodeTestButton.TabIndex = 125;
             this.TierCodeTestButton.Text = "Tier Code Test...";
+            this.SuperToolTip.SetToolTip(this.TierCodeTestButton, "Preview the code for the selected bonuses");
             this.TierCodeTestButton.UseVisualStyleBackColor = true;
             this.TierCodeTestButton.Click += new System.EventHandler(this.TierCodeTestButton_Click);
             // 
@@ -1919,6 +1920,7 @@
             this.FlagshipTextBox.Name = "FlagshipTextBox";
             this.FlagshipTextBox.Size = new System.Drawing.Size(485, 26);
             this.FlagshipTextBox.TabIndex = 116;
+            this.SuperToolTip.SetToolTip(this.FlagshipTextBox, "Set the name of the flagship appearing under COMMAND in the tooltip");
             // 
             // DropshipLabel
             // 
@@ -1996,6 +1998,7 @@
             this.HeroClassComboBox.Name = "HeroClassComboBox";
             this.HeroClassComboBox.Size = new System.Drawing.Size(177, 24);
             this.HeroClassComboBox.TabIndex = 109;
+            this.SuperToolTip.SetToolTip(this.HeroClassComboBox, "The subtitle appearing where unit names from files go");
             // 
             // NewClassTextBox
             // 
@@ -2004,6 +2007,7 @@
             this.NewClassTextBox.Name = "NewClassTextBox";
             this.NewClassTextBox.Size = new System.Drawing.Size(321, 26);
             this.NewClassTextBox.TabIndex = 108;
+            this.SuperToolTip.SetToolTip(this.NewClassTextBox, "The in game text for a new class");
             // 
             // NewHeroAffilListBox
             // 
@@ -2013,6 +2017,7 @@
             this.NewHeroAffilListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.NewHeroAffilListBox.Size = new System.Drawing.Size(120, 264);
             this.NewHeroAffilListBox.TabIndex = 107;
+            this.SuperToolTip.SetToolTip(this.NewHeroAffilListBox, "Set the affiliations of the hero, which matter for AI usage");
             this.NewHeroAffilListBox.Visible = false;
             // 
             // label27
@@ -2044,6 +2049,7 @@
             this.SoundSourceTextBox.Name = "SoundSourceTextBox";
             this.SoundSourceTextBox.Size = new System.Drawing.Size(436, 26);
             this.SoundSourceTextBox.TabIndex = 104;
+            this.SuperToolTip.SetToolTip(this.SoundSourceTextBox, "Optional unit to copy dialog events from instead of the base unit");
             // 
             // RankTierButton
             // 
@@ -2053,6 +2059,8 @@
             this.RankTierButton.Size = new System.Drawing.Size(110, 31);
             this.RankTierButton.TabIndex = 103;
             this.RankTierButton.Text = "Rank Tier...";
+            this.SuperToolTip.SetToolTip(this.RankTierButton, "Open a menu to choose a command tier by the ranks and modifiers used by the EaWX " +
+        "team");
             this.RankTierButton.UseVisualStyleBackColor = true;
             this.RankTierButton.Click += new System.EventHandler(this.RankTierButton_Click);
             // 
@@ -2168,6 +2176,7 @@
             this.ChangeHeroIconButtonStats.Size = new System.Drawing.Size(130, 31);
             this.ChangeHeroIconButtonStats.TabIndex = 92;
             this.ChangeHeroIconButtonStats.Text = "Change Icon...";
+            this.SuperToolTip.SetToolTip(this.ChangeHeroIconButtonStats, "Select an existing icon or add a new one to use for the hero");
             this.ChangeHeroIconButtonStats.UseVisualStyleBackColor = true;
             this.ChangeHeroIconButtonStats.Click += new System.EventHandler(this.ChangeHeroIconButtonStats_Click);
             // 
@@ -2289,6 +2298,7 @@
             this.CopyHeroUserNameTextBox.Name = "CopyHeroUserNameTextBox";
             this.CopyHeroUserNameTextBox.Size = new System.Drawing.Size(485, 26);
             this.CopyHeroUserNameTextBox.TabIndex = 36;
+            this.SuperToolTip.SetToolTip(this.CopyHeroUserNameTextBox, "The name of the new hero in game");
             // 
             // label19
             // 
@@ -2307,6 +2317,7 @@
             this.CopyHeroNameTextBox.Name = "CopyHeroNameTextBox";
             this.CopyHeroNameTextBox.Size = new System.Drawing.Size(485, 26);
             this.CopyHeroNameTextBox.TabIndex = 34;
+            this.SuperToolTip.SetToolTip(this.CopyHeroNameTextBox, "The name of the new code object");
             this.CopyHeroNameTextBox.LostFocus += new System.EventHandler(this.CopyHeroNameTextBox_LostFocus);
             // 
             // label20
@@ -2326,6 +2337,7 @@
             this.NewHeroFileTextBox.Name = "NewHeroFileTextBox";
             this.NewHeroFileTextBox.Size = new System.Drawing.Size(485, 26);
             this.NewHeroFileTextBox.TabIndex = 32;
+            this.SuperToolTip.SetToolTip(this.NewHeroFileTextBox, "The name of teh new file to create");
             // 
             // NewHeroFileCheckBox
             // 
@@ -2336,6 +2348,7 @@
             this.NewHeroFileCheckBox.Size = new System.Drawing.Size(179, 24);
             this.NewHeroFileCheckBox.TabIndex = 31;
             this.NewHeroFileCheckBox.Text = "Create New Hero File";
+            this.SuperToolTip.SetToolTip(this.NewHeroFileCheckBox, "When checked, create a new file instead of using an exsiting one");
             this.NewHeroFileCheckBox.UseVisualStyleBackColor = true;
             // 
             // HeroCopyFileComboBox
@@ -2347,6 +2360,7 @@
             this.HeroCopyFileComboBox.Name = "HeroCopyFileComboBox";
             this.HeroCopyFileComboBox.Size = new System.Drawing.Size(485, 28);
             this.HeroCopyFileComboBox.TabIndex = 30;
+            this.SuperToolTip.SetToolTip(this.HeroCopyFileComboBox, "The existing file to add hero code to");
             // 
             // label5
             // 
@@ -2523,7 +2537,7 @@
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "Tilotny Submodding Studio v0.4b";
+            this.Text = "Tilotny Submodding Studio v0.5";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
