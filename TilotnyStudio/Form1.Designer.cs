@@ -61,6 +61,7 @@
             this.AffilClearButton = new System.Windows.Forms.Button();
             this.UnitTabControl = new System.Windows.Forms.TabControl();
             this.AffilTab = new System.Windows.Forms.TabPage();
+            this.UnitLocksLabel = new System.Windows.Forms.Label();
             this.SuppressCheckBox = new System.Windows.Forms.CheckBox();
             this.FilterLabel = new System.Windows.Forms.Label();
             this.FilterComboBox = new System.Windows.Forms.ComboBox();
@@ -150,24 +151,42 @@
             this.UnitCopyFileComboBox = new System.Windows.Forms.ComboBox();
             this.HeroCreateTab = new System.Windows.Forms.TabPage();
             this.HeroCreatePanel = new System.Windows.Forms.Panel();
+            this.TierCodeTestButton = new System.Windows.Forms.Button();
+            this.Command2Clear1Button = new System.Windows.Forms.Button();
+            this.label31 = new System.Windows.Forms.Label();
+            this.Command2ComboBox = new System.Windows.Forms.ComboBox();
+            this.Command1Clear1Button = new System.Windows.Forms.Button();
+            this.label30 = new System.Windows.Forms.Label();
+            this.Command1ComboBox = new System.Windows.Forms.ComboBox();
+            this.SpecializationClearButton = new System.Windows.Forms.Button();
+            this.FlagshipLabel = new System.Windows.Forms.Label();
+            this.FlagshipTextBox = new System.Windows.Forms.TextBox();
+            this.DropshipLabel = new System.Windows.Forms.Label();
+            this.NewDropshipCheckBox = new System.Windows.Forms.CheckBox();
+            this.DropshipComboBox = new System.Windows.Forms.ComboBox();
+            this.ClearFighterSourceButton = new System.Windows.Forms.Button();
+            this.ClearSoundSourceButton = new System.Windows.Forms.Button();
+            this.NewClassCheckBox = new System.Windows.Forms.CheckBox();
+            this.HeroClassComboBox = new System.Windows.Forms.ComboBox();
+            this.NewClassTextBox = new System.Windows.Forms.TextBox();
             this.NewHeroAffilListBox = new System.Windows.Forms.ListBox();
             this.label27 = new System.Windows.Forms.Label();
-            this.button6 = new System.Windows.Forms.Button();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.button5 = new System.Windows.Forms.Button();
+            this.SetSoundSourceButton = new System.Windows.Forms.Button();
+            this.SoundSourceTextBox = new System.Windows.Forms.TextBox();
+            this.RankTierButton = new System.Windows.Forms.Button();
             this.label26 = new System.Windows.Forms.Label();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.SpecializationComboBox = new System.Windows.Forms.ComboBox();
             this.label25 = new System.Windows.Forms.Label();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.TierBox = new System.Windows.Forms.NumericUpDown();
+            this.StandardFighterModeCheckBox = new System.Windows.Forms.CheckBox();
             this.NewHeroFighterListBox = new System.Windows.Forms.ListBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.label24 = new System.Windows.Forms.Label();
-            this.label23 = new System.Windows.Forms.Label();
+            this.FighterSourceLabel = new System.Windows.Forms.Label();
             this.HeroIconPictureBox = new System.Windows.Forms.PictureBox();
             this.ChangeHeroIconButtonStats = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
-            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.SetFighterSourceButton = new System.Windows.Forms.Button();
+            this.FighterSourceTextBox = new System.Windows.Forms.TextBox();
             this.richTextBox2 = new System.Windows.Forms.RichTextBox();
             this.SetHeroBaseUnitButton = new System.Windows.Forms.Button();
             this.label22 = new System.Windows.Forms.Label();
@@ -177,7 +196,7 @@
             this.label17 = new System.Windows.Forms.Label();
             this.CopyHeroDescTextBox = new System.Windows.Forms.RichTextBox();
             this.label18 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.CopyHeroUserNameTextBox = new System.Windows.Forms.TextBox();
             this.label19 = new System.Windows.Forms.Label();
             this.CopyHeroNameTextBox = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
@@ -200,9 +219,6 @@
             this.ModFilesButton = new System.Windows.Forms.Button();
             this.SuperToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.NewClassCheckBox = new System.Windows.Forms.CheckBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -234,7 +250,7 @@
             this.UnitCopyTab.SuspendLayout();
             this.HeroCreateTab.SuspendLayout();
             this.HeroCreatePanel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TierBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.HeroIconPictureBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -630,6 +646,7 @@
             // 
             // AffilTab
             // 
+            this.AffilTab.Controls.Add(this.UnitLocksLabel);
             this.AffilTab.Controls.Add(this.SuppressCheckBox);
             this.AffilTab.Controls.Add(this.FilterLabel);
             this.AffilTab.Controls.Add(this.FilterComboBox);
@@ -654,14 +671,26 @@
             this.AffilTab.Text = "Availability";
             this.AffilTab.UseVisualStyleBackColor = true;
             // 
+            // UnitLocksLabel
+            // 
+            this.UnitLocksLabel.AutoSize = true;
+            this.UnitLocksLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.UnitLocksLabel.Location = new System.Drawing.Point(6, 56);
+            this.UnitLocksLabel.Name = "UnitLocksLabel";
+            this.UnitLocksLabel.Size = new System.Drawing.Size(39, 13);
+            this.UnitLocksLabel.TabIndex = 43;
+            this.UnitLocksLabel.Text = "Locks:";
+            // 
             // SuppressCheckBox
             // 
             this.SuppressCheckBox.AutoSize = true;
+            this.SuppressCheckBox.Checked = true;
+            this.SuppressCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.SuppressCheckBox.Location = new System.Drawing.Point(714, 34);
             this.SuppressCheckBox.Name = "SuppressCheckBox";
-            this.SuppressCheckBox.Size = new System.Drawing.Size(203, 17);
+            this.SuppressCheckBox.Size = new System.Drawing.Size(123, 17);
             this.SuppressCheckBox.TabIndex = 42;
-            this.SuppressCheckBox.Text = "Suppress Build_Initially_Locked Write";
+            this.SuppressCheckBox.Text = "Remove XML Locks";
             this.SuppressCheckBox.UseVisualStyleBackColor = true;
             // 
             // FilterLabel
@@ -772,9 +801,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.UnitAffilPanel.AutoScroll = true;
-            this.UnitAffilPanel.Location = new System.Drawing.Point(3, 54);
+            this.UnitAffilPanel.Location = new System.Drawing.Point(3, 85);
             this.UnitAffilPanel.Name = "UnitAffilPanel";
-            this.UnitAffilPanel.Size = new System.Drawing.Size(915, 531);
+            this.UnitAffilPanel.Size = new System.Drawing.Size(915, 500);
             this.UnitAffilPanel.TabIndex = 33;
             // 
             // label9
@@ -1726,28 +1755,46 @@
             // 
             // HeroCreatePanel
             // 
+            this.HeroCreatePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.HeroCreatePanel.AutoScroll = true;
+            this.HeroCreatePanel.Controls.Add(this.TierCodeTestButton);
+            this.HeroCreatePanel.Controls.Add(this.Command2Clear1Button);
+            this.HeroCreatePanel.Controls.Add(this.label31);
+            this.HeroCreatePanel.Controls.Add(this.Command2ComboBox);
+            this.HeroCreatePanel.Controls.Add(this.Command1Clear1Button);
+            this.HeroCreatePanel.Controls.Add(this.label30);
+            this.HeroCreatePanel.Controls.Add(this.Command1ComboBox);
+            this.HeroCreatePanel.Controls.Add(this.SpecializationClearButton);
+            this.HeroCreatePanel.Controls.Add(this.FlagshipLabel);
+            this.HeroCreatePanel.Controls.Add(this.FlagshipTextBox);
+            this.HeroCreatePanel.Controls.Add(this.DropshipLabel);
+            this.HeroCreatePanel.Controls.Add(this.NewDropshipCheckBox);
+            this.HeroCreatePanel.Controls.Add(this.DropshipComboBox);
+            this.HeroCreatePanel.Controls.Add(this.ClearFighterSourceButton);
+            this.HeroCreatePanel.Controls.Add(this.ClearSoundSourceButton);
             this.HeroCreatePanel.Controls.Add(this.NewClassCheckBox);
-            this.HeroCreatePanel.Controls.Add(this.comboBox1);
-            this.HeroCreatePanel.Controls.Add(this.textBox2);
+            this.HeroCreatePanel.Controls.Add(this.HeroClassComboBox);
+            this.HeroCreatePanel.Controls.Add(this.NewClassTextBox);
             this.HeroCreatePanel.Controls.Add(this.NewHeroAffilListBox);
             this.HeroCreatePanel.Controls.Add(this.label27);
-            this.HeroCreatePanel.Controls.Add(this.button6);
-            this.HeroCreatePanel.Controls.Add(this.textBox3);
-            this.HeroCreatePanel.Controls.Add(this.button5);
+            this.HeroCreatePanel.Controls.Add(this.SetSoundSourceButton);
+            this.HeroCreatePanel.Controls.Add(this.SoundSourceTextBox);
+            this.HeroCreatePanel.Controls.Add(this.RankTierButton);
             this.HeroCreatePanel.Controls.Add(this.label26);
-            this.HeroCreatePanel.Controls.Add(this.comboBox2);
+            this.HeroCreatePanel.Controls.Add(this.SpecializationComboBox);
             this.HeroCreatePanel.Controls.Add(this.label25);
-            this.HeroCreatePanel.Controls.Add(this.numericUpDown1);
-            this.HeroCreatePanel.Controls.Add(this.checkBox4);
+            this.HeroCreatePanel.Controls.Add(this.TierBox);
+            this.HeroCreatePanel.Controls.Add(this.StandardFighterModeCheckBox);
             this.HeroCreatePanel.Controls.Add(this.NewHeroFighterListBox);
             this.HeroCreatePanel.Controls.Add(this.checkBox3);
             this.HeroCreatePanel.Controls.Add(this.label24);
-            this.HeroCreatePanel.Controls.Add(this.label23);
+            this.HeroCreatePanel.Controls.Add(this.FighterSourceLabel);
             this.HeroCreatePanel.Controls.Add(this.HeroIconPictureBox);
             this.HeroCreatePanel.Controls.Add(this.ChangeHeroIconButtonStats);
-            this.HeroCreatePanel.Controls.Add(this.button3);
-            this.HeroCreatePanel.Controls.Add(this.textBox5);
+            this.HeroCreatePanel.Controls.Add(this.SetFighterSourceButton);
+            this.HeroCreatePanel.Controls.Add(this.FighterSourceTextBox);
             this.HeroCreatePanel.Controls.Add(this.richTextBox2);
             this.HeroCreatePanel.Controls.Add(this.SetHeroBaseUnitButton);
             this.HeroCreatePanel.Controls.Add(this.label22);
@@ -1757,7 +1804,7 @@
             this.HeroCreatePanel.Controls.Add(this.label17);
             this.HeroCreatePanel.Controls.Add(this.CopyHeroDescTextBox);
             this.HeroCreatePanel.Controls.Add(this.label18);
-            this.HeroCreatePanel.Controls.Add(this.textBox1);
+            this.HeroCreatePanel.Controls.Add(this.CopyHeroUserNameTextBox);
             this.HeroCreatePanel.Controls.Add(this.label19);
             this.HeroCreatePanel.Controls.Add(this.CopyHeroNameTextBox);
             this.HeroCreatePanel.Controls.Add(this.label20);
@@ -1769,141 +1816,321 @@
             this.HeroCreatePanel.Size = new System.Drawing.Size(914, 628);
             this.HeroCreatePanel.TabIndex = 30;
             // 
+            // TierCodeTestButton
+            // 
+            this.TierCodeTestButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TierCodeTestButton.Location = new System.Drawing.Point(698, 615);
+            this.TierCodeTestButton.Name = "TierCodeTestButton";
+            this.TierCodeTestButton.Size = new System.Drawing.Size(186, 31);
+            this.TierCodeTestButton.TabIndex = 125;
+            this.TierCodeTestButton.Text = "Tier Code Test...";
+            this.TierCodeTestButton.UseVisualStyleBackColor = true;
+            this.TierCodeTestButton.Click += new System.EventHandler(this.TierCodeTestButton_Click);
+            // 
+            // Command2Clear1Button
+            // 
+            this.Command2Clear1Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Command2Clear1Button.Location = new System.Drawing.Point(821, 692);
+            this.Command2Clear1Button.Name = "Command2Clear1Button";
+            this.Command2Clear1Button.Size = new System.Drawing.Size(63, 24);
+            this.Command2Clear1Button.TabIndex = 124;
+            this.Command2Clear1Button.Text = "Clear";
+            this.Command2Clear1Button.UseVisualStyleBackColor = true;
+            this.Command2Clear1Button.Click += new System.EventHandler(this.Command2Clear1Button_Click);
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label31.Location = new System.Drawing.Point(559, 696);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(134, 20);
+            this.label31.TabIndex = 123;
+            this.label31.Text = "Command Trait 2:";
+            // 
+            // Command2ComboBox
+            // 
+            this.Command2ComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.Command2ComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Command2ComboBox.FormattingEnabled = true;
+            this.Command2ComboBox.Location = new System.Drawing.Point(698, 692);
+            this.Command2ComboBox.Name = "Command2ComboBox";
+            this.Command2ComboBox.Size = new System.Drawing.Size(121, 24);
+            this.Command2ComboBox.TabIndex = 122;
+            this.Command2ComboBox.SelectedIndexChanged += new System.EventHandler(this.Command2ComboBox_SelectedIndexChanged);
+            // 
+            // Command1Clear1Button
+            // 
+            this.Command1Clear1Button.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Command1Clear1Button.Location = new System.Drawing.Point(467, 692);
+            this.Command1Clear1Button.Name = "Command1Clear1Button";
+            this.Command1Clear1Button.Size = new System.Drawing.Size(63, 24);
+            this.Command1Clear1Button.TabIndex = 121;
+            this.Command1Clear1Button.Text = "Clear";
+            this.Command1Clear1Button.UseVisualStyleBackColor = true;
+            this.Command1Clear1Button.Click += new System.EventHandler(this.Command1Clear1Button_Click);
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label30.Location = new System.Drawing.Point(205, 696);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(134, 20);
+            this.label30.TabIndex = 120;
+            this.label30.Text = "Command Trait 1:";
+            // 
+            // Command1ComboBox
+            // 
+            this.Command1ComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.Command1ComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Command1ComboBox.FormattingEnabled = true;
+            this.Command1ComboBox.Location = new System.Drawing.Point(344, 692);
+            this.Command1ComboBox.Name = "Command1ComboBox";
+            this.Command1ComboBox.Size = new System.Drawing.Size(121, 24);
+            this.Command1ComboBox.TabIndex = 119;
+            this.Command1ComboBox.SelectedIndexChanged += new System.EventHandler(this.Command1ComboBox_SelectedIndexChanged);
+            // 
+            // SpecializationClearButton
+            // 
+            this.SpecializationClearButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SpecializationClearButton.Location = new System.Drawing.Point(821, 652);
+            this.SpecializationClearButton.Name = "SpecializationClearButton";
+            this.SpecializationClearButton.Size = new System.Drawing.Size(63, 24);
+            this.SpecializationClearButton.TabIndex = 118;
+            this.SpecializationClearButton.Text = "Clear";
+            this.SpecializationClearButton.UseVisualStyleBackColor = true;
+            this.SpecializationClearButton.Click += new System.EventHandler(this.SpecializationClearButton_Click);
+            // 
+            // FlagshipLabel
+            // 
+            this.FlagshipLabel.AutoSize = true;
+            this.FlagshipLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FlagshipLabel.Location = new System.Drawing.Point(22, 369);
+            this.FlagshipLabel.Name = "FlagshipLabel";
+            this.FlagshipLabel.Size = new System.Drawing.Size(119, 20);
+            this.FlagshipLabel.TabIndex = 117;
+            this.FlagshipLabel.Text = "Flagship Name:";
+            // 
+            // FlagshipTextBox
+            // 
+            this.FlagshipTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FlagshipTextBox.Location = new System.Drawing.Point(208, 366);
+            this.FlagshipTextBox.Name = "FlagshipTextBox";
+            this.FlagshipTextBox.Size = new System.Drawing.Size(485, 26);
+            this.FlagshipTextBox.TabIndex = 116;
+            // 
+            // DropshipLabel
+            // 
+            this.DropshipLabel.AutoSize = true;
+            this.DropshipLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DropshipLabel.Location = new System.Drawing.Point(22, 440);
+            this.DropshipLabel.Name = "DropshipLabel";
+            this.DropshipLabel.Size = new System.Drawing.Size(77, 20);
+            this.DropshipLabel.TabIndex = 115;
+            this.DropshipLabel.Text = "Dropship:";
+            this.DropshipLabel.Visible = false;
+            // 
+            // NewDropshipCheckBox
+            // 
+            this.NewDropshipCheckBox.AutoSize = true;
+            this.NewDropshipCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NewDropshipCheckBox.Location = new System.Drawing.Point(667, 440);
+            this.NewDropshipCheckBox.Name = "NewDropshipCheckBox";
+            this.NewDropshipCheckBox.Size = new System.Drawing.Size(199, 24);
+            this.NewDropshipCheckBox.TabIndex = 114;
+            this.NewDropshipCheckBox.Text = "Copy Selected Dropship";
+            this.NewDropshipCheckBox.UseVisualStyleBackColor = true;
+            this.NewDropshipCheckBox.Visible = false;
+            // 
+            // DropshipComboBox
+            // 
+            this.DropshipComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.DropshipComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.DropshipComboBox.FormattingEnabled = true;
+            this.DropshipComboBox.Location = new System.Drawing.Point(105, 439);
+            this.DropshipComboBox.Name = "DropshipComboBox";
+            this.DropshipComboBox.Size = new System.Drawing.Size(556, 24);
+            this.DropshipComboBox.TabIndex = 113;
+            this.DropshipComboBox.Visible = false;
+            // 
+            // ClearFighterSourceButton
+            // 
+            this.ClearFighterSourceButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ClearFighterSourceButton.Location = new System.Drawing.Point(809, 479);
+            this.ClearFighterSourceButton.Name = "ClearFighterSourceButton";
+            this.ClearFighterSourceButton.Size = new System.Drawing.Size(63, 31);
+            this.ClearFighterSourceButton.TabIndex = 112;
+            this.ClearFighterSourceButton.Text = "Clear";
+            this.ClearFighterSourceButton.UseVisualStyleBackColor = true;
+            this.ClearFighterSourceButton.Click += new System.EventHandler(this.ClearFighterSourceButton_Click);
+            // 
+            // ClearSoundSourceButton
+            // 
+            this.ClearSoundSourceButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ClearSoundSourceButton.Location = new System.Drawing.Point(809, 398);
+            this.ClearSoundSourceButton.Name = "ClearSoundSourceButton";
+            this.ClearSoundSourceButton.Size = new System.Drawing.Size(63, 31);
+            this.ClearSoundSourceButton.TabIndex = 111;
+            this.ClearSoundSourceButton.Text = "Clear";
+            this.ClearSoundSourceButton.UseVisualStyleBackColor = true;
+            this.ClearSoundSourceButton.Click += new System.EventHandler(this.ClearSoundSourceButton_Click);
+            // 
+            // NewClassCheckBox
+            // 
+            this.NewClassCheckBox.AutoSize = true;
+            this.NewClassCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NewClassCheckBox.Location = new System.Drawing.Point(208, 195);
+            this.NewClassCheckBox.Name = "NewClassCheckBox";
+            this.NewClassCheckBox.Size = new System.Drawing.Size(158, 24);
+            this.NewClassCheckBox.TabIndex = 110;
+            this.NewClassCheckBox.Text = "Create New Class:";
+            this.NewClassCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // HeroClassComboBox
+            // 
+            this.HeroClassComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.HeroClassComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HeroClassComboBox.FormattingEnabled = true;
+            this.HeroClassComboBox.Location = new System.Drawing.Point(25, 196);
+            this.HeroClassComboBox.Name = "HeroClassComboBox";
+            this.HeroClassComboBox.Size = new System.Drawing.Size(177, 24);
+            this.HeroClassComboBox.TabIndex = 109;
+            // 
+            // NewClassTextBox
+            // 
+            this.NewClassTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.NewClassTextBox.Location = new System.Drawing.Point(372, 191);
+            this.NewClassTextBox.Name = "NewClassTextBox";
+            this.NewClassTextBox.Size = new System.Drawing.Size(321, 26);
+            this.NewClassTextBox.TabIndex = 108;
+            // 
             // NewHeroAffilListBox
             // 
-            this.NewHeroAffilListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
             this.NewHeroAffilListBox.FormattingEnabled = true;
-            this.NewHeroAffilListBox.Location = new System.Drawing.Point(31, 602);
+            this.NewHeroAffilListBox.Location = new System.Drawing.Point(25, 556);
             this.NewHeroAffilListBox.Name = "NewHeroAffilListBox";
             this.NewHeroAffilListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.NewHeroAffilListBox.Size = new System.Drawing.Size(120, 368);
+            this.NewHeroAffilListBox.Size = new System.Drawing.Size(120, 264);
             this.NewHeroAffilListBox.TabIndex = 107;
+            this.NewHeroAffilListBox.Visible = false;
             // 
             // label27
             // 
             this.label27.AutoSize = true;
             this.label27.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label27.Location = new System.Drawing.Point(22, 362);
+            this.label27.Location = new System.Drawing.Point(22, 403);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(178, 20);
             this.label27.TabIndex = 106;
             this.label27.Text = "Sound Source Override:";
             // 
-            // button6
+            // SetSoundSourceButton
             // 
-            this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button6.Location = new System.Drawing.Point(708, 354);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(158, 31);
-            this.button6.TabIndex = 105;
-            this.button6.Text = "Set Sound Source";
-            this.button6.UseVisualStyleBackColor = true;
+            this.SetSoundSourceButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SetSoundSourceButton.Location = new System.Drawing.Point(650, 398);
+            this.SetSoundSourceButton.Name = "SetSoundSourceButton";
+            this.SetSoundSourceButton.Size = new System.Drawing.Size(153, 31);
+            this.SetSoundSourceButton.TabIndex = 105;
+            this.SetSoundSourceButton.Text = "Set Sound Source";
+            this.SetSoundSourceButton.UseVisualStyleBackColor = true;
+            this.SetSoundSourceButton.Click += new System.EventHandler(this.SetSoundSourceButton_Click);
             // 
-            // textBox3
+            // SoundSourceTextBox
             // 
-            this.textBox3.Enabled = false;
-            this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox3.Location = new System.Drawing.Point(208, 359);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(485, 26);
-            this.textBox3.TabIndex = 104;
+            this.SoundSourceTextBox.Enabled = false;
+            this.SoundSourceTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SoundSourceTextBox.Location = new System.Drawing.Point(208, 400);
+            this.SoundSourceTextBox.Name = "SoundSourceTextBox";
+            this.SoundSourceTextBox.Size = new System.Drawing.Size(436, 26);
+            this.SoundSourceTextBox.TabIndex = 104;
             // 
-            // button5
+            // RankTierButton
             // 
-            this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button5.Location = new System.Drawing.Point(334, 563);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(110, 31);
-            this.button5.TabIndex = 103;
-            this.button5.Text = "Rank Tier...";
-            this.button5.UseVisualStyleBackColor = true;
+            this.RankTierButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.RankTierButton.Location = new System.Drawing.Point(423, 653);
+            this.RankTierButton.Name = "RankTierButton";
+            this.RankTierButton.Size = new System.Drawing.Size(110, 31);
+            this.RankTierButton.TabIndex = 103;
+            this.RankTierButton.Text = "Rank Tier...";
+            this.RankTierButton.UseVisualStyleBackColor = true;
+            this.RankTierButton.Click += new System.EventHandler(this.RankTierButton_Click);
             // 
             // label26
             // 
             this.label26.AutoSize = true;
             this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label26.Location = new System.Drawing.Point(591, 563);
+            this.label26.Location = new System.Drawing.Point(559, 657);
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(111, 20);
             this.label26.TabIndex = 102;
             this.label26.Text = "Specialization:";
             // 
-            // comboBox2
+            // SpecializationComboBox
             // 
-            this.comboBox2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Items.AddRange(new object[] {
-            "None",
-            "Clone Hatred",
-            "Air Command Specialist",
-            "Artillery Specialist",
-            "Fortification Specialist",
-            "Starfighter Specialist",
-            "Small Ship Commander",
-            "Walker Specialist",
-            "Jedi Advisor",
-            "Infantry Specialist",
-            "Cooperative"});
-            this.comboBox2.Location = new System.Drawing.Point(708, 560);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(121, 28);
-            this.comboBox2.TabIndex = 101;
+            this.SpecializationComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.SpecializationComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SpecializationComboBox.FormattingEnabled = true;
+            this.SpecializationComboBox.Location = new System.Drawing.Point(676, 653);
+            this.SpecializationComboBox.Name = "SpecializationComboBox";
+            this.SpecializationComboBox.Size = new System.Drawing.Size(143, 24);
+            this.SpecializationComboBox.TabIndex = 101;
             // 
             // label25
             // 
             this.label25.AutoSize = true;
             this.label25.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label25.Location = new System.Drawing.Point(21, 568);
+            this.label25.Location = new System.Drawing.Point(204, 657);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(116, 20);
             this.label25.TabIndex = 100;
             this.label25.Text = "Command Tier:";
             // 
-            // numericUpDown1
+            // TierBox
             // 
-            this.numericUpDown1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.numericUpDown1.Location = new System.Drawing.Point(208, 566);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
+            this.TierBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TierBox.Location = new System.Drawing.Point(344, 653);
+            this.TierBox.Maximum = new decimal(new int[] {
             11,
             0,
             0,
             0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(120, 26);
-            this.numericUpDown1.TabIndex = 99;
+            this.TierBox.Name = "TierBox";
+            this.TierBox.Size = new System.Drawing.Size(73, 26);
+            this.TierBox.TabIndex = 99;
             // 
-            // checkBox4
+            // StandardFighterModeCheckBox
             // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox4.Location = new System.Drawing.Point(570, 424);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(192, 24);
-            this.checkBox4.TabIndex = 98;
-            this.checkBox4.Text = "Standard Fighter Mode";
-            this.checkBox4.UseVisualStyleBackColor = true;
-            this.checkBox4.Visible = false;
+            this.StandardFighterModeCheckBox.AutoSize = true;
+            this.StandardFighterModeCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.StandardFighterModeCheckBox.Location = new System.Drawing.Point(570, 513);
+            this.StandardFighterModeCheckBox.Name = "StandardFighterModeCheckBox";
+            this.StandardFighterModeCheckBox.Size = new System.Drawing.Size(192, 24);
+            this.StandardFighterModeCheckBox.TabIndex = 98;
+            this.StandardFighterModeCheckBox.Text = "Standard Fighter Mode";
+            this.StandardFighterModeCheckBox.UseVisualStyleBackColor = true;
+            this.StandardFighterModeCheckBox.Visible = false;
             // 
             // NewHeroFighterListBox
             // 
             this.NewHeroFighterListBox.FormattingEnabled = true;
-            this.NewHeroFighterListBox.Location = new System.Drawing.Point(208, 424);
+            this.NewHeroFighterListBox.Location = new System.Drawing.Point(208, 513);
             this.NewHeroFighterListBox.Name = "NewHeroFighterListBox";
             this.NewHeroFighterListBox.Size = new System.Drawing.Size(353, 134);
             this.NewHeroFighterListBox.TabIndex = 97;
+            this.NewHeroFighterListBox.Visible = false;
             // 
             // checkBox3
             // 
             this.checkBox3.AutoSize = true;
             this.checkBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.checkBox3.Location = new System.Drawing.Point(26, 437);
+            this.checkBox3.Location = new System.Drawing.Point(26, 526);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(184, 24);
             this.checkBox3.TabIndex = 96;
             this.checkBox3.Text = "Custom Fighter Setup";
             this.checkBox3.UseVisualStyleBackColor = true;
+            this.checkBox3.Visible = false;
             // 
             // label24
             // 
@@ -1915,15 +2142,15 @@
             this.label24.TabIndex = 95;
             this.label24.Text = "Optionally copy the fighters of this unit instead of the base unit";
             // 
-            // label23
+            // FighterSourceLabel
             // 
-            this.label23.AutoSize = true;
-            this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label23.Location = new System.Drawing.Point(22, 395);
-            this.label23.Name = "label23";
-            this.label23.Size = new System.Drawing.Size(181, 20);
-            this.label23.TabIndex = 94;
-            this.label23.Text = "Fighter Source Override:";
+            this.FighterSourceLabel.AutoSize = true;
+            this.FighterSourceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FighterSourceLabel.Location = new System.Drawing.Point(22, 484);
+            this.FighterSourceLabel.Name = "FighterSourceLabel";
+            this.FighterSourceLabel.Size = new System.Drawing.Size(181, 20);
+            this.FighterSourceLabel.TabIndex = 94;
+            this.FighterSourceLabel.Text = "Fighter Source Override:";
             // 
             // HeroIconPictureBox
             // 
@@ -1944,32 +2171,34 @@
             this.ChangeHeroIconButtonStats.UseVisualStyleBackColor = true;
             this.ChangeHeroIconButtonStats.Click += new System.EventHandler(this.ChangeHeroIconButtonStats_Click);
             // 
-            // button3
+            // SetFighterSourceButton
             // 
-            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(708, 387);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(158, 31);
-            this.button3.TabIndex = 48;
-            this.button3.Text = "Set Fighter Source";
-            this.button3.UseVisualStyleBackColor = true;
+            this.SetFighterSourceButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SetFighterSourceButton.Location = new System.Drawing.Point(650, 479);
+            this.SetFighterSourceButton.Name = "SetFighterSourceButton";
+            this.SetFighterSourceButton.Size = new System.Drawing.Size(153, 31);
+            this.SetFighterSourceButton.TabIndex = 48;
+            this.SetFighterSourceButton.Text = "Set Fighter Source";
+            this.SetFighterSourceButton.UseVisualStyleBackColor = true;
+            this.SetFighterSourceButton.Click += new System.EventHandler(this.SetFighterSourceButton_Click);
             // 
-            // textBox5
+            // FighterSourceTextBox
             // 
-            this.textBox5.Enabled = false;
-            this.textBox5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox5.Location = new System.Drawing.Point(208, 392);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(485, 26);
-            this.textBox5.TabIndex = 46;
+            this.FighterSourceTextBox.Enabled = false;
+            this.FighterSourceTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FighterSourceTextBox.Location = new System.Drawing.Point(208, 481);
+            this.FighterSourceTextBox.Name = "FighterSourceTextBox";
+            this.FighterSourceTextBox.Size = new System.Drawing.Size(436, 26);
+            this.FighterSourceTextBox.TabIndex = 46;
             // 
             // richTextBox2
             // 
-            this.richTextBox2.Location = new System.Drawing.Point(123, 630);
+            this.richTextBox2.Location = new System.Drawing.Point(208, 729);
             this.richTextBox2.Name = "richTextBox2";
             this.richTextBox2.Size = new System.Drawing.Size(616, 95);
             this.richTextBox2.TabIndex = 45;
             this.richTextBox2.Text = "";
+            this.richTextBox2.Visible = false;
             // 
             // SetHeroBaseUnitButton
             // 
@@ -2053,13 +2282,13 @@
             this.label18.TabIndex = 37;
             this.label18.Text = "New User Facing Name:";
             // 
-            // textBox1
+            // CopyHeroUserNameTextBox
             // 
-            this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(208, 160);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(485, 26);
-            this.textBox1.TabIndex = 36;
+            this.CopyHeroUserNameTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CopyHeroUserNameTextBox.Location = new System.Drawing.Point(208, 160);
+            this.CopyHeroUserNameTextBox.Name = "CopyHeroUserNameTextBox";
+            this.CopyHeroUserNameTextBox.Size = new System.Drawing.Size(485, 26);
+            this.CopyHeroUserNameTextBox.TabIndex = 36;
             // 
             // label19
             // 
@@ -2078,6 +2307,7 @@
             this.CopyHeroNameTextBox.Name = "CopyHeroNameTextBox";
             this.CopyHeroNameTextBox.Size = new System.Drawing.Size(485, 26);
             this.CopyHeroNameTextBox.TabIndex = 34;
+            this.CopyHeroNameTextBox.LostFocus += new System.EventHandler(this.CopyHeroNameTextBox_LostFocus);
             // 
             // label20
             // 
@@ -2135,6 +2365,8 @@
             this.AffilSearchTextBox.Name = "AffilSearchTextBox";
             this.AffilSearchTextBox.Size = new System.Drawing.Size(299, 26);
             this.AffilSearchTextBox.TabIndex = 14;
+            this.SuperToolTip.SetToolTip(this.AffilSearchTextBox, "Searches work on names and internal names. Multiple search terms can be separated" +
+        " with semicolons");
             this.AffilSearchTextBox.TextChanged += new System.EventHandler(this.AffilSearchTextBox_TextChanged);
             // 
             // GroundRadioButton
@@ -2276,35 +2508,6 @@
             this.contextMenuStrip2.Name = "contextMenuStrip2";
             this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
             // 
-            // textBox2
-            // 
-            this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox2.Location = new System.Drawing.Point(372, 191);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(321, 26);
-            this.textBox2.TabIndex = 108;
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(25, 190);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(161, 28);
-            this.comboBox1.TabIndex = 109;
-            // 
-            // NewClassCheckBox
-            // 
-            this.NewClassCheckBox.AutoSize = true;
-            this.NewClassCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.NewClassCheckBox.Location = new System.Drawing.Point(208, 195);
-            this.NewClassCheckBox.Name = "NewClassCheckBox";
-            this.NewClassCheckBox.Size = new System.Drawing.Size(158, 24);
-            this.NewClassCheckBox.TabIndex = 110;
-            this.NewClassCheckBox.Text = "Create New Class:";
-            this.NewClassCheckBox.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2361,7 +2564,7 @@
             this.HeroCreateTab.ResumeLayout(false);
             this.HeroCreatePanel.ResumeLayout(false);
             this.HeroCreatePanel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TierBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.HeroIconPictureBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -2514,35 +2717,51 @@
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.RichTextBox CopyHeroDescTextBox;
         private System.Windows.Forms.Label label18;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox CopyHeroUserNameTextBox;
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.TextBox CopyHeroNameTextBox;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.TextBox NewHeroFileTextBox;
         private System.Windows.Forms.CheckBox NewHeroFileCheckBox;
         private System.Windows.Forms.ComboBox HeroCopyFileComboBox;
-        private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button RankTierButton;
         private System.Windows.Forms.Label label26;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox SpecializationComboBox;
         private System.Windows.Forms.Label label25;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
-        private System.Windows.Forms.CheckBox checkBox4;
+        private System.Windows.Forms.NumericUpDown TierBox;
+        private System.Windows.Forms.CheckBox StandardFighterModeCheckBox;
         private System.Windows.Forms.ListBox NewHeroFighterListBox;
         private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.Label label24;
-        private System.Windows.Forms.Label label23;
+        private System.Windows.Forms.Label FighterSourceLabel;
         private System.Windows.Forms.PictureBox HeroIconPictureBox;
         private System.Windows.Forms.Button ChangeHeroIconButtonStats;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.Button SetFighterSourceButton;
+        private System.Windows.Forms.TextBox FighterSourceTextBox;
         private System.Windows.Forms.RichTextBox richTextBox2;
         private System.Windows.Forms.Label label27;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.Button SetSoundSourceButton;
+        private System.Windows.Forms.TextBox SoundSourceTextBox;
         private System.Windows.Forms.ListBox NewHeroAffilListBox;
         private System.Windows.Forms.CheckBox NewClassCheckBox;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.ComboBox HeroClassComboBox;
+        private System.Windows.Forms.TextBox NewClassTextBox;
+        private System.Windows.Forms.Button ClearFighterSourceButton;
+        private System.Windows.Forms.Button ClearSoundSourceButton;
+        private System.Windows.Forms.Label FlagshipLabel;
+        private System.Windows.Forms.TextBox FlagshipTextBox;
+        private System.Windows.Forms.Label DropshipLabel;
+        private System.Windows.Forms.CheckBox NewDropshipCheckBox;
+        private System.Windows.Forms.ComboBox DropshipComboBox;
+        private System.Windows.Forms.Button Command2Clear1Button;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.ComboBox Command2ComboBox;
+        private System.Windows.Forms.Button Command1Clear1Button;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.ComboBox Command1ComboBox;
+        private System.Windows.Forms.Button SpecializationClearButton;
+        private System.Windows.Forms.Label UnitLocksLabel;
+        private System.Windows.Forms.Button TierCodeTestButton;
     }
 }
 

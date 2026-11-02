@@ -94,6 +94,8 @@
             this.SpeedCheckBox = new System.Windows.Forms.CheckBox();
             this.DefCheckBox = new System.Windows.Forms.CheckBox();
             this.crcRB = new System.Windows.Forms.RadioButton();
+            this.HyperspaceSpeedRB = new System.Windows.Forms.RadioButton();
+            this.HighlightRB = new System.Windows.Forms.RadioButton();
             this.SuspendLayout();
             // 
             // NameRB
@@ -837,11 +839,35 @@
             this.crcRB.Text = "CRC";
             this.crcRB.UseVisualStyleBackColor = true;
             // 
+            // HyperspaceSpeedRB
+            // 
+            this.HyperspaceSpeedRB.AutoSize = true;
+            this.HyperspaceSpeedRB.Location = new System.Drawing.Point(278, 165);
+            this.HyperspaceSpeedRB.Name = "HyperspaceSpeedRB";
+            this.HyperspaceSpeedRB.Size = new System.Drawing.Size(116, 17);
+            this.HyperspaceSpeedRB.TabIndex = 73;
+            this.HyperspaceSpeedRB.TabStop = true;
+            this.HyperspaceSpeedRB.Text = "Hyperspace Speed";
+            this.HyperspaceSpeedRB.UseVisualStyleBackColor = true;
+            // 
+            // HighlightRB
+            // 
+            this.HighlightRB.AutoSize = true;
+            this.HighlightRB.Location = new System.Drawing.Point(15, 337);
+            this.HighlightRB.Name = "HighlightRB";
+            this.HighlightRB.Size = new System.Drawing.Size(90, 17);
+            this.HighlightRB.TabIndex = 74;
+            this.HighlightRB.TabStop = true;
+            this.HighlightRB.Text = "Highlight Blob";
+            this.HighlightRB.UseVisualStyleBackColor = true;
+            // 
             // UnitSort
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(767, 408);
+            this.Controls.Add(this.HighlightRB);
+            this.Controls.Add(this.HyperspaceSpeedRB);
             this.Controls.Add(this.crcRB);
             this.Controls.Add(this.FoWCheckBox);
             this.Controls.Add(this.SpeedCheckBox);
@@ -983,5 +1009,7 @@
         private System.Windows.Forms.CheckBox SpeedCheckBox;
         private System.Windows.Forms.CheckBox DefCheckBox;
         private System.Windows.Forms.RadioButton crcRB;
+        private System.Windows.Forms.RadioButton HyperspaceSpeedRB;
+        private System.Windows.Forms.RadioButton HighlightRB;
     }
 }

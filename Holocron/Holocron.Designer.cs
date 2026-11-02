@@ -39,6 +39,7 @@
             this.forwardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.submodsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.readErrorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkedErrorTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.crcCalculatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabLookups = new System.Windows.Forms.TabPage();
             this.LookupTabControl = new System.Windows.Forms.TabControl();
@@ -47,6 +48,19 @@
             this.MatrixSpaceRB = new System.Windows.Forms.RadioButton();
             this.MatrixGrid = new System.Windows.Forms.DataGridView();
             this.ProjectileTab = new System.Windows.Forms.TabPage();
+            this.ProjectileUserGotoButton = new System.Windows.Forms.Button();
+            this.ProjectileUserLabel = new System.Windows.Forms.Label();
+            this.ProjectileUserListBox = new System.Windows.Forms.ListBox();
+            this.ProjectileNameCheckBox = new System.Windows.Forms.CheckBox();
+            this.ProjTurnLabel = new System.Windows.Forms.Label();
+            this.ProjSpeedLabel = new System.Windows.Forms.Label();
+            this.ProjRadiusLabel = new System.Windows.Forms.Label();
+            this.ProjTypeLabel = new System.Windows.Forms.Label();
+            this.ProjDamageLabel = new System.Windows.Forms.Label();
+            this.ProjNameLabel = new System.Windows.Forms.Label();
+            this.label41 = new System.Windows.Forms.Label();
+            this.ProjectileSearchTextBox = new System.Windows.Forms.TextBox();
+            this.ProjectileListBox = new System.Windows.Forms.ListBox();
             this.NameTab = new System.Windows.Forms.TabPage();
             this.ShipnamesFilterDuplicatesCheckbox = new System.Windows.Forms.CheckBox();
             this.label12 = new System.Windows.Forms.Label();
@@ -86,6 +100,7 @@
             this.SpawnText = new System.Windows.Forms.RichTextBox();
             this.SpawnListBox = new System.Windows.Forms.ListBox();
             this.CorporationTab = new System.Windows.Forms.TabPage();
+            this.CorpFilterButton = new System.Windows.Forms.Button();
             this.HeroFTab = new System.Windows.Forms.TabPage();
             this.StandardFTab = new System.Windows.Forms.TabPage();
             this.label39 = new System.Windows.Forms.Label();
@@ -219,6 +234,7 @@
             this.CollapseUnitStatPanel = new System.Windows.Forms.Button();
             this.CollapseUnitTextPanel = new System.Windows.Forms.Button();
             this.UnitStatPanel = new System.Windows.Forms.Panel();
+            this.WeaponGradeCheckBox = new System.Windows.Forms.CheckBox();
             this.UnitEngageRangeLabel = new System.Windows.Forms.Label();
             this.UnitAccTierLabel = new System.Windows.Forms.Label();
             this.label34 = new System.Windows.Forms.Label();
@@ -267,6 +283,7 @@
             this.UnitBTSPanel = new System.Windows.Forms.Panel();
             this.UnitBTSTextBox = new System.Windows.Forms.RichTextBox();
             this.UnitTextPanel = new System.Windows.Forms.Panel();
+            this.HyperspaceLabel = new System.Windows.Forms.Label();
             this.UnitCPLabel = new System.Windows.Forms.Label();
             this.UnitLengthLabel = new System.Windows.Forms.Label();
             this.VariantLabel = new System.Windows.Forms.Label();
@@ -395,6 +412,9 @@
             this.GCMapModeCheckBox = new System.Windows.Forms.CheckBox();
             this.tabFactions = new System.Windows.Forms.TabPage();
             this.FactionPanel = new System.Windows.Forms.Panel();
+            this.GovernmentTypeLabel = new System.Windows.Forms.Label();
+            this.FactionGovernmentGotoButton = new System.Windows.Forms.Button();
+            this.label45 = new System.Windows.Forms.Label();
             this.FactionGotoSpawnSetButton = new System.Windows.Forms.Button();
             this.FactionGotoMissionButton = new System.Windows.Forms.Button();
             this.FactionAliasLabel = new System.Windows.Forms.Label();
@@ -439,6 +459,30 @@
             this.tabGov = new System.Windows.Forms.TabPage();
             this.GovernmentTabControl = new System.Windows.Forms.TabControl();
             this.FavorTab = new System.Windows.Forms.TabPage();
+            this.FavorSupportNameLabel = new System.Windows.Forms.Label();
+            this.FavorIntegratesRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.FavorIntegratesLabel = new System.Windows.Forms.Label();
+            this.FavorDescRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.FavorSpawnGotoButton = new System.Windows.Forms.Button();
+            this.FavorUnlocksGotoButton = new System.Windows.Forms.Button();
+            this.FavorContributorsGotoButton = new System.Windows.Forms.Button();
+            this.FavorTagSLabel = new System.Windows.Forms.Label();
+            this.FavorSpawnLabel = new System.Windows.Forms.Label();
+            this.FavorTagULabel = new System.Windows.Forms.Label();
+            this.FavorUnlockLabel = new System.Windows.Forms.Label();
+            this.FavorLocksLabel = new System.Windows.Forms.Label();
+            this.FavorSupportLabel = new System.Windows.Forms.Label();
+            this.FavorRenameLabel = new System.Windows.Forms.Label();
+            this.FavorMaxLabel = new System.Windows.Forms.Label();
+            this.FavorFactionLabel = new System.Windows.Forms.Label();
+            this.FavorNameLabel = new System.Windows.Forms.Label();
+            this.label44 = new System.Windows.Forms.Label();
+            this.label43 = new System.Windows.Forms.Label();
+            this.label42 = new System.Windows.Forms.Label();
+            this.FavorSpawnListBox = new System.Windows.Forms.ListBox();
+            this.FavorContributorsListBox = new System.Windows.Forms.ListBox();
+            this.FavorUnlockListBox = new System.Windows.Forms.ListBox();
+            this.FavorListBox = new System.Windows.Forms.ListBox();
             this.CommandStaffTab = new System.Windows.Forms.TabPage();
             this.tabGalaxy = new System.Windows.Forms.TabPage();
             this.GCMapControlsLabel = new System.Windows.Forms.Label();
@@ -507,11 +551,13 @@
             this.LookupTabControl.SuspendLayout();
             this.MatrixTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MatrixGrid)).BeginInit();
+            this.ProjectileTab.SuspendLayout();
             this.NameTab.SuspendLayout();
             this.panel1.SuspendLayout();
             this.NameFileTab.SuspendLayout();
             this.MissionTab.SuspendLayout();
             this.SpawnTab.SuspendLayout();
+            this.CorporationTab.SuspendLayout();
             this.StandardFTab.SuspendLayout();
             this.RandomFTab.SuspendLayout();
             this.DocumentationTab.SuspendLayout();
@@ -541,6 +587,7 @@
             this.MainTab.SuspendLayout();
             this.tabGov.SuspendLayout();
             this.GovernmentTabControl.SuspendLayout();
+            this.FavorTab.SuspendLayout();
             this.tabGalaxy.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapPlanetNameBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapPlanetBox)).BeginInit();
@@ -599,10 +646,19 @@
             // 
             // readErrorsToolStripMenuItem
             // 
+            this.readErrorsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.checkedErrorTypesToolStripMenuItem});
             this.readErrorsToolStripMenuItem.Name = "readErrorsToolStripMenuItem";
             this.readErrorsToolStripMenuItem.Size = new System.Drawing.Size(87, 20);
             this.readErrorsToolStripMenuItem.Text = "Read Errors...";
             this.readErrorsToolStripMenuItem.Click += new System.EventHandler(this.readErrorsToolStripMenuItem_Click);
+            // 
+            // checkedErrorTypesToolStripMenuItem
+            // 
+            this.checkedErrorTypesToolStripMenuItem.Name = "checkedErrorTypesToolStripMenuItem";
+            this.checkedErrorTypesToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.checkedErrorTypesToolStripMenuItem.Text = "Checked Error Types...";
+            this.checkedErrorTypesToolStripMenuItem.Click += new System.EventHandler(this.checkedErrorTypesToolStripMenuItem_Click);
             // 
             // crcCalculatorToolStripMenuItem
             // 
@@ -720,12 +776,162 @@
             // 
             // ProjectileTab
             // 
+            this.ProjectileTab.Controls.Add(this.ProjectileUserGotoButton);
+            this.ProjectileTab.Controls.Add(this.ProjectileUserLabel);
+            this.ProjectileTab.Controls.Add(this.ProjectileUserListBox);
+            this.ProjectileTab.Controls.Add(this.ProjectileNameCheckBox);
+            this.ProjectileTab.Controls.Add(this.ProjTurnLabel);
+            this.ProjectileTab.Controls.Add(this.ProjSpeedLabel);
+            this.ProjectileTab.Controls.Add(this.ProjRadiusLabel);
+            this.ProjectileTab.Controls.Add(this.ProjTypeLabel);
+            this.ProjectileTab.Controls.Add(this.ProjDamageLabel);
+            this.ProjectileTab.Controls.Add(this.ProjNameLabel);
+            this.ProjectileTab.Controls.Add(this.label41);
+            this.ProjectileTab.Controls.Add(this.ProjectileSearchTextBox);
+            this.ProjectileTab.Controls.Add(this.ProjectileListBox);
             this.ProjectileTab.Location = new System.Drawing.Point(4, 22);
             this.ProjectileTab.Name = "ProjectileTab";
             this.ProjectileTab.Size = new System.Drawing.Size(1476, 749);
             this.ProjectileTab.TabIndex = 9;
             this.ProjectileTab.Text = "Projectiles";
             this.ProjectileTab.UseVisualStyleBackColor = true;
+            // 
+            // ProjectileUserGotoButton
+            // 
+            this.ProjectileUserGotoButton.Location = new System.Drawing.Point(1218, 4);
+            this.ProjectileUserGotoButton.Name = "ProjectileUserGotoButton";
+            this.ProjectileUserGotoButton.Size = new System.Drawing.Size(64, 23);
+            this.ProjectileUserGotoButton.TabIndex = 54;
+            this.ProjectileUserGotoButton.Text = "Go to unit";
+            this.ProjectileUserGotoButton.UseVisualStyleBackColor = true;
+            this.ProjectileUserGotoButton.Click += new System.EventHandler(this.ProjectileUserGotoButton_Click);
+            // 
+            // ProjectileUserLabel
+            // 
+            this.ProjectileUserLabel.AutoSize = true;
+            this.ProjectileUserLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ProjectileUserLabel.Location = new System.Drawing.Point(810, 4);
+            this.ProjectileUserLabel.Name = "ProjectileUserLabel";
+            this.ProjectileUserLabel.Size = new System.Drawing.Size(95, 20);
+            this.ProjectileUserLabel.TabIndex = 53;
+            this.ProjectileUserLabel.Text = "Units Using:";
+            this.toolTip1.SetToolTip(this.ProjectileUserLabel, "Companies that contain this unit");
+            // 
+            // ProjectileUserListBox
+            // 
+            this.ProjectileUserListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.ProjectileUserListBox.FormattingEnabled = true;
+            this.ProjectileUserListBox.Location = new System.Drawing.Point(814, 26);
+            this.ProjectileUserListBox.Name = "ProjectileUserListBox";
+            this.ProjectileUserListBox.Size = new System.Drawing.Size(468, 719);
+            this.ProjectileUserListBox.TabIndex = 52;
+            this.toolTip1.SetToolTip(this.ProjectileUserListBox, "Units that use this projectile. Any equivalent projectile if full projectile name" +
+        "s is not on");
+            // 
+            // ProjectileNameCheckBox
+            // 
+            this.ProjectileNameCheckBox.AutoSize = true;
+            this.ProjectileNameCheckBox.Location = new System.Drawing.Point(330, 7);
+            this.ProjectileNameCheckBox.Name = "ProjectileNameCheckBox";
+            this.ProjectileNameCheckBox.Size = new System.Drawing.Size(121, 17);
+            this.ProjectileNameCheckBox.TabIndex = 15;
+            this.ProjectileNameCheckBox.Text = "Full projectile names";
+            this.toolTip1.SetToolTip(this.ProjectileNameCheckBox, "When checked, does not attempt to strip out duplicates based on factors such as c" +
+        "olor");
+            this.ProjectileNameCheckBox.UseVisualStyleBackColor = true;
+            this.ProjectileNameCheckBox.CheckedChanged += new System.EventHandler(this.ProjectileNameCheckBox_CheckedChanged);
+            // 
+            // ProjTurnLabel
+            // 
+            this.ProjTurnLabel.AutoSize = true;
+            this.ProjTurnLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ProjTurnLabel.Location = new System.Drawing.Point(326, 142);
+            this.ProjTurnLabel.Name = "ProjTurnLabel";
+            this.ProjTurnLabel.Size = new System.Drawing.Size(45, 20);
+            this.ProjTurnLabel.TabIndex = 14;
+            this.ProjTurnLabel.Text = "Turn:";
+            // 
+            // ProjSpeedLabel
+            // 
+            this.ProjSpeedLabel.AutoSize = true;
+            this.ProjSpeedLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ProjSpeedLabel.Location = new System.Drawing.Point(326, 119);
+            this.ProjSpeedLabel.Name = "ProjSpeedLabel";
+            this.ProjSpeedLabel.Size = new System.Drawing.Size(60, 20);
+            this.ProjSpeedLabel.TabIndex = 13;
+            this.ProjSpeedLabel.Text = "Speed:";
+            // 
+            // ProjRadiusLabel
+            // 
+            this.ProjRadiusLabel.AutoSize = true;
+            this.ProjRadiusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ProjRadiusLabel.Location = new System.Drawing.Point(326, 165);
+            this.ProjRadiusLabel.Name = "ProjRadiusLabel";
+            this.ProjRadiusLabel.Size = new System.Drawing.Size(103, 20);
+            this.ProjRadiusLabel.TabIndex = 12;
+            this.ProjRadiusLabel.Text = "Blast Radius:";
+            // 
+            // ProjTypeLabel
+            // 
+            this.ProjTypeLabel.AutoSize = true;
+            this.ProjTypeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ProjTypeLabel.Location = new System.Drawing.Point(326, 96);
+            this.ProjTypeLabel.Name = "ProjTypeLabel";
+            this.ProjTypeLabel.Size = new System.Drawing.Size(112, 20);
+            this.ProjTypeLabel.TabIndex = 11;
+            this.ProjTypeLabel.Text = "Damage Type:";
+            // 
+            // ProjDamageLabel
+            // 
+            this.ProjDamageLabel.AutoSize = true;
+            this.ProjDamageLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ProjDamageLabel.Location = new System.Drawing.Point(326, 73);
+            this.ProjDamageLabel.Name = "ProjDamageLabel";
+            this.ProjDamageLabel.Size = new System.Drawing.Size(74, 20);
+            this.ProjDamageLabel.TabIndex = 10;
+            this.ProjDamageLabel.Text = "Damage:";
+            // 
+            // ProjNameLabel
+            // 
+            this.ProjNameLabel.AutoSize = true;
+            this.ProjNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ProjNameLabel.Location = new System.Drawing.Point(326, 50);
+            this.ProjNameLabel.Name = "ProjNameLabel";
+            this.ProjNameLabel.Size = new System.Drawing.Size(55, 20);
+            this.ProjNameLabel.TabIndex = 9;
+            this.ProjNameLabel.Text = "Name:";
+            // 
+            // label41
+            // 
+            this.label41.AutoSize = true;
+            this.label41.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label41.Location = new System.Drawing.Point(4, 10);
+            this.label41.Name = "label41";
+            this.label41.Size = new System.Drawing.Size(64, 20);
+            this.label41.TabIndex = 8;
+            this.label41.Text = "Search:";
+            // 
+            // ProjectileSearchTextBox
+            // 
+            this.ProjectileSearchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ProjectileSearchTextBox.Location = new System.Drawing.Point(74, 7);
+            this.ProjectileSearchTextBox.Name = "ProjectileSearchTextBox";
+            this.ProjectileSearchTextBox.Size = new System.Drawing.Size(222, 26);
+            this.ProjectileSearchTextBox.TabIndex = 7;
+            this.toolTip1.SetToolTip(this.ProjectileSearchTextBox, "Multiple search terms can be separated by semicolons");
+            this.ProjectileSearchTextBox.TextChanged += new System.EventHandler(this.ProjectileSearchTextBox_TextChanged);
+            // 
+            // ProjectileListBox
+            // 
+            this.ProjectileListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.ProjectileListBox.FormattingEnabled = true;
+            this.ProjectileListBox.Location = new System.Drawing.Point(6, 46);
+            this.ProjectileListBox.Name = "ProjectileListBox";
+            this.ProjectileListBox.Size = new System.Drawing.Size(290, 693);
+            this.ProjectileListBox.TabIndex = 6;
+            this.ProjectileListBox.SelectedIndexChanged += new System.EventHandler(this.ProjectileListBox_SelectedIndexChanged);
             // 
             // NameTab
             // 
@@ -947,6 +1153,7 @@
             this.ShipnameSearchTextBox.Name = "ShipnameSearchTextBox";
             this.ShipnameSearchTextBox.Size = new System.Drawing.Size(151, 26);
             this.ShipnameSearchTextBox.TabIndex = 1;
+            this.toolTip1.SetToolTip(this.ShipnameSearchTextBox, "Multiple search terms can be separated by semicolons");
             this.ShipnameSearchTextBox.TextChanged += new System.EventHandler(this.ShipnameSearchTextBox_TextChanged);
             // 
             // ShipnameListBox
@@ -1168,12 +1375,24 @@
             // 
             // CorporationTab
             // 
+            this.CorporationTab.Controls.Add(this.CorpFilterButton);
             this.CorporationTab.Location = new System.Drawing.Point(4, 22);
             this.CorporationTab.Name = "CorporationTab";
             this.CorporationTab.Size = new System.Drawing.Size(1476, 749);
             this.CorporationTab.TabIndex = 7;
             this.CorporationTab.Text = "Corporations";
             this.CorporationTab.UseVisualStyleBackColor = true;
+            // 
+            // CorpFilterButton
+            // 
+            this.CorpFilterButton.Location = new System.Drawing.Point(3, 3);
+            this.CorpFilterButton.Name = "CorpFilterButton";
+            this.CorpFilterButton.Size = new System.Drawing.Size(105, 23);
+            this.CorpFilterButton.TabIndex = 0;
+            this.CorpFilterButton.Text = "See Full Units...";
+            this.toolTip1.SetToolTip(this.CorpFilterButton, "Go to unit page with the filter set to show corporations");
+            this.CorpFilterButton.UseVisualStyleBackColor = true;
+            this.CorpFilterButton.Click += new System.EventHandler(this.CorpFilterButton_Click);
             // 
             // HeroFTab
             // 
@@ -1554,6 +1773,8 @@
             this.UnitSearchTextBox.Name = "UnitSearchTextBox";
             this.UnitSearchTextBox.Size = new System.Drawing.Size(318, 26);
             this.UnitSearchTextBox.TabIndex = 51;
+            this.toolTip1.SetToolTip(this.UnitSearchTextBox, "Searches work on names and internal names. Multiple search terms can be separated" +
+        " with semicolons");
             this.UnitSearchTextBox.TextChanged += new System.EventHandler(this.UnitSearchTextBox_TextChanged);
             // 
             // UnitRadioButton
@@ -1910,6 +2131,8 @@
             this.UnitAllSquadSizesCheckBox.Size = new System.Drawing.Size(144, 17);
             this.UnitAllSquadSizesCheckBox.TabIndex = 52;
             this.UnitAllSquadSizesCheckBox.Text = "Show All Squadron Sizes";
+            this.toolTip1.SetToolTip(this.UnitAllSquadSizesCheckBox, "Show all hosts with third/half/single/double/triple squadrons for the unit, not j" +
+        "ust the explicitly selected size");
             this.UnitAllSquadSizesCheckBox.UseVisualStyleBackColor = true;
             this.UnitAllSquadSizesCheckBox.Visible = false;
             this.UnitAllSquadSizesCheckBox.CheckedChanged += new System.EventHandler(this.UnitAllSquadSizesCheckBox_CheckedChanged);
@@ -1943,8 +2166,7 @@
             this.UnitHostListbox.Size = new System.Drawing.Size(148, 277);
             this.UnitHostListbox.TabIndex = 49;
             this.toolTip1.SetToolTip(this.UnitHostListbox, "Companies that contain this unit\r\nAND/OR\r\nObjects that spawn this unit as a garri" +
-        "son\r\n\r\nLua fighter spawn hosts will be limited to the selected faction if one is" +
-        " selected");
+        "son\r\n\r\nHosts will be limited to the selected faction if one is selected");
             // 
             // UnitDiscountGotoButton
             // 
@@ -1978,7 +2200,7 @@
             // 
             // UnitGCGotoButton
             // 
-            this.UnitGCGotoButton.Location = new System.Drawing.Point(993, 71);
+            this.UnitGCGotoButton.Location = new System.Drawing.Point(993, 73);
             this.UnitGCGotoButton.Name = "UnitGCGotoButton";
             this.UnitGCGotoButton.Size = new System.Drawing.Size(48, 23);
             this.UnitGCGotoButton.TabIndex = 45;
@@ -1988,7 +2210,7 @@
             // 
             // UnitGotoPlanetButton
             // 
-            this.UnitGotoPlanetButton.Location = new System.Drawing.Point(754, 71);
+            this.UnitGotoPlanetButton.Location = new System.Drawing.Point(754, 73);
             this.UnitGotoPlanetButton.Name = "UnitGotoPlanetButton";
             this.UnitGotoPlanetButton.Size = new System.Drawing.Size(48, 23);
             this.UnitGotoPlanetButton.TabIndex = 44;
@@ -2010,7 +2232,7 @@
             // 
             this.label30.AutoSize = true;
             this.label30.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label30.Location = new System.Drawing.Point(678, 71);
+            this.label30.Location = new System.Drawing.Point(678, 74);
             this.label30.Name = "label30";
             this.label30.Size = new System.Drawing.Size(66, 20);
             this.label30.TabIndex = 42;
@@ -2020,7 +2242,7 @@
             // UnitRequiredPlanetListbox
             // 
             this.UnitRequiredPlanetListbox.FormattingEnabled = true;
-            this.UnitRequiredPlanetListbox.Location = new System.Drawing.Point(682, 94);
+            this.UnitRequiredPlanetListbox.Location = new System.Drawing.Point(682, 96);
             this.UnitRequiredPlanetListbox.Name = "UnitRequiredPlanetListbox";
             this.UnitRequiredPlanetListbox.Size = new System.Drawing.Size(120, 277);
             this.UnitRequiredPlanetListbox.TabIndex = 41;
@@ -2030,7 +2252,7 @@
             // 
             this.label29.AutoSize = true;
             this.label29.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label29.Location = new System.Drawing.Point(804, 71);
+            this.label29.Location = new System.Drawing.Point(804, 74);
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(152, 20);
             this.label29.TabIndex = 40;
@@ -2040,7 +2262,7 @@
             // UnitGCListbox
             // 
             this.UnitGCListbox.FormattingEnabled = true;
-            this.UnitGCListbox.Location = new System.Drawing.Point(808, 94);
+            this.UnitGCListbox.Location = new System.Drawing.Point(808, 96);
             this.UnitGCListbox.Name = "UnitGCListbox";
             this.UnitGCListbox.Size = new System.Drawing.Size(233, 277);
             this.UnitGCListbox.TabIndex = 39;
@@ -2064,6 +2286,8 @@
             this.FactionAvailableListbox.Name = "FactionAvailableListbox";
             this.FactionAvailableListbox.Size = new System.Drawing.Size(140, 108);
             this.FactionAvailableListbox.TabIndex = 37;
+            this.toolTip1.SetToolTip(this.FactionAvailableListbox, "Affiliated factions. Selecting a faction with limit host units to ones affiliated" +
+        " with the selection");
             this.FactionAvailableListbox.SelectedIndexChanged += new System.EventHandler(this.FactionAvailableListbox_SelectedIndexChanged);
             // 
             // AvailabilityLabel
@@ -2692,6 +2916,7 @@
             // 
             // UnitStatPanel
             // 
+            this.UnitStatPanel.Controls.Add(this.WeaponGradeCheckBox);
             this.UnitStatPanel.Controls.Add(this.UnitEngageRangeLabel);
             this.UnitStatPanel.Controls.Add(this.UnitAccTierLabel);
             this.UnitStatPanel.Controls.Add(this.label34);
@@ -2742,6 +2967,21 @@
             this.UnitStatPanel.Size = new System.Drawing.Size(1039, 396);
             this.UnitStatPanel.TabIndex = 2;
             this.UnitStatPanel.Tag = "";
+            // 
+            // WeaponGradeCheckBox
+            // 
+            this.WeaponGradeCheckBox.AutoSize = true;
+            this.WeaponGradeCheckBox.Checked = true;
+            this.WeaponGradeCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.WeaponGradeCheckBox.Location = new System.Drawing.Point(3, 221);
+            this.WeaponGradeCheckBox.Name = "WeaponGradeCheckBox";
+            this.WeaponGradeCheckBox.Size = new System.Drawing.Size(90, 17);
+            this.WeaponGradeCheckBox.TabIndex = 51;
+            this.WeaponGradeCheckBox.Text = "Split by grade";
+            this.toolTip1.SetToolTip(this.WeaponGradeCheckBox, "Separate or consolidate light, medium, and heavy weapons of the same damage type " +
+        "in the dps type breakdown");
+            this.WeaponGradeCheckBox.UseVisualStyleBackColor = true;
+            this.WeaponGradeCheckBox.CheckedChanged += new System.EventHandler(this.WeaponGradeCheckBox_CheckedChanged);
             // 
             // UnitEngageRangeLabel
             // 
@@ -2884,7 +3124,7 @@
             // AlphaCheckBox
             // 
             this.AlphaCheckBox.AutoSize = true;
-            this.AlphaCheckBox.Location = new System.Drawing.Point(3, 221);
+            this.AlphaCheckBox.Location = new System.Drawing.Point(300, 361);
             this.AlphaCheckBox.Name = "AlphaCheckBox";
             this.AlphaCheckBox.Size = new System.Drawing.Size(113, 17);
             this.AlphaCheckBox.TabIndex = 39;
@@ -2899,7 +3139,7 @@
             // 
             this.FlagLabel.AutoSize = true;
             this.FlagLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FlagLabel.Location = new System.Drawing.Point(182, 331);
+            this.FlagLabel.Location = new System.Drawing.Point(298, 327);
             this.FlagLabel.Name = "FlagLabel";
             this.FlagLabel.Size = new System.Drawing.Size(115, 20);
             this.FlagLabel.TabIndex = 38;
@@ -2909,7 +3149,7 @@
             // 
             this.CategoryLabel.AutoSize = true;
             this.CategoryLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CategoryLabel.Location = new System.Drawing.Point(208, 303);
+            this.CategoryLabel.Location = new System.Drawing.Point(298, 303);
             this.CategoryLabel.Name = "CategoryLabel";
             this.CategoryLabel.Size = new System.Drawing.Size(90, 20);
             this.CategoryLabel.TabIndex = 37;
@@ -3190,8 +3430,8 @@
             this.HPDetailLabel.Size = new System.Drawing.Size(52, 13);
             this.HPDetailLabel.TabIndex = 11;
             this.HPDetailLabel.Text = "HP Type:";
-            this.toolTip1.SetToolTip(this.HPDetailLabel, "Raw DPS is the direct number, average applied is the median amount applied across" +
-        " shield and armor types after modifiers");
+            this.toolTip1.SetToolTip(this.HPDetailLabel, "Base DPS is the direct number, average applied is the median amount applied acros" +
+        "s shield and armor types after modifiers");
             // 
             // UnitHPListbox
             // 
@@ -3262,6 +3502,7 @@
             // 
             // UnitTextPanel
             // 
+            this.UnitTextPanel.Controls.Add(this.HyperspaceLabel);
             this.UnitTextPanel.Controls.Add(this.UnitCPLabel);
             this.UnitTextPanel.Controls.Add(this.UnitLengthLabel);
             this.UnitTextPanel.Controls.Add(this.VariantLabel);
@@ -3285,12 +3526,24 @@
             this.UnitTextPanel.TabIndex = 0;
             this.UnitTextPanel.Tag = "";
             // 
+            // HyperspaceLabel
+            // 
+            this.HyperspaceLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.HyperspaceLabel.AutoSize = true;
+            this.HyperspaceLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HyperspaceLabel.Location = new System.Drawing.Point(906, 332);
+            this.HyperspaceLabel.Name = "HyperspaceLabel";
+            this.HyperspaceLabel.Size = new System.Drawing.Size(10, 13);
+            this.HyperspaceLabel.TabIndex = 20;
+            this.HyperspaceLabel.Text = ".";
+            this.toolTip1.SetToolTip(this.HyperspaceLabel, "Weekly upkeep cost");
+            // 
             // UnitCPLabel
             // 
             this.UnitCPLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.UnitCPLabel.AutoSize = true;
             this.UnitCPLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UnitCPLabel.Location = new System.Drawing.Point(719, 341);
+            this.UnitCPLabel.Location = new System.Drawing.Point(719, 348);
             this.UnitCPLabel.Name = "UnitCPLabel";
             this.UnitCPLabel.Size = new System.Drawing.Size(79, 13);
             this.UnitCPLabel.TabIndex = 19;
@@ -3301,7 +3554,7 @@
             // 
             this.UnitLengthLabel.AutoSize = true;
             this.UnitLengthLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UnitLengthLabel.Location = new System.Drawing.Point(614, 28);
+            this.UnitLengthLabel.Location = new System.Drawing.Point(662, 28);
             this.UnitLengthLabel.Name = "UnitLengthLabel";
             this.UnitLengthLabel.Size = new System.Drawing.Size(63, 20);
             this.UnitLengthLabel.TabIndex = 18;
@@ -3342,7 +3595,7 @@
             // 
             this.UnitSkirmTimeLabel.AutoSize = true;
             this.UnitSkirmTimeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.UnitSkirmTimeLabel.Location = new System.Drawing.Point(614, 53);
+            this.UnitSkirmTimeLabel.Location = new System.Drawing.Point(662, 53);
             this.UnitSkirmTimeLabel.Name = "UnitSkirmTimeLabel";
             this.UnitSkirmTimeLabel.Size = new System.Drawing.Size(73, 20);
             this.UnitSkirmTimeLabel.TabIndex = 14;
@@ -4027,6 +4280,7 @@
             this.PlanetSearchBox.Name = "PlanetSearchBox";
             this.PlanetSearchBox.Size = new System.Drawing.Size(299, 26);
             this.PlanetSearchBox.TabIndex = 75;
+            this.toolTip1.SetToolTip(this.PlanetSearchBox, "Multipe search terms can be separated by semicolons");
             this.PlanetSearchBox.TextChanged += new System.EventHandler(this.PlanetSearchBox_TextChanged);
             // 
             // PlanetShipyardLabel
@@ -4727,6 +4981,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.FactionPanel.AutoScroll = true;
+            this.FactionPanel.Controls.Add(this.GovernmentTypeLabel);
+            this.FactionPanel.Controls.Add(this.FactionGovernmentGotoButton);
+            this.FactionPanel.Controls.Add(this.label45);
             this.FactionPanel.Controls.Add(this.FactionGotoSpawnSetButton);
             this.FactionPanel.Controls.Add(this.FactionGotoMissionButton);
             this.FactionPanel.Controls.Add(this.FactionAliasLabel);
@@ -4770,6 +5027,36 @@
             this.FactionPanel.Name = "FactionPanel";
             this.FactionPanel.Size = new System.Drawing.Size(1203, 775);
             this.FactionPanel.TabIndex = 1;
+            // 
+            // GovernmentTypeLabel
+            // 
+            this.GovernmentTypeLabel.AutoSize = true;
+            this.GovernmentTypeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.GovernmentTypeLabel.Location = new System.Drawing.Point(1108, 527);
+            this.GovernmentTypeLabel.Name = "GovernmentTypeLabel";
+            this.GovernmentTypeLabel.Size = new System.Drawing.Size(13, 20);
+            this.GovernmentTypeLabel.TabIndex = 113;
+            this.GovernmentTypeLabel.Text = ".";
+            // 
+            // FactionGovernmentGotoButton
+            // 
+            this.FactionGovernmentGotoButton.Location = new System.Drawing.Point(1335, 143);
+            this.FactionGovernmentGotoButton.Name = "FactionGovernmentGotoButton";
+            this.FactionGovernmentGotoButton.Size = new System.Drawing.Size(48, 23);
+            this.FactionGovernmentGotoButton.TabIndex = 112;
+            this.FactionGovernmentGotoButton.Text = "Go to";
+            this.FactionGovernmentGotoButton.UseVisualStyleBackColor = true;
+            this.FactionGovernmentGotoButton.Click += new System.EventHandler(this.FactionGovernmentGotoButton_Click);
+            // 
+            // label45
+            // 
+            this.label45.AutoSize = true;
+            this.label45.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label45.Location = new System.Drawing.Point(1104, 143);
+            this.label45.Name = "label45";
+            this.label45.Size = new System.Drawing.Size(181, 20);
+            this.label45.TabIndex = 111;
+            this.label45.Text = "Government Mechanics:";
             // 
             // FactionGotoSpawnSetButton
             // 
@@ -4859,9 +5146,8 @@
             this.FactionGovListBox.FormattingEnabled = true;
             this.FactionGovListBox.Location = new System.Drawing.Point(1108, 166);
             this.FactionGovListBox.Name = "FactionGovListBox";
-            this.FactionGovListBox.Size = new System.Drawing.Size(275, 381);
+            this.FactionGovListBox.Size = new System.Drawing.Size(275, 355);
             this.FactionGovListBox.TabIndex = 102;
-            this.FactionGovListBox.Visible = false;
             this.FactionGovListBox.SelectedIndexChanged += new System.EventHandler(this.FactionGovListBox_SelectedIndexChanged);
             // 
             // FactionUnitAvailabilityLabel
@@ -5254,6 +5540,30 @@
             // 
             // FavorTab
             // 
+            this.FavorTab.Controls.Add(this.FavorSupportNameLabel);
+            this.FavorTab.Controls.Add(this.FavorIntegratesRichTextBox);
+            this.FavorTab.Controls.Add(this.FavorIntegratesLabel);
+            this.FavorTab.Controls.Add(this.FavorDescRichTextBox);
+            this.FavorTab.Controls.Add(this.FavorSpawnGotoButton);
+            this.FavorTab.Controls.Add(this.FavorUnlocksGotoButton);
+            this.FavorTab.Controls.Add(this.FavorContributorsGotoButton);
+            this.FavorTab.Controls.Add(this.FavorTagSLabel);
+            this.FavorTab.Controls.Add(this.FavorSpawnLabel);
+            this.FavorTab.Controls.Add(this.FavorTagULabel);
+            this.FavorTab.Controls.Add(this.FavorUnlockLabel);
+            this.FavorTab.Controls.Add(this.FavorLocksLabel);
+            this.FavorTab.Controls.Add(this.FavorSupportLabel);
+            this.FavorTab.Controls.Add(this.FavorRenameLabel);
+            this.FavorTab.Controls.Add(this.FavorMaxLabel);
+            this.FavorTab.Controls.Add(this.FavorFactionLabel);
+            this.FavorTab.Controls.Add(this.FavorNameLabel);
+            this.FavorTab.Controls.Add(this.label44);
+            this.FavorTab.Controls.Add(this.label43);
+            this.FavorTab.Controls.Add(this.label42);
+            this.FavorTab.Controls.Add(this.FavorSpawnListBox);
+            this.FavorTab.Controls.Add(this.FavorContributorsListBox);
+            this.FavorTab.Controls.Add(this.FavorUnlockListBox);
+            this.FavorTab.Controls.Add(this.FavorListBox);
             this.FavorTab.Location = new System.Drawing.Point(4, 22);
             this.FavorTab.Name = "FavorTab";
             this.FavorTab.Padding = new System.Windows.Forms.Padding(3);
@@ -5261,6 +5571,247 @@
             this.FavorTab.TabIndex = 0;
             this.FavorTab.Text = "Favor";
             this.FavorTab.UseVisualStyleBackColor = true;
+            // 
+            // FavorSupportNameLabel
+            // 
+            this.FavorSupportNameLabel.AutoSize = true;
+            this.FavorSupportNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FavorSupportNameLabel.Location = new System.Drawing.Point(1126, 6);
+            this.FavorSupportNameLabel.Name = "FavorSupportNameLabel";
+            this.FavorSupportNameLabel.Size = new System.Drawing.Size(11, 16);
+            this.FavorSupportNameLabel.TabIndex = 89;
+            this.FavorSupportNameLabel.Text = ".";
+            // 
+            // FavorIntegratesRichTextBox
+            // 
+            this.FavorIntegratesRichTextBox.Location = new System.Drawing.Point(199, 162);
+            this.FavorIntegratesRichTextBox.Name = "FavorIntegratesRichTextBox";
+            this.FavorIntegratesRichTextBox.Size = new System.Drawing.Size(650, 152);
+            this.FavorIntegratesRichTextBox.TabIndex = 88;
+            this.FavorIntegratesRichTextBox.Text = "";
+            this.FavorIntegratesRichTextBox.Visible = false;
+            // 
+            // FavorIntegratesLabel
+            // 
+            this.FavorIntegratesLabel.AutoSize = true;
+            this.FavorIntegratesLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FavorIntegratesLabel.Location = new System.Drawing.Point(199, 100);
+            this.FavorIntegratesLabel.Name = "FavorIntegratesLabel";
+            this.FavorIntegratesLabel.Size = new System.Drawing.Size(82, 20);
+            this.FavorIntegratesLabel.TabIndex = 87;
+            this.FavorIntegratesLabel.Text = "Integrates";
+            // 
+            // FavorDescRichTextBox
+            // 
+            this.FavorDescRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.FavorDescRichTextBox.Location = new System.Drawing.Point(1130, 55);
+            this.FavorDescRichTextBox.Name = "FavorDescRichTextBox";
+            this.FavorDescRichTextBox.Size = new System.Drawing.Size(337, 231);
+            this.FavorDescRichTextBox.TabIndex = 86;
+            this.FavorDescRichTextBox.Text = "";
+            // 
+            // FavorSpawnGotoButton
+            // 
+            this.FavorSpawnGotoButton.Location = new System.Drawing.Point(1072, 314);
+            this.FavorSpawnGotoButton.Name = "FavorSpawnGotoButton";
+            this.FavorSpawnGotoButton.Size = new System.Drawing.Size(48, 23);
+            this.FavorSpawnGotoButton.TabIndex = 85;
+            this.FavorSpawnGotoButton.Text = "Go to";
+            this.FavorSpawnGotoButton.UseVisualStyleBackColor = true;
+            this.FavorSpawnGotoButton.Click += new System.EventHandler(this.FavorSpawnGotoButton_Click);
+            // 
+            // FavorUnlocksGotoButton
+            // 
+            this.FavorUnlocksGotoButton.Location = new System.Drawing.Point(406, 317);
+            this.FavorUnlocksGotoButton.Name = "FavorUnlocksGotoButton";
+            this.FavorUnlocksGotoButton.Size = new System.Drawing.Size(48, 23);
+            this.FavorUnlocksGotoButton.TabIndex = 84;
+            this.FavorUnlocksGotoButton.Text = "Go to";
+            this.FavorUnlocksGotoButton.UseVisualStyleBackColor = true;
+            this.FavorUnlocksGotoButton.Click += new System.EventHandler(this.FavorUnlocksGotoButton_Click);
+            // 
+            // FavorContributorsGotoButton
+            // 
+            this.FavorContributorsGotoButton.Location = new System.Drawing.Point(1072, 6);
+            this.FavorContributorsGotoButton.Name = "FavorContributorsGotoButton";
+            this.FavorContributorsGotoButton.Size = new System.Drawing.Size(48, 23);
+            this.FavorContributorsGotoButton.TabIndex = 83;
+            this.FavorContributorsGotoButton.Text = "Go to";
+            this.FavorContributorsGotoButton.UseVisualStyleBackColor = true;
+            this.FavorContributorsGotoButton.Click += new System.EventHandler(this.FavorContributorsGotoButton_Click);
+            // 
+            // FavorTagSLabel
+            // 
+            this.FavorTagSLabel.AutoSize = true;
+            this.FavorTagSLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FavorTagSLabel.Location = new System.Drawing.Point(1126, 373);
+            this.FavorTagSLabel.Name = "FavorTagSLabel";
+            this.FavorTagSLabel.Size = new System.Drawing.Size(36, 20);
+            this.FavorTagSLabel.TabIndex = 82;
+            this.FavorTagSLabel.Text = "Tag";
+            // 
+            // FavorSpawnLabel
+            // 
+            this.FavorSpawnLabel.AutoSize = true;
+            this.FavorSpawnLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FavorSpawnLabel.Location = new System.Drawing.Point(1126, 343);
+            this.FavorSpawnLabel.Name = "FavorSpawnLabel";
+            this.FavorSpawnLabel.Size = new System.Drawing.Size(136, 20);
+            this.FavorSpawnLabel.TabIndex = 81;
+            this.FavorSpawnLabel.Text = "Spawn Threshold:";
+            // 
+            // FavorTagULabel
+            // 
+            this.FavorTagULabel.AutoSize = true;
+            this.FavorTagULabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FavorTagULabel.Location = new System.Drawing.Point(460, 373);
+            this.FavorTagULabel.Name = "FavorTagULabel";
+            this.FavorTagULabel.Size = new System.Drawing.Size(36, 20);
+            this.FavorTagULabel.TabIndex = 80;
+            this.FavorTagULabel.Text = "Tag";
+            // 
+            // FavorUnlockLabel
+            // 
+            this.FavorUnlockLabel.AutoSize = true;
+            this.FavorUnlockLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FavorUnlockLabel.Location = new System.Drawing.Point(460, 343);
+            this.FavorUnlockLabel.Name = "FavorUnlockLabel";
+            this.FavorUnlockLabel.Size = new System.Drawing.Size(136, 20);
+            this.FavorUnlockLabel.TabIndex = 79;
+            this.FavorUnlockLabel.Text = "Unlock Threshold:";
+            // 
+            // FavorLocksLabel
+            // 
+            this.FavorLocksLabel.AutoSize = true;
+            this.FavorLocksLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FavorLocksLabel.Location = new System.Drawing.Point(1126, 289);
+            this.FavorLocksLabel.Name = "FavorLocksLabel";
+            this.FavorLocksLabel.Size = new System.Drawing.Size(51, 20);
+            this.FavorLocksLabel.TabIndex = 78;
+            this.FavorLocksLabel.Text = "Locks";
+            // 
+            // FavorSupportLabel
+            // 
+            this.FavorSupportLabel.AutoSize = true;
+            this.FavorSupportLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FavorSupportLabel.Location = new System.Drawing.Point(1126, 32);
+            this.FavorSupportLabel.Name = "FavorSupportLabel";
+            this.FavorSupportLabel.Size = new System.Drawing.Size(113, 20);
+            this.FavorSupportLabel.TabIndex = 77;
+            this.FavorSupportLabel.Text = "Favor Change:";
+            // 
+            // FavorRenameLabel
+            // 
+            this.FavorRenameLabel.AutoSize = true;
+            this.FavorRenameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FavorRenameLabel.Location = new System.Drawing.Point(199, 132);
+            this.FavorRenameLabel.Name = "FavorRenameLabel";
+            this.FavorRenameLabel.Size = new System.Drawing.Size(127, 20);
+            this.FavorRenameLabel.TabIndex = 76;
+            this.FavorRenameLabel.Text = "Faction Rename";
+            // 
+            // FavorMaxLabel
+            // 
+            this.FavorMaxLabel.AutoSize = true;
+            this.FavorMaxLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FavorMaxLabel.Location = new System.Drawing.Point(199, 62);
+            this.FavorMaxLabel.Name = "FavorMaxLabel";
+            this.FavorMaxLabel.Size = new System.Drawing.Size(82, 20);
+            this.FavorMaxLabel.TabIndex = 75;
+            this.FavorMaxLabel.Text = "Max Favor";
+            // 
+            // FavorFactionLabel
+            // 
+            this.FavorFactionLabel.AutoSize = true;
+            this.FavorFactionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FavorFactionLabel.Location = new System.Drawing.Point(199, 32);
+            this.FavorFactionLabel.Name = "FavorFactionLabel";
+            this.FavorFactionLabel.Size = new System.Drawing.Size(62, 20);
+            this.FavorFactionLabel.TabIndex = 74;
+            this.FavorFactionLabel.Text = "Faction";
+            // 
+            // FavorNameLabel
+            // 
+            this.FavorNameLabel.AutoSize = true;
+            this.FavorNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FavorNameLabel.Location = new System.Drawing.Point(199, 6);
+            this.FavorNameLabel.Name = "FavorNameLabel";
+            this.FavorNameLabel.Size = new System.Drawing.Size(51, 20);
+            this.FavorNameLabel.TabIndex = 73;
+            this.FavorNameLabel.Text = "Name";
+            // 
+            // label44
+            // 
+            this.label44.AutoSize = true;
+            this.label44.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label44.Location = new System.Drawing.Point(861, 317);
+            this.label44.Name = "label44";
+            this.label44.Size = new System.Drawing.Size(70, 20);
+            this.label44.TabIndex = 72;
+            this.label44.Text = "Spawns:";
+            // 
+            // label43
+            // 
+            this.label43.AutoSize = true;
+            this.label43.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label43.Location = new System.Drawing.Point(195, 317);
+            this.label43.Name = "label43";
+            this.label43.Size = new System.Drawing.Size(70, 20);
+            this.label43.TabIndex = 71;
+            this.label43.Text = "Unlocks:";
+            // 
+            // label42
+            // 
+            this.label42.AutoSize = true;
+            this.label42.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label42.Location = new System.Drawing.Point(861, 6);
+            this.label42.Name = "label42";
+            this.label42.Size = new System.Drawing.Size(96, 20);
+            this.label42.TabIndex = 70;
+            this.label42.Text = "Contributors";
+            // 
+            // FavorSpawnListBox
+            // 
+            this.FavorSpawnListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.FavorSpawnListBox.FormattingEnabled = true;
+            this.FavorSpawnListBox.Location = new System.Drawing.Point(865, 343);
+            this.FavorSpawnListBox.Name = "FavorSpawnListBox";
+            this.FavorSpawnListBox.Size = new System.Drawing.Size(255, 407);
+            this.FavorSpawnListBox.TabIndex = 4;
+            this.FavorSpawnListBox.SelectedIndexChanged += new System.EventHandler(this.FavorSpawnListBox_SelectedIndexChanged);
+            // 
+            // FavorContributorsListBox
+            // 
+            this.FavorContributorsListBox.FormattingEnabled = true;
+            this.FavorContributorsListBox.Location = new System.Drawing.Point(865, 32);
+            this.FavorContributorsListBox.Name = "FavorContributorsListBox";
+            this.FavorContributorsListBox.Size = new System.Drawing.Size(255, 277);
+            this.FavorContributorsListBox.TabIndex = 3;
+            this.FavorContributorsListBox.SelectedIndexChanged += new System.EventHandler(this.FavorContributorsListBox_SelectedIndexChanged);
+            // 
+            // FavorUnlockListBox
+            // 
+            this.FavorUnlockListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.FavorUnlockListBox.FormattingEnabled = true;
+            this.FavorUnlockListBox.Location = new System.Drawing.Point(199, 343);
+            this.FavorUnlockListBox.Name = "FavorUnlockListBox";
+            this.FavorUnlockListBox.Size = new System.Drawing.Size(255, 407);
+            this.FavorUnlockListBox.TabIndex = 2;
+            this.FavorUnlockListBox.SelectedIndexChanged += new System.EventHandler(this.FavorUnlockListBox_SelectedIndexChanged);
+            // 
+            // FavorListBox
+            // 
+            this.FavorListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.FavorListBox.FormattingEnabled = true;
+            this.FavorListBox.Location = new System.Drawing.Point(6, 6);
+            this.FavorListBox.Name = "FavorListBox";
+            this.FavorListBox.Size = new System.Drawing.Size(187, 745);
+            this.FavorListBox.TabIndex = 1;
+            this.FavorListBox.SelectedIndexChanged += new System.EventHandler(this.FavorListBox_SelectedIndexChanged);
             // 
             // CommandStaffTab
             // 
@@ -6133,6 +6684,8 @@
             this.MatrixTab.ResumeLayout(false);
             this.MatrixTab.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.MatrixGrid)).EndInit();
+            this.ProjectileTab.ResumeLayout(false);
+            this.ProjectileTab.PerformLayout();
             this.NameTab.ResumeLayout(false);
             this.NameTab.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -6143,6 +6696,7 @@
             this.MissionTab.PerformLayout();
             this.SpawnTab.ResumeLayout(false);
             this.SpawnTab.PerformLayout();
+            this.CorporationTab.ResumeLayout(false);
             this.StandardFTab.ResumeLayout(false);
             this.StandardFTab.PerformLayout();
             this.RandomFTab.ResumeLayout(false);
@@ -6186,6 +6740,8 @@
             this.MainTab.ResumeLayout(false);
             this.tabGov.ResumeLayout(false);
             this.GovernmentTabControl.ResumeLayout(false);
+            this.FavorTab.ResumeLayout(false);
+            this.FavorTab.PerformLayout();
             this.tabGalaxy.ResumeLayout(false);
             this.tabGalaxy.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapPlanetNameBox)).EndInit();
@@ -6678,6 +7234,50 @@
         private System.Windows.Forms.RadioButton rbTiersTraits;
         private System.Windows.Forms.RadioButton rbGovernment;
         private System.Windows.Forms.RadioButton rbStory;
+        private System.Windows.Forms.ToolStripMenuItem checkedErrorTypesToolStripMenuItem;
+        private System.Windows.Forms.ListBox FavorListBox;
+        private System.Windows.Forms.CheckBox WeaponGradeCheckBox;
+        private System.Windows.Forms.Label label41;
+        private System.Windows.Forms.TextBox ProjectileSearchTextBox;
+        private System.Windows.Forms.ListBox ProjectileListBox;
+        private System.Windows.Forms.Label ProjTypeLabel;
+        private System.Windows.Forms.Label ProjDamageLabel;
+        private System.Windows.Forms.Label ProjNameLabel;
+        private System.Windows.Forms.Label ProjRadiusLabel;
+        private System.Windows.Forms.Label ProjTurnLabel;
+        private System.Windows.Forms.Label ProjSpeedLabel;
+        private System.Windows.Forms.Button CorpFilterButton;
+        private System.Windows.Forms.CheckBox ProjectileNameCheckBox;
+        private System.Windows.Forms.Button ProjectileUserGotoButton;
+        private System.Windows.Forms.Label ProjectileUserLabel;
+        private System.Windows.Forms.ListBox ProjectileUserListBox;
+        private System.Windows.Forms.Label HyperspaceLabel;
+        private System.Windows.Forms.ListBox FavorSpawnListBox;
+        private System.Windows.Forms.ListBox FavorContributorsListBox;
+        private System.Windows.Forms.ListBox FavorUnlockListBox;
+        private System.Windows.Forms.Label label42;
+        private System.Windows.Forms.Label FavorNameLabel;
+        private System.Windows.Forms.Label label44;
+        private System.Windows.Forms.Label label43;
+        private System.Windows.Forms.Label FavorRenameLabel;
+        private System.Windows.Forms.Label FavorMaxLabel;
+        private System.Windows.Forms.Label FavorFactionLabel;
+        private System.Windows.Forms.Label FavorSupportLabel;
+        private System.Windows.Forms.Label FavorTagULabel;
+        private System.Windows.Forms.Label FavorUnlockLabel;
+        private System.Windows.Forms.Label FavorLocksLabel;
+        private System.Windows.Forms.Label FavorTagSLabel;
+        private System.Windows.Forms.Label FavorSpawnLabel;
+        private System.Windows.Forms.Button FavorSpawnGotoButton;
+        private System.Windows.Forms.Button FavorUnlocksGotoButton;
+        private System.Windows.Forms.Button FavorContributorsGotoButton;
+        private System.Windows.Forms.RichTextBox FavorDescRichTextBox;
+        private System.Windows.Forms.Button FactionGovernmentGotoButton;
+        private System.Windows.Forms.Label label45;
+        private System.Windows.Forms.Label GovernmentTypeLabel;
+        private System.Windows.Forms.RichTextBox FavorIntegratesRichTextBox;
+        private System.Windows.Forms.Label FavorIntegratesLabel;
+        private System.Windows.Forms.Label FavorSupportNameLabel;
     }
 }
 

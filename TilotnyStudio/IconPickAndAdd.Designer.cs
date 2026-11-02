@@ -35,7 +35,7 @@ namespace TilotnyStudio
             this.label5 = new System.Windows.Forms.Label();
             this.IconSearchTextBox = new System.Windows.Forms.TextBox();
             this.AddIconButton = new System.Windows.Forms.Button();
-            this.AcceptButton = new System.Windows.Forms.Button();
+            this.IconAcceptButton = new System.Windows.Forms.Button();
             this.CancelButton = new System.Windows.Forms.Button();
             this.SelectedIconLabel = new System.Windows.Forms.Label();
             this.UsedMapPictureBox = new System.Windows.Forms.PictureBox();
@@ -93,17 +93,17 @@ namespace TilotnyStudio
             this.AddIconButton.UseVisualStyleBackColor = true;
             this.AddIconButton.Click += new System.EventHandler(this.AddIconButton_Click);
             // 
-            // AcceptButton
+            // IconAcceptButton
             // 
-            this.AcceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.AcceptButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AcceptButton.Location = new System.Drawing.Point(737, 430);
-            this.AcceptButton.Name = "AcceptButton";
-            this.AcceptButton.Size = new System.Drawing.Size(115, 31);
-            this.AcceptButton.TabIndex = 56;
-            this.AcceptButton.Text = "Accept";
-            this.AcceptButton.UseVisualStyleBackColor = true;
-            this.AcceptButton.Click += new System.EventHandler(this.AcceptButton_Click);
+            this.IconAcceptButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.IconAcceptButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.IconAcceptButton.Location = new System.Drawing.Point(737, 430);
+            this.IconAcceptButton.Name = "IconAcceptButton";
+            this.IconAcceptButton.Size = new System.Drawing.Size(115, 31);
+            this.IconAcceptButton.TabIndex = 56;
+            this.IconAcceptButton.Text = "Accept";
+            this.IconAcceptButton.UseVisualStyleBackColor = true;
+            this.IconAcceptButton.Click += new System.EventHandler(this.AcceptButton_Click);
             // 
             // CancelButton
             // 
@@ -158,7 +158,7 @@ namespace TilotnyStudio
             this.Controls.Add(this.UsedMapPictureBox);
             this.Controls.Add(this.SelectedIconLabel);
             this.Controls.Add(this.CancelButton);
-            this.Controls.Add(this.AcceptButton);
+            this.Controls.Add(this.IconAcceptButton);
             this.Controls.Add(this.AddIconButton);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.IconSearchTextBox);
@@ -182,7 +182,7 @@ namespace TilotnyStudio
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox IconSearchTextBox;
         private System.Windows.Forms.Button AddIconButton;
-        private System.Windows.Forms.Button AcceptButton;
+        private System.Windows.Forms.Button IconAcceptButton;
         private System.Windows.Forms.Button CancelButton;
         private System.Windows.Forms.Label SelectedIconLabel;
         private System.Windows.Forms.PictureBox UsedMapPictureBox;

@@ -23,6 +23,7 @@ using static SharedFunctions;
  *
  *https://dev.to/karenpayneoregon/window-forms-dark-mode-33on in program.cs, requires .Net upgrade? Application.SetColorMode(SystemColorMode.Dark);
  *
+ *https://github.com/LorettaDevs/Loretta Lua parser
  *
  *Templates as another category like mission objects
  * 
@@ -333,6 +334,7 @@ namespace Holocron
             GCListBox.Items.Clear();
             PlanetListBox.Items.Clear();
             UnitListBox.Items.Clear();
+            FavorListBox.Items.Clear();
             System.Threading.Thread t = new System.Threading.Thread(() => LoadThread(loadscreen));
             t.Start();
             MissionListBox.Items.Clear();
@@ -462,6 +464,8 @@ namespace Holocron
             parseGCs(entities);
             loadscreen.ChangeText("Parsing movies");
             parseMovies(entities);
+            loadscreen.ChangeText("Parsing government mechanics");
+            parseGovernment(entities);
 
             loadscreen.ChangeText("Reading AI contrast values");
             globals.ContrastValues = ReadContrastValues();
@@ -570,6 +574,12 @@ namespace Holocron
             lookups,
         }
 
+        enum historygovtabs
+        {
+            favor,
+            staff,
+        }
+
         enum lookupsubtabs
         {
             lkMatrix,
@@ -661,14 +671,14 @@ namespace Holocron
                     }
                     for (int i = 0; i < UnitListBox.Items.Count; i++)
                     {
-                        if (item == ((unit)UnitListBox.Items[i]).unitname)
+                        if (String.Equals(item, ((unit)UnitListBox.Items[i]).unitname, StringComparison.OrdinalIgnoreCase))
                         {
                             UnitListBox.SelectedItem = UnitListBox.Items[i];
                             found = true;
                             break;
                         }
                     }
-                    if (!found) //unify goto units to not care about rb
+                    if (!found)
                     {
                         UnitSearchTextBox.Text = "";
                         UnitFilter INeedYourFunctions = new UnitFilter();
@@ -739,6 +749,23 @@ namespace Holocron
                         }
                     }
                     break;
+                case historymaintabs.govs:
+                    GovernmentTabControl.SelectedIndex = secondary;
+                    switch ((historygovtabs)secondary)
+                    {
+                        case historygovtabs.favor:
+                            for (int i = 0; i < FavorListBox.Items.Count; i++)
+                            {
+                                if (item == ((FavorTrack)FavorListBox.Items[i]).name)
+                                {
+                                    FavorListBox.SelectedItem = FavorListBox.Items[i];
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            break;
+                    }
+                    break;
                 case historymaintabs.lookups:
                     LookupTabControl.SelectedIndex = secondary;
                     switch ((lookupsubtabs)secondary)
@@ -751,6 +778,30 @@ namespace Holocron
                                     SpawnListBox.SelectedItem = SpawnListBox.Items[i];
                                     found = true;
                                     break;
+                                }
+                            }
+                            break;
+                        case lookupsubtabs.lkProj:
+                            for (int i = 0; i < ProjectileListBox.Items.Count; i++)
+                            {
+                                if (item == ((projectile)ProjectileListBox.Items[i]).name)
+                                {
+                                    ProjectileListBox.SelectedItem = ProjectileListBox.Items[i];
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found)
+                            {
+                                ProjectileSearchTextBox.Text = "";
+                                FillProjectiles();
+                                for (int i = 0; i < ProjectileListBox.Items.Count; i++)
+                                {
+                                    if (item == ((projectile)ProjectileListBox.Items[i]).name)
+                                    {
+                                        ProjectileListBox.SelectedItem = ProjectileListBox.Items[i];
+                                        break;
+                                    }
                                 }
                             }
                             break;
@@ -840,6 +891,12 @@ namespace Holocron
                     if (GalaxyMapGCComboBox.Items.Count == 0) setMapGCOptions();
                     insert_history((int)historymaintabs.galaxy, 0, "");
                     break;
+                case (int)historymaintabs.govs:
+                    if(FavorListBox.Items.Count == 0)
+                    {
+                        foreach (FavorTrack track in entities.FavorTracks) FavorListBox.Items.Add(track);
+                    }
+                    break;
                 case (int)historymaintabs.lookups:
                     FillMatrixLookup();
                     break;
@@ -862,6 +919,9 @@ namespace Holocron
             {
                 //case 0: The matrix doesn't need filling from here, actually
                 //break;
+                case (int)lookupsubtabs.lkProj:
+                    if (ProjectileListBox.Items.Count == 0) FillProjectiles(); //todo ensure other histories have such conditions cleared by load_mods
+                    break;
                 case (int)lookupsubtabs.lkName:
                     //todo - more sorting and filtering? filter by unit and hero names only? Filter out dropship and/or cadet?
                     //How are there two acclamator_I instances for Acclamator? Because it's in the list twice. Probably leave that in
@@ -2015,6 +2075,56 @@ namespace Holocron
             }
         }
 
+        private void FillProjectiles()
+        {
+            ProjectileListBox.Items.Clear();
+
+            bool fakemode = !ProjectileNameCheckBox.Checked;
+            List<string> fakenames = new List<string>();
+
+            foreach (projectile proj in entities.projectiles)
+            {
+                bool match = false;
+                string fake = "";
+                string[] search = ProjectileSearchTextBox.Text.Split(';');
+                foreach (string term in search)
+                {
+                    string lmon = proj.name;
+                    if (fakemode)
+                    {
+                        fake = SharedFunctions.convertProjectileToName(proj.name);
+                        lmon = fake;
+                    }
+                    lmon = lmon.ToLower();
+
+                    string lterm = term.ToLower();
+                    if (lmon.Contains(lterm))
+                    {
+                        if (fakemode)
+                        {
+                            if (!fakenames.Contains(lmon))
+                            {
+                                fakenames.Add(lmon);
+                                match = true;
+                            }
+                        }
+                        else match = true;
+                        break;
+                    }
+                }
+                if (match)
+                {
+                    if (fakemode)
+                    {
+                        projectile fak = proj;
+                        fak.name = fake;
+                        ProjectileListBox.Items.Add(fak);
+                    }
+                    else ProjectileListBox.Items.Add(proj);
+                }
+            }
+        }
+
         private void FillShipnameListbox()
         {
             //Todo way to select only hero > 0 and units > 0
@@ -2026,7 +2136,19 @@ namespace Holocron
             //globals.shipnames.OrderByDescending(s1 => (s1.units.Count + s1.heroes.Count)).ThenBy(s1 => s1.name); //This ends up pure alphabetical
             foreach (shipname moniker in globals.shipnames)
             {
-                if (moniker.name.ToLower().Contains(ShipnameSearchTextBox.Text.ToLower())) {
+                bool match = false;
+                string[] search = ShipnameSearchTextBox.Text.Split(';');
+                foreach (string term in search)
+                {
+                    string lmon = moniker.name.ToLower();
+                    string lterm = term.ToLower();
+                    if (lmon.Contains(lterm))
+                    {
+                        match = true;
+                        break;
+                    }
+                }
+                if (match) {
                     bool heroOk = false;
                     bool groundOk = false;
                     bool cadetOk = false;
@@ -2143,6 +2265,7 @@ namespace Holocron
 
         private void SpawnListBox_SelectedIndexChanged(object sender, EventArgs e)
         {//Todo list planets where used
+            insert_history((int)historymaintabs.lookups, (int)lookupsubtabs.lkSpawn, (string)SpawnListBox.SelectedItem, true);
             SpawnText.Text = File.ReadAllText(getModFile("Scripts\\Library\\spawn-sets\\" + SpawnListBox.SelectedItem + ".lua", entities));
             SpawnPlanetListBox.Items.Clear();
             spawnSet set = entities.spawnSets.FirstOrDefault(s => String.Equals(s.name, (string)SpawnListBox.SelectedItem, StringComparison.OrdinalIgnoreCase));
@@ -2275,6 +2398,14 @@ namespace Holocron
                     if (entities.spaceUnits.FindIndex(s => s.reqstructures.Contains(factory.unitname) && s.affiliations.Contains(faction.codename) && s.techlevel <= 5) >= 0) FactionFactoryListbox.Items.Add(factory);
                 }
             }
+            if (FactionFactoryListbox.Items.Count > 0) FactionFactoryListbox.SelectedIndex = 0;
+
+            FactionGovListBox.Items.Clear();
+            foreach (FavorTrack track in entities.FavorTracks)
+            {
+                if(string.Equals(track.faction, faction.codename, StringComparison.OrdinalIgnoreCase)) FactionGovListBox.Items.Add(track);
+            }
+            GovernmentTypeLabel.Text = "";
         }
 
         private void populateFactionGCBox()
@@ -2312,7 +2443,7 @@ namespace Holocron
             else if (FactionHeroTeamRB.Checked) src = entities.heroCompanies;
             foreach (unit unit in src)
             {
-                if (unit.username.ToLower().Contains(FactionUnitSearchTextBox.Text.ToLower()) && unit.affiliations.Contains(faction) && !IsSkirmishObject(unit) && !IsMissionObject(unit) && !IsSurvivalObject(unit) && !IsGroundWar(unit) && !IsTransportObject(unit) && !unit.unitname.Contains("Cheat") && unit.influence == 0)
+                if (unit.username.ToLower().Contains(FactionUnitSearchTextBox.Text.ToLower()) && (unit.affiliations.Contains(faction) || unit.fake_affiliations.Contains(faction)) && !IsSkirmishObject(unit) && !IsMissionObject(unit) && !IsSurvivalObject(unit) && !IsGroundWar(unit) && !IsTransportObject(unit) && !unit.unitname.Contains("Cheat") && unit.influence == 0)
                 {
                     FactionUnitListBox.Items.Add(unit);
                 }
@@ -2375,7 +2506,24 @@ namespace Holocron
 
         private void FactionGovListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if(FactionGovListBox.SelectedItems.Count > 0)
+            {
+                if (FactionGovListBox.SelectedItem.GetType() == typeof(FavorTrack))
+                {
+                    GovernmentTypeLabel.Text = "Favor";
+                }
+            }
+        }
 
+        private void FactionGovernmentGotoButton_Click(object sender, EventArgs e)
+        {
+            if (FactionGovListBox.SelectedItems.Count > 0)
+            {
+                if (FactionGovListBox.SelectedItem.GetType() == typeof(FavorTrack))
+                {
+                    insert_history((int)historymaintabs.govs, (int)historygovtabs.favor, ((FavorTrack)FactionGovListBox.SelectedItem).name, true);
+                }
+            }
         }
 
         private void FactionGotoConquestButton_Click(object sender, EventArgs e)
@@ -2472,6 +2620,8 @@ namespace Holocron
             if (reset_hplistbox) UnitHPListbox.Items.Clear();
             List<string> types = new List<string>();
             List<float> damage = new List<float>();
+            List<float> ldamage = new List<float>();
+            List<float> hdamage = new List<float>();
             List<float> avgMults = new List<float>();
             List<float> ranges = new List<float>();
             foreach (hardpoint hp in selectedUnit.consolidatedhps)
@@ -2479,11 +2629,15 @@ namespace Holocron
                 if (reset_hplistbox) UnitHPListbox.Items.Add(hp);
                 bool found = false;
                 if (hp.range > 0 && !ranges.Contains(hp.range)) ranges.Add(hp.range);
+                string lower = hp.projectile.ToLower();
                 for (int i = 0; i < types.Count; i++)
                 {
                     if (types[i] == hp.damageType)
                     {
-                        damage[i] += getDPS(hp) * (float)UADamageLabel.Tag / (float)UAReloadLabel.Tag;
+                        float dps = getDPS(hp) * (float)UADamageLabel.Tag / (float)UAReloadLabel.Tag;
+                        if (WeaponGradeCheckBox.Checked && lower.Contains("light")) ldamage[i] += dps;
+                        else if (WeaponGradeCheckBox.Checked && lower.Contains("heavy") || lower.Contains("_sphere") || lower.Contains("ship_mass")) hdamage[i] += dps;
+                        else damage[i] += dps;
                         if (FullSalvoOn()) damage[i] /= hp.fullsalvomod;
                         found = true;
                         break;
@@ -2494,7 +2648,28 @@ namespace Holocron
                     types.Add(hp.damageType);
                     float dps = getDPS(hp) * (float)UADamageLabel.Tag / (float)UAReloadLabel.Tag;
                     if (FullSalvoOn()) dps /= hp.fullsalvomod;
-                    damage.Add(dps);
+                    if (WeaponGradeCheckBox.Checked)
+                    {
+                        if (lower.Contains("light"))
+                        {
+                            ldamage.Add(dps);
+                            hdamage.Add(0);
+                            damage.Add(0);
+                        }
+                        else if (lower.Contains("heavy") || lower.Contains("_sphere") || lower.Contains("ship_mass"))
+                        {
+                            ldamage.Add(0);
+                            hdamage.Add(dps);
+                            damage.Add(0);
+                        }
+                        else
+                        {
+                            ldamage.Add(0);
+                            hdamage.Add(0);
+                            damage.Add(dps);
+                        }
+                    }
+                    else damage.Add(dps);
                     foreach (WeaponMods weaps in entities.ArmorMods)
                     {
                         if (weaps.weaponType == hp.damageType)
@@ -2505,15 +2680,28 @@ namespace Holocron
                     }
                 }
             }
-            if (selectedUnit.consolidatedhps.Count > 0) UnitHPListbox.SelectedIndex = 0;
+            if (UnitHPListbox.Items.Count > 0) UnitHPListbox.SelectedIndex = 0;
             RawDPSLabel.Text = "Base DPS totals:";
             float average = 0;
             for (int i = 0; i < types.Count; i++)
             {
-                RawDPSLabel.Text += "\n" + types[i] + ": " + damage[i].ToString(globals.dpsformat);
+                if (WeaponGradeCheckBox.Checked)
+                {
+                    if(ldamage[i] > 0) RawDPSLabel.Text += "\nLight " + types[i] + ": " + ldamage[i].ToString(globals.dpsformat);
+                    if (damage[i] > 0) RawDPSLabel.Text += "\nMedium " + types[i] + ": " + damage[i].ToString(globals.dpsformat);
+                    if (hdamage[i] > 0)
+                    {
+                        string grade = "Heavy";
+                        if (types[i] == "DamageS_Proton") grade = "MD";
+                        else if (types[i] == "DamageS_Concussion") grade = "Sphere";
+                        RawDPSLabel.Text += "\n"+ grade + " " + types[i] + ": " + hdamage[i].ToString(globals.dpsformat);
+                    }
+                }
+                else RawDPSLabel.Text += "\n" + types[i] + ": " + damage[i].ToString(globals.dpsformat);
                 float averagemult = 1;
                 if (i < avgMults.Count) averagemult = avgMults[i];
-                average += (damage[i] * averagemult);
+                if (WeaponGradeCheckBox.Checked) average += ((ldamage[i] + damage[i] + hdamage[i]) * averagemult);
+                else average += (damage[i] * averagemult);
             }
             RawDPSLabel.Text += "\nAverage DPS Total: " + average.ToString(globals.dpsformat);
 
@@ -2641,17 +2829,24 @@ namespace Holocron
             UnitAbilityListBox.Items.Clear();
             foreach (unitability able in selectedUnit.unitabilities)
             {
-                UnitAbilityListBox.Items.Add(able);
+                unitability able2 = able;
                 if (able.linkedEntity != "")
                 {
                     unit linked = entities.objects.FirstOrDefault(s => s.unitname == able.linkedEntity);
                     if (!(linked.unitname is null))
                     {
-                        foreach (ability able2 in linked.abilities) AbilityListBox.Items.Add(able2);
+                        foreach (ability able3 in linked.abilities)
+                        {
+                            AbilityListBox.Items.Add(able3);
+                            able2.ability = able3.name;
+                        }
                     }
                 }
+                UnitAbilityListBox.Items.Add(able2);
             }
             ResetAbilitySelection();
+            if(AbilityListBox.Items.Count > 0) AbilityListBox.SelectedIndex = 0;
+            if (UnitAbilityListBox.Items.Count > 0) UnitAbilityListBox.SelectedIndex = 0;
 
             IconData icondata = DatParser.GetIconData(selectedUnit.icon, entities);
             if (icondata.size_x > 0 && entities.MTmaster != null)
@@ -2762,7 +2957,9 @@ namespace Holocron
             if (selectedUnit.skirmcost > 1) UnitSkirmCostLabel.Text = "Skirmish: " + selectedUnit.skirmcost.ToString();
             else UnitSkirmCostLabel.Text = "";
             if (selectedUnit.crew > 0) UnitCrewLabel.Text = "Crew: " + selectedUnit.crew.ToString();
+            else if (selectedUnit.unitclass != "") UnitCrewLabel.Text = "Class: " + Find_Text_Entry(selectedUnit.unitclass, entities);
             else UnitCrewLabel.Text = "";
+            toolTip1.SetToolTip(UnitCrewLabel, UnitCrewLabel.Text);
             if (selectedUnit.buildtime > 0) UnitTimeLabel.Text = "Build Time: " + selectedUnit.buildtime.ToString();
             else UnitTimeLabel.Text = "";
             if (selectedUnit.skirmbuildtime > 0) UnitSkirmTimeLabel.Text = "Skirmish: " + selectedUnit.skirmbuildtime.ToString();
@@ -2797,6 +2994,10 @@ namespace Holocron
             else VariantLabel.Text = "";
             VariantLabel.Text += "\n" + FindDescendants(selectedUnit.unitname, entities.objects);
             setDPSBreakdown(true);
+
+            if (selectedUnit.hyperspaceSpeed > 0) HyperspaceLabel.Text = "Hyperspace Speed: " + selectedUnit.hyperspaceSpeed.ToString();
+            else HyperspaceLabel.Text = "";
+            //todo show highlight blob. Ideally show the tga too
 
             UnitSubunitListbox.Items.Clear();
             if (!(selectedUnit.consolidatedUnits is null) && selectedUnit.consolidatedUnits.Count > 0)
@@ -2899,7 +3100,6 @@ namespace Holocron
             if (GroundRadioButton.Checked || UnitRadioButton.Checked) LocomotorLabel.Text = "Locomotor: " + selectedUnit.locomotor_type; //todo ground hero and company
             else if (selectedUnit.fightermode >= 0) LocomotorLabel.Text = "Locomotor: Fighter";
             else LocomotorLabel.Text = "";
-            AlphaCheckBox.Checked = selectedUnit.fightermode > 0; //0 = gunship, which does have the locomotor but uses normal cp calcs
 
             CategoryLabel.Text = "Category: ";
             bool furst = true;
@@ -3048,6 +3248,7 @@ namespace Holocron
                     }
                     UnitAccTierLabel.Text = "Accuracy Tier: " + acctier.ToString("0.#");
                 }
+                if (acctier is float.NaN) acctier = 0; //Don't let missile only units spoils the rest of the CP calcs
                 calcCP = CalculateSpaceCPfromUnit(selectedUnit, acctier);
             }
             else
@@ -3683,6 +3884,13 @@ namespace Holocron
                 case UnitSortTypes.crc:
                     unit.sortfloat = Text_Entry.calculateCRC(unit.unitname.ToUpper());
                     break;
+                case UnitSortTypes.Highlight:
+                    unit.sortstring = unit.highlight;
+                    if (unit.sortstring == "") unit.sortstring = " "; //Emptry strings trigger a sort float in the tostring function
+                    break;
+                case UnitSortTypes.HyperspaceSpeed:
+                    unit.sortfloat = unit.hyperspaceSpeed;
+                    break;
             }
 
             //TODO remove invalid sort conditions on rb change
@@ -3731,7 +3939,7 @@ namespace Holocron
                 bool match = false;
                 foreach (faction filter in globals.UnitFilterConfig.factions)
                 {
-                    if (unit.affiliations.Contains(filter.codename))
+                    if (unit.affiliations.Contains(filter.codename) || unit.fake_affiliations.Contains(filter.codename))
                     {
                         match = true;
                         break;
@@ -3857,6 +4065,10 @@ namespace Holocron
             }
 
             if (!categoryFilter(unit, globals.UnitFilterConfig.skirmishModes)) return false;
+            if (FighterRadioButton.Checked)
+            {
+                if (!squadronsizefilter(unit, globals.UnitFilterConfig.squadronSizes)) return false;
+            }
 
             if (globals.UnitFilterConfig.pdMode > 0)
             {
@@ -3955,7 +4167,6 @@ namespace Holocron
             string save = "";
             if (UnitListBox.SelectedItems.Count > 0) save = ((unit)UnitListBox.SelectedItem).unitname;
             UnitListBox.Items.Clear();
-            string search = UnitSearchTextBox.Text;
             List<unit> units;
             List<unit> sorted = new List<unit>();
 
@@ -3974,7 +4185,25 @@ namespace Holocron
                 unit unit = units[i];
                 if (unit.variantbase != "Infantry_Dummy_Template" && unit.unitname != "Infantry_Dummy_Template" && (!StructureRadioButton.Checked || !SpaceStructureRadioButton.Checked || (unit.hp > 1 && !unit.flags.Contains("NotOpportunityTarget"))))
                 {
-                    if ((search == "" || (unit.username).ToLower().Contains(search.ToLower())) && filterUnit(unit))
+                    bool match = false;
+                    string unitname = unit.unitname.ToLower();
+                    string username = unit.username.ToLower();
+                    string[] search = UnitSearchTextBox.Text.Split(';');
+                    foreach (string term in search)
+                    {
+                        string lterm = term.ToLower();
+                        if(unitname.Contains(lterm))
+                        {
+                            match = true;
+                            break;
+                        }
+                        if (username.Contains(lterm))
+                        {
+                            match = true;
+                            break;
+                        }
+                    }
+                    if ((UnitSearchTextBox.Text == "" || match) && filterUnit(unit))
                     {
                         if (StructureRadioButton.Checked || SpaceStructureRadioButton.Checked)
                         {
@@ -4108,6 +4337,8 @@ namespace Holocron
             bool spaceonly = mode == 0 || mode == 3 || mode == 4;
             bool companyonly = mode == 1;
             bool groundunitonly = mode == 2;
+
+            AlphaCheckBox.Checked = mode == 3;
 
             if (mode == 3) UnitAllSquadSizesCheckBox.Visible = true;
             else UnitAllSquadSizesCheckBox.Visible = false;
@@ -4260,6 +4491,8 @@ namespace Holocron
             if (UnitHPListbox.SelectedItems.Count > 0)
             {
                 hardpoint selected = (hardpoint)UnitHPListbox.SelectedItem;
+                toolTip1.SetToolTip(HPDetailLabel, "Projectile name: " + selected.projectile + "\nBase DPS is the direct number, average applied is the median amount applied across shield and armor types after modifiers");
+                ;
                 HPDetailLabel.Text = "HP Type: " + selected.hpType;
                 if (selected.damageAmount > 0)
                 {
@@ -4314,6 +4547,7 @@ namespace Holocron
                             UnitSFXListbox.Items.Add(sfx);
                         }
                     }
+                    if (UnitSFXListbox.Items.Count > 0) UnitSFXListbox.SelectedIndex = 0;
                 }
             }
             else
@@ -4654,15 +4888,15 @@ namespace Holocron
         private void gotoUnitUniversal(string obj)
         {
             int subtype = 0;
-            if (entities.spaceUnits.FindIndex(s => s.unitname == obj) >= 0) subtype = 0;
-            if (entities.groundCompanies.FindIndex(s => s.unitname == obj) >= 0) subtype = 1;
-            if (entities.groundUnits.FindIndex(s => s.unitname == obj) >= 0) subtype = 2;
-            if (entities.fighters.FindIndex(s => s.unitname == obj) >= 0) subtype = 3;
-            if (entities.spaceHeroes.FindIndex(s => s.unitname == obj) >= 0) subtype = 4;
-            if (entities.heroCompanies.FindIndex(s => s.unitname == obj) >= 0) subtype = 5;
-            if (entities.groundHeroes.FindIndex(s => s.unitname == obj) >= 0) subtype = 6;
-            if (entities.structures.FindIndex(s => s.unitname == obj) >= 0) subtype = 7;
-            if (entities.spaceStructures.FindIndex(s => s.unitname == obj) >= 0) subtype = 8;
+            if (entities.spaceUnits.Exists(s => String.Equals(s.unitname, obj, StringComparison.OrdinalIgnoreCase))) subtype = 0;
+            else if (entities.groundCompanies.Exists(s => String.Equals(s.unitname, obj, StringComparison.OrdinalIgnoreCase))) subtype = 1;
+            else if (entities.groundUnits.Exists(s => String.Equals(s.unitname, obj, StringComparison.OrdinalIgnoreCase))) subtype = 2;
+            else if (entities.fighters.Exists(s => String.Equals(s.unitname, obj, StringComparison.OrdinalIgnoreCase))) subtype = 3;
+            else if (entities.spaceHeroes.Exists(s => String.Equals(s.unitname, obj, StringComparison.OrdinalIgnoreCase))) subtype = 4;
+            else if (entities.heroCompanies.Exists(s => String.Equals(s.unitname, obj, StringComparison.OrdinalIgnoreCase))) subtype = 5;
+            else if (entities.groundHeroes.Exists(s => String.Equals(s.unitname, obj, StringComparison.OrdinalIgnoreCase))) subtype = 6;
+            else if (entities.structures.Exists(s => String.Equals(s.unitname, obj, StringComparison.OrdinalIgnoreCase))) subtype = 7;
+            else if (entities.spaceStructures.Exists(s => String.Equals(s.unitname, obj, StringComparison.OrdinalIgnoreCase))) subtype = 8;
             insert_history((int)historymaintabs.unit, subtype, obj, true);
         }
 
@@ -5096,6 +5330,22 @@ namespace Holocron
 
                 //todo regimes
 
+                //Favor tracks
+                foreach(FavorTrack track in entities.FavorTracks)
+                {
+                    if(string.Equals(track.faction, faction.codename, StringComparison.OrdinalIgnoreCase)){
+                        foreach(FavorBuildable bld in track.buildables)
+                        {
+                            if (string.Equals(bld.unit, unit.unitname, StringComparison.OrdinalIgnoreCase))
+                            {
+                                if (firstunlock) firstunlock = false;
+                                else unlocks += ", ";
+                                unlocks += "Favor Track " + track.name + " (" + bld.threshold + ")";
+                            }
+                        }
+                    }
+                }
+
                 //GC master scripts
                 foreach (galacticConquest GC in entities.Conquests)
                 {
@@ -5451,6 +5701,11 @@ namespace Holocron
                 UnitSFXBasicRB.Checked = true;
                 populateUnitSFXList();
             }
+        }
+
+        private void WeaponGradeCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            setDPSBreakdown();
         }
 
         private void ExportButton_Click(object sender, EventArgs e)
@@ -6489,7 +6744,19 @@ namespace Holocron
             for (int i = 0; i < entities.Planets.Count; i++) //Can't use for each because terrain type is saved as it is calculated
             {
                 planet planet = entities.Planets[i];
-                if (planet.codename != "Galaxy_Core_Art_Model" && planet.username.ToLower().Contains(PlanetSearchBox.Text.ToLower()) && filterPlanet(planet))
+                bool match = false;
+                string username = planet.username.ToLower();
+                string[] search = PlanetSearchBox.Text.Split(';');
+                foreach (string term in search)
+                {
+                    string lterm = term.ToLower();
+                    if (username.Contains(lterm))
+                    {
+                        match = true;
+                        break;
+                    }
+                }
+                if (planet.codename != "Galaxy_Core_Art_Model" && match && filterPlanet(planet))
                 {
                     sorted.Add(sortPlanet(planet));
                     int x = (Int32)(planet.x_coord * globals.scale + globals.origin);
@@ -6939,6 +7206,7 @@ namespace Holocron
                 }
                 GCDialogListBox.Items.Clear();
                 foreach (string dialog in dialogs) GCDialogListBox.Items.Add(dialog);
+                if (GCDialogListBox.Items.Count > 0) GCDialogListBox.SelectedIndex = 0;
 
                 speechevents.Sort((s1, s2) => s1.title.CompareTo(s2.title));
                 GCSpeechListBox.Items.Clear();
@@ -7132,6 +7400,7 @@ namespace Holocron
                 }
             }
             GCPictureBox.Image = (Bitmap)GCPictureBox.Tag;
+            if (GCPlanetListBox.Items.Count > 0) GCPlanetListBox.SelectedIndex = 0;
         }
 
         private void populateGCMapListBox()
@@ -8455,12 +8724,7 @@ namespace Holocron
                 dialogfile = File.ReadAllLines(docfile);
                 foreach (string line in dialogfile)
                 {
-                    string nocomment = line;
-                    int comm = nocomment.IndexOf("--");
-                    if (comm >= 0)
-                    {
-                        nocomment = nocomment.Substring(0, comm);
-                    }
+                    string nocomment = removeLuaComment(line);
                     if (nocomment.Contains("Create_Influence_Entry"))
                     {
                         try
@@ -8561,8 +8825,188 @@ namespace Holocron
         private void rbGovernment_CheckedChanged(object sender, EventArgs e)
         {
             //todo - possibly only read nondynamic text
+            //How do coorectly determine which faction opens which gov guide?
         }
 
+        private void checkedErrorTypesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show(ReadErrorDocumentation());
+        }
+
+        private void ProjectileSearchTextBox_TextChanged(object sender, EventArgs e)
+        {
+            FillProjectiles();
+        }
+
+        private void ProjectileNameCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            FillProjectiles();
+        }
+
+        private void ProjectileListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(ProjectileListBox.SelectedItems.Count > 0)
+            {
+                projectile proj = (projectile)ProjectileListBox.SelectedItem;
+                insert_history((int)historymaintabs.lookups, (int)lookupsubtabs.lkProj, proj.name, false);
+
+                ProjNameLabel.Text = "Name: " + proj.name;
+                ProjDamageLabel.Text = "Damage: " + proj.damageAmount;
+                ProjTypeLabel.Text = "Damage Type: " + proj.damageType;
+                ProjSpeedLabel.Text = "Speed: " + proj.speed;
+                if (proj.turn > 0) ProjTurnLabel.Text = "Turn: " + proj.turn;
+                else ProjTurnLabel.Text = "";
+                if (proj.blastRadius > 0) ProjRadiusLabel.Text = "Blast Radius: " + proj.blastRadius;
+                else ProjRadiusLabel.Text = "";
+
+                ProjectileUserListBox.Items.Clear();
+                foreach (unit unit in entities.objects)
+                {
+                    if (unit.percompany > 1) continue; //don't show companies/squadrons
+                    bool uses = false;
+                    foreach(hardpoint hp in unit.consolidatedhps)
+                    {
+                        string hpproj = hp.projectile;
+                        if (!ProjectileNameCheckBox.Checked) hpproj = SharedFunctions.convertProjectileToName(hpproj);
+                        if(string.Equals(hpproj, proj.name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            uses = true;
+                            break;
+                        }
+                    }
+                    if (uses)
+                    {
+                        ProjectileUserListBox.Items.Add(unit);
+                    }
+                }
+                ProjectileUserLabel.Text = "Units Using (" + ProjectileUserListBox.Items.Count.ToString() +  "):";
+            }
+        }
+
+        private void ProjectileUserGotoButton_Click(object sender, EventArgs e)
+        {
+            if (ProjectileUserListBox.SelectedItems.Count > 0) gotoUnitUniversal(((unit)ProjectileUserListBox.SelectedItem).unitname);
+        }
+
+        private void CorpFilterButton_Click(object sender, EventArgs e)
+        {
+            UnitFilter INeedYourFunctions = new UnitFilter();
+            globals.UnitFilterConfig = INeedYourFunctions.newFilter();
+            globals.UnitFilterConfig.discountMode = 1;
+            globals.UnitFilterConfig.planetMode = 1;
+
+            MainTab.SelectedIndex = (int)historymaintabs.unit;
+            StructureRadioButton.Checked = true;
+        }
+
+        private void FavorListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(FavorListBox.SelectedItems.Count > 0)
+            {
+                FavorTrack Track = (FavorTrack)FavorListBox.SelectedItem;
+                insert_history((int)historymaintabs.govs, (int)historygovtabs.favor, Track.name);
+                FavorNameLabel.Text = Track.name;
+                try
+                {
+                    string toshow = Track.faction;
+                    faction faction = entities.factions.FirstOrDefault(s => String.Equals(s.codename, Track.faction, StringComparison.OrdinalIgnoreCase));
+                    if (!(faction.codename is null)) toshow = faction.textname;
+                    FavorFactionLabel.Text = "Faction: " + toshow;
+                }
+                catch { FavorFactionLabel.Text = ""; };
+                FavorMaxLabel.Text = "Max Favor: " + Track.maxFavor.ToString();
+                if (Track.rename == "" || Track.rename is null || Track.rename == "nil") FavorRenameLabel.Text = "";
+                else FavorRenameLabel.Text = "Faction Rename: " + Track.rename;
+                if (Track.integrates)
+                {
+                    string toshow = Track.integratee;
+                    faction faction = entities.factions.FirstOrDefault(s => String.Equals(s.codename, Track.integratee, StringComparison.OrdinalIgnoreCase));
+                    if (!(faction.codename is null)) toshow = faction.textname;
+                    FavorIntegratesLabel.Text = "Integrates Faction: " + toshow;
+                    if(Track.integrateSpeech is null || Track.integrateSpeech == "nil") FavorIntegratesRichTextBox.Visible = false;
+                    else
+                    {
+                        FavorIntegratesRichTextBox.Visible = true;
+                        FavorIntegratesRichTextBox.Text = Find_Text_Entry(Track.integrateSpeech, entities);
+                    }
+                }
+                else
+                {
+                    FavorIntegratesLabel.Text = "";
+                    FavorIntegratesRichTextBox.Visible = false;
+                    FavorIntegratesRichTextBox.Text = "";
+                }
+
+                FavorUnlockListBox.Items.Clear();
+                FavorSpawnListBox.Items.Clear();
+                FavorContributorsListBox.Items.Clear();
+                foreach (FavorBuildable buildable in Track.buildables) FavorUnlockListBox.Items.Add(buildable);
+                foreach (FavorSpawn spawn in Track.spawns) FavorSpawnListBox.Items.Add(spawn);
+                foreach (FavorSupport support in Track.supports) FavorContributorsListBox.Items.Add(support);
+
+                FavorUnlockLabel.Text = "";
+                FavorTagULabel.Text = "";
+                FavorSpawnLabel.Text = "";
+                FavorTagSLabel.Text = "";
+                FavorSupportNameLabel.Text = "";
+                FavorSupportLabel.Text = "";
+                FavorDescRichTextBox.Text = "";
+                FavorLocksLabel.Text = "";
+            }
+            
+        }
+
+        private void FavorUnlockListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (FavorUnlockListBox.SelectedItems.Count > 0)
+            {
+                FavorBuildable selected = (FavorBuildable)FavorUnlockListBox.SelectedItem;
+
+                FavorUnlockLabel.Text = "Unlock Threshold: " + selected.threshold;
+                if (selected.tag != "") FavorTagULabel.Text = "Tag: " + selected.tag;
+            }
+        }
+
+        private void FavorSpawnListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (FavorSpawnListBox.SelectedItems.Count > 0)
+            {
+                FavorSpawn selected = (FavorSpawn)FavorSpawnListBox.SelectedItem;
+
+                FavorSpawnLabel.Text = "Spawn Threshold: " + selected.threshold;
+                if (selected.tag != "") FavorTagSLabel.Text = "Tag: " + selected.tag;
+            }
+        }
+
+        private void FavorContributorsListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (FavorContributorsListBox.SelectedItems.Count > 0)
+            {
+                FavorSupport selected = (FavorSupport)FavorContributorsListBox.SelectedItem;
+
+                FavorSupportNameLabel.Text = selected.unit;
+                FavorSupportLabel.Text = "Favor Change: " + selected.value;
+                FavorDescRichTextBox.Text = "";
+                foreach (string entry in SplitXMLWhitespaceList(selected.desc)) FavorDescRichTextBox.Text += Find_Text_Entry(entry, entities) + "\n";
+                if (selected.locks) FavorLocksLabel.Text = "Locks";
+                else FavorLocksLabel.Text = "";
+            }
+        }
+
+        private void FavorUnlocksGotoButton_Click(object sender, EventArgs e)
+        {
+            if (FavorUnlockListBox.SelectedItems.Count > 0) gotoUnitUniversal(((FavorBuildable)FavorUnlockListBox.SelectedItem).unit);
+        }
+
+        private void FavorSpawnGotoButton_Click(object sender, EventArgs e)
+        {
+            if (FavorSpawnListBox.SelectedItems.Count > 0) gotoUnitUniversal(((FavorSpawn)FavorSpawnListBox.SelectedItem).unit);
+        }
+
+        private void FavorContributorsGotoButton_Click(object sender, EventArgs e)
+        {
+            if (FavorContributorsListBox.SelectedItems.Count > 0) gotoUnitUniversal(((FavorSupport)FavorContributorsListBox.SelectedItem).unit);
+        }
         //Don't put any functions below here if you want it to still compile
     }
 }

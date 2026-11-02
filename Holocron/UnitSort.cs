@@ -25,6 +25,7 @@ namespace Holocron
             AType,
             ChainStart,
             ChainEnd,
+            Highlight,
             Name, //Put all string sort classes before Name so < can find them
             Pop,
             Price,
@@ -59,6 +60,7 @@ namespace Holocron
             incomeAmount,
             CommandBonus,
             crc,
+            HyperspaceSpeed,
         }
 
         public struct UnitSortClass
@@ -126,6 +128,8 @@ namespace Holocron
                     NameCountRB.Visible = false;
                     break;
                 case 3: //Fighter
+                    denomTypes.Add("Per Unit in Company");
+                    CompanySizeRB.Visible = true;
                     break;
                 case 4: //SpaceHero
                     PriceRB.Visible = false;
@@ -274,6 +278,12 @@ namespace Holocron
                 case UnitSortTypes.crc:
                     crcRB.Checked = true;
                     break;
+                case UnitSortTypes.HyperspaceSpeed:
+                    HyperspaceSpeedRB.Checked = true;
+                    break;
+                case UnitSortTypes.Highlight:
+                    HighlightRB.Checked = true;
+                    break;
                 default:
                     break;
             }
@@ -362,6 +372,8 @@ namespace Holocron
             else if (IncomeAmountRB.Checked) sortConfig.SortType = UnitSortTypes.incomeAmount;
             else if (CommandBonusRB.Checked) sortConfig.SortType = UnitSortTypes.CommandBonus;
             else if (crcRB.Checked) sortConfig.SortType = UnitSortTypes.crc;
+            else if (HyperspaceSpeedRB.Checked) sortConfig.SortType = UnitSortTypes.HyperspaceSpeed;
+            else if (HighlightRB.Checked) sortConfig.SortType = UnitSortTypes.Highlight;
 
 
             sortConfig.complementCP = ComplementCheckBox.Checked;

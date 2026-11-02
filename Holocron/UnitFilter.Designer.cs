@@ -95,6 +95,7 @@ namespace Holocron
             this.IncomeFalseRB = new System.Windows.Forms.RadioButton();
             this.IncomePanel = new System.Windows.Forms.Panel();
             this.SkirmishListBox = new System.Windows.Forms.ListBox();
+            this.SquadronListBox = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.ShipyardUpDown)).BeginInit();
             this.BuildPanel.SuspendLayout();
             this.PlanetPanel.SuspendLayout();
@@ -805,11 +806,28 @@ namespace Holocron
             this.SkirmishListBox.Size = new System.Drawing.Size(120, 108);
             this.SkirmishListBox.TabIndex = 76;
             // 
+            // SquadronListBox
+            // 
+            this.SquadronListBox.FormattingEnabled = true;
+            this.SquadronListBox.Items.AddRange(new object[] {
+            "Individual Fighter",
+            "Single Squadron",
+            "Half Squadron",
+            "Double Squadron",
+            "Triple Squadron",
+            "Third Squadron"});
+            this.SquadronListBox.Location = new System.Drawing.Point(571, 337);
+            this.SquadronListBox.Name = "SquadronListBox";
+            this.SquadronListBox.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            this.SquadronListBox.Size = new System.Drawing.Size(120, 82);
+            this.SquadronListBox.TabIndex = 77;
+            // 
             // UnitFilter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(991, 459);
+            this.Controls.Add(this.SquadronListBox);
             this.Controls.Add(this.SkirmishListBox);
             this.Controls.Add(this.CommandPanel);
             this.Controls.Add(this.IncomePanel);
@@ -942,5 +960,6 @@ namespace Holocron
         private System.Windows.Forms.RadioButton IncomeFalseRB;
         private System.Windows.Forms.Panel IncomePanel;
         private System.Windows.Forms.ListBox SkirmishListBox;
+        private System.Windows.Forms.ListBox SquadronListBox;
     }
 }

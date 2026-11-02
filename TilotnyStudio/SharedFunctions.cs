@@ -51,6 +51,11 @@ public static class SharedFunctions
         return Path.Substring(Path.IndexOf("\\") + 1, Path.Length - Path.IndexOf("\\") - 1);
     }
 
+    public static string ReadErrorDocumentation()
+    {
+        return "Files that cannot be located\nText Entries that cannot be located for units and planets\nInvalid projectile types\nUnknown unit abilities\nXML errors in GC files\nBombers that do not have a Land_Bomber_Type\nInvalid Land_Bomber_Type\nLand_Bomber_Type without a model file/undefined model\nLand_Bomber_Type missing LANDBOMBER_LOCOMOTOR";
+    }
+
     public static byte[] getFileFromMegs(string corePath, entities entities)
     {
         string upper = corePath.ToUpper();
@@ -221,7 +226,7 @@ public static class SharedFunctions
     }
 
     public static string Find_Text_Entry(string textid, entities entities)
-    {
+    {//todo redo with CRC
         foreach (Text_Entry entry in entities.Text)
         {
             if (entry.identifier == textid)
@@ -230,6 +235,23 @@ public static class SharedFunctions
             }
         }
         return textid;
+    }
+
+    public static bool Text_Entry_Exists(string textid, entities entities)
+    {
+        uint crc = Text_Entry.calculateCRC(textid); //crc is much faster than comparing strings
+        return entities.Text.Exists(s => s.crc == crc);
+    }
+
+    public static string removeLuaComment(string line)
+    {
+        string nocomment = line;
+        int comm = nocomment.IndexOf("--");
+        if (comm >= 0)
+        {
+            nocomment = nocomment.Substring(0, comm);
+        }
+        return nocomment;
     }
 
     public static string fullTrim(string input)
@@ -472,6 +494,8 @@ public static class SharedFunctions
         string reqstructures = null;
         string reqorbit = "";
         string BTS = "";
+        float hyperspaceSpeed = -1;
+        string highlight = "";
         hardpoint builtin = new hardpoint();
         List<string> categories = new List<string>();
         List<string> affiliations = new List<string>();
@@ -508,13 +532,17 @@ public static class SharedFunctions
             if (!(value.LastChild is null))
             {
                 if (value.LastChild.Value.ToLower() == "yes") locked = 1; //May need to check "true" as well?
-                else locked = 0; //Distinguish explicitly unlocked vs undefined = unlcoked for sufficiently complex variant chains
+                else locked = 0; //Distinguish explicitly unlocked vs undefined = unlocked for sufficiently complex variant chains
             }
         }
         value = unit.SelectSingleNode("descendant::Text_ID");
         if (!(value is null))
         {
-            if (!(value.LastChild is null)) username = value.InnerText.Trim();
+            if (!(value.LastChild is null))
+            {
+                username = value.InnerText.Trim();
+                if (!Text_Entry_Exists(username, entities)) entities.readerrors += "\nText " + username + " not found for " + name;
+            }
         }
         value = unit.SelectSingleNode("descendant::Build_Cost_Credits");
         if (!(value is null))
@@ -738,6 +766,7 @@ public static class SharedFunctions
                 string crewst = crewarray[crewarray.Length - 1];
                 int.TryParse(crewst.Replace(",", ""), out crew);
                 unitclass = unitclass.Trim();
+                if(crewarray.Length == 0) if (!Text_Entry_Exists(unitclass, entities)) entities.readerrors += "\nText " + unitclass + " not found for " + name;
             }
         }
         value = unit.SelectSingleNode("descendant::Required_Planets");
@@ -754,6 +783,10 @@ public static class SharedFunctions
             if (!(value.LastChild is null))
             {
                 tooltip = value.InnerText;
+                foreach (string entry in SplitXMLWhitespaceList(tooltip))
+                {
+                    if (!Text_Entry_Exists(entry, entities)) entities.readerrors += "\nText " + entry + " not found for " + name;
+                }
             }
         }
         value = unit.SelectSingleNode("descendant::Icon_Name");
@@ -1072,25 +1105,29 @@ public static class SharedFunctions
                 }
             }
         }
+        value = unit.SelectSingleNode("descendant::Hyperspace_Speed");
+        if (!(value is null))
+        {
+            hyperspaceSpeed = float.Parse(value.LastChild.Value);
+        }
+        value = unit.SelectSingleNode("descendant::Hyperspace");
+        if (!(value is null))
+        {
+            if (String.Equals(value.LastChild.Value, "no", StringComparison.OrdinalIgnoreCase)) hyperspaceSpeed = 0; //Probably more useful to mark this rather than store the useless value
+        }
+        value = unit.SelectSingleNode("descendant::Highlight_Blob_Material_Name");
+        if (!(value is null))
+        {
+            if (!(value.LastChild is null))
+            {
+                highlight = value.LastChild.Value;
+            }
+        }
         value = unit.SelectSingleNode("descendant::Death_Explosions");
         if (!(value is null) && value.InnerText != "")
         {
             string proj = value.InnerText.Trim().ToLower();
-            builtin.name = "dest";
-            builtin.hpType = "DESTRUCTION";
-            builtin.hp = -1;
-            builtin.targetable = false;
-            builtin.quantity = 1;
-            builtin.range = range;
-            builtin.projectile = proj;
-            builtin.firesound = "";
-            builtin.diesound = "";
-            builtin.inaccuracyAmounts = new List<float>();
-            builtin.inaccuracyTypes = new List<string>();
-            builtin.recharge = 1;
-            builtin.pulseCount = 1;
-            builtin.pulseDelay = 0;
-            bool notfound = true;
+            //bool notfound = true;
             int index = LookupUntemplateID(proj);
             if (index < entities.projectilehashes.Count)
             {
@@ -1099,15 +1136,30 @@ public static class SharedFunctions
                     projectile project = entities.projectiles[entities.projectilehashes[index][j]];
                     if (project.name.ToLower() == proj)
                     {
+                        builtin.name = "dest";
+                        builtin.hpType = "DESTRUCTION";
+                        builtin.hp = -1;
+                        builtin.targetable = false;
+                        builtin.quantity = 1;
+                        builtin.range = range;
+                        builtin.projectile = proj;
+                        builtin.firesound = "";
+                        builtin.diesound = "";
+                        builtin.inaccuracyAmounts = new List<float>();
+                        builtin.inaccuracyTypes = new List<string>();
+                        builtin.recharge = 1;
+                        builtin.pulseCount = 1;
+                        builtin.pulseDelay = 0;
+
                         builtin.damageType = project.damageType;
                         builtin.damageAmount = project.damageAmount;
                         builtin.blastRadius = project.blastRadius;
-                        notfound = false;
+                        //notfound = false;
                         break;
                     }
                 }
             }
-            //if (notfound && proj != "") entities.readerrors += "\nCannot find death explosion type " + value.InnerText.Trim() + " for unit " + name; //Comes up way too often while reading mormal particles is skipped for optimizations
+            //if (notfound && proj != "") entities.readerrors += "\nCannot find death explosion type " + value.InnerText.Trim() + " for unit " + name; //Comes up way too often while reading normal particles and is skipped for optimizations
         }
         value = unit.SelectSingleNode("descendant::Unit_Abilities_Data");
         if (!(value is null))
@@ -1725,6 +1777,7 @@ public static class SharedFunctions
             skirmcost = skirmcost,
             skirmbuildtime = skirmbuildtime,
             affiliations = affiliations,
+            fake_affiliations = new List<string>(),
             pop = pop,
             techlevel = techlevel,
             locked = locked,
@@ -1795,12 +1848,18 @@ public static class SharedFunctions
             garrisonValue_baseID = -1,
             garrisonType_baseID = -1,
             maintenance_baseID = -1,
+            ability_baseID = -1,
+            unitability_baseID = -1,
+            hyperspaceSpeed_baseID = -1,
+            highlight_baseID = -1,
             cp_baseID = -1,
             abilities = abilities,
             unitabilities = unitabilities,
             hero = hero,
             builtin = builtin,
             garrison = garrison,
+            hyperspaceSpeed = hyperspaceSpeed,
+            highlight = highlight,
             BasicSFXEvents = basicSFXEvents,
             BasicSFXEvents_baseID = basicSFXEvents_baseID,
             SFXEvent_Attack_Hardpoint = SFXEvent_Attack_Hardpoint,
@@ -3045,6 +3104,35 @@ public static class SharedFunctions
         return true;
     }
 
+    public static bool squadronsizefilter(unit unit, List<int> sizes)
+    {
+        if (unit.unitname.Contains("_Half"))
+        {
+            if (!sizes.Contains(2)) return false;
+        }
+        else if (unit.unitname.Contains("_Double"))
+        {
+            if (!sizes.Contains(3)) return false;
+        }
+        else if (unit.unitname.Contains("_Triple"))
+        {
+            if (!sizes.Contains(4)) return false;
+        }
+        else if (unit.unitname.Contains("_Third"))
+        {
+            if (!sizes.Contains(5)) return false;
+        }
+        else if (unit.unitname.Contains("_Squadron"))
+        {
+            if (!sizes.Contains(1)) return false;
+        }
+        else
+        {
+            if (!sizes.Contains(0)) return false;
+        }
+        return true;
+    }
+
     public static string ReadXMLElement(string line)
     {
         int start = line.IndexOf(">") + 1;
@@ -3196,281 +3284,6 @@ public static class SharedFunctions
         }
     }
 
-    public static void parsePlanetsTheHardWay(entities entities, bool allplanets = false)
-    {//beating builtin functions for efficiency turns out to be quite difficult
-        string path;
-        if (allplanets) path = entities.modpaths[entities.modpaths.Count - 1] + "\\XML\\Planets.xml";
-        else path = getModFile("XML\\Planets.xml", entities);
-        entities.Planets.Clear();
-        entities.PlanetBounds = 0;
-        string[] lines = File.ReadAllLines(path);
-
-        string codename = "";
-        string username = "";
-        string description = "";
-        string population_desc = "";
-        string fauna = "";
-        float x = 0;
-        float y = 0;
-        int credits = 0;
-        int shipyard = 0;
-        string groundMap = "";
-        string spaceMap = "";
-        string mapTerrain = "";
-        bool has_ground = false;
-
-        for (int i = 0; i < lines.Length; i++)
-        {
-            string line = lines[i];
-
-            if (line.Contains("<Planet Name="))
-            {
-                username = line.Substring(line.IndexOf("\"") + 1, line.IndexOf(">") - line.IndexOf("\"") - 2);
-                description = "";
-                population_desc = "";
-                fauna = "";
-                x = 0;
-                y = 0;
-                credits = 0;
-                shipyard = 0;
-                groundMap = "";
-                spaceMap = "";
-                has_ground = false;
-            }
-            else if (line.Contains("</Planet>"))
-            {
-                planet planet_obj = new planet
-                {
-                    codename = codename,
-                    username = username,
-                    desc_history = description,
-                    x_coord = x,
-                    y_coord = -y, //Inversion intentional
-                    credits = credits,
-                    groundMap = groundMap,
-                    spaceMap = spaceMap,
-                    has_ground = has_ground,
-                    desc_pop = population_desc,
-                    shipyard = shipyard,
-                    desc_fauna = fauna,
-                };
-                entities.Planets.Add(planet_obj);
-            }
-            else if (line.Contains("<Text_ID>")) username = Find_Text_Entry(ReadXMLElement(line), entities);
-            else if (line.Contains("<Galactic_Position>"))
-            {
-                string[] split = ReadWhiteSpaceAsCommas(ReadXMLElement(line));
-                x = Single.Parse(split[0]);
-                y = Single.Parse(split[1]);
-                entities.PlanetBounds = Math.Max(entities.PlanetBounds, x);
-                entities.PlanetBounds = Math.Max(entities.PlanetBounds, -x);
-                entities.PlanetBounds = Math.Max(entities.PlanetBounds, y);
-                entities.PlanetBounds = Math.Max(entities.PlanetBounds, -y);
-            }
-            else if (line.Contains("<Planet_Surface_Accessible>") && line.ToLower().Contains("yes")) has_ground = true;
-            else if (line.Contains("<Planet_Credit_Value>")) credits = (int)Single.Parse(ReadXMLElement(line));
-            else if (line.Contains("<Planet_Ability_Name>"))
-            {
-                switch (ReadXMLElement(line))
-                {
-                    case "TEXT_PLANET_LIGHT":
-                        shipyard = 1;
-                        break;
-                    case "TEXT_PLANET_HEAVY":
-                        shipyard = 2;
-                        break;
-                    case "TEXT_PLANET_CAPITAL":
-                        shipyard = 3;
-                        break;
-                    case "TEXT_PLANET_DREAD":
-                        shipyard = 4;
-                        break;
-                }
-            }
-            else if (line.Contains("<Land_Tactical_Map>"))
-            {
-                groundMap = ReadXMLElement(line);
-                if (groundMap != "")
-                {
-                    string mappath = getModFile("Art\\Maps\\" + groundMap, entities);
-                    if (mappath != "")
-                    {
-                        byte[] data = File.ReadAllBytes(mappath); //byte 46 is terrain type
-                        switch (data[46])
-                        {
-                            default:
-                                mapTerrain = "Temperate";
-                                break;
-                            case 1:
-                                mapTerrain = "Arctic";
-                                break;
-                            case 2:
-                                mapTerrain = "Desert";
-                                break;
-                            case 3:
-                                mapTerrain = "Forest";
-                                break;
-                            case 4:
-                                mapTerrain = "Swamp";
-                                break;
-                            case 5:
-                                mapTerrain = "Volcanic";
-                                break;
-                            case 6:
-                                mapTerrain = "Urban";
-                                break;
-                            case 7:
-                                mapTerrain = "Space";
-                                break;
-                        }
-                    }
-                }
-                else if (line.Contains("<Space_Tactical_Map>")) groundMap = ReadXMLElement(line);
-            }
-        }
-
-        entities.Planets.Sort((s1, s2) => s1.codename.CompareTo(s2.codename));
-    }
-
-    public static void parsePlanetsXMLLoop(entities entities, bool allplanets = false)
-    {//If there were any gains, they were modest
-        string path;
-        if (allplanets) path = entities.modpaths[entities.modpaths.Count-1] + "\\XML\\Planets.xml";
-        else path = getModFile("XML\\Planets.xml", entities);
-        entities.Planets.Clear();
-        entities.PlanetBounds = 0;
-        XmlDocument doc = new XmlDocument();
-        doc.PreserveWhitespace = true;
-        doc.Load(path);
-        XmlNode root = doc.DocumentElement;
-        XmlNodeList planets = root.SelectNodes("*");
-        foreach (XmlNode planet in planets)
-        {
-            string codename = planet.Attributes[0].Value;
-            string username = "";
-            string description = "";
-            string population_desc = "";
-            string fauna = "";
-            float x = 0;
-            float y = 0;
-            int credits = 0;
-            int shipyard = 0;
-            string mapTerrain = "";
-            string groundMap = "";
-            string spaceMap = "";
-            bool has_ground = false;
-
-            XmlNodeList xmlNodes = planet.SelectNodes("*");
-            foreach (XmlNode value in xmlNodes)
-            {
-                switch (value.Name)
-                {
-                    case "Text_ID":
-                        username = Find_Text_Entry(value.InnerText, entities);
-                        break;
-                    case "Galactic_Position":
-                        string[] split = ReadWhiteSpaceAsCommas(value.InnerText);
-                        x = Single.Parse(split[0]);
-                        y = Single.Parse(split[1]);
-                        entities.PlanetBounds = Math.Max(entities.PlanetBounds, x);
-                        entities.PlanetBounds = Math.Max(entities.PlanetBounds, -x);
-                        entities.PlanetBounds = Math.Max(entities.PlanetBounds, y);
-                        entities.PlanetBounds = Math.Max(entities.PlanetBounds, -y);
-                        break;
-                    case "Planet_Surface_Accessible":
-                        if (value.InnerText.ToLower().Contains("yes")) has_ground = true;
-                        break;
-                    case "Describe_History":
-                        description = value.InnerText;
-                        break;
-                    case "Describe_Wildlife":
-                        population_desc = value.InnerText;
-                        break;
-                    case "Planet_Credit_Value":
-                        credits = Int32.Parse(value.InnerText);
-                        break;
-                    case "Planet_Ability_Name":
-                        switch (value.InnerText)
-                        {
-                            case "TEXT_PLANET_LIGHT":
-                                shipyard = 1;
-                                break;
-                            case "TEXT_PLANET_HEAVY":
-                                shipyard = 2;
-                                break;
-                            case "TEXT_PLANET_CAPITAL":
-                                shipyard = 3;
-                                break;
-                            case "TEXT_PLANET_DREAD":
-                                shipyard = 4;
-                                break;
-                        }
-                        break;
-                    case "Land_Tactical_Map":
-                        groundMap = value.InnerText;
-                        if (groundMap != "")
-                        {
-                            string mappath = getModFile("Art\\Maps\\" + groundMap, entities);
-                            if (mappath != "")
-                            {
-                                byte[] data = File.ReadAllBytes(mappath); //byte 46 is terrain type
-                                switch (data[46])
-                                {
-                                    default:
-                                        mapTerrain = "Temperate";
-                                        break;
-                                    case 1:
-                                        mapTerrain = "Arctic";
-                                        break;
-                                    case 2:
-                                        mapTerrain = "Desert";
-                                        break;
-                                    case 3:
-                                        mapTerrain = "Forest";
-                                        break;
-                                    case 4:
-                                        mapTerrain = "Swamp";
-                                        break;
-                                    case 5:
-                                        mapTerrain = "Volcanic";
-                                        break;
-                                    case 6:
-                                        mapTerrain = "Urban";
-                                        break;
-                                    case 7:
-                                        mapTerrain = "Space";
-                                        break;
-                                }
-                            }
-                        }
-                        break;
-                    case "Space_Tactical_Map":
-                        spaceMap = value.InnerText;
-                        break;
-                }
-            }
-
-        planet planet_obj = new planet
-            {
-                codename = codename,
-                username = username,
-                desc_history = description,
-                x_coord = x,
-                y_coord = -y, //Inversion intentional
-                credits = credits,
-                groundMap = groundMap,
-                spaceMap = spaceMap,
-                has_ground = has_ground,
-                desc_pop = population_desc,
-                shipyard = shipyard,
-                desc_fauna = fauna,
-            };
-            entities.Planets.Add(planet_obj);
-        }
-
-        entities.Planets.Sort((s1, s2) => s1.codename.CompareTo(s2.codename));
-    }
-
     public static string getTerrainType(string map, entities entities)
     {
         int terraintype = getTerrainIndex(map, entities);
@@ -3505,7 +3318,7 @@ public static class SharedFunctions
                 corenne = Color.Gray; //"Urban"
                 break;
             case 7:
-                corenne = Color.Blue; //"Space"
+                corenne = Color.RoyalBlue; //"Space"
                 break;
         }
         return corenne;
@@ -3599,6 +3412,7 @@ public static class SharedFunctions
                 XmlNode value = planet.SelectSingleNode("descendant::Text_ID");
                 if (!(value is null))
                 {
+                    if (!Text_Entry_Exists(value.InnerText, entities)) entities.readerrors += "\nText " + value.InnerText + " not found for " + codename;
                     username = Find_Text_Entry(value.InnerText, entities);
                 }
                 value = planet.SelectSingleNode("descendant::Galactic_Position");
@@ -3621,21 +3435,25 @@ public static class SharedFunctions
                 if (!(value is null))
                 {
                     description = value.InnerText;
+                    if (!Text_Entry_Exists(value.InnerText, entities)) entities.readerrors += "\nText " + value.InnerText + " not found for " + codename;
                 }
                 value = planet.SelectSingleNode("descendant::Describe_Population");
                 if (!(value is null))
                 {
                     population_desc = value.InnerText;
+                    if (!Text_Entry_Exists(value.InnerText, entities)) entities.readerrors += "\nText " + value.InnerText + " not found for " + codename;
                 }
                 value = planet.SelectSingleNode("descendant::Describe_Wildlife");
                 if (!(value is null))
                 {
                     fauna = value.InnerText;
+                    if (!Text_Entry_Exists(value.InnerText, entities)) entities.readerrors += "\nText " + value.InnerText + " not found for " + codename;
                 }
                 value = planet.SelectSingleNode("descendant::Encyclopedia_Weather_Name");
                 if (!(value is null))
                 {
                     weather = value.InnerText;
+                    if (value.InnerText != "" && !Text_Entry_Exists(value.InnerText, entities)) entities.readerrors += "\nText " + value.InnerText + " not found for " + codename;
                     if (weather.Contains("_TRADE")) tradehub = true;
 
                 }
@@ -4100,7 +3918,10 @@ public static class SharedFunctions
             System.Xml.XmlNode value = mvdat.SelectSingleNode("descendant::Movie_File");
             if (!(value is null))
             {
-                file = value.LastChild.Value.Trim();
+                if(!(value.LastChild is null))
+                {
+                    file = value.LastChild.Value.Trim();
+                }
             }
             movieLoop movie = new movieLoop
             {
@@ -4111,6 +3932,264 @@ public static class SharedFunctions
         }
     }
 
+    public static List<LuaLibrarySegment> GenericLuaLibraryParse(string CorePath, entities entities)
+    {
+        List<LuaLibrarySegment> corenne = new List<LuaLibrarySegment>();
+        string path = getModFile("Scripts\\Library\\FavourRewards.lua", entities);
+        if (path != "") //fail return for getModFile
+        {
+            string[] Lib = File.ReadAllLines(path);
+            int nestedLevel = 0;
+            int linenumber = 0;
+            foreach (string line in Lib)
+            {
+                linenumber++;
+                string nocomment = line;
+                string comment = "";
+                int comm = nocomment.IndexOf("--");
+                if (comm >= 0)
+                {
+                    nocomment = line.Substring(0, comm);
+                    comment = line.Substring(comm + 2, line.Length - comm - 3);
+                }
+                string temp = nocomment.Replace("\\\"", ((char)1).ToString());
+                string reconstucted = "";
+                string[] segs = temp.Split('"');
+                for(int i = 0; i < segs.Length; i++)
+                {
+                    if (i % 2 == 0) reconstucted += segs[i].Replace("\"", "").Replace("[", "").Replace("]", ""); //Need to handle the ["name"] syntax. " is unhelpful in the final string vars too
+                    else reconstucted += segs[i].Replace(',', (char)2).Replace('=', (char)3).Replace('{', (char)4).Replace('}', (char)5); //Temporarily replace values within a string so the remainder are consistenly control chars
+                }
+
+                segs = reconstucted.Split(',');
+                foreach(string seg in segs)
+                {
+                    nestedLevel += seg.Count(c => c == '{') - seg.Count(c => c == '}');
+                    string trueseg = seg.Trim();
+                    if (trueseg.Length > 0) //ignore empty lines that still picked up indententation and empty splits when a line ends with a comma
+                    {
+                        trueseg = trueseg.Replace("{", "").Replace("}", ""); //Need to keep functional braces so individual changes in nesting can be detected by as the happen rather than checking that things jumped as }, was skipped 
+                        string variable = "";
+                        string value = "";
+                        string[] split = trueseg.Replace(((char)1).ToString(), "\\\"").Replace((char)2, ',').Replace((char)4, '{').Replace((char)5, '}').Split('=');
+                        if (split.Length > 1)
+                        {
+                            variable = split[0].Trim();
+                            value = split[1].Trim().Replace((char)3, '=');
+                        }
+                        else value = split[0].Trim();
+                        LuaLibrarySegment segment = new LuaLibrarySegment
+                        {
+                            nesting = nestedLevel,
+                            linenumber = linenumber,
+                            fullLine = nocomment,
+                            comment = comment,
+                            segment = trueseg,
+                            variable = variable,
+                            value = value,
+                        };
+                        corenne.Add(segment);
+                    }
+                }
+            }
+        }
+
+        return corenne;
+    }
+
+    public static string UsernameFromUnitname(string unitname, entities entities)
+    {
+        string corenne = unitname;
+        unit unit = entities.objects.FirstOrDefault(s => String.Equals(s.unitname, unitname, StringComparison.OrdinalIgnoreCase));
+        if (!(unit.unitname is null)) return unit.username;
+        return corenne;
+    }
+
+    public static void parseGovernment(entities entities)
+    {
+        //todo read Custom lib for fake affiliations
+        entities.FavorTracks.Clear();
+
+        List <LuaLibrarySegment> FavorLib = GenericLuaLibraryParse("Scripts\\Library\\FavourRewards.lua", entities);
+        FavorTrack Track = new FavorTrack();
+        Track.supports = new List<FavorSupport>();
+        Track.buildables = new List<FavorBuildable>();
+        Track.spawns = new List<FavorSpawn>();
+        FavorSupport support = new FavorSupport();
+        FavorBuildable buildable = new FavorBuildable();
+        FavorSpawn spawn = new FavorSpawn();
+        bool supportmode = false;
+        bool buildablemode = false;
+        bool spawnmode = false;
+        int oldnest = 0;
+
+        foreach (LuaLibrarySegment segment in FavorLib)
+        {
+            if (segment.nesting == 2 && oldnest == 3)
+            {
+                entities.FavorTracks.Add(Track);
+                Track = new FavorTrack();
+                Track.supports = new List<FavorSupport>();
+                Track.buildables = new List<FavorBuildable>();
+                Track.spawns = new List<FavorSpawn>();
+            }
+            if (segment.nesting == 3 && oldnest == 2)
+            {
+                Track.integratee = segment.variable;
+            }
+            if (segment.variable == "faction_name")
+            {
+                Track.faction = segment.value;
+            }
+            else if (segment.variable == "favour_rename")
+            {
+                Track.rename = segment.value;
+            }
+            else if (segment.nesting == 3 && segment.variable == "integrates")
+            {
+                Track.integrates = segment.value == "true";
+            }
+            else if (segment.nesting == 4 && segment.variable == "integration_speech")
+            {
+                Track.integrateSpeech = segment.value;
+            }
+            else if (segment.nesting == 3 && segment.variable == "name")
+            {
+                Track.name = segment.value;
+            }
+            else if (segment.nesting == 3 && segment.variable == "max_value")
+            {
+                int.TryParse(segment.value, out Track.maxFavor);
+            }
+            else if (supportmode)
+            {
+                if (segment.nesting == 3) supportmode = false;
+                else if (segment.variable == "name")
+                {
+                    support.unit = segment.value;
+                    unit unit = entities.objects.FirstOrDefault(s => String.Equals(s.unitname, support.unit, StringComparison.OrdinalIgnoreCase));
+                    if (unit.unitname is null)
+                    {
+                        support.username = support.unit;
+                        support.desc = "";
+                    }
+                    else
+                    {
+                        support.username = unit.username;
+                        support.desc = unit.tooltip;
+                    }
+                    
+                }
+                else if (segment.variable == "value")
+                {
+                     int.TryParse(segment.value, out support.value);
+                }
+                else if (segment.variable == "locks")
+                {
+                    support.locks = segment.value == "true";
+                }
+
+                if (segment.nesting == 4 && oldnest == 5)
+                {
+                    Track.supports.Add(support);
+                    support = new FavorSupport();
+                }
+            }
+            else if (segment.variable == "support_buildables")
+            {
+                supportmode = true;
+            }
+            else if (buildablemode)
+            {
+                if (segment.nesting == 3) buildablemode = false;
+                else if (segment.variable == "unit")
+                {
+                    buildable.unit = segment.value;
+                    buildable.username = UsernameFromUnitname(segment.value, entities);
+                }
+                else if (segment.variable == "threshold")
+                {
+                    int.TryParse(segment.value, out buildable.threshold);
+                }
+                else if (segment.variable == "tag")
+                {
+                    buildable.tag = segment.value;
+                }
+
+                if (segment.nesting == 4 && oldnest == 5)
+                {
+                    Track.buildables.Add(buildable);
+                    buildable = new FavorBuildable();
+                }
+            }
+            else if (segment.variable == "reward_list")
+            {
+                buildablemode = true;
+            }
+            else if (spawnmode)
+            {
+                if (segment.nesting == 3) spawnmode = false;
+                else if (segment.value == "" && segment.variable != "")
+                {
+                    string faction = ""; //Convert uppercase to normally used capitalization
+                    foreach(faction fac in entities.factions)
+                    {
+                        if(String.Equals(fac.codename, Track.faction, StringComparison.OrdinalIgnoreCase))
+                        {
+                            faction = fac.codename;
+                            break;
+                        }
+                    }
+                    spawn.unit = segment.variable;
+                    int id = entities.spaceHeroes.FindIndex(s => String.Equals(s.unitname, spawn.unit, StringComparison.OrdinalIgnoreCase));
+                    unit unit = new unit();
+                    if(id >= 0)
+                    {
+                        unit = entities.spaceHeroes[id];
+                        unit.fake_affiliations.Add(faction);
+                        entities.spaceHeroes[id] = unit;
+                    }
+                    else
+                    {
+                        id = entities.heroCompanies.FindIndex(s => String.Equals(s.unitname, spawn.unit, StringComparison.OrdinalIgnoreCase));
+                        if (id >= 0)
+                        {
+                            unit = entities.heroCompanies[id];
+                            unit.fake_affiliations.Add(faction);
+                            entities.heroCompanies[id] = unit;
+                        }
+                        else
+                        {
+                            unit = entities.objects.FirstOrDefault(s => String.Equals(s.unitname, support.unit, StringComparison.OrdinalIgnoreCase));
+                        }
+                    }
+                    if (unit.unitname is null) spawn.username = spawn.unit;
+                    else spawn.username = unit.username;
+                }
+                else if (segment.variable == "threshold")
+                {
+                    int.TryParse(segment.value, out spawn.threshold);
+                }
+                else if (segment.variable == "tag")
+                {
+                    spawn.tag = segment.value;
+                }
+
+                if (segment.nesting == 4 && oldnest == 5)
+                {
+                    Track.spawns.Add(spawn);
+                    spawn = new FavorSpawn();
+                }
+            }
+            else if (segment.variable == "spawned_rewards")
+            {
+                spawnmode = true;
+            }
+
+
+            oldnest = segment.nesting;
+        }
+    }
 
     public static List<quantizedObject> quantizedAdd(List<quantizedObject> l, quantizedObject q)
     {
@@ -4385,8 +4464,31 @@ public static class SharedFunctions
                                 {
                                     needs_templates = true; //Another iteration required
                                 }
-                                if (unidad.abilities.Count == 0) unidad.abilities = unidad2.abilities;
-                                if (unidad.unitabilities.Count == 0) unidad.unitabilities = unidad2.unitabilities;
+                                if (unidad.buildtime < 0)
+                                {
+                                    unidad.buildtime = unidad2.buildtime;
+                                    unidad.buildtime_baseID = unidad2.buildtime_baseID + 1;
+                                }
+                                if (unidad.hyperspaceSpeed < 0)
+                                {
+                                    unidad.hyperspaceSpeed = unidad2.hyperspaceSpeed;
+                                    unidad.hyperspaceSpeed_baseID = unidad2.hyperspaceSpeed_baseID + 1;
+                                }
+                                if (unidad.highlight != "")
+                                {
+                                    unidad.highlight = unidad2.highlight;
+                                    unidad.highlight_baseID = unidad2.highlight_baseID + 1;
+                                }
+                                if (unidad.abilities.Count == 0)
+                                {
+                                    unidad.abilities = unidad2.abilities;
+                                    unidad.ability_baseID = unidad2.ability_baseID + 1;
+                                }
+                                if (unidad.unitabilities.Count == 0)
+                                {
+                                    unidad.unitabilities = unidad2.unitabilities;
+                                    unidad.unitability_baseID = unidad2.unitability_baseID + 1;
+                                }
                                 if (unidad.builtin.hpType is null) unidad.builtin = unidad2.builtin;
                                 else {
                                     //Handle definitions of a builtin that partially inherit
@@ -4508,6 +4610,10 @@ public static class SharedFunctions
             if (unidad.garrison_slots < 0) unidad.garrisonSlots_baseID = -1;
             if (unidad.garrison_type == "") unidad.garrisonType_baseID = -1;
             if (unidad.garrison_value < 0) unidad.garrisonValue_baseID = -1;
+            if (unidad.hyperspaceSpeed < 0) unidad.hyperspaceSpeed_baseID = -1;
+            if (unidad.highlight == "") unidad.highlight_baseID = -1;
+            if (unidad.abilities.Count == 0) unidad.ability_baseID = -1;
+            if (unidad.unitabilities.Count == 0) unidad.unitability_baseID = -1;
             for (int sfxid = 0; sfxid < unidad.BasicSFXEvents.Length; sfxid++)
             {
                 if (unidad.BasicSFXEvents[sfxid] == "") unidad.BasicSFXEvents_baseID[sfxid] = -1;
@@ -5711,6 +5817,11 @@ public static class SharedFunctions
         proj = proj.Replace("_Yellow", "").Replace("_yellow", "");
         proj = proj.Replace("_Purple", "").Replace("_purple", "");
         proj = proj.Replace("_Silver", "").Replace("_silver", "");
+        proj = proj.Replace("_Cyan", "").Replace("_cyan", "");
+        proj = proj.Replace("_Gold", "").Replace("_gold", "");
+
+        proj = proj.Replace("_Line2", "").Replace("_line2", "");
+        proj = proj.Replace("_Line", "").Replace("_line", "");
 
         return proj;
     }
@@ -6087,7 +6198,8 @@ public static class SharedFunctions
                 break;
             case "PD_Ion":
                 expectedRange = 1500;
-                ExpectedAccuracy = MedLaserAccs();
+                if(entities.version >= 35) ExpectedAccuracy = LightLaserAccs();
+                else ExpectedAccuracy = MedLaserAccs();
                 break;
             case "DamageS_Turbolaser":
                 if (light)
@@ -6432,6 +6544,11 @@ public struct projectile
     public float blastRadius;
     public float speed;
     public float turn;
+
+    public override string ToString()
+    {
+        return name;
+    }
 }
 
 public struct projectileAccuracyTemplate
@@ -6553,6 +6670,7 @@ public struct unit
     public int skirmcost;
     public float skirmbuildtime; //Probably none of these are actually ints
     public List<string> affiliations;
+    public List<string> fake_affiliations; //Belongs to the faction based on inclusion in spawn scripts, but not given actual affiliation for perfomance reasons. Most heroes after TR 3.5 rely on this
     public int pop;
     public int techlevel;
     public int fightermode;
@@ -6625,6 +6743,10 @@ public struct unit
     public int garrisonType_baseID;
     public int maintenance_baseID;
     public int cp_baseID;
+    public int ability_baseID;
+    public int unitability_baseID;
+    public int hyperspaceSpeed_baseID;
+    public int highlight_baseID;
     public hardpoint builtin;
     public List<string> companyunits;
     public List<quantizedObject> consolidatedUnits;
@@ -6642,6 +6764,8 @@ public struct unit
     public string BTS;
     public string sortstring;
     public float sortfloat;
+    public float hyperspaceSpeed;
+    public string highlight;
     public List<ability> abilities;
     public List<unitability> unitabilities;
     public List<garrison_entry> garrison;
@@ -6969,9 +7093,32 @@ public struct entities {
     public static List<IconData> IconData = new List<IconData>();
     public static AutoResolveSettings AutoResolveSettings = new AutoResolveSettings();
 
-    public static string modid; //Should be deprecated in Rev 1.0, but keep around for compatibility
+    public static string modid;
     public static float version; //Standardize on TR version, but may need to work in conjuction with modid
     public static string readerrors = "";
+
+    public static List<FavorTrack> FavorTracks = new List<FavorTrack>();
+
+    public static Specialization[] Specializations =
+    {
+        new Specialization{ name = "Air", textID = "TEXT_TOOLTIP_TRAIT_SPECIALIZATION_AIR_COMMAND", categories = "AirSpeeder | AirGunship" },
+        new Specialization{ name = "Fortification", textID = "TEXT_TOOLTIP_TRAIT_SPECIALIZATION_FORTIFICATION", categories = "Structure | SpaceStructure" },
+        new Specialization{ name = "Infantry", textID = "TEXT_TOOLTIP_TRAIT_SPECIALIZATION_INFANTRY", categories = "Infantry | InfantryHero" },
+        new Specialization{ name = "Small_Ship", textID = "TEXT_TOOLTIP_TRAIT_SPECIALIZATION_SMALL_SHIP", categories = "Frigate | Corvette" },
+        new Specialization{ name = "Starfighter", textID = "TEXT_TOOLTIP_TRAIT_SPECIALIZATION_STARFIGHTER", categories = "Fighter | Bomber" },
+        //new Specialization{ name = "Artillery", textID = "TEXT_TOOLTIP_TRAIT_SPECIALIZATION_ARTILLERY", categories = "Structure | SpaceStructure" }, //it's a unit list, not a category
+        //TODO Tell Walker specialist to copy Veers rather than hardcode the list?
+        //likewise mando, EotH subgroups
+    };
+
+    public static CommandTrait[] CommandTraits =
+    {
+        new CommandTrait{ name = "Force Sensitive", textID = "TEXT_TOOLTIP_TRAIT_COMMAND_FORCE_SENSITIVE", speed = 0.06f, fow = 0.09f},
+        new CommandTrait{ name = "Offense Focus", textID = "TEXT_TOOLTIP_TRAIT_COMMAND_OFFENSE_FOCUS", attack = 0.06f},
+        new CommandTrait{ name = "Defense Focus", textID = "TEXT_TOOLTIP_TRAIT_COMMAND_DEFENSE_FOCUS", defense = 0.06f},
+        new CommandTrait{ name = "Intel Focus", textID = "TEXT_TOOLTIP_TRAIT_COMMAND_INTEL_FOCUS", attack = -0.06f, speed = 0.06f, fow = 0.18f},
+        new CommandTrait{ name = "Battle Meditation", textID = "TEXT_TOOLTIP_TRAIT_COMMAND_BATTLE_MEDITATION", attack = 0.09f, defense = 0.09f, speed = 0.09f, fow = 0.18f},
+    };
 }
 
 public class ArmorMods
@@ -7003,6 +7150,103 @@ public class IconData
     public int origin_y;
     public int size_x;
     public int size_y;
+}
+
+public class LuaLibrarySegment
+{
+    public int nesting;
+    public int linenumber;
+    public string fullLine;
+    public string comment;
+    public string segment;
+    public string variable;
+    public string value;
+}
+
+public class FavorBuildable
+{
+    public string unit;
+    public string username;
+    public int threshold;
+    public string tag;
+
+    public override string ToString()
+    {
+        return username + " (" + threshold.ToString() + ")";
+    }
+}
+
+public class FavorSpawn
+{
+    public string unit;
+    public string username;
+    public int threshold;
+    public string tag;
+
+    public override string ToString()
+    {
+        return username + " (" + threshold.ToString() + ")";
+    }
+}
+
+public class FavorSupport
+{
+    public string unit;
+    public string username;
+    public string desc;
+    public int value;
+    public bool locks;
+
+    public override string ToString()
+    {
+        return username + " (" + value.ToString() + ")";
+    }
+}
+public class FavorTrack
+{
+    public string name;
+    public string faction;
+    public bool integrates;
+    public string integratee;
+    public string integrateSpeech;
+    public int maxFavor;
+    public string rename;
+    public List<FavorSupport> supports;
+    public List<FavorBuildable> buildables;
+    public List<FavorSpawn> spawns;
+    //public string perception;
+
+    public override string ToString()
+    {
+        return name;
+    }
+}
+
+public class Specialization
+{
+    public string name; //For dropdowns and Combat_Bonus_Ability/Battlefield_Modifier_Ability blocks
+    public string textID;
+    public string categories;
+
+    public override string ToString()
+    {
+        return name;
+    }
+}
+
+public class CommandTrait
+{
+    public string name;
+    public string textID;
+    public float attack;
+    public float defense;
+    public float speed;
+    public float fow;
+
+    public override string ToString()
+    {
+        return name;
+    }
 }
 
 public static class crcGlobals

@@ -115,8 +115,8 @@ namespace TilotnyStudio
             this.button8 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
             this.button10 = new System.Windows.Forms.Button();
-            this.button11 = new System.Windows.Forms.Button();
-            this.button12 = new System.Windows.Forms.Button();
+            this.TierAcceptButton = new System.Windows.Forms.Button();
+            this.TierCancelButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // radioButton1
@@ -245,9 +245,9 @@ namespace TilotnyStudio
             this.EduCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.EduCheckBox.Location = new System.Drawing.Point(12, 306);
             this.EduCheckBox.Name = "EduCheckBox";
-            this.EduCheckBox.Size = new System.Drawing.Size(161, 22);
+            this.EduCheckBox.Size = new System.Drawing.Size(164, 22);
             this.EduCheckBox.TabIndex = 10;
-            this.EduCheckBox.Text = "Promsing Education";
+            this.EduCheckBox.Text = "Promising Education";
             this.EduCheckBox.UseVisualStyleBackColor = true;
             // 
             // VicCheckBox
@@ -1015,33 +1015,35 @@ namespace TilotnyStudio
             this.button10.TabIndex = 86;
             this.button10.UseVisualStyleBackColor = false;
             // 
-            // button11
+            // TierAcceptButton
             // 
-            this.button11.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button11.Location = new System.Drawing.Point(513, 326);
-            this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(93, 30);
-            this.button11.TabIndex = 87;
-            this.button11.Text = "Accept";
-            this.button11.UseVisualStyleBackColor = true;
+            this.TierAcceptButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TierAcceptButton.Location = new System.Drawing.Point(513, 326);
+            this.TierAcceptButton.Name = "TierAcceptButton";
+            this.TierAcceptButton.Size = new System.Drawing.Size(93, 30);
+            this.TierAcceptButton.TabIndex = 87;
+            this.TierAcceptButton.Text = "Accept";
+            this.TierAcceptButton.UseVisualStyleBackColor = true;
+            this.TierAcceptButton.Click += new System.EventHandler(this.TierAcceptButton_Click);
             // 
-            // button12
+            // TierCancelButton
             // 
-            this.button12.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button12.Location = new System.Drawing.Point(633, 326);
-            this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(93, 30);
-            this.button12.TabIndex = 88;
-            this.button12.Text = "Cancel";
-            this.button12.UseVisualStyleBackColor = true;
+            this.TierCancelButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TierCancelButton.Location = new System.Drawing.Point(633, 326);
+            this.TierCancelButton.Name = "TierCancelButton";
+            this.TierCancelButton.Size = new System.Drawing.Size(93, 30);
+            this.TierCancelButton.TabIndex = 88;
+            this.TierCancelButton.Text = "Cancel";
+            this.TierCancelButton.UseVisualStyleBackColor = true;
+            this.TierCancelButton.Click += new System.EventHandler(this.TierCancelButton_Click);
             // 
             // TierPick
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1264, 368);
-            this.Controls.Add(this.button12);
-            this.Controls.Add(this.button11);
+            this.Controls.Add(this.TierCancelButton);
+            this.Controls.Add(this.TierAcceptButton);
             this.Controls.Add(this.button10);
             this.Controls.Add(this.button9);
             this.Controls.Add(this.button8);
@@ -1130,6 +1132,7 @@ namespace TilotnyStudio
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "TierPick";
             this.Text = "Tier Picker";
+            this.Load += new System.EventHandler(this.TierPick_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1222,7 +1225,7 @@ namespace TilotnyStudio
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Button button10;
-        private System.Windows.Forms.Button button11;
-        private System.Windows.Forms.Button button12;
+        private System.Windows.Forms.Button TierAcceptButton;
+        private System.Windows.Forms.Button TierCancelButton;
     }
 }

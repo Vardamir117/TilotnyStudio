@@ -89,6 +89,12 @@
     <Compile Include="SubmodSetup.designer.cs">
       <DependentUpon>SubmodSetup.cs</DependentUpon>
     </Compile>
+    <Compile Include="TextDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="TextDetail.Designer.cs">
+      <DependentUpon>TextDetail.cs</DependentUpon>
+    </Compile>
     <Compile Include="TGASharpLib.cs" />
     <Compile Include="TierPick.cs">
       <SubType>Form</SubType>
@@ -120,6 +126,9 @@
     </Compile>
     <EmbeddedResource Include="SubmodSetup.resx">
       <DependentUpon>SubmodSetup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextDetail.resx">
+      <DependentUpon>TextDetail.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TierPick.resx">
       <DependentUpon>TierPick.cs</DependentUpon>
