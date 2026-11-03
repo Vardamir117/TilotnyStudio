@@ -3788,7 +3788,7 @@ namespace TilotnyStudio
                                         string visible = ex.Message;
                                     }
                                 }
-                                if(!(able is null))
+                                if (!(able is null))
                                 {
                                     XmlNodeList abils = able.SelectNodes("*");
                                     for (int j = abils.Count - 1; j >= 0; j--)
@@ -3800,6 +3800,16 @@ namespace TilotnyStudio
                                             abils[j].ParentNode.RemoveChild(abils[j]);
                                         }
                                     }
+                                }
+                                else
+                                { //if it is null, create
+                                    able = savedoc.CreateElement("Abilities");
+                                    XmlAttribute attribute = savedoc.CreateAttribute("SubObjectList");
+                                    attribute.Value = "Yes";
+
+                                    able.Attributes.Append(attribute);
+                                    able.AppendChild(savedoc.CreateTextNode("\n"));
+                                    replaceable = true;
                                 }
                                 if (TierBox.Value > 0 || Command1ComboBox.SelectedIndex > -1 || Command2ComboBox.SelectedIndex > -1)
                                 {

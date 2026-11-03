@@ -1965,6 +1965,7 @@
             this.ClearFighterSourceButton.TabIndex = 112;
             this.ClearFighterSourceButton.Text = "Clear";
             this.ClearFighterSourceButton.UseVisualStyleBackColor = true;
+            this.ClearFighterSourceButton.Visible = false;
             this.ClearFighterSourceButton.Click += new System.EventHandler(this.ClearFighterSourceButton_Click);
             // 
             // ClearSoundSourceButton
@@ -2159,6 +2160,7 @@
             this.FighterSourceLabel.Size = new System.Drawing.Size(181, 20);
             this.FighterSourceLabel.TabIndex = 94;
             this.FighterSourceLabel.Text = "Fighter Source Override:";
+            this.FighterSourceLabel.Visible = false;
             // 
             // HeroIconPictureBox
             // 
@@ -2189,6 +2191,7 @@
             this.SetFighterSourceButton.TabIndex = 48;
             this.SetFighterSourceButton.Text = "Set Fighter Source";
             this.SetFighterSourceButton.UseVisualStyleBackColor = true;
+            this.SetFighterSourceButton.Visible = false;
             this.SetFighterSourceButton.Click += new System.EventHandler(this.SetFighterSourceButton_Click);
             // 
             // FighterSourceTextBox
@@ -2199,6 +2202,7 @@
             this.FighterSourceTextBox.Name = "FighterSourceTextBox";
             this.FighterSourceTextBox.Size = new System.Drawing.Size(436, 26);
             this.FighterSourceTextBox.TabIndex = 46;
+            this.FighterSourceTextBox.Visible = false;
             // 
             // richTextBox2
             // 
@@ -2537,7 +2541,7 @@
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "Tilotny Submodding Studio v0.5";
+            this.Text = "Tilotny Submodding Studio v0.5a";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
