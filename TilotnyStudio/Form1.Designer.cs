@@ -2321,7 +2321,8 @@
             this.CopyHeroNameTextBox.Name = "CopyHeroNameTextBox";
             this.CopyHeroNameTextBox.Size = new System.Drawing.Size(485, 26);
             this.CopyHeroNameTextBox.TabIndex = 34;
-            this.SuperToolTip.SetToolTip(this.CopyHeroNameTextBox, "The name of the new code object");
+            this.SuperToolTip.SetToolTip(this.CopyHeroNameTextBox, "The name of the new code object\r\n\r\nSpaces and hyphers may not be used in this fie" +
+        "ld");
             this.CopyHeroNameTextBox.LostFocus += new System.EventHandler(this.CopyHeroNameTextBox_LostFocus);
             // 
             // label20
@@ -2541,7 +2542,7 @@
             this.Controls.Add(this.tabControl1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
-            this.Text = "Tilotny Submodding Studio v0.5a";
+            this.Text = "Tilotny Submodding Studio v0.5b";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);

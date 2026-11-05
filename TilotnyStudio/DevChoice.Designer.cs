@@ -92,6 +92,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "DevChoice";
             this.Text = "Test Build Selection";
+            this.TopMost = true;
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -3383,7 +3383,7 @@ namespace TilotnyStudio
                                             bool hpchanged = false;
                                             if (tip.Contains("_HEALTH"))
                                             {
-                                                if (textval.Contains("(Infantry)"))
+                                                if (textval.Contains("(Infantry)") || textval.Contains("(Droid)"))
                                                 {
                                                     hpchanged = true;
                                                     unit.armor_type = "ArmourG_Hero";
@@ -3457,7 +3457,7 @@ namespace TilotnyStudio
                                     {
                                         if(unit.categories[c] == "Infantry")
                                         {
-                                            if (entities.version <= 34 || (entities.version <= 35 && entities.modid != "rev")) unit.categories[c] = "LandHero";
+                                            if (entities.version <= 34 || (entities.version <= 35 && entities.modid == "rev")) unit.categories[c] = "LandHero";
                                             else unit.categories[c] = "InfantryHero";
                                             WriteXMLTag("CategoryMask", SerializeStringArray(unit.categories), savedoc, import);
                                             break;
@@ -3716,8 +3716,8 @@ namespace TilotnyStudio
                                 if (libpath != "")
                                 {
                                     string[] herolib = File.ReadAllLines(libpath);
-                                    herolib[0] += CopyHeroNameTextBox.Text.ToUpper();
-                                    if(globals.NewHeroGroundMode) herolib[0] +="_TEAM";
+                                    herolib[0] += "[\"" + CopyHeroNameTextBox.Text.ToUpper();
+                                    if(globals.NewHeroGroundMode) herolib[0] +="_TEAM\"]";
                                     herolib[0] += " = {nil, ";
                                     if (globals.NewHeroGroundMode) herolib[0] += "false";
                                     else herolib[0] += "true";
@@ -5164,6 +5164,7 @@ namespace TilotnyStudio
                 string[] split = CopyHeroNameTextBox.Text.Split('_');
                 CopyHeroUserNameTextBox.Text = split[0];
             }
+            CopyHeroNameTextBox.Text = CopyHeroNameTextBox.Text.Replace(" ", "_").Replace("-", "_");
         }
 
         private void SetSoundSourceButton_Click(object sender, EventArgs e)

@@ -3932,6 +3932,65 @@ public static class SharedFunctions
         }
     }
 
+    public static List<LuaLibrarySegment> GenericLuaPartialLibraryParse(string[] Library, int startline, int endline)
+    {
+        List<LuaLibrarySegment> corenne = new List<LuaLibrarySegment>();
+        int nestedLevel = 0;
+        for (int linenumber = startline; linenumber < endline; linenumber++)
+        {
+            string line = Library[linenumber];
+            string nocomment = line;
+            string comment = "";
+            int comm = nocomment.IndexOf("--");
+            if (comm >= 0)
+            {
+                nocomment = line.Substring(0, comm);
+                comment = line.Substring(comm + 2, line.Length - comm - 3);
+            }
+            string temp = nocomment.Replace("\\\"", ((char)1).ToString());
+            string reconstucted = "";
+            string[] segs = temp.Split('"');
+            for (int i = 0; i < segs.Length; i++)
+            {
+                if (i % 2 == 0) reconstucted += segs[i].Replace("\"", "").Replace("[", "").Replace("]", ""); //Need to handle the ["name"] syntax. " is unhelpful in the final string vars too
+                else reconstucted += segs[i].Replace(',', (char)2).Replace('=', (char)3).Replace('{', (char)4).Replace('}', (char)5); //Temporarily replace values within a string so the remainder are consistenly control chars
+            }
+
+            segs = reconstucted.Split(',');
+            foreach (string seg in segs)
+            {
+                nestedLevel += seg.Count(c => c == '{') - seg.Count(c => c == '}');
+                string trueseg = seg.Trim();
+                if (trueseg.Length > 0) //ignore empty lines that still picked up indententation and empty splits when a line ends with a comma
+                {
+                    trueseg = trueseg.Replace("{", "").Replace("}", ""); //Need to keep functional braces so individual changes in nesting can be detected by as the happen rather than checking that things jumped as }, was skipped 
+                    string variable = "";
+                    string value = "";
+                    string[] split = trueseg.Replace(((char)1).ToString(), "\\\"").Replace((char)2, ',').Replace((char)4, '{').Replace((char)5, '}').Split('=');
+                    if (split.Length > 1)
+                    {
+                        variable = split[0].Trim();
+                        value = split[1].Trim().Replace((char)3, '=');
+                    }
+                    else value = split[0].Trim();
+                    LuaLibrarySegment segment = new LuaLibrarySegment
+                    {
+                        nesting = nestedLevel,
+                        linenumber = linenumber,
+                        fullLine = nocomment,
+                        comment = comment,
+                        segment = trueseg,
+                        variable = variable,
+                        value = value,
+                    };
+                    corenne.Add(segment);
+                }
+                // nestedLevel -= seg.Count(c => c == '}'); Todo: move this logic here and redo favor tracks, or add openandclose bool
+            }
+        }
+        return corenne;
+    }
+
     public static List<LuaLibrarySegment> GenericLuaLibraryParse(string CorePath, entities entities)
     {
         List<LuaLibrarySegment> corenne = new List<LuaLibrarySegment>();
@@ -3939,59 +3998,7 @@ public static class SharedFunctions
         if (path != "") //fail return for getModFile
         {
             string[] Lib = File.ReadAllLines(path);
-            int nestedLevel = 0;
-            int linenumber = 0;
-            foreach (string line in Lib)
-            {
-                linenumber++;
-                string nocomment = line;
-                string comment = "";
-                int comm = nocomment.IndexOf("--");
-                if (comm >= 0)
-                {
-                    nocomment = line.Substring(0, comm);
-                    comment = line.Substring(comm + 2, line.Length - comm - 3);
-                }
-                string temp = nocomment.Replace("\\\"", ((char)1).ToString());
-                string reconstucted = "";
-                string[] segs = temp.Split('"');
-                for(int i = 0; i < segs.Length; i++)
-                {
-                    if (i % 2 == 0) reconstucted += segs[i].Replace("\"", "").Replace("[", "").Replace("]", ""); //Need to handle the ["name"] syntax. " is unhelpful in the final string vars too
-                    else reconstucted += segs[i].Replace(',', (char)2).Replace('=', (char)3).Replace('{', (char)4).Replace('}', (char)5); //Temporarily replace values within a string so the remainder are consistenly control chars
-                }
-
-                segs = reconstucted.Split(',');
-                foreach(string seg in segs)
-                {
-                    nestedLevel += seg.Count(c => c == '{') - seg.Count(c => c == '}');
-                    string trueseg = seg.Trim();
-                    if (trueseg.Length > 0) //ignore empty lines that still picked up indententation and empty splits when a line ends with a comma
-                    {
-                        trueseg = trueseg.Replace("{", "").Replace("}", ""); //Need to keep functional braces so individual changes in nesting can be detected by as the happen rather than checking that things jumped as }, was skipped 
-                        string variable = "";
-                        string value = "";
-                        string[] split = trueseg.Replace(((char)1).ToString(), "\\\"").Replace((char)2, ',').Replace((char)4, '{').Replace((char)5, '}').Split('=');
-                        if (split.Length > 1)
-                        {
-                            variable = split[0].Trim();
-                            value = split[1].Trim().Replace((char)3, '=');
-                        }
-                        else value = split[0].Trim();
-                        LuaLibrarySegment segment = new LuaLibrarySegment
-                        {
-                            nesting = nestedLevel,
-                            linenumber = linenumber,
-                            fullLine = nocomment,
-                            comment = comment,
-                            segment = trueseg,
-                            variable = variable,
-                            value = value,
-                        };
-                        corenne.Add(segment);
-                    }
-                }
-            }
+            corenne = GenericLuaPartialLibraryParse(Lib, 0, Lib.Length);
         }
 
         return corenne;
@@ -4003,6 +4010,33 @@ public static class SharedFunctions
         unit unit = entities.objects.FirstOrDefault(s => String.Equals(s.unitname, unitname, StringComparison.OrdinalIgnoreCase));
         if (!(unit.unitname is null)) return unit.username;
         return corenne;
+    }
+
+    public static unit FindUnitAddFakeAffils(string unitname, string faction, entities entities)
+    {
+        int id = entities.spaceHeroes.FindIndex(s => String.Equals(s.unitname, unitname, StringComparison.OrdinalIgnoreCase));
+        unit unit = new unit();
+        if (id >= 0)
+        {
+            unit = entities.spaceHeroes[id];
+            unit.fake_affiliations.Add(faction);
+            entities.spaceHeroes[id] = unit;
+        }
+        else
+        {
+            id = entities.heroCompanies.FindIndex(s => String.Equals(s.unitname, unitname, StringComparison.OrdinalIgnoreCase));
+            if (id >= 0)
+            {
+                unit = entities.heroCompanies[id];
+                unit.fake_affiliations.Add(faction);
+                entities.heroCompanies[id] = unit;
+            }
+            else
+            {
+                unit = entities.objects.FirstOrDefault(s => String.Equals(s.unitname, unitname, StringComparison.OrdinalIgnoreCase));
+            }
+        }
+        return unit;
     }
 
     public static void parseGovernment(entities entities)
@@ -4141,28 +4175,7 @@ public static class SharedFunctions
                         }
                     }
                     spawn.unit = segment.variable;
-                    int id = entities.spaceHeroes.FindIndex(s => String.Equals(s.unitname, spawn.unit, StringComparison.OrdinalIgnoreCase));
-                    unit unit = new unit();
-                    if(id >= 0)
-                    {
-                        unit = entities.spaceHeroes[id];
-                        unit.fake_affiliations.Add(faction);
-                        entities.spaceHeroes[id] = unit;
-                    }
-                    else
-                    {
-                        id = entities.heroCompanies.FindIndex(s => String.Equals(s.unitname, spawn.unit, StringComparison.OrdinalIgnoreCase));
-                        if (id >= 0)
-                        {
-                            unit = entities.heroCompanies[id];
-                            unit.fake_affiliations.Add(faction);
-                            entities.heroCompanies[id] = unit;
-                        }
-                        else
-                        {
-                            unit = entities.objects.FirstOrDefault(s => String.Equals(s.unitname, support.unit, StringComparison.OrdinalIgnoreCase));
-                        }
-                    }
+                    unit unit = FindUnitAddFakeAffils(spawn.unit, faction, entities);
                     if (unit.unitname is null) spawn.username = spawn.unit;
                     else spawn.username = unit.username;
                 }
@@ -4189,6 +4202,44 @@ public static class SharedFunctions
 
             oldnest = segment.nesting;
         }
+
+        string cmd = getModFile("Scripts\\Library\\eawx-plugins\\republic-heroes\\RepublicHeroes.lua",entities);
+        string[] cmdscript = File.ReadAllLines(cmd);
+        int cmdstart = 0;
+        int cdmend = 0;
+        for (int linenum = 0; linenum < cmdscript.Length; linenum++)
+        {
+            string line = cmdscript[linenum];
+            if (line.Contains(":subscribe") || line.Contains("self.library")) cmdstart = linenum; //skip the headers, skipping .library syncs the indents of a rework within the 3.5 cycle
+            if (line.Contains("fighter_assigns") || line.Contains("function") && !line.Contains("herokilled_finished_event"))
+            {
+                cdmend = linenum;
+                break;
+            }
+        }
+        List<LuaLibrarySegment> cmdlib = GenericLuaPartialLibraryParse(cmdscript, cmdstart + 1, cdmend);
+        entities.CommandStaffs.Clear();
+        oldnest = 0;
+        int lastline = 0;
+        CommandStaff staff = new CommandStaff();
+        staff.staff = new List<CommandStaffer>();
+        CommandStaffer staffer = new CommandStaffer();
+
+        foreach (LuaLibrarySegment segment in cmdlib)
+        {
+            if(oldnest == 0 && segment.nesting == 1) staff.name = segment.variable;
+            if (oldnest == 1 && segment.nesting == 0)
+            {
+                entities.CommandStaffs.Add(staff);
+                staff = new CommandStaff();
+                staff.staff = new List<CommandStaffer>();
+            }
+
+            oldnest = segment.nesting;
+            lastline = segment.linenumber;
+        }
+
+        bool visible = true;
     }
 
     public static List<quantizedObject> quantizedAdd(List<quantizedObject> l, quantizedObject q)
@@ -6524,6 +6575,27 @@ public static class SharedFunctions
         return MTDArray;
     }
 
+    public static List<string> TexturesFromModel(string modelfile, entities entities)
+    {
+        List<string> corenne = new List<string>();
+        string file = File.ReadAllText(modelfile);
+        int id = file.IndexOf("Texture");
+        while (id >= 0)
+        {
+            file = file.Substring(id + 10, file.Length - id - 10);
+            string texture = "";
+            foreach(char c in file)
+            {
+                if (c == '\0') break;
+                else texture += c;
+            }
+            corenne.Add(texture);
+            id = file.IndexOf("Texture");
+        }
+
+        return corenne;
+    }
+
 } //End of function
 
 public struct MEGentry
@@ -7098,6 +7170,7 @@ public struct entities {
     public static string readerrors = "";
 
     public static List<FavorTrack> FavorTracks = new List<FavorTrack>();
+    public static List<CommandStaff> CommandStaffs = new List<CommandStaff>();
 
     public static Specialization[] Specializations =
     {
@@ -7215,6 +7288,34 @@ public class FavorTrack
     public List<FavorBuildable> buildables;
     public List<FavorSpawn> spawns;
     //public string perception;
+
+    public override string ToString()
+    {
+        return name;
+    }
+}
+
+public class CommandStaffer
+{
+    public string tag;
+    public unit assign;
+    public List<unit> forms;
+
+    public override string ToString()
+    {
+        return tag;
+    }
+}
+
+public class CommandStaff
+{
+    public string name;
+    public string faction;
+    public List<CommandStaffer> staff;
+    public int total_slots;
+    public int vacant_limit;
+    public unit extra;
+    public unit random;
 
     public override string ToString()
     {

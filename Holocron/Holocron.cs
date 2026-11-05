@@ -7849,6 +7849,22 @@ namespace Holocron
             else MessageBox.Show("Could not find model file. Is it in a MEG?");
         }
 
+        private void TextureListButton_Click(object sender, EventArgs e)
+        {
+            if (UnitListBox.Tag is null) return;
+            unit selectedUnit = (unit)UnitListBox.Tag;
+            string datafile = getModFile("Art\\Models\\" + selectedUnit.model, entities);
+            if (datafile != "")
+            {
+                List<string> textures = TexturesFromModel(datafile, entities);
+                TextDetail deets = new TextDetail();
+                deets.detail = selectedUnit.model + "\n";
+                foreach (string texture in textures) deets.detail += "\n" + texture;
+                deets.Show();
+            }
+            else MessageBox.Show("Could not find model file. Is it in a MEG?");
+        }
+
         private void SetGalaxyMapBackground()
         {//Can't make a full map and crop, that runs out of memory. Make slightly larger area so planets can be drawn in, then cut to fit
             int planet_radius = (int)GalaxyMapPlanetBox.Value;
@@ -8862,7 +8878,8 @@ namespace Holocron
                 ProjectileUserListBox.Items.Clear();
                 foreach (unit unit in entities.objects)
                 {
-                    if (unit.percompany > 1) continue; //don't show companies/squadrons
+                    if (unit.companyunits.Count > 0) continue; //don't show companies/squadrons
+                    if (unit.unitname.Contains("Death_Clone")) continue;
                     bool uses = false;
                     foreach(hardpoint hp in unit.consolidatedhps)
                     {
@@ -8876,7 +8893,9 @@ namespace Holocron
                     }
                     if (uses)
                     {
-                        ProjectileUserListBox.Items.Add(unit);
+                        unit edited = unit;
+                        edited.sortstring = unit.unitname;
+                        ProjectileUserListBox.Items.Add(edited);
                     }
                 }
                 ProjectileUserLabel.Text = "Units Using (" + ProjectileUserListBox.Items.Count.ToString() +  "):";
@@ -8952,6 +8971,10 @@ namespace Holocron
                 FavorSupportLabel.Text = "";
                 FavorDescRichTextBox.Text = "";
                 FavorLocksLabel.Text = "";
+
+                if (Track.buildables.Count > 0) FavorUnlockListBox.SelectedIndex = 0;
+                if (Track.spawns.Count > 0) FavorSpawnListBox.SelectedIndex = 0;
+                if (Track.supports.Count > 0) FavorContributorsListBox.SelectedIndex = 0;
             }
             
         }
@@ -9007,6 +9030,7 @@ namespace Holocron
         {
             if (FavorContributorsListBox.SelectedItems.Count > 0) gotoUnitUniversal(((FavorSupport)FavorContributorsListBox.SelectedItem).unit);
         }
+
         //Don't put any functions below here if you want it to still compile
     }
 }
