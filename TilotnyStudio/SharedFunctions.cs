@@ -3936,6 +3936,7 @@ public static class SharedFunctions
     {
         List<LuaLibrarySegment> corenne = new List<LuaLibrarySegment>();
         int nestedLevel = 0;
+        int decrement = 0;
         for (int linenumber = startline; linenumber < endline; linenumber++)
         {
             string line = Library[linenumber];
@@ -3959,9 +3960,11 @@ public static class SharedFunctions
             segs = reconstucted.Split(',');
             foreach (string seg in segs)
             {
-                nestedLevel += seg.Count(c => c == '{') - seg.Count(c => c == '}');
+                nestedLevel += seg.Count(c => c == '{');
+                decrement = seg.Count(c => c == '}');
+
                 string trueseg = seg.Trim();
-                if (trueseg.Length > 0) //ignore empty lines that still picked up indententation and empty splits when a line ends with a comma
+                if (trueseg.Length > 0 || decrement > 0) //ignore empty lines that still picked up indententation and empty splits when a line ends with a comma
                 {
                     trueseg = trueseg.Replace("{", "").Replace("}", ""); //Need to keep functional braces so individual changes in nesting can be detected by as the happen rather than checking that things jumped as }, was skipped 
                     string variable = "";
@@ -3976,6 +3979,7 @@ public static class SharedFunctions
                     LuaLibrarySegment segment = new LuaLibrarySegment
                     {
                         nesting = nestedLevel,
+                        decrement = decrement,
                         linenumber = linenumber,
                         fullLine = nocomment,
                         comment = comment,
@@ -3985,7 +3989,7 @@ public static class SharedFunctions
                     };
                     corenne.Add(segment);
                 }
-                // nestedLevel -= seg.Count(c => c == '}'); Todo: move this logic here and redo favor tracks, or add openandclose bool
+                nestedLevel -= decrement;
             }
         }
         return corenne;
@@ -4007,9 +4011,24 @@ public static class SharedFunctions
     public static string UsernameFromUnitname(string unitname, entities entities)
     {
         string corenne = unitname;
-        unit unit = entities.objects.FirstOrDefault(s => String.Equals(s.unitname, unitname, StringComparison.OrdinalIgnoreCase));
+        unit unit = Entities_ObjectsFirstOrDefault(unitname, entities);
         if (!(unit.unitname is null)) return unit.username;
         return corenne;
+    }
+
+    public static unit Entities_ObjectsFirstOrDefault(string unitname, entities entities)
+    {
+        if(entities.objecthashes.Count == 0) entities.objecthashes = setUnitHashes(entities.objects);
+        int index = LookupUntemplateID(unitname);
+        if (index < entities.objecthashes.Count)
+        {
+            foreach (int cachedindex in entities.objecthashes[index])
+            {
+                unit unidad2 = entities.objects[cachedindex];
+                if (String.Equals(unidad2.unitname, unitname, StringComparison.OrdinalIgnoreCase)) return unidad2;
+            }
+        }
+        return new unit(); ;
     }
 
     public static unit FindUnitAddFakeAffils(string unitname, string faction, entities entities)
@@ -4024,17 +4043,7 @@ public static class SharedFunctions
         }
         else
         {
-            id = entities.heroCompanies.FindIndex(s => String.Equals(s.unitname, unitname, StringComparison.OrdinalIgnoreCase));
-            if (id >= 0)
-            {
-                unit = entities.heroCompanies[id];
-                unit.fake_affiliations.Add(faction);
-                entities.heroCompanies[id] = unit;
-            }
-            else
-            {
-                unit = entities.objects.FirstOrDefault(s => String.Equals(s.unitname, unitname, StringComparison.OrdinalIgnoreCase));
-            }
+            unit = Entities_ObjectsFirstOrDefault(unitname, entities);
         }
         return unit;
     }
@@ -4056,10 +4065,11 @@ public static class SharedFunctions
         bool buildablemode = false;
         bool spawnmode = false;
         int oldnest = 0;
-
+        
         foreach (LuaLibrarySegment segment in FavorLib)
         {
-            if (segment.nesting == 2 && oldnest == 3)
+            int nest = segment.nesting - segment.decrement; //the original logic was set up before decrements. Could fix more consistently, but this works
+            if (nest == 2 && oldnest == 3)
             {
                 entities.FavorTracks.Add(Track);
                 Track = new FavorTrack();
@@ -4067,7 +4077,7 @@ public static class SharedFunctions
                 Track.buildables = new List<FavorBuildable>();
                 Track.spawns = new List<FavorSpawn>();
             }
-            if (segment.nesting == 3 && oldnest == 2)
+            if (nest == 3 && oldnest == 2)
             {
                 Track.integratee = segment.variable;
             }
@@ -4079,29 +4089,29 @@ public static class SharedFunctions
             {
                 Track.rename = segment.value;
             }
-            else if (segment.nesting == 3 && segment.variable == "integrates")
+            else if (nest == 3 && segment.variable == "integrates")
             {
                 Track.integrates = segment.value == "true";
             }
-            else if (segment.nesting == 4 && segment.variable == "integration_speech")
+            else if (nest == 4 && segment.variable == "integration_speech")
             {
                 Track.integrateSpeech = segment.value;
             }
-            else if (segment.nesting == 3 && segment.variable == "name")
+            else if (nest == 3 && segment.variable == "name")
             {
                 Track.name = segment.value;
             }
-            else if (segment.nesting == 3 && segment.variable == "max_value")
+            else if (nest == 3 && segment.variable == "max_value")
             {
                 int.TryParse(segment.value, out Track.maxFavor);
             }
             else if (supportmode)
             {
-                if (segment.nesting == 3) supportmode = false;
+                if (nest == 3) supportmode = false;
                 else if (segment.variable == "name")
                 {
                     support.unit = segment.value;
-                    unit unit = entities.objects.FirstOrDefault(s => String.Equals(s.unitname, support.unit, StringComparison.OrdinalIgnoreCase));
+                    unit unit = Entities_ObjectsFirstOrDefault(support.unit, entities);
                     if (unit.unitname is null)
                     {
                         support.username = support.unit;
@@ -4123,7 +4133,7 @@ public static class SharedFunctions
                     support.locks = segment.value == "true";
                 }
 
-                if (segment.nesting == 4 && oldnest == 5)
+                if (nest == 4 && oldnest == 5)
                 {
                     Track.supports.Add(support);
                     support = new FavorSupport();
@@ -4135,7 +4145,7 @@ public static class SharedFunctions
             }
             else if (buildablemode)
             {
-                if (segment.nesting == 3) buildablemode = false;
+                if (nest == 3) buildablemode = false;
                 else if (segment.variable == "unit")
                 {
                     buildable.unit = segment.value;
@@ -4150,7 +4160,7 @@ public static class SharedFunctions
                     buildable.tag = segment.value;
                 }
 
-                if (segment.nesting == 4 && oldnest == 5)
+                if (nest == 4 && oldnest == 5)
                 {
                     Track.buildables.Add(buildable);
                     buildable = new FavorBuildable();
@@ -4162,7 +4172,7 @@ public static class SharedFunctions
             }
             else if (spawnmode)
             {
-                if (segment.nesting == 3) spawnmode = false;
+                if (nest == 3) spawnmode = false;
                 else if (segment.value == "" && segment.variable != "")
                 {
                     string faction = ""; //Convert uppercase to normally used capitalization
@@ -4188,7 +4198,7 @@ public static class SharedFunctions
                     spawn.tag = segment.value;
                 }
 
-                if (segment.nesting == 4 && oldnest == 5)
+                if (nest == 4 && oldnest == 5)
                 {
                     Track.spawns.Add(spawn);
                     spawn = new FavorSpawn();
@@ -4199,8 +4209,7 @@ public static class SharedFunctions
                 spawnmode = true;
             }
 
-
-            oldnest = segment.nesting;
+            oldnest = nest;
         }
 
         string cmd = getModFile("Scripts\\Library\\eawx-plugins\\republic-heroes\\RepublicHeroes.lua",entities);
@@ -4220,23 +4229,61 @@ public static class SharedFunctions
         List<LuaLibrarySegment> cmdlib = GenericLuaPartialLibraryParse(cmdscript, cmdstart + 1, cdmend);
         entities.CommandStaffs.Clear();
         oldnest = 0;
-        int lastline = 0;
+        int liststate = 0;
         CommandStaff staff = new CommandStaff();
         staff.staff = new List<CommandStaffer>();
         CommandStaffer staffer = new CommandStaffer();
+        staffer.forms = new List<unit>();
 
         foreach (LuaLibrarySegment segment in cmdlib)
         {
-            if(oldnest == 0 && segment.nesting == 1) staff.name = segment.variable;
-            if (oldnest == 1 && segment.nesting == 0)
+            if ((oldnest) == 0 && segment.nesting == 1)
             {
-                entities.CommandStaffs.Add(staff);
-                staff = new CommandStaff();
-                staff.staff = new List<CommandStaffer>();
+                if(staff.staff.Count > 0)
+                {
+                    entities.CommandStaffs.Add(staff);
+                    staff = new CommandStaff();
+                    staff.staff = new List<CommandStaffer>();
+                }
+                staff.name = segment.variable;
+            }
+            else if (segment.variable == "total_slots") int.TryParse(segment.value, out staff.total_slots);
+            else if (segment.variable == "vacant_limit") int.TryParse(segment.value, out staff.vacant_limit);
+            else if (segment.variable == "active_player")
+            {
+                staff.faction = segment.value.Replace("Find_Player(", "").Replace(")", "");
+            }
+            else if (segment.variable == "extra_name") staff.extra = Entities_ObjectsFirstOrDefault(segment.value, entities);
+            else if (segment.variable == "random_name") staff.random = Entities_ObjectsFirstOrDefault(segment.value, entities);
+            else if ((liststate == 1 || liststate == 3) && segment.nesting == 4)
+            {
+                if (!segment.value.Contains("_RETIRE"))
+                {
+                    unit unit = Entities_ObjectsFirstOrDefault(segment.value, entities);
+                    if (String.Equals(unit.unitname, segment.value, StringComparison.OrdinalIgnoreCase)) staffer.forms.Add(unit);
+                }
+            }
+            else if (liststate == 1 && segment.nesting == 3) liststate = 2;
+            else if (segment.nesting == 4 && segment.variable == "Companies")
+            {
+                liststate = 3;
+                staffer.forms.Clear(); //ignore units if companies are defined later
+            }
+            else if (segment.nesting == 3 && liststate == 0)
+            {
+                staffer.tag = segment.variable;
+                liststate = 1;
+                staffer.assign = Entities_ObjectsFirstOrDefault(segment.value, entities);
+            }
+            if(liststate > 0 && (segment.nesting - segment.decrement) == 2)
+            {
+                liststate = 0;
+                staff.staff.Add(staffer);
+                staffer = new CommandStaffer();
+                staffer.forms = new List<unit>();
             }
 
-            oldnest = segment.nesting;
-            lastline = segment.linenumber;
+            oldnest = segment.nesting - segment.decrement; //} cannot apply to the contents of a segment itself, but does apply to the next one
         }
 
         bool visible = true;
@@ -4779,8 +4826,8 @@ public static class SharedFunctions
                     //random error checking section!
                     if(entity.bombingRunUnit != "") //todo check actual bomber trigger. Is_Bomber?
                     {
-                        unit land = entities.objects.FirstOrDefault(x => String.Equals(entity.bombingRunUnit, x.unitname, StringComparison.OrdinalIgnoreCase));
-                        if(land.unitname is null) entities.readerrors += "\nCannot find land bombing run unit " + entity.bombingRunUnit + " for bomber type " + entity.unitname;
+                        unit land = Entities_ObjectsFirstOrDefault(entity.bombingRunUnit, entities);
+                        if (land.unitname is null) entities.readerrors += "\nCannot find land bombing run unit " + entity.bombingRunUnit + " for bomber type " + entity.unitname;
                         else
                         {
                             if(!(land.behaviors.Contains("LANDBOMBER_LOCOMOTOR") || land.modebehaviors.Contains("LANDBOMBER_LOCOMOTOR"))) entities.readerrors += "\nNo LANDBOMBER_LOCOMOTOR on " + land.unitname + " linked to  " + entity.unitname;
@@ -7229,6 +7276,7 @@ public class LuaLibrarySegment
 {
     public int nesting;
     public int linenumber;
+    public int decrement;
     public string fullLine;
     public string comment;
     public string segment;

@@ -3868,6 +3868,8 @@ namespace TilotnyStudio
 
                             unit.datafile = unitfile;
                             AddCopiedUnits(unit, CopyUnits[i]);
+
+                            if (unit.reqtemplate == baseunit.unitname) unit.reqtemplate = unit.unitname; //If the unit defined its own required structures, update the new unit to also do so in memory
                             entities.objects.Add(unit);
                             if (unitmode)
                             {
