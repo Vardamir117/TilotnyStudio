@@ -1685,7 +1685,7 @@
             this.AbilityUsageLookupListBox.Name = "AbilityUsageLookupListBox";
             this.AbilityUsageLookupListBox.Size = new System.Drawing.Size(506, 589);
             this.AbilityUsageLookupListBox.TabIndex = 25;
-            this.toolTip1.SetToolTip(this.AbilityUsageLookupListBox, "Units that contribute favor to the track when built");
+            this.toolTip1.SetToolTip(this.AbilityUsageLookupListBox, "Units that use the ability and match the hero/skirmish checkboxes");
             // 
             // AbilityLookupDescLabel
             // 
@@ -1878,6 +1878,7 @@
             this.AbilityLookupListBox.Name = "AbilityLookupListBox";
             this.AbilityLookupListBox.Size = new System.Drawing.Size(428, 732);
             this.AbilityLookupListBox.TabIndex = 11;
+            this.toolTip1.SetToolTip(this.AbilityLookupListBox, "Abilities are only grouped when they share a name, description, and icon");
             this.AbilityLookupListBox.SelectedIndexChanged += new System.EventHandler(this.AbilityLookupListBox_SelectedIndexChanged);
             // 
             // tabUnits
@@ -7161,7 +7162,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Holocron";
-            this.Text = "EaWX Holocron v0.5";
+            this.Text = "EaWX Holocron v0.5a";
             this.Load += new System.EventHandler(this.Holocron_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

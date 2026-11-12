@@ -2330,7 +2330,7 @@ namespace Holocron
                 {
                     if (AbilityDescSortRB.Checked) toadd.sortstring = able.desc;
                     else if (AbilityIconSortRB.Checked) toadd.sortstring = able.icon;
-                    else if (AbilityUsageSortRB.Checked)
+                    else // if (AbilityUsageSortRB.Checked) show count when name is selected to, even if it is not sorted by it
                     {
                         toadd.sortstring = "";
                         int sort = 0;

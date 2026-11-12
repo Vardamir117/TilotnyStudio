@@ -439,6 +439,12 @@ public static class SharedFunctions
         entities.containers.Add(contain);*/
     }
 
+    public static int ReadIntFromString(string input)
+    {
+        double temp = Double.Parse(input);
+        return (int)Math.Floor(temp);
+    } 
+
     public static bool parseUnit(XmlNode unit, entities entities, string file)
     {
         if (unit.LocalName == "Planet") return true;
@@ -524,7 +530,7 @@ public static class SharedFunctions
         System.Xml.XmlNode value = unit.SelectSingleNode("descendant::Tech_Level");
         if (!(value is null))
         {
-            techlevel = Int32.Parse(value.InnerText);
+            techlevel = ReadIntFromString(value.InnerText);
         }
         value = unit.SelectSingleNode("descendant::Build_Initially_Locked");
         if (!(value is null))
@@ -547,12 +553,12 @@ public static class SharedFunctions
         value = unit.SelectSingleNode("descendant::Build_Cost_Credits");
         if (!(value is null))
         {
-            cost = Int32.Parse(value.LastChild.Value);
+            cost = ReadIntFromString(value.LastChild.Value);
         }
         value = unit.SelectSingleNode("descendant::Build_Time_Seconds");
         if (!(value is null))
         {
-            buildtime = Int32.Parse(value.LastChild.Value);
+            buildtime = ReadIntFromString(value.LastChild.Value);
         }
         value = unit.SelectSingleNode("descendant::Tactical_Build_Cost_Multiplayer");
         if (!(value is null))
@@ -560,7 +566,7 @@ public static class SharedFunctions
             if (!(value.LastChild is null))
             {
                 string trimmed = value.LastChild.Value.Trim();
-                if (trimmed != "") skirmcost = Int32.Parse(value.LastChild.Value);
+                if (trimmed != "") skirmcost = ReadIntFromString(value.LastChild.Value);
             }
         }
         value = unit.SelectSingleNode("descendant::Tactical_Build_Time_Seconds");
@@ -575,7 +581,7 @@ public static class SharedFunctions
         value = unit.SelectSingleNode("descendant::Population_Value");
         if (!(value is null))
         {
-            pop = Int32.Parse(value.LastChild.Value);
+            pop = ReadIntFromString(value.LastChild.Value);
         }
         value = unit.SelectSingleNode("descendant::AI_Combat_Power");
         if (!(value is null))
@@ -637,7 +643,7 @@ public static class SharedFunctions
                         garrison_entry gar = new garrison_entry
                         {
                             unitname = data[0],
-                            parsingupfront = Int32.Parse(data[1]),
+                            parsingupfront = ReadIntFromString(data[1]),
                             parsingreserve = 0,
                             parsingtech = tech,
                         };
@@ -659,7 +665,7 @@ public static class SharedFunctions
                             garrison_entry gar = garrison[i];
                             if(gar.parsingtech == tech && gar.unitname == data[0])
                             {
-                                gar.parsingreserve = Int32.Parse(data[1]);
+                                gar.parsingreserve = ReadIntFromString(data[1]);
                                 garrison[i] = gar;
                                 break;
                             }
@@ -824,7 +830,7 @@ public static class SharedFunctions
         {
             if (!(value.LastChild is null))
             {
-                shield = Int32.Parse(value.LastChild.Value);
+                shield = ReadIntFromString(value.LastChild.Value);
             }
         }
         value = unit.SelectSingleNode("descendant::Shield_Refresh_Rate");
@@ -840,7 +846,7 @@ public static class SharedFunctions
         {
             if (!(value.LastChild is null))
             {
-                hp = Int32.Parse(value.LastChild.Value);
+                hp = ReadIntFromString(value.LastChild.Value);
             }
         }
         value = unit.SelectSingleNode("descendant::CategoryMask");
@@ -859,22 +865,22 @@ public static class SharedFunctions
         value = unit.SelectSingleNode("descendant::GUI_Row");
         if (!(value is null))
         {
-            gui_row = Int32.Parse(value.LastChild.Value);
+            gui_row = ReadIntFromString(value.LastChild.Value);
         }
         value = unit.SelectSingleNode("descendant::Build_Limit_Current_Per_Player");
         if (!(value is null))
         {
-            if(!(value.LastChild is null)) limit_concurrent = Int32.Parse(value.LastChild.Value);
+            if(!(value.LastChild is null)) limit_concurrent = ReadIntFromString(value.LastChild.Value);
         }
         value = unit.SelectSingleNode("descendant::Build_Limit_Lifetime_Per_Player");
         if (!(value is null))
         {
-            limit_lifetime = Int32.Parse(value.LastChild.Value);
+            limit_lifetime = ReadIntFromString(value.LastChild.Value);
         }
         value = unit.SelectSingleNode("descendant::Build_Max_Instances_Per_Planet");
         if (!(value is null))
         {
-            if (!(value.LastChild is null)) limit_planet = Int32.Parse(value.LastChild.Value);
+            if (!(value.LastChild is null)) limit_planet = ReadIntFromString(value.LastChild.Value);
         }
         value = unit.SelectSingleNode("descendant::Max_Speed");
         if (!(value is null))
@@ -925,12 +931,12 @@ public static class SharedFunctions
         value = unit.SelectSingleNode("descendant::Num_Garrison_Slots");
         if (!(value is null))
         {
-            garrison_slots = Int32.Parse(value.LastChild.Value);
+            garrison_slots = ReadIntFromString(value.LastChild.Value);
         }
         value = unit.SelectSingleNode("descendant::Garrison_Value");
         if (!(value is null))
         {
-            garrison_value = Int32.Parse(value.LastChild.Value);
+            garrison_value = ReadIntFromString(value.LastChild.Value);
         }
         value = unit.SelectSingleNode("descendant::Type");
         if (!(value is null))
@@ -1266,7 +1272,7 @@ public static class SharedFunctions
                         if (!(abdata is null) && !(abdata.LastChild is null)) forlist.icon = abdata.LastChild.Value;
                         else
                         {
-                            switch (forlist.type)
+                            switch (forlist.type.ToUpper())
                             { //Could do a default block for the nontrivial number that are simply I_SA_ namehere .tga, but this is already set up
                                 case "AREA_EFFECT_CONVERT":
                                     forlist.icon = "I_SA_JOIN_ME.TGA";
@@ -1571,7 +1577,7 @@ public static class SharedFunctions
                 abdata = able.SelectSingleNode("descendant::Movement_Speed_Bonus_Percentage");
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.speedBonus = Single.Parse(abdata.LastChild.Value);
                 abdata = able.SelectSingleNode("descendant::Stacking_Category");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.stacking = Int32.Parse(abdata.LastChild.Value);
+                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.stacking = ReadIntFromString(abdata.LastChild.Value);
 
                 abdata = able.SelectSingleNode("descendant::FOW_Reveal_Range_Multiplier");
                 if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
@@ -3473,17 +3479,17 @@ public static class SharedFunctions
                 value = planet.SelectSingleNode("descendant::Special_Structures_Land");
                 if (!(value is null))
                 {
-                    land_structures = Int32.Parse(value.InnerText);
+                    land_structures = ReadIntFromString(value.InnerText);
                 }
                 value = planet.SelectSingleNode("descendant::Max_Space_Base");
                 if (!(value is null))
                 {
-                    max_starbase = Int32.Parse(value.InnerText);
+                    max_starbase = ReadIntFromString(value.InnerText);
                 }
                 value = planet.SelectSingleNode("descendant::Additional_Population_Capacity");
                 if (!(value is null))
                 {
-                    pop = Int32.Parse(value.InnerText);
+                    pop = ReadIntFromString(value.InnerText);
                 }
                 value = planet.SelectSingleNode("descendant::Planet_Ability_Name");
                 if (!(value is null))
