@@ -91,6 +91,7 @@ namespace Holocron
             public static PlanetFilterClass PlanetFilterConfig = new PlanetFilterClass();
 
             public static List<shipname> shipnames = new List<shipname>();
+            public static List<lookupAbility> lookupAbilities = new List<lookupAbility>();
 
             //Assume map picturebox is a square of odd pixel count, the same size between GC and planet pages
             public static int origin;
@@ -335,6 +336,7 @@ namespace Holocron
             PlanetListBox.Items.Clear();
             UnitListBox.Items.Clear();
             FavorListBox.Items.Clear();
+            CommandStaffListBox.Items.Clear();
             System.Threading.Thread t = new System.Threading.Thread(() => LoadThread(loadscreen));
             t.Start();
             MissionListBox.Items.Clear();
@@ -344,6 +346,7 @@ namespace Holocron
             entities.mapcache = new List<string>();
             entities.terraincache = new List<int>();
             globals.shipnames.Clear();
+            globals.lookupAbilities.Clear();
             globals.MoneyStructures.Clear();
             globals.DiscountEntities.Clear();
             loadscreen.Activate();
@@ -594,12 +597,21 @@ namespace Holocron
             lkRandom,
             lkRegional,
             lkGuides,
+            lkAbility,
         }
 
         private void insert_history(int main, int secondary, string entity, bool go_to = false)
         {
-            if (nav.suppresshistory) return;
-            if (nav.navindex > 0 && nav.item[nav.navindex] == entity) return; //Don't duplicate entries when e.g. sorting reselects the same index. Technically should care if the others are the same too, but it's not often names should overlap
+            if (nav.suppresshistory)
+            {
+                if (go_to) goto_history(nav.navindex);
+                return;
+            }
+            if (nav.navindex > 0 && nav.item[nav.navindex] == entity)
+            {
+                if (go_to) goto_history(nav.navindex);
+                return; //Don't duplicate entries when e.g. sorting reselects the same index. Technically should care if the others are the same too, but it's not often names should overlap
+            }
             if (nav.navindex < nav.maintab.Count - 1)
             {
                 for (int i = nav.maintab.Count - 1; i > nav.navindex; i--)
@@ -764,6 +776,17 @@ namespace Holocron
                                 }
                             }
                             break;
+                        case historygovtabs.staff:
+                            for (int i = 0; i < CommandStaffListBox.Items.Count; i++)
+                            {
+                                if (item == ((CommandStaff)CommandStaffListBox.Items[i]).name)
+                                {
+                                    CommandStaffListBox.SelectedItem = CommandStaffListBox.Items[i];
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            break;
                     }
                     break;
                 case historymaintabs.lookups:
@@ -896,6 +919,10 @@ namespace Holocron
                     {
                         foreach (FavorTrack track in entities.FavorTracks) FavorListBox.Items.Add(track);
                     }
+                    if (CommandStaffListBox.Items.Count == 0)
+                    {
+                        foreach (CommandStaff staff in entities.CommandStaffs) CommandStaffListBox.Items.Add(staff);
+                    }
                     break;
                 case (int)historymaintabs.lookups:
                     FillMatrixLookup();
@@ -979,7 +1006,7 @@ namespace Holocron
 
                         foreach (unit hero in entities.spaceHeroes)
                         {
-                            if (hero.tooltip.Contains("TEXT_TOOLTIP_COMMAND_")) //Not sure if this is in fact an efficiency gain
+                            if (!IsSkirmishObject(hero) && hero.tooltip.Contains("TEXT_TOOLTIP_COMMAND_")) //Not sure if this is in fact an efficiency gain
                             {//Todo benchmark this and sorting by name. Add loading screen?
                                 foreach (string entry in SplitXMLWhitespaceList(hero.tooltip))
                                 {
@@ -1128,6 +1155,75 @@ namespace Holocron
                     break;
                 case (int)lookupsubtabs.lkGuides:
                     if (!rbTiersTraits.Checked && !rbStory.Checked && !rbInfluence.Checked && !rbGovernment.Checked) rbTiersTraits.Checked = true;
+                    break;
+                case (int)lookupsubtabs.lkAbility:
+                    if (globals.lookupAbilities.Count == 0)
+                    {
+                        foreach(unit unit in entities.objects)
+                        {
+                            if (!IsTemplate(unit) && !IsHiddenObject(unit) && unit.companyunits.Count <= 0) //Some unit types do not need to be shown
+                            {
+                                /*if(unit.unitname == "Thorn_Assertor")
+                                {
+                                    bool visible = true;
+                                }*/
+                                foreach (unitability able in unit.unitabilities)
+                                {
+                                    string name = able.username;
+                                    string desc = able.desc;
+                                    string icon = able.icon;
+                                    bool notfound = true;
+
+                                    for (int i = 0; i < globals.lookupAbilities.Count; i++)
+                                    {
+                                        lookupAbility lk = globals.lookupAbilities[i];
+                                        if (lk.name == name && lk.desc == desc && lk.icon == icon)
+                                        {
+                                            notfound = false;
+                                            if (IsSkirmishObject(unit) || IsSurvivalObject(unit))
+                                            {
+                                                if (unit.hero) lk.skheroes.Add(unit.unitname);
+                                                else lk.skunits.Add(unit.unitname);
+                                            }
+                                            else
+                                            {
+                                                if (unit.hero) lk.heroes.Add(unit.unitname);
+                                                else lk.units.Add(unit.unitname);
+                                            }
+                                            globals.lookupAbilities[i] = lk;
+                                            break;
+                                        }
+                                    }
+                                    if (notfound)
+                                    {
+                                        lookupAbility looked = new lookupAbility
+                                        {
+                                            name = name,
+                                            sortstring = name,
+                                            desc = desc,
+                                            icon = icon,
+                                            heroes = new List<string>(),
+                                            units = new List<string>(),
+                                            skheroes = new List<string>(),
+                                            skunits = new List<string>(),
+                                        };
+                                        if (IsSkirmishObject(unit) || IsSurvivalObject(unit))
+                                        {
+                                            if (unit.hero) looked.skheroes.Add(unit.unitname);
+                                            else looked.skunits.Add(unit.unitname);
+                                        }
+                                        else
+                                        {
+                                            if (unit.hero) looked.heroes.Add(unit.unitname);
+                                            else looked.units.Add(unit.unitname);
+                                        }
+                                        globals.lookupAbilities.Add(looked);
+                                    }
+                                }
+                            }
+                        }
+                        FillLookupAbilityListbox();
+                    }
                     break;
                 default:
                     // code block
@@ -2171,47 +2267,7 @@ namespace Holocron
             ShipnameCountLabel.Text = "Matches: " + ShipnameListBox.Items.Count;
         }
 
-        private void ShipnameSearchTextBox_TextChanged(object sender, EventArgs e)
-        {
-            FillShipnameListbox(); //Make these all the same handler
-        }
-
-        private void ShipnameSortNameRB_CheckedChanged(object sender, EventArgs e)
-        {
-            FillShipnameListbox();
-        }
-
-        private void ShipnameSortUnitRB_CheckedChanged(object sender, EventArgs e)
-        {
-            FillShipnameListbox();
-        }
-
-        private void ShipnameSortHeroRB_CheckedChanged(object sender, EventArgs e)
-        {
-            FillShipnameListbox();
-        }
-
-        private void ShipnameSortAllRB_CheckedChanged(object sender, EventArgs e)
-        {
-            FillShipnameListbox();
-        }
-
-        private void ShipnameFilterSpaceCheckbox_CheckedChanged(object sender, EventArgs e)
-        {
-            FillShipnameListbox();
-        }
-
-        private void ShipnameFilterHeroCheckbox_CheckedChanged(object sender, EventArgs e)
-        {
-            FillShipnameListbox();
-        }
-
-        private void ShipnameFilterGroundCheckbox_CheckedChanged(object sender, EventArgs e)
-        {
-            FillShipnameListbox();
-        }
-
-        private void ShipnameFilterMinorCheckbox_CheckedChanged(object sender, EventArgs e)
+        private void FillShipnameListbox_Handler(object sender, EventArgs e)
         {
             FillShipnameListbox();
         }
@@ -2240,6 +2296,72 @@ namespace Holocron
             }
         }
 
+        private void FillLookupAbilityListbox()
+        {
+            string oldname = "";
+            string olddesc = "";
+            string oldicon = "";
+            bool oldused = AbilityLookupListBox.SelectedItems.Count > 0;
+            if (oldused)
+            {
+                lookupAbility able = (lookupAbility)AbilityLookupListBox.SelectedItem;
+                oldname = able.name;
+                olddesc = able.desc;
+                oldicon = able.icon;
+            }
+            AbilityLookupListBox.Items.Clear();
+            List<lookupAbility> sorted = new List<lookupAbility>();
+            foreach(lookupAbility able in globals.lookupAbilities)
+            {
+                lookupAbility toadd = able;
+                bool match = false;
+                string[] search = AbilitiesSearchTextBox.Text.Split(';');
+                foreach (string term in search)
+                {
+                    string labl = able.name.ToLower();
+                    string lterm = term.ToLower();
+                    if (labl.Contains(lterm))
+                    {
+                        match = true;
+                        break;
+                    }
+                }
+                if (match)
+                {
+                    if (AbilityDescSortRB.Checked) toadd.sortstring = able.desc;
+                    else if (AbilityIconSortRB.Checked) toadd.sortstring = able.icon;
+                    else if (AbilityUsageSortRB.Checked)
+                    {
+                        toadd.sortstring = "";
+                        int sort = 0;
+                        if (AbilityGCHeroCheckBox.Checked) sort += able.heroes.Count;
+                        if (AbilityGCUnitCheckBox.Checked) sort += able.units.Count;
+                        if (AbilitySkHeroCheckBox.Checked) sort += able.skheroes.Count;
+                        if (AbilitySkHeroCheckBox.Checked) sort += able.skunits.Count;
+                        toadd.sortcount = sort;
+                    }
+                    sorted.Add(toadd);
+                }
+            }
+            if(AbilityUsageSortRB.Checked) sorted.Sort((s2, s1) => s1.sortcount.CompareTo(s2.sortcount));
+            else sorted.Sort((s1, s2) => s1.name.CompareTo(s2.name));
+
+            for (int i = 0; i < sorted.Count; i++)
+            {
+                lookupAbility able = sorted[i];
+                AbilityLookupListBox.Items.Add(able);
+                if (oldused)
+                {
+                    if (able.name == oldname && able.desc == olddesc && able.icon == oldicon)
+                    {
+                        AbilityLookupListBox.SelectedIndex = i;
+                        oldused = false;
+                    }
+                }
+                
+            }
+        }
+
         private void MissionListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             MissionText.Text = File.ReadAllText(getModFile("Scripts\\Library\\eawx-plugins\\intervention-missions\\rewards\\RewardTables_" + MissionListBox.SelectedItem + ".lua", entities));
@@ -2262,6 +2384,28 @@ namespace Holocron
                 return name + " (" + units.Count + "," + heroes.Count + ")";
             }
         }
+
+        public struct lookupAbility
+        {
+            public string name;
+            public string desc;
+            public string icon;
+            public string sortstring;
+            public int sortcount;
+            public List<string> heroes;
+            public List<string> units;
+            public List<string> skheroes;
+            public List<string> skunits;
+
+            public override string ToString()
+            {
+                if (sortstring == name) return name;
+                else if (sortstring != "") return "(" + sortstring + ") " + name;
+                else return "(" + sortcount.ToString("0") + ") " + name;
+            }
+        }
+
+
 
         private void SpawnListBox_SelectedIndexChanged(object sender, EventArgs e)
         {//Todo list planets where used
@@ -2405,6 +2549,10 @@ namespace Holocron
             {
                 if(string.Equals(track.faction, faction.codename, StringComparison.OrdinalIgnoreCase)) FactionGovListBox.Items.Add(track);
             }
+            foreach (CommandStaff staff in entities.CommandStaffs)
+            {
+                if (string.Equals(staff.faction, faction.codename, StringComparison.OrdinalIgnoreCase)) FactionGovListBox.Items.Add(staff);
+            }
             GovernmentTypeLabel.Text = "";
         }
 
@@ -2512,6 +2660,10 @@ namespace Holocron
                 {
                     GovernmentTypeLabel.Text = "Favor";
                 }
+                else if (FactionGovListBox.SelectedItem.GetType() == typeof(CommandStaff))
+                {
+                    GovernmentTypeLabel.Text = "Command Staff";
+                }
             }
         }
 
@@ -2522,6 +2674,10 @@ namespace Holocron
                 if (FactionGovListBox.SelectedItem.GetType() == typeof(FavorTrack))
                 {
                     insert_history((int)historymaintabs.govs, (int)historygovtabs.favor, ((FavorTrack)FactionGovListBox.SelectedItem).name, true);
+                }
+                else if (FactionGovListBox.SelectedItem.GetType() == typeof(CommandStaff))
+                {
+                    insert_history((int)historymaintabs.govs, (int)historygovtabs.staff, ((CommandStaff)FactionGovListBox.SelectedItem).name, true);
                 }
             }
         }
@@ -9029,6 +9185,181 @@ namespace Holocron
         private void FavorContributorsGotoButton_Click(object sender, EventArgs e)
         {
             if (FavorContributorsListBox.SelectedItems.Count > 0) gotoUnitUniversal(((FavorSupport)FavorContributorsListBox.SelectedItem).unit);
+        }
+
+        private void VariantLabel_Click(object sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+            if (me.Button == MouseButtons.Left)
+            {
+                TextDetail deets = new TextDetail();
+                deets.detail = VariantLabel.Text;
+                deets.Show();
+            }
+            else if (me.Button == MouseButtons.Right) System.Windows.Forms.Clipboard.SetText(VariantLabel.Text);
+        }
+
+        private void CommandStaffListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (CommandStaffListBox.SelectedItems.Count > 0)
+            {
+                CommandStaff staff = (CommandStaff)CommandStaffListBox.SelectedItem;
+                insert_history((int)historymaintabs.govs, (int)historygovtabs.staff, staff.name);
+
+                CmdStaffFactionLabel.Text = "Faction: " + staff.faction;
+                CmdStaffSlotsLabel.Text = "Slot Count: " + staff.total_slots;
+                CmdStaffVacantLabel.Text = "Replacements: " + staff.vacant_limit;
+                CmdStaffExtraLabel.Text = "Replacement Cost: " + staff.extra.cost.ToString();
+                CmdStaffRandomLabel.Text = "Random Cost: " + staff.random.cost.ToString();
+
+                CmdStaffOptionListBox.Items.Clear();
+                foreach (CommandStaffer staffer in staff.staff) CmdStaffOptionListBox.Items.Add(staffer);
+                if (CmdStaffOptionListBox.Items.Count > 0) CmdStaffOptionListBox.SelectedIndex = 0;
+            }
+        }
+
+        private void CmdStaffOptionListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            CmdStaffFormListBox.Items.Clear();
+            if (CmdStaffOptionListBox.SelectedItems.Count > 0)
+            {
+                CommandStaffer staffer = (CommandStaffer)CmdStaffOptionListBox.SelectedItem;
+                foreach (unit form in staffer.forms) CmdStaffFormListBox.Items.Add(form);
+                if (CmdStaffFormListBox.Items.Count > 0) CmdStaffFormListBox.SelectedIndex = 0;
+                CmdStaffEnableLabel.Text = "";
+                if (staffer.enable.Count > 0) CmdStaffEnableLabel.Text += "Enable: " + SerializeStringArray(staffer.enable) + "\n";
+                if (staffer.disable.Count > 0) CmdStaffEnableLabel.Text += "Disable: " + SerializeStringArray(staffer.disable);
+
+                CmdStaffHireDescRichTextBox.Text = "";
+                foreach (string entry in SplitXMLWhitespaceList(staffer.assign.tooltip)) CmdStaffHireDescRichTextBox.Text += Find_Text_Entry(entry, entities) + "\n";
+            }
+        }
+
+        private void CmdStaffFormListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (CmdStaffFormListBox.SelectedItems.Count > 0)
+            {
+                unit form = (unit)CmdStaffFormListBox.SelectedItem;
+
+                CmdStaffHeroDescRichTextBox.Text = "";
+                foreach (string entry in SplitXMLWhitespaceList(form.tooltip)) CmdStaffHeroDescRichTextBox.Text += Find_Text_Entry(entry, entities) + "\n";
+            }
+                
+        }
+
+        private void CmdStaffGotoFormButton_Click(object sender, EventArgs e)
+        {
+            if (CommandStaffListBox.SelectedItems.Count > 0) gotoUnitUniversal(((unit)CommandStaffListBox.SelectedItem).unitname);
+        }
+
+        private void AbilityLookupListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(AbilityLookupListBox.SelectedItems.Count > 0)
+            {
+                lookupAbility able = (lookupAbility)AbilityLookupListBox.SelectedItem;
+
+                AbilityLookupIconPictureBox.Image = new Bitmap(IconPictureBox.Width, IconPictureBox.Height);
+                IconData icondata = DatParser.GetIconData(able.icon, entities);
+                if (icondata.size_x > 0 && entities.MTmaster != null)
+                {
+                    // Create a Graphics object to do the drawing, *with the new bitmap as the target*
+                    using (Graphics g = Graphics.FromImage(AbilityLookupIconPictureBox.Image))
+                    {
+                        g.DrawImage(entities.MTmaster, 0, 0, new Rectangle(icondata.origin_x, icondata.origin_y, icondata.size_x, icondata.size_y), GraphicsUnit.Pixel);
+                    }
+                }
+                AbilityLookupIconPictureBox.Tag = able.icon;
+                AbilityLookupNameLabel.Text = able.name;
+                AbilityLookupDescLabel.Text = Find_Text_Entry(able.desc, entities);
+
+                AbilityUsageLookupListBox.Items.Clear();
+                if (AbilityGCHeroCheckBox.Checked)
+                {
+                    foreach(string unitname in able.heroes)
+                    {
+                        unit unit = Entities_ObjectsFirstOrDefault(unitname, entities);
+                        unit.sortstring = unit.unitname;
+                        AbilityUsageLookupListBox.Items.Add(unit);
+                    }
+                }
+                if (AbilityGCUnitCheckBox.Checked)
+                {
+                    foreach (string unitname in able.units)
+                    {
+                        unit unit = Entities_ObjectsFirstOrDefault(unitname, entities);
+                        unit.sortstring = unit.unitname;
+                        AbilityUsageLookupListBox.Items.Add(unit);
+                    }
+                }
+                if (AbilitySkHeroCheckBox.Checked)
+                {
+                    foreach (string unitname in able.skheroes)
+                    {
+                        unit unit = Entities_ObjectsFirstOrDefault(unitname, entities);
+                        unit.sortstring = unit.unitname;
+                        AbilityUsageLookupListBox.Items.Add(unit);
+                    }
+                }
+                if (AbilitySkUnitCheckBox.Checked)
+                {
+                    foreach (string unitname in able.skunits)
+                    {
+                        unit unit = Entities_ObjectsFirstOrDefault(unitname, entities);
+                        unit.sortstring = unit.unitname;
+                        AbilityUsageLookupListBox.Items.Add(unit);
+                    }
+                }
+
+                AbilityLookupUsageLabel.Text = "Usage: (" + AbilityUsageLookupListBox.Items.Count.ToString() + ")";
+            }
+        }
+
+        private void FillLookupAbilityListbox_Hook(object sender, EventArgs e)
+        {
+            FillLookupAbilityListbox();
+        }
+
+        private void AbilityUsageLookupGoToButton_Click(object sender, EventArgs e)
+        {
+            if (AbilityUsageLookupListBox.SelectedItems.Count > 0) gotoUnitUniversal(((unit)AbilityUsageLookupListBox.SelectedItem).unitname);
+        }
+
+        private void AbilityLookupIconPictureBox_Click(object sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if (me.Button == MouseButtons.Right)
+            {
+                if (AbilityLookupIconPictureBox.Tag is null) return;
+                string icon = (string)AbilityLookupIconPictureBox.Tag;
+
+                if (IconPictureBox.Image == null) return;
+                SaveFileDialog fil = new SaveFileDialog();
+                fil.Filter = ("Bitmap files (*.bmp)|*.bmp|PNG Files (*.png)|*.png|JPEG files (*.jpg)|*.jpg");
+                fil.Title = "Icon Export";
+                fil.FileName = icon;
+                if (fil.ShowDialog() == DialogResult.OK)
+                {
+                    IconData icondata = DatParser.GetIconData(icon, entities);
+                    Image export = new Bitmap(icondata.size_x, icondata.size_y);
+                    using (Graphics g = Graphics.FromImage(export))
+                    {
+                        g.DrawImage(entities.MTmaster, new Rectangle(0, 0, icondata.size_x, icondata.size_y), new Rectangle(icondata.origin_x, icondata.origin_y, icondata.size_x, icondata.size_y), GraphicsUnit.Pixel);
+                    }
+                    System.Drawing.Imaging.ImageFormat format = System.Drawing.Imaging.ImageFormat.Bmp;
+                    switch (fil.FilterIndex)
+                    {
+                        case 1:
+                            format = System.Drawing.Imaging.ImageFormat.Png;
+                            break;
+                        case 2:
+                            format = System.Drawing.Imaging.ImageFormat.Jpeg;
+                            break;
+                    }
+                    export.Save(fil.FileName, format);
+                    MessageBox.Show("Image saved");
+                }
+            }
         }
 
         //Don't put any functions below here if you want it to still compile

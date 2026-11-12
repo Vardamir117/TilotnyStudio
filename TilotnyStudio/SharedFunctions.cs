@@ -1190,14 +1190,14 @@ public static class SharedFunctions
                         if (!(abdata is null) && !(abdata.LastChild is null)) forlist.username = abdata.LastChild.Value;
                         else
                         {//These seem to be consistent, unlike icon names
-                            forlist.username = "TEXT_TOOLTIP_ABILITY_" + forlist.type + "_NAME";
+                            forlist.username = "TEXT_TOOLTIP_ABILITY_" + forlist.type.ToUpper() + "_NAME";
                         }
                         forlist.username = Find_Text_Entry(forlist.username, entities);
                         abdata = able.SelectSingleNode("descendant::Alternate_Description_Text");
                         if (!(abdata is null) && !(abdata.LastChild is null)) forlist.desc = abdata.LastChild.Value;
                         else
                         {
-                            forlist.desc = "TEXT_TOOLTIP_ABILITY_" + forlist.type + "_DESCRIPTION";
+                            forlist.desc = "TEXT_TOOLTIP_ABILITY_" + forlist.type.ToUpper() + "_DESCRIPTION";
                         }
                         abdata = able.SelectSingleNode("descendant::GUI_Activated_Ability_Name");
                         if (!(abdata is null) && !(abdata.LastChild is null)) forlist.ability = abdata.LastChild.Value.Trim();
@@ -1444,6 +1444,9 @@ public static class SharedFunctions
                                     break;
                                 case "STUN":
                                     forlist.icon = "I_SA_STUN.TGA";
+                                    break;
+                                case "SUPER_LASER":
+                                    forlist.icon = "I_SA_FIRE_ENERGY_WEAPON.TGA";
                                     break;
                                 case "SUMMON":
                                     forlist.icon = "I_SA_SUMMON.TGA";
@@ -4234,6 +4237,10 @@ public static class SharedFunctions
         staff.staff = new List<CommandStaffer>();
         CommandStaffer staffer = new CommandStaffer();
         staffer.forms = new List<unit>();
+        staffer.enable = new List<string>();
+        staffer.disable = new List<string>();
+        List<string> avails = new List<string>();
+        bool availmode = false;
 
         foreach (LuaLibrarySegment segment in cmdlib)
         {
@@ -4241,6 +4248,19 @@ public static class SharedFunctions
             {
                 if(staff.staff.Count > 0)
                 {
+                    for(int i = 0; i < staff.staff.Count; i++)
+                    {
+                        CommandStaffer staf = staff.staff[i];
+                        if (avails.Contains(staf.tag))
+                        {
+                            staf.enable.Add("Default");
+                            staff.staff[i] = staf;
+                        }
+                        if (staff.faction != "")
+                        {
+                            foreach (unit form in staf.forms) FindUnitAddFakeAffils(form.unitname, staff.faction, entities); //There is no guarantee faction is defined when forms are originally found
+                        }
+                    }
                     entities.CommandStaffs.Add(staff);
                     staff = new CommandStaff();
                     staff.staff = new List<CommandStaffer>();
@@ -4260,7 +4280,11 @@ public static class SharedFunctions
                 if (!segment.value.Contains("_RETIRE"))
                 {
                     unit unit = Entities_ObjectsFirstOrDefault(segment.value, entities);
-                    if (String.Equals(unit.unitname, segment.value, StringComparison.OrdinalIgnoreCase)) staffer.forms.Add(unit);
+                    if (String.Equals(unit.unitname, segment.value, StringComparison.OrdinalIgnoreCase))
+                    {
+                        unit.sortstring = unit.unitname;
+                        staffer.forms.Add(unit);
+                    }
                 }
             }
             else if (liststate == 1 && segment.nesting == 3) liststate = 2;
@@ -4281,9 +4305,104 @@ public static class SharedFunctions
                 staff.staff.Add(staffer);
                 staffer = new CommandStaffer();
                 staffer.forms = new List<unit>();
+                staffer.enable = new List<string>();
+                staffer.disable = new List<string>();
+            }
+            else if(segment.variable == "available_list")
+            {
+                if (segment.value != "") avails.Add(segment.value);
+                availmode = true;
+            }
+            if (availmode)
+            {
+                if ((segment.nesting - segment.decrement) == 1) availmode = false;
+                else if(segment.value != "") avails.Add(segment.value);
             }
 
             oldnest = segment.nesting - segment.decrement; //} cannot apply to the contents of a segment itself, but does apply to the next one
+        }
+        if(entities.CommandStaffs[entities.CommandStaffs.Count - 1].name != staff.name) entities.CommandStaffs.Add(staff); //The last one listed may not be picked up by the check condition
+
+        string functionname = "";
+        bool initmode = false;
+        string techlevel = "";
+        for (int linenum = cdmend; linenum < cmdscript.Length; linenum++)
+        {
+            string line = cmdscript[linenum];
+            if (line.Contains("function"))
+            {
+                int startindex = line.IndexOf(':');
+                if (startindex < 0) startindex = line.IndexOf(' ');
+                startindex++;
+                int endex = line.IndexOf('(');
+                if (endex < 0) endex = line.Length - 1;
+                functionname = line.Substring(startindex,endex - startindex);
+                initmode = false;
+                techlevel = "";
+            }
+            if (line.Contains("init_hero_system"))
+            {
+                initmode = true;
+            }
+            if (initmode)
+            {
+                if (line.Contains("tech_level") || line.Contains("Era_Transitions"))
+                {
+                    int start = line.IndexOf("tech_level");
+                    techlevel = " " + line.Substring(start, line.Length - start).Replace("then", "").TrimEnd();
+                }
+                if (line.Contains("current_year"))
+                {
+                    int start = line.IndexOf("current_year");
+                    techlevel = " " + line.Substring(start, line.Length - start).Replace("then", "").TrimEnd();
+                }
+                if (line.Contains("end")) techlevel = "";
+            }
+            if (line.Contains("new_era_number"))
+            {
+                int start = line.IndexOf("new_era_number");
+                techlevel = " " + line.Substring(start, line.Length - start).Replace("then", "").TrimEnd();
+            }
+            if (line.Contains("Handle_Hero_Add"))
+            {
+                foreach (CommandStaff command in entities.CommandStaffs)
+                {
+                    if (line.Contains(command.name))
+                    {
+                        for (int i = 0; i < command.staff.Count; i++)
+                        {
+                            CommandStaffer staf = command.staff[i];
+                            if (line.Contains(staf.tag))
+                            {
+                                string condition = functionname;
+                                if (techlevel != "") condition += techlevel;
+                                staf.enable.Add(condition);
+                                command.staff[i] = staf;
+                            }
+                        }
+                    }
+                }
+            }
+            if (line.Contains("Handle_Hero_Exit"))
+            {
+                foreach (CommandStaff command in entities.CommandStaffs)
+                {
+                    if (line.Contains(command.name))
+                    {
+                        for (int i = 0; i < command.staff.Count; i++)
+                        {
+                            CommandStaffer staf = command.staff[i];
+                            if (line.Contains(staf.tag))
+                            {
+                                string condition = functionname;
+                                if (techlevel != "") condition += techlevel;
+                                staf.disable.Add(condition);
+                                command.staff[i] = staf;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         bool visible = true;
@@ -7346,6 +7465,8 @@ public class FavorTrack
 public class CommandStaffer
 {
     public string tag;
+    public List<string> enable;
+    public List<string> disable;
     public unit assign;
     public List<unit> forms;
 

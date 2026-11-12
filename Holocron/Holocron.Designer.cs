@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Holocron));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -119,6 +119,27 @@
             this.DocumentationTextBox = new System.Windows.Forms.RichTextBox();
             this.rbInfluence = new System.Windows.Forms.RadioButton();
             this.rbTiersTraits = new System.Windows.Forms.RadioButton();
+            this.AbilityTab = new System.Windows.Forms.TabPage();
+            this.AbilityUsageLookupGoToButton = new System.Windows.Forms.Button();
+            this.AbilityLookupUsageLabel = new System.Windows.Forms.Label();
+            this.AbilityUsageLookupListBox = new System.Windows.Forms.ListBox();
+            this.AbilityLookupDescLabel = new System.Windows.Forms.Label();
+            this.AbilityLookupNameLabel = new System.Windows.Forms.Label();
+            this.AbilityLookupIconPictureBox = new System.Windows.Forms.PictureBox();
+            this.label48 = new System.Windows.Forms.Label();
+            this.AbilitySkUnitCheckBox = new System.Windows.Forms.CheckBox();
+            this.AbilitySkHeroCheckBox = new System.Windows.Forms.CheckBox();
+            this.AbilityGCHeroCheckBox = new System.Windows.Forms.CheckBox();
+            this.AbilityGCUnitCheckBox = new System.Windows.Forms.CheckBox();
+            this.label49 = new System.Windows.Forms.Label();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.AbilityUsageSortRB = new System.Windows.Forms.RadioButton();
+            this.AbilityIconSortRB = new System.Windows.Forms.RadioButton();
+            this.AbilityDescSortRB = new System.Windows.Forms.RadioButton();
+            this.AbilityNameSortRB = new System.Windows.Forms.RadioButton();
+            this.label50 = new System.Windows.Forms.Label();
+            this.AbilitiesSearchTextBox = new System.Windows.Forms.TextBox();
+            this.AbilityLookupListBox = new System.Windows.Forms.ListBox();
             this.tabUnits = new System.Windows.Forms.TabPage();
             this.UnitListBox = new System.Windows.Forms.ListBox();
             this.SpaceStructureRadioButton = new System.Windows.Forms.RadioButton();
@@ -136,6 +157,7 @@
             this.UnitSearchTextBox = new System.Windows.Forms.TextBox();
             this.UnitRadioButton = new System.Windows.Forms.RadioButton();
             this.Unitpanel = new System.Windows.Forms.Panel();
+            this.TextureListButton = new System.Windows.Forms.Button();
             this.ErrorCheckButton = new System.Windows.Forms.Button();
             this.OpenUnitModelButton = new System.Windows.Forms.Button();
             this.OpenUnitFileButton = new System.Windows.Forms.Button();
@@ -484,6 +506,20 @@
             this.FavorUnlockListBox = new System.Windows.Forms.ListBox();
             this.FavorListBox = new System.Windows.Forms.ListBox();
             this.CommandStaffTab = new System.Windows.Forms.TabPage();
+            this.CmdStaffEnableLabel = new System.Windows.Forms.Label();
+            this.CmdStaffFactionLabel = new System.Windows.Forms.Label();
+            this.CmdStaffRandomLabel = new System.Windows.Forms.Label();
+            this.CmdStaffExtraLabel = new System.Windows.Forms.Label();
+            this.CmdStaffVacantLabel = new System.Windows.Forms.Label();
+            this.CmdStaffSlotsLabel = new System.Windows.Forms.Label();
+            this.label47 = new System.Windows.Forms.Label();
+            this.CmdStaffHireDescRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.CmdStaffHeroDescRichTextBox = new System.Windows.Forms.RichTextBox();
+            this.CmdStaffGotoFormButton = new System.Windows.Forms.Button();
+            this.label46 = new System.Windows.Forms.Label();
+            this.CmdStaffFormListBox = new System.Windows.Forms.ListBox();
+            this.CmdStaffOptionListBox = new System.Windows.Forms.ListBox();
+            this.CommandStaffListBox = new System.Windows.Forms.ListBox();
             this.tabGalaxy = new System.Windows.Forms.TabPage();
             this.GCMapControlsLabel = new System.Windows.Forms.Label();
             this.label36 = new System.Windows.Forms.Label();
@@ -546,7 +582,6 @@
             this.AutoResolveBattleTypeLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.TextureListButton = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tabLookups.SuspendLayout();
             this.LookupTabControl.SuspendLayout();
@@ -562,6 +597,9 @@
             this.StandardFTab.SuspendLayout();
             this.RandomFTab.SuspendLayout();
             this.DocumentationTab.SuspendLayout();
+            this.AbilityTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AbilityLookupIconPictureBox)).BeginInit();
+            this.panel2.SuspendLayout();
             this.tabUnits.SuspendLayout();
             this.Unitpanel.SuspendLayout();
             this.UnitSFXPanel.SuspendLayout();
@@ -589,6 +627,7 @@
             this.tabGov.SuspendLayout();
             this.GovernmentTabControl.SuspendLayout();
             this.FavorTab.SuspendLayout();
+            this.CommandStaffTab.SuspendLayout();
             this.tabGalaxy.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapPlanetNameBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapPlanetBox)).BeginInit();
@@ -692,6 +731,7 @@
             this.LookupTabControl.Controls.Add(this.RandomFTab);
             this.LookupTabControl.Controls.Add(this.RegionalTab);
             this.LookupTabControl.Controls.Add(this.DocumentationTab);
+            this.LookupTabControl.Controls.Add(this.AbilityTab);
             this.LookupTabControl.Location = new System.Drawing.Point(3, 3);
             this.LookupTabControl.Name = "LookupTabControl";
             this.LookupTabControl.SelectedIndex = 0;
@@ -744,34 +784,34 @@
             this.MatrixGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.MatrixGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.MatrixGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             this.MatrixGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.MatrixGrid.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.MatrixGrid.DefaultCellStyle = dataGridViewCellStyle5;
             this.MatrixGrid.Location = new System.Drawing.Point(3, 24);
             this.MatrixGrid.Name = "MatrixGrid";
             this.MatrixGrid.ReadOnly = true;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.MatrixGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.MatrixGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.MatrixGrid.Size = new System.Drawing.Size(1470, 722);
             this.MatrixGrid.TabIndex = 1;
             // 
@@ -1012,7 +1052,7 @@
             this.ShipnameFilterMinorCheckbox.TabIndex = 9;
             this.ShipnameFilterMinorCheckbox.Text = "Minor Heroes";
             this.ShipnameFilterMinorCheckbox.UseVisualStyleBackColor = true;
-            this.ShipnameFilterMinorCheckbox.CheckedChanged += new System.EventHandler(this.ShipnameFilterMinorCheckbox_CheckedChanged);
+            this.ShipnameFilterMinorCheckbox.CheckedChanged += new System.EventHandler(this.FillShipnameListbox_Handler);
             // 
             // ShipnameFilterGroundCheckbox
             // 
@@ -1026,7 +1066,7 @@
             this.ShipnameFilterGroundCheckbox.TabIndex = 8;
             this.ShipnameFilterGroundCheckbox.Text = "Ground Units";
             this.ShipnameFilterGroundCheckbox.UseVisualStyleBackColor = true;
-            this.ShipnameFilterGroundCheckbox.CheckedChanged += new System.EventHandler(this.ShipnameFilterGroundCheckbox_CheckedChanged);
+            this.ShipnameFilterGroundCheckbox.CheckedChanged += new System.EventHandler(this.FillShipnameListbox_Handler);
             // 
             // ShipnameFilterSpaceCheckbox
             // 
@@ -1040,7 +1080,7 @@
             this.ShipnameFilterSpaceCheckbox.TabIndex = 7;
             this.ShipnameFilterSpaceCheckbox.Text = "Space Units";
             this.ShipnameFilterSpaceCheckbox.UseVisualStyleBackColor = true;
-            this.ShipnameFilterSpaceCheckbox.CheckedChanged += new System.EventHandler(this.ShipnameFilterSpaceCheckbox_CheckedChanged);
+            this.ShipnameFilterSpaceCheckbox.CheckedChanged += new System.EventHandler(this.FillShipnameListbox_Handler);
             // 
             // ShipnameFilterHeroCheckbox
             // 
@@ -1054,7 +1094,7 @@
             this.ShipnameFilterHeroCheckbox.TabIndex = 6;
             this.ShipnameFilterHeroCheckbox.Text = "Heroes";
             this.ShipnameFilterHeroCheckbox.UseVisualStyleBackColor = true;
-            this.ShipnameFilterHeroCheckbox.CheckedChanged += new System.EventHandler(this.ShipnameFilterHeroCheckbox_CheckedChanged);
+            this.ShipnameFilterHeroCheckbox.CheckedChanged += new System.EventHandler(this.FillShipnameListbox_Handler);
             // 
             // label10
             // 
@@ -1087,7 +1127,7 @@
             this.ShipnameSortAllRB.TabIndex = 3;
             this.ShipnameSortAllRB.Text = "List+Hero Usage";
             this.ShipnameSortAllRB.UseVisualStyleBackColor = true;
-            this.ShipnameSortAllRB.CheckedChanged += new System.EventHandler(this.ShipnameSortAllRB_CheckedChanged);
+            this.ShipnameSortAllRB.CheckedChanged += new System.EventHandler(this.FillShipnameListbox_Handler);
             // 
             // ShipnameSortHeroRB
             // 
@@ -1099,7 +1139,7 @@
             this.ShipnameSortHeroRB.TabIndex = 2;
             this.ShipnameSortHeroRB.Text = "Usage in heroes";
             this.ShipnameSortHeroRB.UseVisualStyleBackColor = true;
-            this.ShipnameSortHeroRB.CheckedChanged += new System.EventHandler(this.ShipnameSortHeroRB_CheckedChanged);
+            this.ShipnameSortHeroRB.CheckedChanged += new System.EventHandler(this.FillShipnameListbox_Handler);
             // 
             // ShipnameSortUnitRB
             // 
@@ -1111,7 +1151,7 @@
             this.ShipnameSortUnitRB.TabIndex = 1;
             this.ShipnameSortUnitRB.Text = "Usage in name lists";
             this.ShipnameSortUnitRB.UseVisualStyleBackColor = true;
-            this.ShipnameSortUnitRB.CheckedChanged += new System.EventHandler(this.ShipnameSortUnitRB_CheckedChanged);
+            this.ShipnameSortUnitRB.CheckedChanged += new System.EventHandler(this.FillShipnameListbox_Handler);
             // 
             // ShipnameSortNameRB
             // 
@@ -1125,7 +1165,7 @@
             this.ShipnameSortNameRB.TabStop = true;
             this.ShipnameSortNameRB.Text = "Alphabetically";
             this.ShipnameSortNameRB.UseVisualStyleBackColor = true;
-            this.ShipnameSortNameRB.CheckedChanged += new System.EventHandler(this.ShipnameSortNameRB_CheckedChanged);
+            this.ShipnameSortNameRB.CheckedChanged += new System.EventHandler(this.FillShipnameListbox_Handler);
             // 
             // ShipnameDetailLabel
             // 
@@ -1155,7 +1195,7 @@
             this.ShipnameSearchTextBox.Size = new System.Drawing.Size(151, 26);
             this.ShipnameSearchTextBox.TabIndex = 1;
             this.toolTip1.SetToolTip(this.ShipnameSearchTextBox, "Multiple search terms can be separated by semicolons");
-            this.ShipnameSearchTextBox.TextChanged += new System.EventHandler(this.ShipnameSearchTextBox_TextChanged);
+            this.ShipnameSearchTextBox.TextChanged += new System.EventHandler(this.FillShipnameListbox_Handler);
             // 
             // ShipnameListBox
             // 
@@ -1591,6 +1631,255 @@
             this.rbTiersTraits.UseVisualStyleBackColor = true;
             this.rbTiersTraits.CheckedChanged += new System.EventHandler(this.rbTiersTraits_CheckedChanged);
             // 
+            // AbilityTab
+            // 
+            this.AbilityTab.Controls.Add(this.AbilityUsageLookupGoToButton);
+            this.AbilityTab.Controls.Add(this.AbilityLookupUsageLabel);
+            this.AbilityTab.Controls.Add(this.AbilityUsageLookupListBox);
+            this.AbilityTab.Controls.Add(this.AbilityLookupDescLabel);
+            this.AbilityTab.Controls.Add(this.AbilityLookupNameLabel);
+            this.AbilityTab.Controls.Add(this.AbilityLookupIconPictureBox);
+            this.AbilityTab.Controls.Add(this.label48);
+            this.AbilityTab.Controls.Add(this.AbilitySkUnitCheckBox);
+            this.AbilityTab.Controls.Add(this.AbilitySkHeroCheckBox);
+            this.AbilityTab.Controls.Add(this.AbilityGCHeroCheckBox);
+            this.AbilityTab.Controls.Add(this.AbilityGCUnitCheckBox);
+            this.AbilityTab.Controls.Add(this.label49);
+            this.AbilityTab.Controls.Add(this.panel2);
+            this.AbilityTab.Controls.Add(this.label50);
+            this.AbilityTab.Controls.Add(this.AbilitiesSearchTextBox);
+            this.AbilityTab.Controls.Add(this.AbilityLookupListBox);
+            this.AbilityTab.Location = new System.Drawing.Point(4, 22);
+            this.AbilityTab.Name = "AbilityTab";
+            this.AbilityTab.Size = new System.Drawing.Size(1476, 749);
+            this.AbilityTab.TabIndex = 12;
+            this.AbilityTab.Text = "Abilities";
+            this.AbilityTab.UseVisualStyleBackColor = true;
+            // 
+            // AbilityUsageLookupGoToButton
+            // 
+            this.AbilityUsageLookupGoToButton.Location = new System.Drawing.Point(1127, 132);
+            this.AbilityUsageLookupGoToButton.Name = "AbilityUsageLookupGoToButton";
+            this.AbilityUsageLookupGoToButton.Size = new System.Drawing.Size(48, 23);
+            this.AbilityUsageLookupGoToButton.TabIndex = 84;
+            this.AbilityUsageLookupGoToButton.Text = "Go to";
+            this.AbilityUsageLookupGoToButton.UseVisualStyleBackColor = true;
+            this.AbilityUsageLookupGoToButton.Click += new System.EventHandler(this.AbilityUsageLookupGoToButton_Click);
+            // 
+            // AbilityLookupUsageLabel
+            // 
+            this.AbilityLookupUsageLabel.AutoSize = true;
+            this.AbilityLookupUsageLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AbilityLookupUsageLabel.Location = new System.Drawing.Point(664, 132);
+            this.AbilityLookupUsageLabel.Name = "AbilityLookupUsageLabel";
+            this.AbilityLookupUsageLabel.Size = new System.Drawing.Size(60, 20);
+            this.AbilityLookupUsageLabel.TabIndex = 26;
+            this.AbilityLookupUsageLabel.Text = "Usage:";
+            // 
+            // AbilityUsageLookupListBox
+            // 
+            this.AbilityUsageLookupListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.AbilityUsageLookupListBox.FormattingEnabled = true;
+            this.AbilityUsageLookupListBox.Location = new System.Drawing.Point(668, 155);
+            this.AbilityUsageLookupListBox.Name = "AbilityUsageLookupListBox";
+            this.AbilityUsageLookupListBox.Size = new System.Drawing.Size(506, 589);
+            this.AbilityUsageLookupListBox.TabIndex = 25;
+            this.toolTip1.SetToolTip(this.AbilityUsageLookupListBox, "Units that contribute favor to the track when built");
+            // 
+            // AbilityLookupDescLabel
+            // 
+            this.AbilityLookupDescLabel.AutoSize = true;
+            this.AbilityLookupDescLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AbilityLookupDescLabel.Location = new System.Drawing.Point(485, 78);
+            this.AbilityLookupDescLabel.Name = "AbilityLookupDescLabel";
+            this.AbilityLookupDescLabel.Size = new System.Drawing.Size(60, 13);
+            this.AbilityLookupDescLabel.TabIndex = 24;
+            this.AbilityLookupDescLabel.Text = "Description";
+            // 
+            // AbilityLookupNameLabel
+            // 
+            this.AbilityLookupNameLabel.AutoSize = true;
+            this.AbilityLookupNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AbilityLookupNameLabel.Location = new System.Drawing.Point(484, 56);
+            this.AbilityLookupNameLabel.Name = "AbilityLookupNameLabel";
+            this.AbilityLookupNameLabel.Size = new System.Drawing.Size(51, 20);
+            this.AbilityLookupNameLabel.TabIndex = 23;
+            this.AbilityLookupNameLabel.Text = "Name";
+            // 
+            // AbilityLookupIconPictureBox
+            // 
+            this.AbilityLookupIconPictureBox.Location = new System.Drawing.Point(437, 56);
+            this.AbilityLookupIconPictureBox.Name = "AbilityLookupIconPictureBox";
+            this.AbilityLookupIconPictureBox.Size = new System.Drawing.Size(35, 35);
+            this.AbilityLookupIconPictureBox.TabIndex = 22;
+            this.AbilityLookupIconPictureBox.TabStop = false;
+            this.AbilityLookupIconPictureBox.Click += new System.EventHandler(this.AbilityLookupIconPictureBox_Click);
+            // 
+            // label48
+            // 
+            this.label48.AutoSize = true;
+            this.label48.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label48.Location = new System.Drawing.Point(440, 485);
+            this.label48.Name = "label48";
+            this.label48.Size = new System.Drawing.Size(109, 20);
+            this.label48.TabIndex = 21;
+            this.label48.Text = "Usage Cases:";
+            // 
+            // AbilitySkUnitCheckBox
+            // 
+            this.AbilitySkUnitCheckBox.AutoSize = true;
+            this.AbilitySkUnitCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AbilitySkUnitCheckBox.Location = new System.Drawing.Point(444, 598);
+            this.AbilitySkUnitCheckBox.Name = "AbilitySkUnitCheckBox";
+            this.AbilitySkUnitCheckBox.Size = new System.Drawing.Size(129, 24);
+            this.AbilitySkUnitCheckBox.TabIndex = 20;
+            this.AbilitySkUnitCheckBox.Text = "Skirmish Units";
+            this.AbilitySkUnitCheckBox.UseVisualStyleBackColor = true;
+            this.AbilitySkUnitCheckBox.CheckedChanged += new System.EventHandler(this.FillLookupAbilityListbox_Hook);
+            // 
+            // AbilitySkHeroCheckBox
+            // 
+            this.AbilitySkHeroCheckBox.AutoSize = true;
+            this.AbilitySkHeroCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AbilitySkHeroCheckBox.Location = new System.Drawing.Point(444, 568);
+            this.AbilitySkHeroCheckBox.Name = "AbilitySkHeroCheckBox";
+            this.AbilitySkHeroCheckBox.Size = new System.Drawing.Size(144, 24);
+            this.AbilitySkHeroCheckBox.TabIndex = 19;
+            this.AbilitySkHeroCheckBox.Text = "Skirmish Heroes";
+            this.AbilitySkHeroCheckBox.UseVisualStyleBackColor = true;
+            this.AbilitySkHeroCheckBox.CheckedChanged += new System.EventHandler(this.FillLookupAbilityListbox_Hook);
+            // 
+            // AbilityGCHeroCheckBox
+            // 
+            this.AbilityGCHeroCheckBox.AutoSize = true;
+            this.AbilityGCHeroCheckBox.Checked = true;
+            this.AbilityGCHeroCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.AbilityGCHeroCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AbilityGCHeroCheckBox.Location = new System.Drawing.Point(444, 508);
+            this.AbilityGCHeroCheckBox.Name = "AbilityGCHeroCheckBox";
+            this.AbilityGCHeroCheckBox.Size = new System.Drawing.Size(108, 24);
+            this.AbilityGCHeroCheckBox.TabIndex = 17;
+            this.AbilityGCHeroCheckBox.Text = "GC Heroes";
+            this.AbilityGCHeroCheckBox.UseVisualStyleBackColor = true;
+            this.AbilityGCHeroCheckBox.CheckedChanged += new System.EventHandler(this.FillLookupAbilityListbox_Hook);
+            // 
+            // AbilityGCUnitCheckBox
+            // 
+            this.AbilityGCUnitCheckBox.AutoSize = true;
+            this.AbilityGCUnitCheckBox.Checked = true;
+            this.AbilityGCUnitCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.AbilityGCUnitCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AbilityGCUnitCheckBox.Location = new System.Drawing.Point(444, 538);
+            this.AbilityGCUnitCheckBox.Name = "AbilityGCUnitCheckBox";
+            this.AbilityGCUnitCheckBox.Size = new System.Drawing.Size(93, 24);
+            this.AbilityGCUnitCheckBox.TabIndex = 16;
+            this.AbilityGCUnitCheckBox.Text = "GC Units";
+            this.AbilityGCUnitCheckBox.UseVisualStyleBackColor = true;
+            this.AbilityGCUnitCheckBox.CheckedChanged += new System.EventHandler(this.FillLookupAbilityListbox_Hook);
+            // 
+            // label49
+            // 
+            this.label49.AutoSize = true;
+            this.label49.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label49.Location = new System.Drawing.Point(440, 311);
+            this.label49.Name = "label49";
+            this.label49.Size = new System.Drawing.Size(63, 20);
+            this.label49.TabIndex = 15;
+            this.label49.Text = "Sort by:";
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.AbilityUsageSortRB);
+            this.panel2.Controls.Add(this.AbilityIconSortRB);
+            this.panel2.Controls.Add(this.AbilityDescSortRB);
+            this.panel2.Controls.Add(this.AbilityNameSortRB);
+            this.panel2.Location = new System.Drawing.Point(441, 343);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(217, 126);
+            this.panel2.TabIndex = 14;
+            // 
+            // AbilityUsageSortRB
+            // 
+            this.AbilityUsageSortRB.AutoSize = true;
+            this.AbilityUsageSortRB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AbilityUsageSortRB.Location = new System.Drawing.Point(3, 93);
+            this.AbilityUsageSortRB.Name = "AbilityUsageSortRB";
+            this.AbilityUsageSortRB.Size = new System.Drawing.Size(74, 24);
+            this.AbilityUsageSortRB.TabIndex = 3;
+            this.AbilityUsageSortRB.Text = "Usage";
+            this.AbilityUsageSortRB.UseVisualStyleBackColor = true;
+            this.AbilityUsageSortRB.CheckedChanged += new System.EventHandler(this.FillLookupAbilityListbox_Hook);
+            // 
+            // AbilityIconSortRB
+            // 
+            this.AbilityIconSortRB.AutoSize = true;
+            this.AbilityIconSortRB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AbilityIconSortRB.Location = new System.Drawing.Point(3, 63);
+            this.AbilityIconSortRB.Name = "AbilityIconSortRB";
+            this.AbilityIconSortRB.Size = new System.Drawing.Size(104, 24);
+            this.AbilityIconSortRB.TabIndex = 2;
+            this.AbilityIconSortRB.Text = "Icon Name";
+            this.AbilityIconSortRB.UseVisualStyleBackColor = true;
+            this.AbilityIconSortRB.CheckedChanged += new System.EventHandler(this.FillLookupAbilityListbox_Hook);
+            // 
+            // AbilityDescSortRB
+            // 
+            this.AbilityDescSortRB.AutoSize = true;
+            this.AbilityDescSortRB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AbilityDescSortRB.Location = new System.Drawing.Point(3, 33);
+            this.AbilityDescSortRB.Name = "AbilityDescSortRB";
+            this.AbilityDescSortRB.Size = new System.Drawing.Size(107, 24);
+            this.AbilityDescSortRB.TabIndex = 1;
+            this.AbilityDescSortRB.Text = "Description";
+            this.AbilityDescSortRB.UseVisualStyleBackColor = true;
+            this.AbilityDescSortRB.CheckedChanged += new System.EventHandler(this.FillLookupAbilityListbox_Hook);
+            // 
+            // AbilityNameSortRB
+            // 
+            this.AbilityNameSortRB.AutoSize = true;
+            this.AbilityNameSortRB.Checked = true;
+            this.AbilityNameSortRB.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AbilityNameSortRB.Location = new System.Drawing.Point(3, 3);
+            this.AbilityNameSortRB.Name = "AbilityNameSortRB";
+            this.AbilityNameSortRB.Size = new System.Drawing.Size(69, 24);
+            this.AbilityNameSortRB.TabIndex = 0;
+            this.AbilityNameSortRB.TabStop = true;
+            this.AbilityNameSortRB.Text = "Name";
+            this.AbilityNameSortRB.UseVisualStyleBackColor = true;
+            this.AbilityNameSortRB.CheckedChanged += new System.EventHandler(this.FillLookupAbilityListbox_Hook);
+            // 
+            // label50
+            // 
+            this.label50.AutoSize = true;
+            this.label50.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label50.Location = new System.Drawing.Point(437, 21);
+            this.label50.Name = "label50";
+            this.label50.Size = new System.Drawing.Size(64, 20);
+            this.label50.TabIndex = 13;
+            this.label50.Text = "Search:";
+            // 
+            // AbilitiesSearchTextBox
+            // 
+            this.AbilitiesSearchTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AbilitiesSearchTextBox.Location = new System.Drawing.Point(507, 18);
+            this.AbilitiesSearchTextBox.Name = "AbilitiesSearchTextBox";
+            this.AbilitiesSearchTextBox.Size = new System.Drawing.Size(416, 26);
+            this.AbilitiesSearchTextBox.TabIndex = 12;
+            this.toolTip1.SetToolTip(this.AbilitiesSearchTextBox, "Multiple search terms can be separated by semicolons");
+            this.AbilitiesSearchTextBox.TextChanged += new System.EventHandler(this.FillLookupAbilityListbox_Hook);
+            // 
+            // AbilityLookupListBox
+            // 
+            this.AbilityLookupListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.AbilityLookupListBox.FormattingEnabled = true;
+            this.AbilityLookupListBox.Location = new System.Drawing.Point(3, 3);
+            this.AbilityLookupListBox.Name = "AbilityLookupListBox";
+            this.AbilityLookupListBox.Size = new System.Drawing.Size(428, 732);
+            this.AbilityLookupListBox.TabIndex = 11;
+            this.AbilityLookupListBox.SelectedIndexChanged += new System.EventHandler(this.AbilityLookupListBox_SelectedIndexChanged);
+            // 
             // tabUnits
             // 
             this.tabUnits.Controls.Add(this.UnitListBox);
@@ -1819,6 +2108,19 @@
             this.Unitpanel.Name = "Unitpanel";
             this.Unitpanel.Size = new System.Drawing.Size(1091, 775);
             this.Unitpanel.TabIndex = 2;
+            // 
+            // TextureListButton
+            // 
+            this.TextureListButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TextureListButton.Location = new System.Drawing.Point(509, 3);
+            this.TextureListButton.Name = "TextureListButton";
+            this.TextureListButton.Size = new System.Drawing.Size(102, 27);
+            this.TextureListButton.TabIndex = 18;
+            this.TextureListButton.Tag = "";
+            this.TextureListButton.Text = "Texture List...";
+            this.toolTip1.SetToolTip(this.TextureListButton, "Open the model file for this unit in the default program for alo files");
+            this.TextureListButton.UseVisualStyleBackColor = true;
+            this.TextureListButton.Click += new System.EventHandler(this.TextureListButton_Click);
             // 
             // ErrorCheckButton
             // 
@@ -3567,11 +3869,14 @@
             // 
             this.VariantLabel.AutoSize = true;
             this.VariantLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.VariantLabel.ForeColor = System.Drawing.SystemColors.HotTrack;
             this.VariantLabel.Location = new System.Drawing.Point(3, 340);
             this.VariantLabel.Name = "VariantLabel";
             this.VariantLabel.Size = new System.Drawing.Size(10, 13);
             this.VariantLabel.TabIndex = 17;
             this.VariantLabel.Text = ".";
+            this.toolTip1.SetToolTip(this.VariantLabel, "Click for details, right click to copy to clipboard");
+            this.VariantLabel.Click += new System.EventHandler(this.VariantLabel_Click);
             // 
             // MaintenanceLabel
             // 
@@ -5828,6 +6133,20 @@
             // 
             // CommandStaffTab
             // 
+            this.CommandStaffTab.Controls.Add(this.CmdStaffEnableLabel);
+            this.CommandStaffTab.Controls.Add(this.CmdStaffFactionLabel);
+            this.CommandStaffTab.Controls.Add(this.CmdStaffRandomLabel);
+            this.CommandStaffTab.Controls.Add(this.CmdStaffExtraLabel);
+            this.CommandStaffTab.Controls.Add(this.CmdStaffVacantLabel);
+            this.CommandStaffTab.Controls.Add(this.CmdStaffSlotsLabel);
+            this.CommandStaffTab.Controls.Add(this.label47);
+            this.CommandStaffTab.Controls.Add(this.CmdStaffHireDescRichTextBox);
+            this.CommandStaffTab.Controls.Add(this.CmdStaffHeroDescRichTextBox);
+            this.CommandStaffTab.Controls.Add(this.CmdStaffGotoFormButton);
+            this.CommandStaffTab.Controls.Add(this.label46);
+            this.CommandStaffTab.Controls.Add(this.CmdStaffFormListBox);
+            this.CommandStaffTab.Controls.Add(this.CmdStaffOptionListBox);
+            this.CommandStaffTab.Controls.Add(this.CommandStaffListBox);
             this.CommandStaffTab.Location = new System.Drawing.Point(4, 22);
             this.CommandStaffTab.Name = "CommandStaffTab";
             this.CommandStaffTab.Padding = new System.Windows.Forms.Padding(3);
@@ -5835,6 +6154,160 @@
             this.CommandStaffTab.TabIndex = 1;
             this.CommandStaffTab.Text = "Command Staff";
             this.CommandStaffTab.UseVisualStyleBackColor = true;
+            // 
+            // CmdStaffEnableLabel
+            // 
+            this.CmdStaffEnableLabel.AutoSize = true;
+            this.CmdStaffEnableLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CmdStaffEnableLabel.Location = new System.Drawing.Point(802, 144);
+            this.CmdStaffEnableLabel.Name = "CmdStaffEnableLabel";
+            this.CmdStaffEnableLabel.Size = new System.Drawing.Size(63, 20);
+            this.CmdStaffEnableLabel.TabIndex = 98;
+            this.CmdStaffEnableLabel.Text = "Enable:";
+            this.toolTip1.SetToolTip(this.CmdStaffEnableLabel, "The names of functions that add or remove the hero from the command staff, and ad" +
+        "ditional conditions on the initialization");
+            // 
+            // CmdStaffFactionLabel
+            // 
+            this.CmdStaffFactionLabel.AutoSize = true;
+            this.CmdStaffFactionLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CmdStaffFactionLabel.Location = new System.Drawing.Point(195, 3);
+            this.CmdStaffFactionLabel.Name = "CmdStaffFactionLabel";
+            this.CmdStaffFactionLabel.Size = new System.Drawing.Size(66, 20);
+            this.CmdStaffFactionLabel.TabIndex = 97;
+            this.CmdStaffFactionLabel.Text = "Faction:";
+            // 
+            // CmdStaffRandomLabel
+            // 
+            this.CmdStaffRandomLabel.AutoSize = true;
+            this.CmdStaffRandomLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CmdStaffRandomLabel.Location = new System.Drawing.Point(195, 82);
+            this.CmdStaffRandomLabel.Name = "CmdStaffRandomLabel";
+            this.CmdStaffRandomLabel.Size = new System.Drawing.Size(111, 20);
+            this.CmdStaffRandomLabel.TabIndex = 96;
+            this.CmdStaffRandomLabel.Text = "Random Cost:";
+            this.toolTip1.SetToolTip(this.CmdStaffRandomLabel, "The cost to pick a random hero, which is generally the same as hiring a hero");
+            // 
+            // CmdStaffExtraLabel
+            // 
+            this.CmdStaffExtraLabel.AutoSize = true;
+            this.CmdStaffExtraLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CmdStaffExtraLabel.Location = new System.Drawing.Point(195, 62);
+            this.CmdStaffExtraLabel.Name = "CmdStaffExtraLabel";
+            this.CmdStaffExtraLabel.Size = new System.Drawing.Size(145, 20);
+            this.CmdStaffExtraLabel.TabIndex = 95;
+            this.CmdStaffExtraLabel.Text = "Replacement Cost:";
+            this.toolTip1.SetToolTip(this.CmdStaffExtraLabel, "The cost to replace a slot after a hero dies");
+            // 
+            // CmdStaffVacantLabel
+            // 
+            this.CmdStaffVacantLabel.AutoSize = true;
+            this.CmdStaffVacantLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CmdStaffVacantLabel.Location = new System.Drawing.Point(195, 42);
+            this.CmdStaffVacantLabel.Name = "CmdStaffVacantLabel";
+            this.CmdStaffVacantLabel.Size = new System.Drawing.Size(116, 20);
+            this.CmdStaffVacantLabel.TabIndex = 94;
+            this.CmdStaffVacantLabel.Text = "Replacements:";
+            this.toolTip1.SetToolTip(this.CmdStaffVacantLabel, "The number of times a slot can be reopened when a hero dies");
+            // 
+            // CmdStaffSlotsLabel
+            // 
+            this.CmdStaffSlotsLabel.AutoSize = true;
+            this.CmdStaffSlotsLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CmdStaffSlotsLabel.Location = new System.Drawing.Point(195, 22);
+            this.CmdStaffSlotsLabel.Name = "CmdStaffSlotsLabel";
+            this.CmdStaffSlotsLabel.Size = new System.Drawing.Size(49, 20);
+            this.CmdStaffSlotsLabel.TabIndex = 93;
+            this.CmdStaffSlotsLabel.Text = "Slots:";
+            this.toolTip1.SetToolTip(this.CmdStaffSlotsLabel, "The number of heroes that can be chosen concurrently");
+            // 
+            // label47
+            // 
+            this.label47.AutoSize = true;
+            this.label47.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label47.Location = new System.Drawing.Point(199, 144);
+            this.label47.Name = "label47";
+            this.label47.Size = new System.Drawing.Size(68, 20);
+            this.label47.TabIndex = 92;
+            this.label47.Text = "Options:";
+            // 
+            // CmdStaffHireDescRichTextBox
+            // 
+            this.CmdStaffHireDescRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.CmdStaffHireDescRichTextBox.Location = new System.Drawing.Point(806, 187);
+            this.CmdStaffHireDescRichTextBox.Name = "CmdStaffHireDescRichTextBox";
+            this.CmdStaffHireDescRichTextBox.Size = new System.Drawing.Size(661, 281);
+            this.CmdStaffHireDescRichTextBox.TabIndex = 91;
+            this.CmdStaffHireDescRichTextBox.Text = "";
+            this.toolTip1.SetToolTip(this.CmdStaffHireDescRichTextBox, "The description when purchasing the hero");
+            // 
+            // CmdStaffHeroDescRichTextBox
+            // 
+            this.CmdStaffHeroDescRichTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.CmdStaffHeroDescRichTextBox.Location = new System.Drawing.Point(806, 474);
+            this.CmdStaffHeroDescRichTextBox.Name = "CmdStaffHeroDescRichTextBox";
+            this.CmdStaffHeroDescRichTextBox.Size = new System.Drawing.Size(661, 269);
+            this.CmdStaffHeroDescRichTextBox.TabIndex = 90;
+            this.CmdStaffHeroDescRichTextBox.Text = "";
+            this.toolTip1.SetToolTip(this.CmdStaffHeroDescRichTextBox, "The full description of the hero");
+            // 
+            // CmdStaffGotoFormButton
+            // 
+            this.CmdStaffGotoFormButton.Location = new System.Drawing.Point(752, 141);
+            this.CmdStaffGotoFormButton.Name = "CmdStaffGotoFormButton";
+            this.CmdStaffGotoFormButton.Size = new System.Drawing.Size(48, 23);
+            this.CmdStaffGotoFormButton.TabIndex = 89;
+            this.CmdStaffGotoFormButton.Text = "Go to";
+            this.CmdStaffGotoFormButton.UseVisualStyleBackColor = true;
+            this.CmdStaffGotoFormButton.Click += new System.EventHandler(this.CmdStaffGotoFormButton_Click);
+            // 
+            // label46
+            // 
+            this.label46.AutoSize = true;
+            this.label46.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label46.Location = new System.Drawing.Point(456, 144);
+            this.label46.Name = "label46";
+            this.label46.Size = new System.Drawing.Size(109, 20);
+            this.label46.TabIndex = 88;
+            this.label46.Text = "Option Forms:";
+            // 
+            // CmdStaffFormListBox
+            // 
+            this.CmdStaffFormListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.CmdStaffFormListBox.FormattingEnabled = true;
+            this.CmdStaffFormListBox.Location = new System.Drawing.Point(460, 167);
+            this.CmdStaffFormListBox.Name = "CmdStaffFormListBox";
+            this.CmdStaffFormListBox.Size = new System.Drawing.Size(340, 576);
+            this.CmdStaffFormListBox.TabIndex = 87;
+            this.toolTip1.SetToolTip(this.CmdStaffFormListBox, "The different forms of the selected hero");
+            this.CmdStaffFormListBox.SelectedIndexChanged += new System.EventHandler(this.CmdStaffFormListBox_SelectedIndexChanged);
+            // 
+            // CmdStaffOptionListBox
+            // 
+            this.CmdStaffOptionListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.CmdStaffOptionListBox.FormattingEnabled = true;
+            this.CmdStaffOptionListBox.Location = new System.Drawing.Point(199, 167);
+            this.CmdStaffOptionListBox.Name = "CmdStaffOptionListBox";
+            this.CmdStaffOptionListBox.Size = new System.Drawing.Size(255, 576);
+            this.CmdStaffOptionListBox.TabIndex = 86;
+            this.toolTip1.SetToolTip(this.CmdStaffOptionListBox, "The hero options in the staff");
+            this.CmdStaffOptionListBox.SelectedIndexChanged += new System.EventHandler(this.CmdStaffOptionListBox_SelectedIndexChanged);
+            // 
+            // CommandStaffListBox
+            // 
+            this.CommandStaffListBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.CommandStaffListBox.FormattingEnabled = true;
+            this.CommandStaffListBox.Location = new System.Drawing.Point(6, 6);
+            this.CommandStaffListBox.Name = "CommandStaffListBox";
+            this.CommandStaffListBox.Size = new System.Drawing.Size(187, 745);
+            this.CommandStaffListBox.TabIndex = 2;
+            this.CommandStaffListBox.SelectedIndexChanged += new System.EventHandler(this.CommandStaffListBox_SelectedIndexChanged);
             // 
             // tabGalaxy
             // 
@@ -6677,19 +7150,6 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.ReshowDelay = 100;
             // 
-            // TextureListButton
-            // 
-            this.TextureListButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TextureListButton.Location = new System.Drawing.Point(509, 3);
-            this.TextureListButton.Name = "TextureListButton";
-            this.TextureListButton.Size = new System.Drawing.Size(102, 27);
-            this.TextureListButton.TabIndex = 18;
-            this.TextureListButton.Tag = "";
-            this.TextureListButton.Text = "Texture List...";
-            this.toolTip1.SetToolTip(this.TextureListButton, "Open the model file for this unit in the default program for alo files");
-            this.TextureListButton.UseVisualStyleBackColor = true;
-            this.TextureListButton.Click += new System.EventHandler(this.TextureListButton_Click);
-            // 
             // Holocron
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -6729,6 +7189,11 @@
             this.RandomFTab.PerformLayout();
             this.DocumentationTab.ResumeLayout(false);
             this.DocumentationTab.PerformLayout();
+            this.AbilityTab.ResumeLayout(false);
+            this.AbilityTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.AbilityLookupIconPictureBox)).EndInit();
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.tabUnits.ResumeLayout(false);
             this.tabUnits.PerformLayout();
             this.Unitpanel.ResumeLayout(false);
@@ -6768,6 +7233,8 @@
             this.GovernmentTabControl.ResumeLayout(false);
             this.FavorTab.ResumeLayout(false);
             this.FavorTab.PerformLayout();
+            this.CommandStaffTab.ResumeLayout(false);
+            this.CommandStaffTab.PerformLayout();
             this.tabGalaxy.ResumeLayout(false);
             this.tabGalaxy.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.GalaxyMapPlanetNameBox)).EndInit();
@@ -7305,6 +7772,41 @@
         private System.Windows.Forms.Label FavorIntegratesLabel;
         private System.Windows.Forms.Label FavorSupportNameLabel;
         private System.Windows.Forms.Button TextureListButton;
+        private System.Windows.Forms.Label CmdStaffRandomLabel;
+        private System.Windows.Forms.Label CmdStaffExtraLabel;
+        private System.Windows.Forms.Label CmdStaffVacantLabel;
+        private System.Windows.Forms.Label CmdStaffSlotsLabel;
+        private System.Windows.Forms.Label label47;
+        private System.Windows.Forms.RichTextBox CmdStaffHireDescRichTextBox;
+        private System.Windows.Forms.RichTextBox CmdStaffHeroDescRichTextBox;
+        private System.Windows.Forms.Button CmdStaffGotoFormButton;
+        private System.Windows.Forms.Label label46;
+        private System.Windows.Forms.ListBox CmdStaffFormListBox;
+        private System.Windows.Forms.ListBox CmdStaffOptionListBox;
+        private System.Windows.Forms.ListBox CommandStaffListBox;
+        private System.Windows.Forms.Label CmdStaffFactionLabel;
+        private System.Windows.Forms.Label CmdStaffEnableLabel;
+        private System.Windows.Forms.TabPage AbilityTab;
+        private System.Windows.Forms.Button AbilityUsageLookupGoToButton;
+        private System.Windows.Forms.Label AbilityLookupUsageLabel;
+        private System.Windows.Forms.ListBox AbilityUsageLookupListBox;
+        private System.Windows.Forms.Label AbilityLookupDescLabel;
+        private System.Windows.Forms.Label AbilityLookupNameLabel;
+        private System.Windows.Forms.PictureBox AbilityLookupIconPictureBox;
+        private System.Windows.Forms.Label label48;
+        private System.Windows.Forms.CheckBox AbilitySkUnitCheckBox;
+        private System.Windows.Forms.CheckBox AbilitySkHeroCheckBox;
+        private System.Windows.Forms.CheckBox AbilityGCHeroCheckBox;
+        private System.Windows.Forms.CheckBox AbilityGCUnitCheckBox;
+        private System.Windows.Forms.Label label49;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.RadioButton AbilityUsageSortRB;
+        private System.Windows.Forms.RadioButton AbilityIconSortRB;
+        private System.Windows.Forms.RadioButton AbilityDescSortRB;
+        private System.Windows.Forms.RadioButton AbilityNameSortRB;
+        private System.Windows.Forms.Label label50;
+        private System.Windows.Forms.TextBox AbilitiesSearchTextBox;
+        private System.Windows.Forms.ListBox AbilityLookupListBox;
     }
 }
 
