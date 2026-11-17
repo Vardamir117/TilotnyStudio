@@ -199,86 +199,94 @@ namespace Holocron
                 }
             }
             string exePath = AppContext.BaseDirectory;
-            string localmodtest = UpOneFolder(UpOneFolder(UpOneFolder(UpOneFolder(exePath))));
-            string modfolder = UpOneFolder(exePath);
-            if (File.Exists(localmodtest + "\\StarWarsG.exe"))
+            int nested = exePath.Count(s => s == '\\');
+            if (File.Exists("debugpaths.cfg")) //Run on real mod data from the debugger
             {
-                globals.localmodpath = UpOneFolder(UpOneFolder(modfolder));
-                globals.steammodpath = UpOneFolder(UpOneFolder(UpOneFolder(localmodtest))) + "\\workshop\\content\\32470";
-                if (entities.modpaths.Count == 0)
-                {
-                    if (Directory.Exists(modfolder + "\\..\\TR") && Directory.Exists(modfolder + "\\..\\FotR") && Directory.Exists(modfolder + "\\..\\CoreSaga") && Directory.Exists(modfolder + "\\..\\Rev"))
-                    {
-                        DevChoice devChoice = new DevChoice();
-                        devChoice.basepath = UpOneFolder(modfolder);
-                        devChoice.ShowDialog();
+                string[] lines = File.ReadAllLines("debugpaths.cfg");
+                globals.localmodpath = lines[0];
+                globals.steammodpath = lines[1];
 
-                        entities.modpaths = devChoice.args;
-                        globals.allplanets = devChoice.allplanet;
-                        globals.devmode = true;
-                    }
-                    else entities.modpaths.Add(modfolder);
-                }
+                for (int i = 2; i < lines.Length; i++) entities.modpaths.Add(lines[i]);
             }
-            else
+            else if (nested > 4)
             {
-                localmodtest = UpOneFolder(UpOneFolder(localmodtest)) + "\\common\\Star Wars Empire at War\\corruption";
+                string localmodtest = UpOneFolder(UpOneFolder(UpOneFolder(UpOneFolder(exePath))));
+                string modfolder = UpOneFolder(exePath);
+
                 if (File.Exists(localmodtest + "\\StarWarsG.exe"))
                 {
-                    if (Directory.Exists(modfolder + "\\..\\TR") && Directory.Exists(modfolder + "\\..\\FotR") && Directory.Exists(modfolder + "\\..\\CoreSaga") && Directory.Exists(modfolder + "\\..\\Rev"))
+                    globals.localmodpath = UpOneFolder(UpOneFolder(modfolder));
+                    globals.steammodpath = UpOneFolder(UpOneFolder(UpOneFolder(localmodtest))) + "\\workshop\\content\\32470";
+                    if (entities.modpaths.Count == 0)
                     {
-                        DevChoice devChoice = new DevChoice();
-                        devChoice.basepath = UpOneFolder(modfolder);
-                        devChoice.ShowDialog();
+                        if (Directory.Exists(modfolder + "\\..\\TR") && Directory.Exists(modfolder + "\\..\\FotR") && Directory.Exists(modfolder + "\\..\\CoreSaga") && Directory.Exists(modfolder + "\\..\\Rev"))
+                        {
+                            DevChoice devChoice = new DevChoice();
+                            devChoice.basepath = UpOneFolder(modfolder);
+                            devChoice.ShowDialog();
 
-                        entities.modpaths = devChoice.args;
-                        globals.allplanets = devChoice.allplanet;
-                        globals.devmode = true;
-                        globals.steammodpath = UpOneFolder(UpOneFolder(modfolder));
-                        globals.localmodpath = localmodtest + "\\Mods";
-                    }
-                    else
-                    {
-                        if (entities.modpaths.Count == 0) entities.modpaths.Add(modfolder);
-                        globals.steammodpath = UpOneFolder(UpOneFolder(modfolder));
-                        globals.localmodpath = localmodtest + "\\Mods";
+                            entities.modpaths = devChoice.args;
+                            globals.allplanets = devChoice.allplanet;
+                            globals.devmode = true;
+                        }
+                        else entities.modpaths.Add(modfolder);
                     }
                 }
                 else
-                {//Run on real mod data from the debugger
-                    if (File.Exists("debugpaths.cfg"))
+                {
+                    localmodtest = UpOneFolder(UpOneFolder(localmodtest)) + "\\common\\Star Wars Empire at War\\corruption";
+                    if (File.Exists(localmodtest + "\\StarWarsG.exe"))
                     {
-                        string[] lines = File.ReadAllLines("debugpaths.cfg");
-                        globals.localmodpath = lines[0];
-                        globals.steammodpath = lines[1];
+                        if (Directory.Exists(modfolder + "\\..\\TR") && Directory.Exists(modfolder + "\\..\\FotR") && Directory.Exists(modfolder + "\\..\\CoreSaga") && Directory.Exists(modfolder + "\\..\\Rev"))
+                        {
+                            DevChoice devChoice = new DevChoice();
+                            devChoice.basepath = UpOneFolder(modfolder);
+                            devChoice.ShowDialog();
 
-                        for (int i = 2; i < lines.Length; i++) entities.modpaths.Add(lines[i]);
+                            entities.modpaths = devChoice.args;
+                            globals.allplanets = devChoice.allplanet;
+                            globals.devmode = true;
+                            globals.steammodpath = UpOneFolder(UpOneFolder(modfolder));
+                            globals.localmodpath = localmodtest + "\\Mods";
+                        }
+                        else
+                        {
+                            if (entities.modpaths.Count == 0) entities.modpaths.Add(modfolder);
+                            globals.steammodpath = UpOneFolder(UpOneFolder(modfolder));
+                            globals.localmodpath = localmodtest + "\\Mods";
+                        }
                     }
                     else
                     {
                         MessageBox.Show("Could not locate data files. Please place in the data folder of a Steam Workshop or local mod for Empire at War");
                         this.Close();
+                        //globals.localmodpath = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods";
+                        //globals.steammodpath = "C:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470";
+                        //1125571106 1976399102 3417277973
+                        //Workshop
+                        // entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470\\3417277973\\Data");
+
+                        //Dev build
+
+                        //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\Rev\\Data");
+                        //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\TR\\Data");
+                        //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\FotR\\Data");
+                        //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\CoreSaga\\Data");
+                        //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\Data");
+
+
+                        //Vanillua
+                        //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Data");
+                        //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\GameData\\Data");
                     }
-                    //globals.localmodpath = "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods";
-                    //globals.steammodpath = "C:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470";
-                    //1125571106 1976399102 3417277973
-                    //Workshop
-                    // entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470\\3417277973\\Data");
-
-                    //Dev build
-
-                    //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\Rev\\Data");
-                    //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\TR\\Data");
-                    //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\FotR\\Data");
-                    //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\CoreSaga\\Data");
-                    //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\\Imperial_Civil_War\\Data");
-
-
-                    //Vanillua
-                    //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Data");
-                    //entities.modpaths.Add("C:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\GameData\\Data");
                 }
             }
+            else
+            {
+                MessageBox.Show("Could not locate data files. Please place in the data folder of a Steam Workshop or local mod for Empire at War");
+                this.Close();
+            }
+            
             load_mods();
             globals.UnitSortConfig.SortType = UnitSortTypes.Name;
             globals.UnitSortConfig.denomtype = "Absolute Value";
@@ -2171,32 +2179,57 @@ namespace Holocron
             }
         }
 
+        private string removeMultProj(string projectile)
+        {
+            return projectile.Replace("_Dual", "").Replace("_Triple", "").Replace("_Quad", "").Replace("_Sextuple", "").Replace("_Octuple", "").Replace("_dual", "").Replace("_triple", "").Replace("_quad", "").Replace("_sextuple", "").Replace("_octuple", "");
+        }
+
         private void FillProjectiles()
         {
             ProjectileListBox.Items.Clear();
 
             bool fakemode = !ProjectileNameCheckBox.Checked;
+            bool singlemode = MultiProjectileCheckBox.Checked;
+            bool multi = false;
             List<string> fakenames = new List<string>();
 
             foreach (projectile proj in entities.projectiles)
             {
                 bool match = false;
-                string fake = "";
+                string fake = proj.name;
                 string[] search = ProjectileSearchTextBox.Text.Split(';');
                 foreach (string term in search)
                 {
+                    multi = false;
                     string lmon = proj.name;
                     if (fakemode)
                     {
                         fake = SharedFunctions.convertProjectileToName(proj.name);
                         lmon = fake;
                     }
+                    if (singlemode)
+                    {
+                        string stripped = removeMultProj(lmon);
+                        if (stripped != lmon)
+                        {
+                            multi = true;
+                            lmon = stripped;
+                            fake = stripped;
+                        }
+                        else
+                        {
+                            if (lmon.Contains("Dual"))
+                            {
+                                bool vis = false;
+                            }
+                        }
+                    }
                     lmon = lmon.ToLower();
 
                     string lterm = term.ToLower();
-                    if (lmon.Contains(lterm))
+                    if (lmon.Contains(lterm) && !multi) //Duals and such would throw off the damage numbers
                     {
-                        if (fakemode)
+                        if (fakemode || singlemode)
                         {
                             if (!fakenames.Contains(lmon))
                             {
@@ -2210,7 +2243,7 @@ namespace Holocron
                 }
                 if (match)
                 {
-                    if (fakemode)
+                    if (fakemode || singlemode)
                     {
                         projectile fak = proj;
                         fak.name = fake;
@@ -4344,6 +4377,7 @@ namespace Holocron
                     bool match = false;
                     string unitname = unit.unitname.ToLower();
                     string username = unit.username.ToLower();
+                    string sortstring = unit.sortstring.ToLower();
                     string[] search = UnitSearchTextBox.Text.Split(';');
                     foreach (string term in search)
                     {
@@ -4354,6 +4388,11 @@ namespace Holocron
                             break;
                         }
                         if (username.Contains(lterm))
+                        {
+                            match = true;
+                            break;
+                        }
+                        if (sortstring.Contains(lterm))
                         {
                             match = true;
                             break;
@@ -9005,12 +9044,7 @@ namespace Holocron
             MessageBox.Show(ReadErrorDocumentation());
         }
 
-        private void ProjectileSearchTextBox_TextChanged(object sender, EventArgs e)
-        {
-            FillProjectiles();
-        }
-
-        private void ProjectileNameCheckBox_CheckedChanged(object sender, EventArgs e)
+        private void FillProjectiles_Hook(object sender, EventArgs e)
         {
             FillProjectiles();
         }
@@ -9041,6 +9075,7 @@ namespace Holocron
                     {
                         string hpproj = hp.projectile;
                         if (!ProjectileNameCheckBox.Checked) hpproj = SharedFunctions.convertProjectileToName(hpproj);
+                        if (MultiProjectileCheckBox.Checked) hpproj = removeMultProj(hpproj.ToLower());
                         if(string.Equals(hpproj, proj.name, StringComparison.OrdinalIgnoreCase))
                         {
                             uses = true;

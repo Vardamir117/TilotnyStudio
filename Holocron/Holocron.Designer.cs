@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Holocron));
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -48,6 +48,7 @@
             this.MatrixSpaceRB = new System.Windows.Forms.RadioButton();
             this.MatrixGrid = new System.Windows.Forms.DataGridView();
             this.ProjectileTab = new System.Windows.Forms.TabPage();
+            this.MultiProjectileCheckBox = new System.Windows.Forms.CheckBox();
             this.ProjectileUserGotoButton = new System.Windows.Forms.Button();
             this.ProjectileUserLabel = new System.Windows.Forms.Label();
             this.ProjectileUserListBox = new System.Windows.Forms.ListBox();
@@ -784,39 +785,40 @@
             this.MatrixGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.MatrixGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.MatrixGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.MatrixGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.MatrixGrid.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.MatrixGrid.DefaultCellStyle = dataGridViewCellStyle2;
             this.MatrixGrid.Location = new System.Drawing.Point(3, 24);
             this.MatrixGrid.Name = "MatrixGrid";
             this.MatrixGrid.ReadOnly = true;
-            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.MatrixGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.MatrixGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.MatrixGrid.Size = new System.Drawing.Size(1470, 722);
             this.MatrixGrid.TabIndex = 1;
             // 
             // ProjectileTab
             // 
+            this.ProjectileTab.Controls.Add(this.MultiProjectileCheckBox);
             this.ProjectileTab.Controls.Add(this.ProjectileUserGotoButton);
             this.ProjectileTab.Controls.Add(this.ProjectileUserLabel);
             this.ProjectileTab.Controls.Add(this.ProjectileUserListBox);
@@ -836,6 +838,18 @@
             this.ProjectileTab.TabIndex = 9;
             this.ProjectileTab.Text = "Projectiles";
             this.ProjectileTab.UseVisualStyleBackColor = true;
+            // 
+            // MultiProjectileCheckBox
+            // 
+            this.MultiProjectileCheckBox.AutoSize = true;
+            this.MultiProjectileCheckBox.Location = new System.Drawing.Point(330, 26);
+            this.MultiProjectileCheckBox.Name = "MultiProjectileCheckBox";
+            this.MultiProjectileCheckBox.Size = new System.Drawing.Size(121, 17);
+            this.MultiProjectileCheckBox.TabIndex = 55;
+            this.MultiProjectileCheckBox.Text = "Group multiple shots";
+            this.toolTip1.SetToolTip(this.MultiProjectileCheckBox, "When checked, collapses dual, triple, quads... into a single weapon type");
+            this.MultiProjectileCheckBox.UseVisualStyleBackColor = true;
+            this.MultiProjectileCheckBox.CheckedChanged += new System.EventHandler(this.FillProjectiles_Hook);
             // 
             // ProjectileUserGotoButton
             // 
@@ -881,7 +895,7 @@
             this.toolTip1.SetToolTip(this.ProjectileNameCheckBox, "When checked, does not attempt to strip out duplicates based on factors such as c" +
         "olor");
             this.ProjectileNameCheckBox.UseVisualStyleBackColor = true;
-            this.ProjectileNameCheckBox.CheckedChanged += new System.EventHandler(this.ProjectileNameCheckBox_CheckedChanged);
+            this.ProjectileNameCheckBox.CheckedChanged += new System.EventHandler(this.FillProjectiles_Hook);
             // 
             // ProjTurnLabel
             // 
@@ -961,7 +975,7 @@
             this.ProjectileSearchTextBox.Size = new System.Drawing.Size(222, 26);
             this.ProjectileSearchTextBox.TabIndex = 7;
             this.toolTip1.SetToolTip(this.ProjectileSearchTextBox, "Multiple search terms can be separated by semicolons");
-            this.ProjectileSearchTextBox.TextChanged += new System.EventHandler(this.ProjectileSearchTextBox_TextChanged);
+            this.ProjectileSearchTextBox.TextChanged += new System.EventHandler(this.FillProjectiles_Hook);
             // 
             // ProjectileListBox
             // 
@@ -2064,8 +2078,8 @@
             this.UnitSearchTextBox.Name = "UnitSearchTextBox";
             this.UnitSearchTextBox.Size = new System.Drawing.Size(318, 26);
             this.UnitSearchTextBox.TabIndex = 51;
-            this.toolTip1.SetToolTip(this.UnitSearchTextBox, "Searches work on names and internal names. Multiple search terms can be separated" +
-        " with semicolons");
+            this.toolTip1.SetToolTip(this.UnitSearchTextBox, "Searches work on names, internal names, and sort strings. Multiple search terms c" +
+        "an be separated with semicolons");
             this.UnitSearchTextBox.TextChanged += new System.EventHandler(this.UnitSearchTextBox_TextChanged);
             // 
             // UnitRadioButton
@@ -7162,7 +7176,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Holocron";
-            this.Text = "EaWX Holocron v0.5a";
+            this.Text = "EaWX Holocron v0.5b";
             this.Load += new System.EventHandler(this.Holocron_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -7808,6 +7822,7 @@
         private System.Windows.Forms.Label label50;
         private System.Windows.Forms.TextBox AbilitiesSearchTextBox;
         private System.Windows.Forms.ListBox AbilityLookupListBox;
+        private System.Windows.Forms.CheckBox MultiProjectileCheckBox;
     }
 }
 

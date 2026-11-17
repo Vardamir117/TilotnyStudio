@@ -122,7 +122,7 @@ namespace TilotnyStudio
         private void AdvancedDataFileButton_Click(object sender, EventArgs e)
         {
             TextDetail deets = new TextDetail();
-            deets.detail = "If a debugpaths.cfg file is placed in the same folder as the Holocron executable, arbitrary paths may be defined in it.\nThe first line must be the local mod folder, the second the Steam workshop folder, then any number of mod paths. E.g.\n\nC:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\nC:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470\nC:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470\\3417277973\\Data";
+            deets.detail = "If a debugpaths.cfg file is placed in the same folder as the Holocron executable, arbitrary paths may be defined in it.\nThe first line must be the local mod folder, the second the Steam workshop folder, then any number of mod paths in descending load priority. E.g.\n\nC:\\Program Files (x86)\\Steam\\steamapps\\common\\Star Wars Empire at War\\corruption\\Mods\nC:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470\nC:\\Program Files (x86)\\Steam\\steamapps\\workshop\\content\\32470\\3417277973\\Data\n\n\n\n\nLaunch options may also be used, which follow WshShell procedures: the first launch option is irrelevant, the second is a semicolon delimited list of the mod paths. The executable must be in a subfolder of the Data folder of a local or steam mod when using launch options.";
             deets.Show();
         }
     }

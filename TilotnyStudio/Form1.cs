@@ -174,46 +174,48 @@ namespace TilotnyStudio
                     globals.modpaths.Add(split[i]);
                 }
             }
-            string localmodtest = UpOneFolder(UpOneFolder(UpOneFolder(UpOneFolder(UpOneFolder(exePath)))));
-            string modfolder = UpOneFolder(UpOneFolder(exePath));
-            if (File.Exists(localmodtest + "\\StarWarsG.exe"))
+            int nested = exePath.Count(s => s == '\\');
+            //Run on real mod data from the debugger
+            if (File.Exists("debugpaths.cfg"))
             {
-                globals.localmodpath = UpOneFolder(UpOneFolder(modfolder));
-                globals.steammodpath = UpOneFolder(UpOneFolder(UpOneFolder(localmodtest))) + "\\workshop\\content\\32470";
-                if (globals.modpaths.Count == 0)
-                {
-                    if (Directory.Exists(modfolder + "\\..\\TR") && Directory.Exists(modfolder + "\\..\\FotR") && Directory.Exists(modfolder + "\\..\\CoreSaga") && Directory.Exists(modfolder + "\\..\\Rev"))
-                    {
-                        DevChoice devChoice = new DevChoice();
-                        devChoice.basepath = UpOneFolder(modfolder);
-                        devChoice.ShowDialog();
+                string[] lines = File.ReadAllLines("debugpaths.cfg");
+                globals.localmodpath = lines[0];
+                globals.steammodpath = lines[1];
 
-                        globals.modpaths = devChoice.args;
-                        devModeOn();
-                    }
-                    else globals.modpaths.Add(modfolder);
-                }
+                for (int i = 2; i < lines.Length; i++) globals.modpaths.Add(lines[i]);
+
+                if (globals.modpaths[0].Contains("Imperial_Civil_War")) devModeOn();
             }
-            else
+            else if (nested > 4)
             {
-                localmodtest = UpOneFolder(UpOneFolder(localmodtest)) + "\\common\\Star Wars Empire at War\\corruption";
+                string localmodtest = UpOneFolder(UpOneFolder(UpOneFolder(UpOneFolder(UpOneFolder(exePath)))));
+                string modfolder = UpOneFolder(UpOneFolder(exePath));
                 if (File.Exists(localmodtest + "\\StarWarsG.exe"))
                 {
-                    if (globals.modpaths.Count == 0) globals.modpaths.Add(modfolder);
-                    globals.steammodpath = UpOneFolder(UpOneFolder(modfolder));
-                    globals.localmodpath = localmodtest + "\\Mods";
+                    globals.localmodpath = UpOneFolder(UpOneFolder(modfolder));
+                    globals.steammodpath = UpOneFolder(UpOneFolder(UpOneFolder(localmodtest))) + "\\workshop\\content\\32470";
+                    if (globals.modpaths.Count == 0)
+                    {
+                        if (Directory.Exists(modfolder + "\\..\\TR") && Directory.Exists(modfolder + "\\..\\FotR") && Directory.Exists(modfolder + "\\..\\CoreSaga") && Directory.Exists(modfolder + "\\..\\Rev"))
+                        {
+                            DevChoice devChoice = new DevChoice();
+                            devChoice.basepath = UpOneFolder(modfolder);
+                            devChoice.ShowDialog();
+
+                            globals.modpaths = devChoice.args;
+                            devModeOn();
+                        }
+                        else globals.modpaths.Add(modfolder);
+                    }
                 }
                 else
-                {//Run on real mod data from the debugger
-                    if (File.Exists("debugpaths.cfg"))
+                {
+                    localmodtest = UpOneFolder(UpOneFolder(localmodtest)) + "\\common\\Star Wars Empire at War\\corruption";
+                    if (File.Exists(localmodtest + "\\StarWarsG.exe"))
                     {
-                        string[] lines = File.ReadAllLines("debugpaths.cfg");
-                        globals.localmodpath = lines[0];
-                        globals.steammodpath = lines[1];
-
-                        for (int i = 2; i < lines.Length; i++) globals.modpaths.Add(lines[i]);
-
-                        if (globals.modpaths[0].Contains("Imperial_Civil_War")) devModeOn();
+                        if (globals.modpaths.Count == 0) globals.modpaths.Add(modfolder);
+                        globals.steammodpath = UpOneFolder(UpOneFolder(modfolder));
+                        globals.localmodpath = localmodtest + "\\Mods";
                     }
                     else
                     {
