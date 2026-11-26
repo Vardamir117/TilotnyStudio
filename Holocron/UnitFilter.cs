@@ -50,6 +50,7 @@ namespace Holocron
             public int limitMode;
             public int complementMode;
             public List<int> skirmishModes;
+            public List<int> squadronSizes;
             public int pdMode;
             public int healMode;
             public int discountMode;
@@ -74,6 +75,13 @@ namespace Holocron
             filter.stypes = new List<string>();
             filter.skirmishModes = new List<int>();
             filter.skirmishModes.Add(0);
+            filter.squadronSizes = new List<int>();
+            filter.squadronSizes.Add(0);
+            filter.squadronSizes.Add(1);
+            filter.squadronSizes.Add(2);
+            filter.squadronSizes.Add(3);
+            filter.squadronSizes.Add(4);
+            filter.squadronSizes.Add(5);
 
             filterDocumentation = "Any faction";
             return filter;
@@ -88,6 +96,7 @@ namespace Holocron
             foreach (string at in atypes) ArmorListBox.Items.Add(at);
             foreach (string st in stypes) ShieldListBox.Items.Add(st);
             loadFromConfig();
+            SquadronListBox.Visible = false;
             switch (UnitRBtype)
             {
                 case 0: //space unit
@@ -101,6 +110,11 @@ namespace Holocron
                 case 2: //ground units
                     hideavailpanels();
                     ComplementPanel.Visible = false;
+                    break;
+                case 3:
+                    hideavailpanels();
+                    ComplementPanel.Visible = false;
+                    SquadronListBox.Visible = true;
                     break;
                     //todo heroes, structures...
             }
@@ -136,6 +150,9 @@ namespace Holocron
 
             SkirmishListBox.SelectedItems.Clear();
             foreach (int mode in filterConfig.skirmishModes) SkirmishListBox.SelectedIndices.Add(mode);
+
+            SquadronListBox.SelectedItems.Clear();
+            foreach (int mode in filterConfig.squadronSizes) SquadronListBox.SelectedIndices.Add(mode);
 
             if (filterConfig.pdMode == 1) PDTrueRB.Checked = true;
             else if (filterConfig.pdMode == 2) PDFalseRB.Checked = true;
@@ -260,6 +277,9 @@ namespace Holocron
             filterConfig.skirmishModes.Clear();
             foreach (int mode in SkirmishListBox.SelectedIndices) filterConfig.skirmishModes.Add(mode);
             if(!(filterConfig.skirmishModes.Count == 1 && filterConfig.skirmishModes[0] == 0)) filterDocumentation += ", has no Complement";
+
+            filterConfig.squadronSizes.Clear();
+            foreach (int mode in SquadronListBox.SelectedIndices) filterConfig.squadronSizes.Add(mode);
 
             if (PDTrueRB.Checked)
             {

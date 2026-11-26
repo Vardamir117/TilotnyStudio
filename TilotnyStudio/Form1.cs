@@ -56,6 +56,8 @@ using System.Threading;
 -# The program makes no attempt to understand units affiliated with a faction but locked via script or lack of prereqs. May unlock mission rewards or units relying on build initally locked for early era locks, cannot enable units with scripted locks (e.g. Warlord stromtroopers). Corporations may become buildable on account of mission rewards that are not themselves buildable
 
 -# Hapan House and corporation prereqs may not be edited
+
+allow infantry hardpoints to be swapped for any with the same attachment bone
 */
 
 namespace TilotnyStudio
@@ -172,46 +174,48 @@ namespace TilotnyStudio
                     globals.modpaths.Add(split[i]);
                 }
             }
-            string localmodtest = UpOneFolder(UpOneFolder(UpOneFolder(UpOneFolder(UpOneFolder(exePath)))));
-            string modfolder = UpOneFolder(UpOneFolder(exePath));
-            if (File.Exists(localmodtest + "\\StarWarsG.exe"))
+            int nested = exePath.Count(s => s == '\\');
+            //Run on real mod data from the debugger
+            if (File.Exists("debugpaths.cfg"))
             {
-                globals.localmodpath = UpOneFolder(UpOneFolder(modfolder));
-                globals.steammodpath = UpOneFolder(UpOneFolder(UpOneFolder(localmodtest))) + "\\workshop\\content\\32470";
-                if (globals.modpaths.Count == 0)
-                {
-                    if (Directory.Exists(modfolder + "\\..\\TR") && Directory.Exists(modfolder + "\\..\\FotR") && Directory.Exists(modfolder + "\\..\\CoreSaga") && Directory.Exists(modfolder + "\\..\\Rev"))
-                    {
-                        DevChoice devChoice = new DevChoice();
-                        devChoice.basepath = UpOneFolder(modfolder);
-                        devChoice.ShowDialog();
+                string[] lines = File.ReadAllLines("debugpaths.cfg");
+                globals.localmodpath = lines[0];
+                globals.steammodpath = lines[1];
 
-                        globals.modpaths = devChoice.args;
-                        devModeOn();
-                    }
-                    else globals.modpaths.Add(modfolder);
-                }
+                for (int i = 2; i < lines.Length; i++) globals.modpaths.Add(lines[i]);
+
+                if (globals.modpaths[0].Contains("Imperial_Civil_War")) devModeOn();
             }
-            else
+            else if (nested > 4)
             {
-                localmodtest = UpOneFolder(UpOneFolder(localmodtest)) + "\\common\\Star Wars Empire at War\\corruption";
+                string localmodtest = UpOneFolder(UpOneFolder(UpOneFolder(UpOneFolder(UpOneFolder(exePath)))));
+                string modfolder = UpOneFolder(UpOneFolder(exePath));
                 if (File.Exists(localmodtest + "\\StarWarsG.exe"))
                 {
-                    if (globals.modpaths.Count == 0) globals.modpaths.Add(modfolder);
-                    globals.steammodpath = UpOneFolder(UpOneFolder(modfolder));
-                    globals.localmodpath = localmodtest + "\\Mods";
+                    globals.localmodpath = UpOneFolder(UpOneFolder(modfolder));
+                    globals.steammodpath = UpOneFolder(UpOneFolder(UpOneFolder(localmodtest))) + "\\workshop\\content\\32470";
+                    if (globals.modpaths.Count == 0)
+                    {
+                        if (Directory.Exists(modfolder + "\\..\\TR") && Directory.Exists(modfolder + "\\..\\FotR") && Directory.Exists(modfolder + "\\..\\CoreSaga") && Directory.Exists(modfolder + "\\..\\Rev"))
+                        {
+                            DevChoice devChoice = new DevChoice();
+                            devChoice.basepath = UpOneFolder(modfolder);
+                            devChoice.ShowDialog();
+
+                            globals.modpaths = devChoice.args;
+                            devModeOn();
+                        }
+                        else globals.modpaths.Add(modfolder);
+                    }
                 }
                 else
-                {//Run on real mod data from the debugger
-                    if (File.Exists("debugpaths.cfg"))
+                {
+                    localmodtest = UpOneFolder(UpOneFolder(localmodtest)) + "\\common\\Star Wars Empire at War\\corruption";
+                    if (File.Exists(localmodtest + "\\StarWarsG.exe"))
                     {
-                        string[] lines = File.ReadAllLines("debugpaths.cfg");
-                        globals.localmodpath = lines[0];
-                        globals.steammodpath = lines[1];
-
-                        for (int i = 2; i < lines.Length; i++) globals.modpaths.Add(lines[i]);
-
-                        if (globals.modpaths[0].Contains("Imperial_Civil_War")) devModeOn();
+                        if (globals.modpaths.Count == 0) globals.modpaths.Add(modfolder);
+                        globals.steammodpath = UpOneFolder(UpOneFolder(modfolder));
+                        globals.localmodpath = localmodtest + "\\Mods";
                     }
                     else
                     {
@@ -223,6 +227,16 @@ namespace TilotnyStudio
 
             SkirmishListBox.SelectedIndex = 0;
             populateModPage();
+
+            foreach(Specialization spec in entities.Specializations)
+            {
+                SpecializationComboBox.Items.Add(spec);
+            }
+            foreach (CommandTrait cmd in entities.CommandTraits)
+            {
+                Command1ComboBox.Items.Add(cmd);
+                Command2ComboBox.Items.Add(cmd);
+            }
         }
 
         public static entities entities = new entities();
@@ -252,6 +266,21 @@ namespace TilotnyStudio
             public static List<int> categories = new List<int>();
             public static bool[,] MTDArray;
             public static bool MTDtga;
+
+            public static bool NewHeroGroundMode = false;
+            public static List<string> Transports = new List<string>();
+            public static List<string> AdminTransports = new List<string>();
+        }
+
+        public struct classlabel
+        {
+            public string id;
+            public string clss;
+
+            public override string ToString()
+            {
+                return clss;
+            }
         }
 
         public static class algorithm_data
@@ -468,6 +497,7 @@ namespace TilotnyStudio
             int rank = 0;
 
             FactionFilterListBox.BeginInvoke(new Action(() => FactionFilterListBox.Items.Clear()));
+            NewHeroAffilListBox.BeginInvoke(new Action(() => NewHeroAffilListBox.Items.Clear()));
             foreach (XmlElement faction in factions)
             {
                 rank += 1;
@@ -483,6 +513,7 @@ namespace TilotnyStudio
                     }
                 }
                 FactionFilterListBox.BeginInvoke(new Action(() => FactionFilterListBox.Items.Add(facname)));
+                NewHeroAffilListBox.BeginInvoke(new Action(() => NewHeroAffilListBox.Items.Add(facname)));
             }
             globals.playablefactions.Sort((s1, s2) => s1.rank.CompareTo(s2.rank));
 
@@ -810,6 +841,19 @@ namespace TilotnyStudio
             //}
             loadscreen.SetQuote(getLoadQuote(entities));
 
+            HeroClassComboBox.BeginInvoke(new Action(() => HeroClassComboBox.Items.Clear()));
+            foreach (Text_Entry text in entities.Text)
+            {
+                if (text.identifier.Contains("TEXT_ENCYCLOPEDIA_CLASS_"))
+                {
+                    classlabel nu = new classlabel();
+                    nu.id = text.identifier;
+                    nu.clss = text.entry;
+                    HeroClassComboBox.BeginInvoke(new Action(() => HeroClassComboBox.Items.Add(nu)));
+                }
+            }
+            HeroClassComboBox.BeginInvoke(new Action(() => HeroClassComboBox.SelectedIndex = 0));
+
             loadscreen.BeginInvoke(new Action(() => loadscreen.TopMost = false)); //Make sure it's initially on top, but then let other windows win
 
             loadscreen.ChangeText("Reading MEG files");
@@ -819,7 +863,25 @@ namespace TilotnyStudio
             entities.IconData = DatParser.ReadMTD(entities);
             try
             {
-                entities.MTmaster = (Bitmap)Image.FromFile(getModFile("Art\\Textures\\MT_CommandBar.tga", entities));
+                //it seems impossible to open the bmp such that masks are preserved (which also semi resizes for some reason) and such that the file is unlocked
+                //This stupid setup is the best workaround I could find
+                if(!(entities.MTmaster is null)) entities.MTmaster.Dispose();
+                string workaround = globals.LocalMod + "\\Art\\Textures\\MT_Workaround.tga";
+                System.IO.Directory.CreateDirectory(globals.LocalMod + "\\Art\\Textures");
+                File.Delete(workaround);
+                File.Copy(getModFile("Art\\Textures\\MT_CommandBar.tga", entities), workaround);
+                entities.MTmaster = (Bitmap)Image.FromFile(workaround);
+                //Bitmap tmp = (Bitmap)Image.FromFile(getModFile("Art\\Textures\\MT_CommandBar.tga", entities));
+                //entities.MTmaster = tmp.Clone(new Rectangle(0, 0, tmp.Width, tmp.Height), tmp.PixelFormat);
+                //tmp.Dispose();
+                /*using (Bitmap bmpTemp = new Bitmap(getModFile("Art\\Textures\\MT_CommandBar.tga", entities)))
+                {
+                    entities.MTmaster = new Bitmap(bmpTemp);
+                }*/
+                /*using (Bitmap bmpTemp = (Bitmap)Image.FromFile(getModFile("Art\\Textures\\MT_CommandBar.tga", entities)))
+                {
+                    entities.MTmaster = new Bitmap(bmpTemp);
+                }*/
                 globals.MTDtga = false;
             }
             catch
@@ -887,31 +949,54 @@ namespace TilotnyStudio
             parsePrereqs(entities.groundCompanies, false);
             parsePrereqs(entities.spaceUnits, true);
 
+            loadscreen.ChangeText("Parsing government mechanics");
+            parseGovernment(entities);
+
             Thread.CurrentThread.CurrentCulture = globals.UIculture;
             loadscreen.CloseLoadScreen();
 
-            UnitCopyFileComboBox.Items.Clear();
+            UnitCopyFileComboBox.BeginInvoke(new Action(() => UnitCopyFileComboBox.Items.Clear()));
+            HeroCopyFileComboBox.BeginInvoke(new Action(() => HeroCopyFileComboBox.Items.Clear()));
             List<string> unitfiles = getModFiles("XML\\Units", "*.xml", entities);
             string defaultfile = "Submod_Units";
             bool defaultfound = false;
             foreach (string unitfile in unitfiles)
             {
                 string trimmedfile = LastFolderOrFile(unitfile);
-                UnitCopyFileComboBox.Items.Add(trimmedfile);
+                UnitCopyFileComboBox.BeginInvoke(new Action(() => UnitCopyFileComboBox.Items.Add(trimmedfile)));
                 if (trimmedfile == defaultfile + ".xml")
                 {
                     defaultfound = true;
-                    UnitCopyFileComboBox.SelectedItem = trimmedfile;
+                    UnitCopyFileComboBox.BeginInvoke(new Action(() => UnitCopyFileComboBox.SelectedItem = trimmedfile));
                 }
             }
             if (!defaultfound)
             {
                 NewUnitFileTextBox.Text = defaultfile;
                 NewUnitFileCheckBox.Checked = true;
-                UnitCopyFileComboBox.SelectedIndex = 0;
+                if(UnitCopyFileComboBox.Items.Count > 0) UnitCopyFileComboBox.BeginInvoke(new Action(() => UnitCopyFileComboBox.SelectedIndex = 0));
+            }
+            defaultfile = "Submod_Heroes";
+            defaultfound = false;
+            unitfiles = getModFiles("XML\\Heroes", "*.xml", entities);
+            foreach (string unitfile in unitfiles)
+            {
+                string trimmedfile = LastFolderOrFile(unitfile);
+                HeroCopyFileComboBox.BeginInvoke(new Action(() => HeroCopyFileComboBox.Items.Add(trimmedfile)));
+                if (trimmedfile == defaultfile + ".xml")
+                {
+                    defaultfound = true;
+                    HeroCopyFileComboBox.BeginInvoke(new Action(() => HeroCopyFileComboBox.SelectedItem = trimmedfile));
+                }
+            }
+            if (!defaultfound)
+            {
+                NewHeroFileTextBox.Text = defaultfile;
+                NewHeroFileCheckBox.Checked = true;
+                HeroCopyFileComboBox.BeginInvoke(new Action(() => HeroCopyFileComboBox.SelectedIndex = 0));
             }
 
-            UnitHPCopyFileComboBox.Items.Clear();
+            UnitHPCopyFileComboBox.BeginInvoke(new Action(() => UnitHPCopyFileComboBox.Items.Clear()));
             unitfiles = getModFiles("XML\\Hardpoints", "*.xml", entities);
             defaultfile = "Submod_Hardpoints";
             defaultfound = false;
@@ -932,6 +1017,26 @@ namespace TilotnyStudio
                 UnitHPCopyFileComboBox.SelectedIndex = 0;
             }
 
+            globals.Transports.Clear();
+            globals.AdminTransports.Clear();
+            DropshipComboBox.BeginInvoke(new Action(() => DropshipComboBox.Items.Clear()));
+            foreach (unit unit in entities.spaceUnits)
+            {
+                if (IsTransportObject(unit))
+                {
+                    if (findUnitNameFile(unit, entities).Length == 0)
+                    {
+                        if (unit.hyperspaceSpeed > 1)
+                        {
+                            globals.Transports.Add(unit.unitname);
+                            DropshipComboBox.BeginInvoke(new Action(() => DropshipComboBox.Items.Add(unit.unitname)));
+                        }
+                        else globals.AdminTransports.Add(unit.unitname);
+                    }
+                }
+            }
+            DropshipComboBox.BeginInvoke(new Action(() => DropshipComboBox.SelectedIndex = 0));
+
             SpaceRadioButton.BeginInvoke(new Action(() => SpaceRadioButton.Checked = true));
             //populateAffilUnits(true);
             this.BeginInvoke(new Action(() => this.Enabled = true));
@@ -940,7 +1045,7 @@ namespace TilotnyStudio
         private void populateAffilUnits(bool furst = false)
         {
             AffilListBox.BeginInvoke(new Action(() => AffilListBox.Items.Clear()));
-            string search = AffilSearchTextBox.Text;
+            string[] search = AffilSearchTextBox.Text.Split(';');
             List<unit> units;
 
             if (SpaceRadioButton.Checked) units = entities.spaceUnits;
@@ -971,7 +1076,22 @@ namespace TilotnyStudio
                             }
                         }
                     }
-                    if (affil_ok && (search == "" || (unit.unitname).ToLower().Contains(search.ToLower())))
+                    bool match = false;
+                    foreach (string term in search)
+                    {
+                        string lterm = term.ToLower();
+                        if (unit.unitname.ToLower().Contains(lterm))
+                        {
+                            match = true;
+                            break;
+                        }
+                        if (unit.username.ToLower().Contains(lterm))
+                        {
+                            match = true;
+                            break;
+                        }
+                    }
+                    if (affil_ok && (AffilSearchTextBox.Text == "" || match))
                     {
                         AffilListBox.BeginInvoke(new Action(() => AffilListBox.Items.Add(unit.unitname)));
                     }
@@ -1021,6 +1141,29 @@ namespace TilotnyStudio
             LifetimeBox.Visible = spaceonly;
         }
 
+        private void SetHeroCopy(bool groundmode, bool respectprev = true)
+        {
+            if(!respectprev || BaseHeroTextBox.Text == "")
+            {
+                if (groundmode != globals.NewHeroGroundMode)
+                {
+                    BaseHeroTextBox.Text = "";
+
+                    FlagshipTextBox.Visible = !groundmode;
+                    FlagshipLabel.Visible = !groundmode;
+                    DropshipComboBox.Visible = groundmode;
+                    DropshipLabel.Visible = groundmode;
+                    NewDropshipCheckBox.Visible = groundmode;
+                    NewHeroAffilListBox.Visible = groundmode;
+
+                    if (groundmode) FighterSourceLabel.Text = "Escort Source Override:";
+                    else FighterSourceLabel.Text = "Fighter Source Override:";
+                    StandardFighterModeCheckBox.Visible = !groundmode;
+                }
+                globals.NewHeroGroundMode = groundmode;
+            }
+        }
+
         private void SpaceRadioButton_CheckedChanged(object sender, EventArgs e)
         {
             populateAffilUnits();
@@ -1048,6 +1191,7 @@ namespace TilotnyStudio
             FilterComboBox.Visible = true;
             FilterLabel.Visible = true;
             SetStatVisibility(0);
+            SetHeroCopy(false);
         }
 
         private void GroundRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -1085,6 +1229,7 @@ namespace TilotnyStudio
             foreach (string type in entities.GroundShields) STypeComboBox.Items.Add(type);
 
             SetStatVisibility(2);
+            SetHeroCopy(true);
         }
 
         private void GroundHeroRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -1096,6 +1241,7 @@ namespace TilotnyStudio
             foreach (string type in entities.GroundShields) STypeComboBox.Items.Add(type);
 
             SetStatVisibility(2);
+            SetHeroCopy(true);
         }
 
         private void HeroTeamRadioButton_CheckedChanged(object sender, EventArgs e)
@@ -1117,6 +1263,7 @@ namespace TilotnyStudio
             FilterComboBox.Visible = true;
             FilterLabel.Visible = true;
             SetStatVisibility(0);
+            SetHeroCopy(false);
         }
 
         private void AffilSearchTextBox_TextChanged(object sender, EventArgs e)
@@ -1188,6 +1335,15 @@ namespace TilotnyStudio
                     if (unit.unitname == AffilListBox.SelectedItem.ToString())
                     {
                         AffilListBox.Tag = unit;
+                        UnitLocksLabel.Text = "";
+                        if (!Multi)
+                        {
+                            if(unit.techlevel > 5) UnitLocksLabel.Text = "Locked by Tech Level";
+                            else if(unit.locked > 0) UnitLocksLabel.Text = "Initially locked";
+                            else UnitLocksLabel.Text = "Unlocked by default";
+                            //UnitLocksLabel.Text += "\nFor more specific details, select a faction name below";
+                            //todo move checkUnitAvailibility to shared functions and and add the handler
+                        }
                         if (!UnitRadioButton.Checked)
                         {
                             if (SpaceRadioButton.Checked) CorpLabel.Text = "Filter: ";
@@ -1464,6 +1620,7 @@ namespace TilotnyStudio
                         }
                         else VariantChainLabel.Text = "";
                         VariantLabel.Text = FindDescendants(unit.unitname, units);
+                        updateStatsIcon(unit.icon);
 
                         string newname = FindNewUnitID(unit.unitname, entities);
                         //todo create funtion to check if any unit in any unit list exists, also call on saving
@@ -1494,6 +1651,36 @@ namespace TilotnyStudio
             }
         }
 
+        private void updateStatsIcon(string icon)
+        {
+            IconPictureBox.Image = new Bitmap(IconPictureBox.Width, IconPictureBox.Height);
+            IconData icondata = DatParser.GetIconData(icon, entities);
+            if (icondata.size_x > 0 && entities.MTmaster != null)
+            {
+                // Create a Graphics object to do the drawing, *with the new bitmap as the target*
+                using (Graphics g = Graphics.FromImage(IconPictureBox.Image))
+                {
+                    g.DrawImage(entities.MTmaster, 0, 0, new Rectangle(icondata.origin_x, icondata.origin_y, icondata.size_x, icondata.size_y), GraphicsUnit.Pixel);
+                }
+            }
+            IconPictureBox.Tag = icon;
+        }
+
+        private void updateHeroIcon(string icon)
+        {
+            HeroIconPictureBox.Image = new Bitmap(HeroIconPictureBox.Width, HeroIconPictureBox.Height);
+            IconData icondata = DatParser.GetIconData(icon, entities);
+            if (icondata.size_x > 0 && entities.MTmaster != null)
+            {
+                // Create a Graphics object to do the drawing, *with the new bitmap as the target*
+                using (Graphics g = Graphics.FromImage(HeroIconPictureBox.Image))
+                {
+                    g.DrawImage(entities.MTmaster, 0, 0, new Rectangle(icondata.origin_x, icondata.origin_y, icondata.size_x, icondata.size_y), GraphicsUnit.Pixel);
+                }
+            }
+            HeroIconPictureBox.Tag = icon;
+        }
+
         private void AffilAllButton_Click(object sender, EventArgs e)
         {
             foreach (CheckBox control in UnitAffilPanel.Controls.OfType<CheckBox>()) control.Checked = true;
@@ -1509,18 +1696,131 @@ namespace TilotnyStudio
             AffilListBox.SelectedItems.Clear();
         }
 
-        private void WriteXMLTag(string tagname, string value, XmlDocument doc, XmlNode XMLunit)
+        private void WriteXMLTag(string tagname, string value, XmlDocument doc, XmlNode XMLunit, int indent = 2, bool newline = true, bool append = false)
         {
             XmlNode tag = XMLunit.SelectSingleNode("descendant::" + tagname);
-            if (tag != null) tag.InnerText = value;
+            if (append == false && tag != null) tag.InnerText = value;
             else
             {
+                string w = "";
+                for (int i = 0; i < indent; i++) w += "\t";
+                XmlNode ws = doc.CreateTextNode(w);
+                XMLunit.AppendChild(ws);
                 XmlNode elem = doc.CreateElement(tagname);
                 elem.InnerText = value;
                 XMLunit.AppendChild(elem);
-                XmlNode linebreak = doc.CreateTextNode("\n\n");
+                w = "\n";
+                if (newline) w += "\n";
+                XmlNode linebreak = doc.CreateTextNode(w);
                 XMLunit.AppendChild(linebreak);
             }
+        }
+
+        private void WriteTierBonus(XmlDocument doc, XmlNode node, bool ground, int tier, CommandTrait trait1, CommandTrait trait2)
+        {
+            float tierbase = 0.03f * tier;
+            float damage = tierbase + trait1.attack + trait2.attack;
+            float defense = tierbase + trait1.defense + trait2.defense;
+            float speed = tierbase + trait1.speed + trait2.speed;
+            float fow = tierbase + trait1.fow + trait2.fow;
+            WriteBonusAbility(doc, node, ground, "Command_Tier_" + tier.ToString("00"), "All", damage, defense, speed, fow, 0);
+        }
+
+        private void WriteSpecialization(XmlDocument doc, XmlNode node, bool ground, Specialization spec)
+        {
+            float specbase = 0.06f;
+            if (entities.version <= 35 && entities.modid != "icw") specbase = 0.03f;
+
+            WriteBonusAbility(doc, node, ground, spec.name + "_Specialist", spec.categories, specbase, specbase, specbase, specbase, 1);
+        }
+
+        private void WriteBonusAbility(XmlDocument doc, XmlNode node, bool ground, string name, string category, float damage, float defense, float speed, float fow, int stacking)
+        {
+            string indent = "\t\t\t";
+            node.AppendChild(doc.CreateTextNode(indent));
+            XmlNode able = doc.CreateElement("Combat_Bonus_Ability");
+            XmlAttribute attribute = doc.CreateAttribute("Name");
+            attribute.Value = name + "_Combat_Bonus";
+
+            able.Attributes.Append(attribute);
+            string ws = "\n\t\t\t\t";
+            
+            able.AppendChild(doc.CreateTextNode(ws));
+            XmlNode act = doc.CreateElement("Activation_Style");
+            if (ground) act.InnerText = " Ground_Automatic ";
+            else act.InnerText = " Space_Automatic ";
+            able.AppendChild(act);
+
+            able.AppendChild(doc.CreateTextNode(ws));
+            XmlNode cats = doc.CreateElement("Applicable_Unit_Categories");
+            cats.InnerText = category;
+            able.AppendChild(cats);
+
+            able.AppendChild(doc.CreateTextNode(ws));
+            XmlNode types = doc.CreateElement("Applicable_Unit_Types");
+            able.AppendChild(types);
+            able.AppendChild(doc.CreateTextNode(ws));
+            XmlNode xcl = doc.CreateElement("Excluded_Unit_Types");
+            xcl.InnerText = " Ground_Ion_Cannon, Ground_Hypervelocity_Gun ";
+            able.AppendChild(xcl);
+
+            string formatstring = "0.00";
+            able.AppendChild(doc.CreateTextNode(ws));
+            XmlNode dmg = doc.CreateElement("Damage_Bonus_Percentage");
+            dmg.InnerText = damage.ToString(formatstring);
+            able.AppendChild(dmg);
+            able.AppendChild(doc.CreateTextNode(ws));
+            XmlNode def = doc.CreateElement("Defense_Bonus_Percentage");
+            def.InnerText = defense.ToString(formatstring);
+            able.AppendChild(def);
+            able.AppendChild(doc.CreateTextNode(ws));
+            XmlNode spd = doc.CreateElement("Movement_Speed_Bonus_Percentage");
+            spd.InnerText = speed.ToString(formatstring);
+            able.AppendChild(spd);
+
+            able.AppendChild(doc.CreateTextNode(ws));
+            XmlNode stk = doc.CreateElement("Stacking_Category");
+            stk.InnerText = stacking.ToString();
+            able.AppendChild(stk);
+
+            string nl = "\n";
+            able.AppendChild(doc.CreateTextNode(nl));
+            able.AppendChild(doc.CreateTextNode(indent));
+            node.AppendChild(able);
+            node.AppendChild(doc.CreateTextNode(nl));
+
+
+            node.AppendChild(doc.CreateTextNode(indent));
+            XmlNode able2 = doc.CreateElement("Battlefield_Modifier_Ability");
+            XmlAttribute attribute2 = doc.CreateAttribute("Name");
+            attribute2.Value = name + "_FOW_Increase";
+            able2.Attributes.Append(attribute2);
+
+            able2.AppendChild(doc.CreateTextNode(ws));
+            XmlNode init = doc.CreateElement("Initially_Enabled");
+            init.InnerText = "Yes";
+            able2.AppendChild(init);
+            able2.AppendChild(doc.CreateTextNode(ws));
+            XmlNode act2 = doc.CreateElement("Activation_Style");
+            act2.InnerText = act.InnerText;
+            able2.AppendChild(act2);
+
+            able2.AppendChild(doc.CreateTextNode(ws));
+            XmlNode fw = doc.CreateElement("FOW_Reveal_Range_Multiplier");
+            fw.InnerText = (1 + fow).ToString(formatstring); //silly inconsistent additive and multiplicative math
+            able2.AppendChild(fw);
+            able2.AppendChild(doc.CreateTextNode(ws));
+            XmlNode ally = doc.CreateElement("Apply_To_All_Allies");
+            ally.InnerText = "Yes";
+            able2.AppendChild(ally);
+            able2.AppendChild(doc.CreateTextNode(ws));
+            XmlNode stk2 = doc.CreateElement("Stacking_Category");
+            stk2.InnerText = stacking.ToString();
+            able2.AppendChild(stk2);
+            able2.AppendChild(doc.CreateTextNode(nl));
+            able2.AppendChild(doc.CreateTextNode(indent));
+            node.AppendChild(able2);
+            node.AppendChild(doc.CreateTextNode(nl));
         }
 
         private string FindNewUnitID(string ID, entities entities)
@@ -1748,20 +2048,35 @@ namespace TilotnyStudio
                             }
                             for (int index = 0; index < globals.playablefactions.Count; index++)
                             {
-                                string facname = (string)globals.playablefactions[index].factionname;
-                                if (affilist.Contains(facname) && !unit.affiliations.Contains(facname))
+                                if(index < CustomStartIndexes.Count)
                                 {
-                                    //Adding new
-                                    CustomLib[CustomStartIndexes[index]] += "\"" + unitname + "\", ";
-                                }
-                                if (!affilist.Contains(facname) && unit.affiliations.Contains(facname))
-                                {
-                                    //Remove existing
-                                    string tokill = "\"" + unitname + "\"";
-                                    for (int j = CustomStartIndexes[index]; j < CustomEndIndexes[index]; j++)
+                                    string facname = (string)globals.playablefactions[index].factionname;
+                                    if (affilist.Contains(facname))
                                     {
-                                        CustomLib[j] = CustomLib[j].Replace(tokill + ",", "");
-                                        CustomLib[j] = CustomLib[j].Replace(tokill, "");
+                                        bool add = true;
+                                        if (!unit.affiliations.Contains(facname)) add = true;
+                                        else
+                                        {
+                                            for (int j = CustomStartIndexes[index]; j < CustomEndIndexes[index]; j++)
+                                            {
+                                                if (CustomLib[j].Contains("\"" + unitname + "\""))
+                                                {
+                                                    add = false;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        if (add) CustomLib[CustomStartIndexes[index]] += "\"" + unitname + "\", ";
+                                    }
+                                    if (!affilist.Contains(facname) && unit.affiliations.Contains(facname))
+                                    {
+                                        //Remove existing
+                                        string tokill = "\"" + unitname + "\"";
+                                        for (int j = CustomStartIndexes[index]; j < CustomEndIndexes[index]; j++)
+                                        {
+                                            CustomLib[j] = CustomLib[j].Replace(tokill + ",", "");
+                                            CustomLib[j] = CustomLib[j].Replace(tokill, "");
+                                        }
                                     }
                                 }
                             }
@@ -1941,8 +2256,14 @@ namespace TilotnyStudio
                                 {
                                     WriteXMLTag("Affiliation", affils, doc, XMLunit);
                                     unit.affiliations = affilist;
-                                    WriteXMLTag("Tech_Level", "0", doc, XMLunit);
-                                    if(!SuppressCheckBox.Checked) WriteXMLTag("Build_Initially_Locked", "No", doc, XMLunit);
+                                    if (SuppressCheckBox.Checked)
+                                    {
+                                        WriteXMLTag("Tech_Level", "0", doc, XMLunit);
+                                        unit.techlevel = 0;
+                                        WriteXMLTag("Build_Initially_Locked", "No", doc, XMLunit);
+                                        unit.locked = 0;
+                                    }
+                                    UnitLocksLabel.Text = "";
                                     if (PlanetTextBox.Text != "" || unit.planets.Length == 0)
                                     {
                                         WriteXMLTag("Required_Planets", PlanetTextBox.Text, doc, XMLunit);
@@ -2155,11 +2476,11 @@ namespace TilotnyStudio
                         unit[] templates = new unit[count + 1];
                         for (int j = 0; j < count; j++)
                         {
-                            for (int k = 0; k < unitlist.Count; k++)
+                            for (int k = 0; k < entities.objects.Count; k++)
                             {
-                                if (unitlist[k].unitname == unitlist[i].variantchain[j])
+                                if (entities.objects[k].unitname == unitlist[i].variantchain[j])
                                 {
-                                    templates[j] = unitlist[k];
+                                    templates[j] = entities.objects[k];
                                     break;
                                 }
                             }
@@ -2404,6 +2725,12 @@ namespace TilotnyStudio
                                 changed = true;
                             }
 
+                            if (unit.icon.ToUpper() != (string)IconPictureBox.Tag)
+                            {
+                                WriteXMLTag("Icon_Name", (string)IconPictureBox.Tag, doc, XMLunit);
+                                changed = true;
+                            }
+
                             if (SpeedBox.Enabled && SpeedBox.Value != (decimal)unit.speed && (MainUnit && unit.speed_baseID < 0 || templates[count].speed_baseID == j))
                             {
                                 unit.speed = (float)SpeedBox.Value;
@@ -2573,18 +2900,48 @@ namespace TilotnyStudio
                     }
                 }
             }
-            else if (UnitTabControl.SelectedIndex == 2) //unit copy
+            else if (UnitTabControl.SelectedIndex == 2 || UnitTabControl.SelectedIndex == 3) //unit/hero copy. Very similar operation
             {
+                bool unitmode = UnitTabControl.SelectedIndex == 2;
                 //Todo check that unit name is free, new unit/hp files are free
                 //todo give up if infantry (or anything with a company spawner is selected. Just in deep copy, I guess?
-                if (AffilListBox.SelectedItems.Count == 0)
+                if (unitmode && AffilListBox.SelectedItems.Count == 0)
                 {
                     MessageBox.Show("Please select a unit to copy.");
                     return;
                 }
+                if (!unitmode)
+                {
+                    if (BaseHeroTextBox.Text == "")
+                    {
+                        MessageBox.Show("Please select a base unit for the hero.");
+                        return;
+                    }
+                    if (CopyHeroNameTextBox.Text == "")
+                    {
+                        MessageBox.Show("A hero name must be chosen.");
+                        return;
+                    }
+                    unit exist = entities.objects.FirstOrDefault(s => string.Equals(s.unitname, CopyHeroNameTextBox.Text, StringComparison.OrdinalIgnoreCase));
+                    if (!(exist.unitname is null))
+                    {
+                        MessageBox.Show("A unit called " + exist.unitname + " already exists. Please choose a unique name.");
+                        return;
+                    }
+                    if (!globals.NewHeroGroundMode && FlagshipTextBox.Text.Contains("SHIPNAMEHERE"))
+                    {
+                        DialogResult result = MessageBox.Show("No name has been supplied for the flagship. Continue anyway?", "Tilotny", MessageBoxButtons.YesNo);
+                        if (result == DialogResult.No) return;
+                    }
+                    if (globals.NewHeroGroundMode && DropshipComboBox.Text == "")
+                    {
+                        MessageBox.Show("A transport must be selected for ground heroes");
+                        return;
+                    }
+                }
 
                 string unitfile;
-                if (NewUnitFileCheckBox.Checked)
+                if (unitmode && NewUnitFileCheckBox.Checked)
                 {
                     if (NewUnitFileTextBox.Text == "")
                     {
@@ -2594,7 +2951,7 @@ namespace TilotnyStudio
                     string xml = NewUnitFileTextBox.Text + ".xml";
                     unitfile = ConvertMainPathToMod("\\Data\\XML\\Units\\" + xml, true);
                     Directory.CreateDirectory(UpOneFolder(unitfile));
-                    File.WriteAllText(unitfile, "<?xml version='1.0' encoding='ASCII'?>\n<"+ NewUnitFileTextBox.Text + ">\n\t\n</"+ NewUnitFileTextBox.Text + ">"); //Could use XML functions too
+                    File.WriteAllText(unitfile, "<?xml version='1.0' encoding='ASCII'?>\n<" + NewUnitFileTextBox.Text + ">\n\t\n</" + NewUnitFileTextBox.Text + ">"); //Could use XML functions too
                     UnitCopyFileComboBox.Items.Add(xml);
                     UnitCopyFileComboBox.SelectedItem = xml;
 
@@ -2603,15 +2960,53 @@ namespace TilotnyStudio
                     newdoc.Load(getModFile("XML\\GameObjectFiles.xml", entities));
                     XmlNode newroot = newdoc.DocumentElement;
                     XmlElement newelem = newdoc.CreateElement("File");
-                    newelem.InnerText = "Units\\"+ xml;
+                    newelem.InnerText = "Units\\" + xml;
                     newroot.AppendChild(newelem);
                     XmlNode linebreak = newdoc.CreateTextNode("\n");
                     newroot.AppendChild(linebreak);
                     newdoc.Save(ConvertMainPathToMod("\\Data\\XML\\GameObjectFiles.xml", true));
+
+                    NewUnitFileCheckBox.Checked = false;
+                    UnitCopyFileComboBox.SelectedItem = NewUnitFileTextBox.Text;
+                    NewUnitFileTextBox.Text = "";
                 }
-                else unitfile = getModFile("XML\\units\\" + (string)UnitCopyFileComboBox.SelectedItem,entities); //todo might need some help
+                else if (!unitmode && NewHeroFileCheckBox.Checked)
+                {
+                    if (NewHeroFileTextBox.Text == "")
+                    {
+                        MessageBox.Show("A name for the new unit file must be supplied");
+                        return;
+                    }
+                    string xml = NewHeroFileTextBox.Text + ".xml";
+                    unitfile = ConvertMainPathToMod("\\Data\\XML\\Heroes\\" + xml, true);
+                    Directory.CreateDirectory(UpOneFolder(unitfile));
+                    File.WriteAllText(unitfile, "<?xml version='1.0' encoding='ASCII'?>\n<" + NewHeroFileTextBox.Text + ">\n\t\n</" + NewHeroFileTextBox.Text + ">"); //Could use XML functions too
+                    HeroCopyFileComboBox.Items.Add(xml);
+                    HeroCopyFileComboBox.SelectedItem = xml;
+
+                    XmlDocument newdoc = new XmlDocument();
+                    newdoc.PreserveWhitespace = true;
+                    newdoc.Load(getModFile("XML\\GameObjectFiles.xml", entities));
+                    XmlNode newroot = newdoc.DocumentElement;
+                    XmlElement newelem = newdoc.CreateElement("File");
+                    newelem.InnerText = "Heroes\\" + xml;
+                    newroot.AppendChild(newelem);
+                    XmlNode linebreak = newdoc.CreateTextNode("\n");
+                    newroot.AppendChild(linebreak);
+                    newdoc.Save(ConvertMainPathToMod("\\Data\\XML\\GameObjectFiles.xml", true));
+
+                    NewHeroFileCheckBox.Checked = false;
+                    HeroCopyFileComboBox.SelectedItem = NewUnitFileTextBox.Text;
+                    NewHeroFileTextBox.Text = "";
+                }
+                else
+                {
+                    if (unitmode) unitfile = getModFile("XML\\units\\" + (string)UnitCopyFileComboBox.SelectedItem, entities); //todo might need some help
+                    else unitfile = getModFile("XML\\Heroes\\" + (string)HeroCopyFileComboBox.SelectedItem, entities);
+                }
 
                 unit baseunit = unitlist.FirstOrDefault(x => x.unitname == (string)AffilListBox.SelectedItem); //it must exist if it was on the list
+                if (!unitmode) baseunit = entities.objects.FirstOrDefault(x => x.unitname == BaseHeroTextBox.Text);
                 List<string> CopyUnits = new List<string>(); //Find all dependent units
                 List<string> CopyStrings = new List<string>();
                 List<string> CopiedStrings = new List<string>();
@@ -2623,7 +3018,7 @@ namespace TilotnyStudio
                 string[] CopyUnitHPs = new string[0];
                 string[] CopyUnitTooltips = new string[0];
                 string[] CopyUnitNewNames = new string[1];
-                if (UnitNewStatsCheckBox.Checked)
+                if (unitmode && UnitNewStatsCheckBox.Checked)
                 {
                     CopyUnits = GetCopyUnits(baseunit.unitname, entities);
                     CopyUnitHPs = new string[CopyUnits.Count];
@@ -2650,13 +3045,12 @@ namespace TilotnyStudio
                         CopyUnitHPs[i] = "";
 
                         string[] tooltip = SplitXMLWhitespaceList(unit.tooltip);
-                        string spacer = "\t\t";
+                        string spacer = "\t\t\t";
                         if (tooltip.Length > 0) spacer = unit.tooltip.Substring(0, unit.tooltip.IndexOf(tooltip[0]));
                         CopyUnitTooltips[i] = "";
                         for (int j = 0; j < tooltip.Length; j++)
                         {
                             string tip = tooltip[j];
-                            //if (j > 0) CopyUnitTooltips[i] += "\n"; //TODO check that this works as expected
                             if (!(tip.Contains("_CAPABILIT") || tip.Contains("_BONUS_") || tip.Contains("_SEPARATOR_")))
                             {
                                 if (!CopyStrings.Contains(nameid))
@@ -2705,6 +3099,9 @@ namespace TilotnyStudio
                             XmlNode linebreak = newdoc.CreateTextNode("\n");
                             newroot.AppendChild(linebreak);
                             newdoc.Save(ConvertMainPathToMod("\\Data\\XML\\HardPointDataFiles.xml"));
+                            NewUnitHPFileCheckBox.Checked = false;
+                            UnitHPCopyFileComboBox.SelectedItem = NewUnitHPFileTextBox.Text;
+                            NewUnitHPFileTextBox.Text = "";
                         }
                         else hpfile = getModFile("XML\\Hardpoints\\" + (string)UnitHPCopyFileComboBox.SelectedItem, entities); //todo might need some help
 
@@ -2722,6 +3119,7 @@ namespace TilotnyStudio
                         XmlNodeList hpnodes = srcroot.ChildNodes;
 
                         //todo don't copy hardpoints for infantry. There's probably a better condition to use
+                        //todo: hardpoints need to be added as new objects under entities.hardpoints eventually
                         if (!(unit.Hardpoints is null) && unit.unitclass != "TEXT_ENCYCLOPEDIA_CLASS_INFANTRY")
                         {
                             for (int hpid = 0; hpid < unit.Hardpoints.Length; hpid++)
@@ -2772,12 +3170,19 @@ namespace TilotnyStudio
                             if (hpsimple != "") newhpdoc.Save(ConvertMainPathToMod(hpfile));
                         }
                     }
-                    SaveText(textfile);
                 }
                 else
                 {
-                    CopyUnits.Add((string)AffilListBox.SelectedItem);
-                    CopyUnitNewNames[0] = FindNewUnitID(CopyUnitNameTextBox.Text, entities);
+                    if (unitmode)
+                    {
+                        CopyUnits.Add((string)AffilListBox.SelectedItem);
+                        CopyUnitNewNames[0] = FindNewUnitID(CopyUnitNameTextBox.Text, entities);
+                    }
+                    else
+                    {
+                        CopyUnits.Add(BaseHeroTextBox.Text);
+                        CopyUnitNewNames[0] = FindNewUnitID(CopyHeroNameTextBox.Text, entities);
+                    }
                 }
 
 
@@ -2844,12 +3249,11 @@ namespace TilotnyStudio
                             XmlNode import = savedoc.ImportNode(node, true);
                             import.Attributes[0].Value = CopyUnitNewNames[i];
                             unit.unitname = CopyUnitNewNames[i];
-                            if (UnitNewStatsCheckBox.Checked)
+                            if (unitmode && UnitNewStatsCheckBox.Checked)
                             {
                                 int textid = CopyStrings.FindIndex(x => string.Equals(x, unit.usernameID, StringComparison.OrdinalIgnoreCase));
-                                //todo set all stat inheritance IDs to -1
                                 WriteXMLTag("Text_ID", CopiedStrings[textid], savedoc, import);
-                                WriteXMLTag("Encyclopedia_Text", CopyUnitTooltips[i], savedoc, import);
+                                WriteXMLTag("Encyclopedia_Text", "\n" + CopyUnitTooltips[i] + "\n\t\t", savedoc, import);
                                 if (i == 0) unit.username = CopyUnitUsernameTextBox.Text;
                                 unit.usernameID = CopiedStrings[textid];
                                 unit.tooltip = CopyUnitTooltips[i];
@@ -2873,6 +3277,7 @@ namespace TilotnyStudio
                                     WriteXMLTag("Create_Team_Type", CopyUnitNewNames[contain], savedoc, import);
                                     unit.container = CopyUnitNewNames[contain];
                                 }
+
                                 //Decouple stats from templates on fields that are assumed to be synced with text
                                 int nonzero = unit.hp;
                                 if (nonzero < 0) nonzero = 0;
@@ -2907,11 +3312,316 @@ namespace TilotnyStudio
                                 unit.accel_baseID = -1;
                                 unit.min_speed_baseID = -1;
                                 //todo build limits need some work to separate Lua from XML
-
-                                //todo rename self heal and other such self target abilities, and duplicate in corp lists
                             }
 
-                            WriteXMLTag("Affiliation", "", savedoc, import);
+                            //todo add to hero libraries. Read perceptions from full list iff economic hero
+
+                            bool infantrymode = unit.categories.Contains("Infantry") || unit.categories.Contains("LandHero") || unit.categories.Contains("InfantryHero"); //LandHero switched to infantry hero between Rev 0.4 and FotR 1.4
+                            XmlNode company = savedoc.CreateElement("HeroCompany");
+                            bool template = entities.heroCompanies.Exists(s => s.unitname == "Template_Hero_Team");
+                            List<string> heroaffils = new List<string>();
+                            foreach(string faction in NewHeroAffilListBox.SelectedItems)
+                            {
+                                heroaffils.Add(faction);
+                            }
+
+                            if (!unitmode)
+                            {
+                                string unitid = FindNewStringID("TEXT_HERO_" + CopyHeroNameTextBox.Text.ToUpper(), entities);
+                                textfile = SetTextID(textfile, unitid, CopyHeroUserNameTextBox.Text);
+                                WriteXMLTag("Text_ID", unitid, savedoc, import);
+
+                                string[] oldtooltip = SplitXMLWhitespaceList(unit.tooltip);
+                                string spacer = "\t\t\t";
+                                string newtooltip = "\n" + spacer + "TEXT_TOOLTIP_SEPARATOR_TRAITS_BLOCK";
+                                spacer = "\n" + spacer;
+                                bool boring = true;
+                                if (TierBox.Value > 0)
+                                {
+                                    newtooltip += spacer + "TEXT_TOOLTIP_TRAIT_COMMAND_TIER_" + TierBox.Value.ToString("00");
+                                    if (globals.NewHeroGroundMode) newtooltip += "_LAND";
+                                    else newtooltip += "_SPACE";
+                                    boring = false;
+                                }
+                                if (Command1ComboBox.SelectedIndex > -1)
+                                {
+                                    CommandTrait trait = (CommandTrait)Command1ComboBox.SelectedItem;
+                                    newtooltip += spacer + trait.textID;
+                                    boring = false;
+                                }
+                                if (Command2ComboBox.SelectedIndex > -1)
+                                {
+                                    CommandTrait trait = (CommandTrait)Command2ComboBox.SelectedItem;
+                                    newtooltip += spacer + trait.textID;
+                                    boring = false;
+                                }
+                                if (SpecializationComboBox.SelectedIndex > -1)
+                                {
+                                    Specialization spec = (Specialization)SpecializationComboBox.SelectedItem;
+                                    newtooltip += spacer + spec.textID;
+                                    boring = false;
+                                }
+                                if (boring) newtooltip += spacer + "TEXT_TOOLTIP_TRAIT_UNINTERESTING";
+                                //If none, add no active traits
+                                string nameid = FindNewStringID("TEXT_TOOLTIP_" + CopyHeroNameTextBox.Text.ToUpper(), entities);
+                                textfile = SetTextID(textfile, nameid, CopyHeroDescTextBox.Text);
+                                newtooltip += spacer + "TEXT_TOOLTIP_SEPARATOR_BIO_BLOCK" + spacer + nameid;
+                                if (!globals.NewHeroGroundMode)
+                                {
+                                    nameid = FindNewStringID("TEXT_TOOLTIP_COMMAND_" + CopyHeroNameTextBox.Text.ToUpper(), entities);
+                                    textfile = SetTextID(textfile, nameid, FlagshipTextBox.Text);
+                                    newtooltip += spacer + "TEXT_TOOLTIP_SEPARATOR_COMMANDS_BLOCK" + spacer + nameid;
+                                }
+                                bool copyline = false;
+                                for (int j = 0; j < oldtooltip.Length; j++)
+                                {
+                                    string tip = oldtooltip[j];
+                                    if (tip.Contains("TEXT_TOOLTIP_SEPARATOR_STAT_BLOCK")) copyline = true;
+                                    if (copyline)
+                                    {
+                                        string textval = Find_Text_Entry(tip, entities);
+                                        if (infantrymode)
+                                        {
+                                            bool hpchanged = false;
+                                            if (tip.Contains("_HEALTH"))
+                                            {
+                                                if (textval.Contains("(Infantry)") || textval.Contains("(Droid)"))
+                                                {
+                                                    hpchanged = true;
+                                                    unit.armor_type = "ArmourG_Hero";
+                                                    unit.hp = 150;
+                                                    WriteXMLTag("Armor_Type", "ArmourG_Hero", savedoc, import);
+                                                }
+                                            }
+                                            if ((!(tip.Contains("_CAPABILIT") || tip.Contains("_BONUS_") || tip.Contains("_SEPARATOR_")))) tip = FindNewStringID(tip, entities);
+                                            if (hpchanged) textfile = SetTextID(textfile, tip, "Health: 150 (Hero)"); //Todo base on hp of unit somehow? especially for generic versions
+                                            else textfile = SetTextID(textfile, tip, textval);
+                                        }
+                                        newtooltip += spacer + tip;
+                                    }
+                                }
+                                newtooltip += "\n\t\t";
+                                WriteXMLTag("Encyclopedia_Text", newtooltip, savedoc, import);
+                                if (NewClassCheckBox.Checked)
+                                {
+                                    bool skip = false;
+                                    foreach (classlabel clas in HeroClassComboBox.Items)
+                                    {
+                                        if (clas.clss == NewClassTextBox.Text)
+                                        {
+                                            skip = true;
+                                            nameid = clas.id;
+                                        }
+                                    }
+                                    if (!skip)
+                                    {
+                                        nameid = FindNewStringID("TEXT_ENCYCLOPEDIA_CLASS_" + NewClassTextBox.Text.ToUpper().Replace(" ", "_"), entities);
+                                        textfile = SetTextID(textfile, nameid, NewClassTextBox.Text);
+                                        classlabel nu = new classlabel
+                                        {
+                                            id = nameid,
+                                            clss = NewClassTextBox.Text,
+                                        };
+                                        HeroClassComboBox.Items.Add(nu);
+                                        HeroClassComboBox.SelectedItem = nu;
+                                        NewClassCheckBox.Checked = false;
+                                        NewClassTextBox.Text = "";
+                                    }
+
+                                }
+                                else nameid = ((classlabel)HeroClassComboBox.SelectedItem).id;
+                                WriteXMLTag("Encyclopedia_Unit_Class", nameid, savedoc, import);
+                                WriteXMLTag("Icon_Name", (string)HeroIconPictureBox.Tag, savedoc, import);
+
+                                if (GenericHeroCheckBox.Checked)
+                                {
+                                    WriteXMLTag("Show_Hero_Head", "No", savedoc, import);
+                                    WriteXMLTag("Is_Generic_Hero", "Yes", savedoc, import);
+                                    WriteXMLTag("Is_Named_Hero", "Yes", savedoc, import);
+                                }
+                                else
+                                {
+                                    WriteXMLTag("Is_Named_Hero", "Yes", savedoc, import);
+                                    WriteXMLTag("Show_Hero_Head", "Yes", savedoc, import);
+                                    WriteXMLTag("Is_Generic_Hero", "No", savedoc, import);
+                                }
+                                WriteXMLTag("Create_Team", "No", savedoc, import);
+
+                                if (!unit.flags.Contains("GTSImmune"))
+                                {
+                                    unit.flags.Add("GTSImmune");
+                                    WriteXMLTag("Property_Flags", SerializeStringArray(unit.flags), savedoc, import);
+                                }
+
+                                if (infantrymode)
+                                {
+                                    for(int c = 0; c < unit.categories.Count; c++)
+                                    {
+                                        if(unit.categories[c] == "Infantry")
+                                        {
+                                            if (entities.version <= 34 || (entities.version <= 35 && entities.modid == "rev")) unit.categories[c] = "LandHero";
+                                            else unit.categories[c] = "InfantryHero";
+                                            WriteXMLTag("CategoryMask", SerializeStringArray(unit.categories), savedoc, import);
+                                            break;
+                                        }
+                                    }
+
+                                    for (int b = 0; b < unit.modebehaviors.Count; b++)
+                                    {
+                                        if (unit.modebehaviors[b] == "LAND_TEAM_INFANTRY_LOCOMOTOR")
+                                        {
+                                            unit.modebehaviors[b] = "WALK_LOCOMOTOR";
+                                            WriteXMLTag("LandBehavior", SerializeStringArray(unit.modebehaviors), savedoc, import);
+                                            break;
+                                        }
+                                    }
+
+                                    int nonzero = unit.hp;
+                                    if (nonzero < 0) nonzero = 0;
+                                    WriteXMLTag("Tactical_Health", nonzero.ToString(), savedoc, import);
+                                    nonzero = unit.shield;
+                                    if (nonzero < 0) nonzero = 0;
+                                    WriteXMLTag("Shield_Points", nonzero.ToString(), savedoc, import);
+                                    WriteXMLTag("Armor_Type", unit.armor_type.ToString(), savedoc, import);
+                                    WriteXMLTag("Shield_Armor_Type", unit.shield_type.ToString(), savedoc, import);
+                                    float nonzer = unit.regen;
+                                    if (nonzer < 0) nonzer = 0;
+                                    WriteXMLTag("Shield_Refresh_Rate", nonzer.ToString(), savedoc, import);
+                                    nonzer = unit.speed;
+                                    if (nonzer < 0) nonzer = 0;
+                                    WriteXMLTag("Max_Speed", nonzer.ToString(), savedoc, import);
+                                    nonzer = unit.turn;
+                                    if (nonzer < 0) nonzer = 0;
+                                    WriteXMLTag("Max_Rate_Of_Turn", nonzer.ToString(), savedoc, import);
+                                    nonzer = unit.accel;
+                                    if (nonzer < 0) nonzer = 0;
+                                    WriteXMLTag("OverrideAcceleration", nonzer.ToString(), savedoc, import);
+                                    nonzer = unit.min_speed;
+                                    if (nonzer < 0) nonzer = 0;
+                                    WriteXMLTag("Min_Speed", nonzer.ToString(), savedoc, import);
+                                    unit.hp_baseID = -1; //On the units in this session as well as the future
+                                    unit.shield_baseID = -1;
+                                    unit.atype_baseID = -1;
+                                    unit.stype_baseID = -1;
+                                    unit.regen_baseID = -1;
+                                    unit.speed_baseID = -1;
+                                    unit.turn_baseID = -1;
+                                    unit.accel_baseID = -1;
+                                    unit.min_speed_baseID = -1;
+                                }
+
+
+                                //sound override
+                                if (SoundSourceTextBox.Text != "")
+                                {
+                                    unit soundbase = entities.objects.FirstOrDefault(x => x.unitname == SoundSourceTextBox.Text);
+                                    if (soundbase.unitname == SoundSourceTextBox.Text) //Failure shouldn't be possible, but safety first
+                                    {
+                                        WriteXMLTag("SFXEvent_Select", soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Select], savedoc, import);
+                                        WriteXMLTag("SFXEvent_Move", soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Move], savedoc, import);
+                                        WriteXMLTag("SFXEvent_Fleet_Move", soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Fleet_Move], savedoc, import);
+                                        WriteXMLTag("SFXEvent_Attack", soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Attack], savedoc, import);
+                                        WriteXMLTag("SFXEvent_Guard", soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Guard], savedoc, import);
+                                        WriteXMLTag("SFXEvent_Assist_Move", soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Move], savedoc, import);
+                                        WriteXMLTag("SFXEvent_Assist_Attack", soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Attack], savedoc, import);
+                                        WriteXMLTag("SFXEvent_Health_Low_Warning", soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Low_Warning], savedoc, import);
+                                        WriteXMLTag("SFXEvent_Health_Critical_Warning", soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Critical_Warning], savedoc, import);
+                                        WriteXMLTag("SFXEvent_Move_Into_Nebula", soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Nebula], savedoc, import);
+                                        WriteXMLTag("SFXEvent_Move_Into_Asteroid_Field", soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Asteroid_Field], savedoc, import);
+
+                                        unit.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Select] = soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Select];
+                                        unit.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Move] = soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Move];
+                                        unit.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Fleet_Move] = soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Fleet_Move];
+                                        unit.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Attack] = soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Attack];
+                                        unit.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Guard] = soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Guard];
+                                        unit.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Move] = soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Move];
+                                        unit.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Attack] = soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Attack];
+                                        unit.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Low_Warning] = soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Low_Warning];
+                                        unit.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Critical_Warning] = soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Critical_Warning];
+                                        unit.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Nebula] = soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Nebula];
+                                        unit.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Asteroid_Field] = soundbase.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Asteroid_Field];
+
+                                        XmlNodeList sfxes = import.SelectNodes("descendant::SFXEvent_Attack_Hardpoint");
+                                        for (int j = 0; j < sfxes.Count; j++)
+                                        {
+                                            sfxes[j].ParentNode.RemoveChild(sfxes[j]);
+                                        }
+
+                                        sfxes = import.SelectNodes("descendant::SFXEvent_Hardpoint_Destroyed");
+                                        for (int j = 0; j < sfxes.Count; j++)
+                                        {
+                                            sfxes[j].ParentNode.RemoveChild(sfxes[j]);
+                                        }
+
+                                        if(soundbase.SFXEvent_Attack_Hardpoint.Count == soundbase.SFXEvent_Attack_Hardpoint_Type.Count)
+                                        {
+                                            for (int j = 0; j < soundbase.SFXEvent_Attack_Hardpoint.Count; j++)
+                                            {
+                                                WriteXMLTag("SFXEvent_Attack_Hardpoint", soundbase.SFXEvent_Attack_Hardpoint_Type[j] + ", " + soundbase.SFXEvent_Attack_Hardpoint[j], savedoc, import, 2, false, true);
+                                            }
+                                        }
+                                        
+
+                                        if (soundbase.SFXEvent_Hardpoint_Destroyed.Count == soundbase.SFXEvent_Hardpoint_Destroyed_Type.Count)
+                                        {
+                                            for (int j = 0; j < soundbase.SFXEvent_Hardpoint_Destroyed.Count; j++)
+                                            {
+                                                WriteXMLTag("SFXEvent_Hardpoint_Destroyed", soundbase.SFXEvent_Hardpoint_Destroyed_Type[j] + ", " + soundbase.SFXEvent_Hardpoint_Destroyed[j], savedoc, import, 2, false, true);
+                                            }
+                                        }
+
+                                        unit.SFXEvent_Attack_Hardpoint_Type = soundbase.SFXEvent_Attack_Hardpoint_Type;
+                                        unit.SFXEvent_Hardpoint_Destroyed_Type = soundbase.SFXEvent_Hardpoint_Destroyed_Type;
+                                    }
+                                }
+
+                                if (!unitmode && globals.NewHeroGroundMode)
+                                {
+                                    XmlAttribute attribute = savedoc.CreateAttribute("Name");
+                                    attribute.Value = CopyUnitNewNames[0] + "_Team";
+
+                                    company.Attributes.Append(attribute);
+
+                                    company.AppendChild(savedoc.CreateTextNode("\n"));
+                                    if (template) WriteXMLTag("Variant_Of_Existing_Type", "Template_Hero_Team", savedoc, import);
+                                    WriteXMLTag("Text_ID", unitid, savedoc, company);
+                                    WriteXMLTag("Encyclopedia_Text", newtooltip, savedoc, company);
+                                    WriteXMLTag("Encyclopedia_Unit_Class", nameid, savedoc, company);
+                                    WriteXMLTag("Icon_Name", (string)HeroIconPictureBox.Tag, savedoc, company);
+                                    company.AppendChild(savedoc.CreateTextNode("\n"));
+                                    if (!template)
+                                    {
+                                        WriteXMLTag("Population_Value", "1", savedoc, company);
+                                        company.AppendChild(savedoc.CreateTextNode("\n"));
+                                        WriteXMLTag("Behavior", "DUMMY_GROUND_COMPANY", savedoc, company);
+                                    }
+                                    WriteXMLTag("Company_Transport_Unit", DropshipComboBox.Text, savedoc, company);
+                                    WriteXMLTag("Company_Units", CopyUnitNewNames[0], savedoc, company);
+                                    company.AppendChild(savedoc.CreateTextNode("\n"));
+                                    if (!template) WriteXMLTag("Is_Dummy", "Yes", savedoc, company);
+                                    WriteXMLTag("Affiliation", SerializeStringArray(heroaffils), savedoc, company);
+                                    if (!template)
+                                    {
+                                        WriteXMLTag("Damage", "1", savedoc, company);
+                                        company.AppendChild(savedoc.CreateTextNode("\n"));
+                                        WriteXMLTag("Tech_Level", "99", savedoc, company);
+                                        WriteXMLTag("Is_Named_Hero", "Yes", savedoc, company);
+                                    }
+                                    company.AppendChild(savedoc.CreateTextNode("\n"));
+                                    WriteXMLTag("SFXEvent_Build_Started", "RHD_Request_Assistance", savedoc, company);
+                                    WriteXMLTag("SFXEvent_Build_Cancelled", "RHD_Request_Canceled", savedoc, company);
+                                    WriteXMLTag("SFXEvent_Build_Complete", "", savedoc, company); //todo pull from company of sound source?
+                                    WriteXMLTag("SFXEvent_Move", unit.BasicSFXEvents[(int)basicSoundTypes.SFXEvent_Move], savedoc, company);
+                                    company.AppendChild(savedoc.CreateTextNode("\n"));
+                                }
+                            }
+
+                            //todo handle hero affiliation
+                            if(!unitmode && infantrymode)
+                            {
+                                WriteXMLTag("Affiliation", SerializeStringArray(heroaffils), savedoc, import);
+                            }
+                            else WriteXMLTag("Affiliation", "", savedoc, import);
                             unit.affiliations = new List<string>();
 
                             string libpath = getGroundUnitLibraryPath(CopyUnit, entities);
@@ -2967,38 +3677,170 @@ namespace TilotnyStudio
                                 }
                             }
 
-                            string moniker = findUnitNameFilePath(unit, entities);
-                            string lowername = CopyUnits[i].ToLower();
-                            //string transport = unit.transport.ToLower(); only need this on the porting version
-                            string path = getModFile("XML\\GameConstants.xml", entities);
-                            XmlDocument consts = readModXmlOrMeg("XML\\GameConstants.xml", entities);
-                            XmlNodeList listsets = consts.DocumentElement.SelectNodes("descendant::ShipNameTextFiles");
-                            foreach (XmlNode listset in listsets)
+                            if (unitmode)
                             {
-                                bool foundname = false;
-                                string[] types = ReadWhiteSpaceAsCommas(listset.InnerText);
-                                if (types.Length > 1)
+                                string lowername = CopyUnits[i].ToLower();
+                                //string transport = unit.transport.ToLower(); only need this on the porting version
+                                string path = getModFile("XML\\GameConstants.xml", entities);
+                                XmlDocument consts = readModXmlOrMeg("XML\\GameConstants.xml", entities);
+                                XmlNodeList listsets = consts.DocumentElement.SelectNodes("descendant::ShipNameTextFiles");
+                                foreach (XmlNode listset in listsets)
                                 {
-                                    for (int j = 0; j + 1 < types.Length; j += 2)
+                                    bool foundname = false;
+                                    string[] types = ReadWhiteSpaceAsCommas(listset.InnerText);
+                                    if (types.Length > 1)
                                     {
-                                        string low = types[j].ToLower();
-                                        if (low == lowername)
+                                        for (int j = 0; j + 1 < types.Length; j += 2)
                                         {
-                                            string namepath = getModFile(RemoveTopLevelFolder(types[j + 1]), entities);
-                                            if (File.Exists(namepath))
+                                            string low = types[j].ToLower();
+                                            if (low == lowername)
                                             {
-                                                XmlNode elem = consts.CreateElement("ShipNameTextFiles");
-                                                elem.InnerText = CopyUnitNewNames[i] + ",\t\t" + types[j + 1] + ",";
-                                                XmlNode constroot = consts.DocumentElement;
-                                                constroot.AppendChild(elem);
-                                                consts.Save(ConvertMainPathToMod("\\XML\\GameConstants.xml"));
+                                                string namepath = getModFile(RemoveTopLevelFolder(types[j + 1]), entities);
+                                                if (File.Exists(namepath))
+                                                {
+                                                    XmlNode elem = consts.CreateElement("ShipNameTextFiles");
+                                                    elem.InnerText = CopyUnitNewNames[i] + ",\t\t" + types[j + 1] + ",";
+                                                    XmlNode constroot = consts.DocumentElement;
+                                                    constroot.AppendChild(elem);
+                                                    consts.Save(ConvertMainPathToMod("\\XML\\GameConstants.xml"));
+                                                }
+                                                foundname = true;
+                                                break;
                                             }
-                                            foundname = true;
-                                            break;
+                                        }
+                                    }
+                                    if (foundname) break;
+                                }
+                            }
+                            else
+                            {
+                                libpath = getModFile("Scripts\\Library\\HeroFreeStorePlacements.lua", entities);
+                                if (libpath != "")
+                                {
+                                    string[] herolib = File.ReadAllLines(libpath);
+                                    herolib[0] += "[\"" + CopyHeroNameTextBox.Text.ToUpper();
+                                    if(globals.NewHeroGroundMode) herolib[0] +="_TEAM\"]";
+                                    herolib[0] += " = {nil, ";
+                                    if (globals.NewHeroGroundMode) herolib[0] += "false";
+                                    else herolib[0] += "true";
+                                    herolib[0] += "},";
+                                    File.WriteAllLines(ConvertMainPathToMod("Data\\Scripts\\Library\\HeroFreeStorePlacements.lua"), herolib);
+                                }
+                                if (infantrymode || heroaffils.Contains("EmpireoftheHand"))
+                                {
+                                    libpath = getModFile("Scripts\\Library\\HeroLibrary.lua", entities);
+                                    if (libpath != "") //todo - space units may need this someday
+                                    {
+                                        string[] herolib = File.ReadAllLines(libpath);
+                                        herolib[0] += "[\"" + CopyHeroNameTextBox.Text.ToUpper();
+                                        if (globals.NewHeroGroundMode) herolib[0] += "_TEAM";
+                                        herolib[0] += "\"] = {Type = \"";
+                                        if (globals.NewHeroGroundMode) herolib[0] += "HeroCompany";
+                                        else herolib[0] += "UniqueUnit";
+                                        herolib[0] += "\", Text_ID = \"" + CopyHeroUserNameTextBox.Text;
+                                        herolib[0] += "\", Icon_Name = \"" + unit.icon.ToUpper() + "\"";
+                                        if (globals.NewHeroGroundMode) {
+                                            herolib[0] += ", Company_Units = {[\"" + CopyHeroNameTextBox.Text.ToUpper();
+                                            string serialized = ""; //Basically SerializeStringArray, but the individual strings are wrapped in quotes
+                                            bool furst = true;
+                                            foreach(string cat in unit.categories)
+                                            {
+                                                if (furst) furst = false;
+                                                else serialized += ", ";
+                                                serialized += "\"" + cat.ToUpper() + "\"";
+                                            }
+                                            herolib[0] += "\"] = {CategoryMask = {" + serialized + "}}}";
+                                        }
+                                        herolib[0] += "},";
+                                        //["TRONOX_TEAM"] = {Type = "HeroCompany", Text_ID = "Tronox", Icon_Name = "I_BUTTON_SHELLHUTT2.TGA", Company_Units = {["TRONOX"] = {CategoryMask = {"INFANTRYHERO", "ANTIVEHICLE"}}}},
+                                        //["PRINCE_MILITAIRE_JIEBAN_REN"] = {Type = "UniqueUnit", Text_ID = "Prince Militaire", Icon_Name = "I_BUTTON_PRINCE_MILITAIRE.TGA"},
+                                        File.WriteAllLines(ConvertMainPathToMod("Data\\Scripts\\Library\\HeroLibrary.lua"), herolib);
+                                    }
+                                }
+                            }
+
+                            if (!unitmode)
+                            {
+                                XmlNode able = import.SelectSingleNode("descendant::Abilities");
+                                bool replaceable = false;
+                                if (unit.ability_baseID >= 0) //Pull ability from templates so non trait abilities are preserved
+                                {
+                                    try
+                                    {
+                                        string sourcename = unit.variantchain[unit.ability_baseID];
+                                        unit sourceunit = entities.objects.FirstOrDefault(s => s.unitname == sourcename);
+                                        XmlDocument abledoc = new XmlDocument();
+                                        abledoc.PreserveWhitespace = true;
+                                        abledoc.Load(getModFile(sourceunit.datafile, entities));
+                                        XmlNode ableroot = abledoc.DocumentElement;
+                                        XmlNodeList aunitnodes = ableroot.ChildNodes;
+                                        foreach (XmlNode anode in aunitnodes)
+                                        {
+                                            if (!(anode.Attributes is null) && anode.Attributes.Count > 0 && anode.Attributes[0].Value == sourcename)
+                                            {
+                                                XmlNode aable = anode.SelectSingleNode("descendant::Abilities");
+                                                able = savedoc.ImportNode(aable, true);
+                                                replaceable = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        string visible = ex.Message;
+                                    }
+                                }
+                                if (!(able is null))
+                                {
+                                    XmlNodeList abils = able.SelectNodes("*");
+                                    for (int j = abils.Count - 1; j >= 0; j--)
+                                    {
+                                        XmlNode abil = abils[j];
+                                        //Remove any trait based abilities and start from scratch
+                                        if (abil.Name == "Combat_Bonus_Ability" || abil.Name == "Battlefield_Modifier_Ability" || abil.Name == "Reduce_Production_Price_Ability" || abil.Name == "Planet_Income_Bonus_Ability" || abil.Name == "Reduce_Production_Time_Ability" || abil.Name == "Bounty_On_Faction_Ability")
+                                        {
+                                            abils[j].ParentNode.RemoveChild(abils[j]);
                                         }
                                     }
                                 }
-                                if (foundname) break;
+                                else
+                                { //if it is null, create
+                                    able = savedoc.CreateElement("Abilities");
+                                    XmlAttribute attribute = savedoc.CreateAttribute("SubObjectList");
+                                    attribute.Value = "Yes";
+
+                                    able.Attributes.Append(attribute);
+                                    able.AppendChild(savedoc.CreateTextNode("\n"));
+                                    replaceable = true;
+                                }
+                                if (TierBox.Value > 0 || Command1ComboBox.SelectedIndex > -1 || Command2ComboBox.SelectedIndex > -1)
+                                {
+                                    CommandTrait Nul = new CommandTrait
+                                    {
+                                        attack = 0,
+                                        defense = 0,
+                                        speed = 0,
+                                        fow = 0,
+                                    };
+                                    CommandTrait one = Nul;
+                                    if (Command1ComboBox.SelectedIndex > -1) one = (CommandTrait)Command1ComboBox.SelectedItem;
+                                     CommandTrait two = Nul;
+                                    if (Command2ComboBox.SelectedIndex > -1) two = (CommandTrait)Command2ComboBox.SelectedItem;
+                                    WriteTierBonus(savedoc, able, globals.NewHeroGroundMode, (int)TierBox.Value, one, two);
+
+                                    able.AppendChild(savedoc.CreateTextNode("\n"));
+                                }
+                                if (SpecializationComboBox.SelectedIndex > -1)
+                                {
+                                    WriteSpecialization(savedoc, able, globals.NewHeroGroundMode, (Specialization)SpecializationComboBox.SelectedItem);
+                                }
+                                //todo change comment on abilities line
+                                if (replaceable)
+                                {
+                                    import.AppendChild(savedoc.CreateTextNode("\t\t"));
+                                    import.AppendChild(able);
+                                    import.AppendChild(savedoc.CreateTextNode("\n"));
+                                }
                             }
 
                             foreach(ability able in unit.abilities)
@@ -3026,11 +3868,32 @@ namespace TilotnyStudio
                                 }
                             }
 
+                            unit.datafile = unitfile;
                             AddCopiedUnits(unit, CopyUnits[i]);
+
+                            if (unit.reqtemplate == baseunit.unitname) unit.reqtemplate = unit.unitname; //If the unit defined its own required structures, update the new unit to also do so in memory
                             entities.objects.Add(unit);
+                            if (unitmode)
+                            {
+                                if (SpaceHeroRadioButton.Checked) entities.spaceUnits.Add(unit);
+                                else if (GroundRadioButton.Checked) entities.groundCompanies.Add(unit);
+                            }
+                            else
+                            {
+                                if (globals.NewHeroGroundMode) entities.groundHeroes.Add(unit);
+                                else entities.spaceHeroes.Add(unit);
+                                //todo should create companies for ground units
+                            }
+                            saveroot.AppendChild(savedoc.CreateTextNode("\t"));
                             saveroot.AppendChild(import);
                             XmlNode linebreak = savedoc.CreateTextNode("\n\n");
                             saveroot.AppendChild(linebreak);
+                            if(!unitmode && globals.NewHeroGroundMode)
+                            {
+                                saveroot.AppendChild(savedoc.CreateTextNode("\t"));
+                                saveroot.AppendChild(company);
+                                saveroot.AppendChild(savedoc.CreateTextNode("\n\n"));
+                            }
                             break;
                         }
                     }
@@ -3040,63 +3903,83 @@ namespace TilotnyStudio
                     //todo for the truly ambitious: IA unit..
                 }
 
-                for (int unitid = 0; unitid < entities.objects.Count; unitid++)
-                {//the most common case is applying this to several abilities within a unit (that is, discount and time), so it would be more efficient to save the abilties together
-                    unit unidad = entities.objects[unitid];
-                    for (int ableid = 0; ableid < unidad.abilities.Count; ableid++)
-                    {
-                        ability able = unidad.abilities[ableid];
-                        List<string> addunits = new List<string>();
-                        for (int i = 0; i < CopyUnits.Count; i++)
+                if (unitmode)
+                {
+                    for (int unitid = 0; unitid < entities.objects.Count; unitid++)
+                    {//the most common case is applying this to several abilities within a unit (that is, discount and time), so it would be more efficient to save the abilties together
+                        unit unidad = entities.objects[unitid];
+                        for (int ableid = 0; ableid < unidad.abilities.Count; ableid++)
                         {
-                            for (int j = 0; j < able.applicable_types.Length; j++)
+                            ability able = unidad.abilities[ableid];
+                            List<string> addunits = new List<string>();
+                            for (int i = 0; i < CopyUnits.Count; i++)
                             {
-                                if (String.Equals(able.applicable_types[j], CopyUnits[i], StringComparison.OrdinalIgnoreCase))
+                                for (int j = 0; j < able.applicable_types.Length; j++)
                                 {
-                                    if (!CopyUnits.Contains(unidad.unitname)) addunits.Add(CopyUnitNewNames[i]); //Don't make edits
+                                    if (String.Equals(able.applicable_types[j], CopyUnits[i], StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        if (!CopyUnits.Contains(unidad.unitname)) addunits.Add(CopyUnitNewNames[i]); //Don't make edits
+                                    }
                                 }
                             }
-                        }
-                        if(addunits.Count > 0)
-                        {
-                            string[] newtypes = new string[able.applicable_types.Length + addunits.Count];
-                            Array.Copy(able.applicable_types, newtypes, able.applicable_types.Length);
-                            for(int k = 0; k < addunits.Count; k++)
+                            if (addunits.Count > 0)
                             {
-                                newtypes[k + able.applicable_types.Length] = addunits[k];
-                            }
-
-                            able.applicable_types = newtypes;
-                            unidad.abilities[ableid] = able;
-                            entities.objects[unitid] = unidad;
-
-                            XmlDocument doc = new XmlDocument();
-                            doc.PreserveWhitespace = true;
-                            string modfilepath = getModFile(unidad.datafile, entities);
-                            doc.Load(modfilepath);
-                            XmlNodeList XMLunits = doc.DocumentElement.SelectNodes("descendant::" + unidad.elementName);
-                            foreach (XmlNode XMLunidad in XMLunits)
-                            {
-                                if (XMLunidad.Attributes[0].Value == unidad.unitname)
+                                string[] newtypes = new string[able.applicable_types.Length + addunits.Count];
+                                Array.Copy(able.applicable_types, newtypes, able.applicable_types.Length);
+                                for (int k = 0; k < addunits.Count; k++)
                                 {
-                                    XmlNodeList ables = XMLunidad.SelectNodes("descendant::Abilities");
-                                    if (ables.Count > 0)
+                                    newtypes[k + able.applicable_types.Length] = addunits[k];
+                                }
+
+                                able.applicable_types = newtypes;
+                                unidad.abilities[ableid] = able;
+                                entities.objects[unitid] = unidad;
+
+                                XmlDocument doc = new XmlDocument();
+                                doc.PreserveWhitespace = true;
+                                string modfilepath = getModFile(unidad.datafile, entities);
+                                doc.Load(modfilepath);
+                                XmlNodeList XMLunits = doc.DocumentElement.SelectNodes("descendant::" + unidad.elementName);
+                                foreach (XmlNode XMLunidad in XMLunits)
+                                {
+                                    if (XMLunidad.Attributes[0].Value == unidad.unitname)
                                     {
-                                        XmlNodeList abils = ables[0].SelectNodes("*");
-                                        foreach (XmlNode abil in abils)
+                                        XmlNodeList ables = XMLunidad.SelectNodes("descendant::Abilities");
+                                        if (ables.Count > 0)
                                         {
-                                            if (abil.Attributes[0].Value == able.name)
+                                            XmlNodeList abils = ables[0].SelectNodes("*");
+                                            foreach (XmlNode abil in abils)
                                             {
-                                                WriteXMLTag("Applicable_Unit_Types", SerializeStringArray(able.applicable_types), doc, abil);
-                                                doc.Save(ConvertMainPathToMod(modfilepath));
-                                                break;
+                                                if (abil.Attributes[0].Value == able.name)
+                                                {
+                                                    WriteXMLTag("Applicable_Unit_Types", SerializeStringArray(able.applicable_types), doc, abil);
+                                                    doc.Save(ConvertMainPathToMod(modfilepath));
+                                                    break;
+                                                }
                                             }
                                         }
+                                        break;
                                     }
-                                    break;
                                 }
                             }
                         }
+                    }
+                }
+                else
+                {
+                    //todo create better way to assign heroes
+                    //until then, copy spawn sets
+
+                    string corepath = "scripts\\library\\eawx-mod-" + entities.modid + "\\spawn-sets";
+                    string path = globals.LocalMod + "\\" + corepath;
+                    if (!Directory.Exists(path))
+                    {
+                        try
+                        {
+                            List<string> spawns = getModFiles(corepath, "*.lua", entities);
+                            foreach (string spawn in spawns) File.Copy(spawn, ConvertMainPathToMod(spawn));
+                        }
+                        catch { };
                     }
                 }
                 /*var buffer = new StringBuilder();
@@ -3108,22 +3991,11 @@ namespace TilotnyStudio
                 if (saveGroundObjs) File.WriteAllLines(ConvertMainPathToMod(groundObjPath), groundObjs);
                 if (saveSpaceObjs) File.WriteAllLines(ConvertMainPathToMod(spaceObjPath), spaceObjs);
                 if (saveSpaceLibs) File.WriteAllLines(ConvertMainPathToMod(spaceLibPath), spaceLibs);
+                SaveText(textfile);
             }
             Thread.CurrentThread.CurrentCulture = globals.UIculture;
             populateAffilUnits();
             AffilListBox.SelectedItem = CopyUnitUsernameTextBox.Text;
-            if (NewUnitFileCheckBox.Checked)
-            {
-                NewUnitFileCheckBox.Checked = false;
-                UnitCopyFileComboBox.SelectedItem = NewUnitFileTextBox.Text;
-                NewUnitFileTextBox.Text = "";
-            }
-            if (NewUnitHPFileCheckBox.Checked)
-            {
-                NewUnitHPFileCheckBox.Checked = false;
-                UnitHPCopyFileComboBox.SelectedItem = NewUnitHPFileTextBox.Text;
-                NewUnitHPFileTextBox.Text = "";
-            }
             populateAffilUnits();
 
             MessageBox.Show("Changes saved");
@@ -3146,44 +4018,62 @@ namespace TilotnyStudio
 
         private void UnitTabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
+            int save = AffilListBox.SelectedIndex;
             switch (UnitTabControl.SelectedIndex)
             {
-                case 0:
+                case 0: //Affil
                     UnitRadioButton.Visible = false;
                     SpaceHeroRadioButton.Visible = false;
                     HeroTeamRadioButton.Visible = false;
                     GroundHeroRadioButton.Visible = false;
+                    GroundRadioButton.Visible = true;
                     AffilClearButton.Visible = true;
                     AffilListBox.SelectionMode = SelectionMode.MultiExtended;
                     if (UnitRadioButton.Checked || SpaceHeroRadioButton.Checked || HeroTeamRadioButton.Checked || GroundHeroRadioButton.Checked) GroundRadioButton.Checked = true;
                     break;
-                case 1:
+                case 1: //Stats
                     UnitRadioButton.Visible = true;
                     SpaceHeroRadioButton.Visible = true;
                     HeroTeamRadioButton.Visible = true;
                     GroundHeroRadioButton.Visible = true;
+                    GroundRadioButton.Visible = true;
                     AffilClearButton.Visible = false;
                     AffilListBox.SelectionMode = SelectionMode.One;
-                    int save = AffilListBox.SelectedIndex;
                     if(save >= 0)
                     {
                         AffilListBox.SelectedItems.Clear();
                         AffilListBox.SelectedIndex = save;
                     }
                     break;
-                case 2:
+                case 2: //Copy unit
                     UnitRadioButton.Visible = false;
                     SpaceHeroRadioButton.Visible = false;
                     HeroTeamRadioButton.Visible = false;
                     GroundHeroRadioButton.Visible = false;
+                    GroundRadioButton.Visible = true;
                     if (UnitRadioButton.Checked) GroundRadioButton.Checked = true;
                     AffilClearButton.Visible = false;
                     AffilListBox.SelectionMode = SelectionMode.One;
-                    int save2 = AffilListBox.SelectedIndex;
-                    if (save2 >= 0)
+                    if (save >= 0)
                     {
                         AffilListBox.SelectedItems.Clear();
-                        AffilListBox.SelectedIndex = save2;
+                        AffilListBox.SelectedIndex = save;
+                    }
+                    break;
+                case 3: //Create hero
+                    UnitRadioButton.Visible = true;
+                    SpaceHeroRadioButton.Visible = true;
+                    HeroTeamRadioButton.Visible = false;
+                    GroundHeroRadioButton.Visible = true;
+                    GroundRadioButton.Visible = false;
+                    if (HeroTeamRadioButton.Checked) SpaceRadioButton.Checked = true;
+                    if (GroundHeroRadioButton.Checked) SpaceRadioButton.Checked = true;
+                    AffilClearButton.Visible = false;
+                    AffilListBox.SelectionMode = SelectionMode.One;
+                    if (save >= 0)
+                    {
+                        AffilListBox.SelectedItems.Clear();
+                        AffilListBox.SelectedIndex = save;
                     }
                     break;
                     //default:
@@ -3203,7 +4093,7 @@ namespace TilotnyStudio
                 return;
             }
 
-            if (ModListBox.Items.Contains(newmod))
+            if (Directory.Exists(globals.localmodpath + "\\" + newmod))
             {
                 MessageBox.Show("A mod of that name already exists");
                 ModListBox.SelectedItem = newmod;
@@ -4173,6 +5063,202 @@ namespace TilotnyStudio
                 }
             }
             
+        }
+
+        private void ChangeIconButtonStats_Click(object sender, EventArgs e)
+        {
+            unit unit = new unit();
+            IconPickAndAdd ico = new IconPickAndAdd();
+            if (AffilListBox.SelectedItems.Count > 0)
+            {
+                unit = entities.objects.FirstOrDefault(s => s.unitname == (string)AffilListBox.SelectedItem);
+                ico.icon = unit.icon;
+            }
+            ico.entities = entities;
+            ico.MTDArray = globals.MTDArray;
+            ico.localmod = globals.LocalMod;
+            ico.mainicon = getNonSubModFile("Art\\Textures\\MT_CommandBar.tga");
+            ico.ShowDialog();
+
+            if (ico.addedicon)
+            {
+                entities = ico.entities;
+                globals.MTDArray = ico.MTDArray;
+            }
+            if(!ico.cancel) updateStatsIcon(ico.icon);
+
+        }
+
+        private void SetHeroBaseUnitButton_Click(object sender, EventArgs e)
+        {
+            if (AffilListBox.SelectedItems.Count > 0)
+            {
+                BaseHeroTextBox.Text = (string)AffilListBox.SelectedItem;
+                unit unit = entities.objects.FirstOrDefault(s => s.unitname == (string)AffilListBox.SelectedItem);
+                updateHeroIcon(unit.icon);
+                bool spacebase = true;
+
+                if (SpaceHeroRadioButton.Checked)
+                {
+                    SetHeroCopy(false, false);
+
+                    bool prefind = false;
+                    foreach (string tip in SplitXMLWhitespaceList(unit.tooltip))
+                    {
+                        if (tip.Contains("TEXT_TOOLTIP_COMMAND_"))
+                        {
+                            string str = Find_Text_Entry(tip, entities);
+                            if(str.Contains(",")) FlagshipTextBox.Text = str.Substring(0, str.LastIndexOf(",")+1) + " SHIPNAMEHERE";
+                            else FlagshipTextBox.Text = unit.username + ", SHIPNAMEHERE";
+                            return;
+                        }
+                        if (prefind)
+                        {
+                            string str = Find_Text_Entry(tip, entities);
+                            FlagshipTextBox.Text = str + ", SHIPNAMEHERE";
+                            return;
+                        }
+                        if (tip == "TEXT_TOOLTIP_SEPARATOR_COMMANDS_BLOCK") prefind = true;
+                    }
+                }
+                if (SpaceRadioButton.Checked)
+                {
+                    spacebase = false;
+                    FlagshipTextBox.Text = unit.username + ", SHIPNAMEHERE";
+                }
+                SetHeroCopy(spacebase, false);
+            }
+            else MessageBox.Show("Select a unit to continue");
+        }
+
+        private void ChangeHeroIconButtonStats_Click(object sender, EventArgs e)
+        {
+            IconPickAndAdd ico = new IconPickAndAdd();
+            if (!(HeroIconPictureBox.Tag is null))
+            {
+                ico.icon = (string)HeroIconPictureBox.Tag;
+            }
+            ico.entities = entities;
+            ico.MTDArray = globals.MTDArray;
+            ico.localmod = globals.LocalMod;
+            ico.mainicon = getNonSubModFile("Art\\Textures\\MT_CommandBar.tga");
+            ico.ShowDialog();
+
+            if (ico.addedicon)
+            {
+                entities = ico.entities;
+                globals.MTDArray = ico.MTDArray;
+            }
+            if (!ico.cancel) updateHeroIcon(ico.icon);
+        }
+
+        private void RankTierButton_Click(object sender, EventArgs e)
+        {
+            TierPick picker = new TierPick();
+            picker.tier = (int)TierBox.Value;
+            picker.ShowDialog();
+
+            if (!picker.cancel) TierBox.Value = picker.tier;
+        }
+
+        private void CopyHeroNameTextBox_LostFocus(object sender, EventArgs e)
+        {
+            if(CopyHeroUserNameTextBox.Text == "")
+            {
+                string[] split = CopyHeroNameTextBox.Text.Split('_');
+                CopyHeroUserNameTextBox.Text = split[0];
+            }
+            CopyHeroNameTextBox.Text = CopyHeroNameTextBox.Text.Replace(" ", "_").Replace("-", "_");
+        }
+
+        private void SetSoundSourceButton_Click(object sender, EventArgs e)
+        {
+            if (AffilListBox.SelectedItems.Count > 0) SoundSourceTextBox.Text = (string)AffilListBox.SelectedItem;
+            else MessageBox.Show("Select a unit to continue");
+        }
+
+        private void ClearSoundSourceButton_Click(object sender, EventArgs e)
+        {
+            SoundSourceTextBox.Text = "";
+        }
+
+        private void SetFighterSourceButton_Click(object sender, EventArgs e)
+        {
+            if (AffilListBox.SelectedItems.Count > 0) FighterSourceTextBox.Text = (string)AffilListBox.SelectedItem;
+            else MessageBox.Show("Select a unit to continue");
+        }
+
+        private void ClearFighterSourceButton_Click(object sender, EventArgs e)
+        {
+            FighterSourceTextBox.Text = "";
+        }
+
+        private void SpecializationClearButton_Click(object sender, EventArgs e)
+        {
+            SpecializationComboBox.SelectedIndex = -1;
+        }
+
+        private void Command1ComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(Command1ComboBox.SelectedIndex == Command2ComboBox.SelectedIndex) Command2ComboBox.SelectedIndex = -1;
+        }
+
+        private void Command1Clear1Button_Click(object sender, EventArgs e)
+        {
+            Command1ComboBox.SelectedIndex = -1;
+        }
+
+        private void Command2ComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (Command1ComboBox.SelectedIndex == -1)
+            {
+                Command1ComboBox.SelectedIndex = Command2ComboBox.SelectedIndex;
+                Command2ComboBox.SelectedIndex = -1;
+            }
+            if (Command1ComboBox.SelectedIndex == Command2ComboBox.SelectedIndex) Command2ComboBox.SelectedIndex = -1;
+        }
+
+        private void Command2Clear1Button_Click(object sender, EventArgs e)
+        {
+            Command2ComboBox.SelectedIndex = -1;
+        }
+
+        private void TierCodeTestButton_Click(object sender, EventArgs e)
+        {
+            bool none = true;
+            XmlDocument testdoc = new XmlDocument();
+            XmlNode testnode = testdoc.CreateElement("Abilities");
+            testnode.AppendChild(testdoc.CreateTextNode("\n"));
+
+            if (TierBox.Value > 0 || Command1ComboBox.SelectedIndex > -1 || Command2ComboBox.SelectedIndex > -1)
+            {
+                CommandTrait Nul = new CommandTrait
+                {
+                    attack = 0,
+                    defense = 0,
+                    speed = 0,
+                    fow = 0,
+                };
+                CommandTrait one = Nul;
+                if (Command1ComboBox.SelectedIndex > -1) one = (CommandTrait)Command1ComboBox.SelectedItem;
+                CommandTrait two = Nul;
+                if (Command2ComboBox.SelectedIndex > -1) two = (CommandTrait)Command2ComboBox.SelectedItem;
+
+                WriteTierBonus(testdoc, testnode, globals.NewHeroGroundMode, (int)TierBox.Value, one, two);
+                none = false;
+            }
+            if (SpecializationComboBox.SelectedIndex > -1)
+            {
+                WriteSpecialization(testdoc, testnode, globals.NewHeroGroundMode, (Specialization)SpecializationComboBox.SelectedItem);
+                none = false;
+            }
+            if(none) MessageBox.Show("No bonus selected");
+            else
+            {
+                TextDetail deets = new TextDetail();
+                deets.detail = testnode.OuterXml;
+                deets.Show();
+            }
         }
 
         //leave below this point alone

@@ -68,6 +68,12 @@
       <Link>SharedFunctions.cs</Link>
     </Compile>
     <Compile Include="AutoResolvePort.cs" />
+    <Compile Include="CRCcalc.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CRCcalc.Designer.cs">
+      <DependentUpon>CRCcalc.cs</DependentUpon>
+    </Compile>
     <Compile Include="DevChoice.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -145,6 +151,9 @@
     <Compile Include="UnitSort.Designer.cs">
       <DependentUpon>UnitSort.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="CRCcalc.resx">
+      <DependentUpon>CRCcalc.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="DevChoice.resx">
       <DependentUpon>DevChoice.cs</DependentUpon>
     </EmbeddedResource>

@@ -33,7 +33,15 @@ public static class SharedFunctions
 {
     public static string UpOneFolder(string Path)
     {
-        return Path.Substring(0, Path.LastIndexOf("\\"));
+        try
+        {
+            return Path.Substring(0, Path.LastIndexOf("\\"));
+        }
+        catch
+        {
+            MessageBox.Show("There was a error trying to go up a a folder on path: " + Path);
+            return Path;
+        }
     }
 
     public static string LastFolderOrFile(string Path)
@@ -49,6 +57,11 @@ public static class SharedFunctions
     public static string RemoveTopLevelFolder(string Path)
     {
         return Path.Substring(Path.IndexOf("\\") + 1, Path.Length - Path.IndexOf("\\") - 1);
+    }
+
+    public static string ReadErrorDocumentation()
+    {
+        return "Files that cannot be located\nText Entries that cannot be located for units and planets\nInvalid projectile types\nUnknown unit abilities\nXML errors in GC files\nBombers that do not have a Land_Bomber_Type\nInvalid Land_Bomber_Type\nLand_Bomber_Type without a model file/undefined model\nLand_Bomber_Type missing LANDBOMBER_LOCOMOTOR";
     }
 
     public static byte[] getFileFromMegs(string corePath, entities entities)
@@ -102,7 +115,7 @@ public static class SharedFunctions
             }
             else
             {
-                entities.readerrors += "\n" + corepath + "cannot be found in loose files or megs";
+                entities.readerrors += "\n" + corepath + " cannot be found in loose files or megs";
             }
         }
 
@@ -124,7 +137,7 @@ public static class SharedFunctions
             }
             else
             {
-                entities.readerrors += "\n" + corepath + "cannot be found in loose files or megs";
+                entities.readerrors += "\n" + corepath + " cannot be found in loose files or megs";
             }
         }
 
@@ -146,7 +159,7 @@ public static class SharedFunctions
             }
             else
             {
-                entities.readerrors += "\n" + corepath + "cannot be found in loose files or megs";
+                entities.readerrors += "\n" + corepath + " cannot be found in loose files or megs";
             }
         }
 
@@ -168,7 +181,7 @@ public static class SharedFunctions
             }
             else
             {
-                entities.readerrors += "\n" + corepath + "cannot be found in loose files or megs";
+                entities.readerrors += "\n" + corepath + " cannot be found in loose files or megs";
             }
         }
 
@@ -221,7 +234,7 @@ public static class SharedFunctions
     }
 
     public static string Find_Text_Entry(string textid, entities entities)
-    {
+    {//todo redo with CRC
         foreach (Text_Entry entry in entities.Text)
         {
             if (entry.identifier == textid)
@@ -230,6 +243,23 @@ public static class SharedFunctions
             }
         }
         return textid;
+    }
+
+    public static bool Text_Entry_Exists(string textid, entities entities)
+    {
+        uint crc = Text_Entry.calculateCRC(textid); //crc is much faster than comparing strings
+        return entities.Text.Exists(s => s.crc == crc);
+    }
+
+    public static string removeLuaComment(string line)
+    {
+        string nocomment = line;
+        int comm = nocomment.IndexOf("--");
+        if (comm >= 0)
+        {
+            nocomment = nocomment.Substring(0, comm);
+        }
+        return nocomment;
     }
 
     public static string fullTrim(string input)
@@ -417,6 +447,12 @@ public static class SharedFunctions
         entities.containers.Add(contain);*/
     }
 
+    public static int ReadIntFromString(string input)
+    {
+        double temp = Double.Parse(input);
+        return (int)Math.Floor(temp);
+    }
+
     //Tri-state boolean for tags that variants may inherit: 1 = yes/true, -1 = anything else
     public static int ParseAutoResolveBool(string input)
     {
@@ -430,1392 +466,1499 @@ public static class SharedFunctions
         //Todo Eclipse hps failed completely for unclear reasons when using LastChild rather than InnerText. May want to switch all fields over?
         //last child includes comments, innertext does not
         string name = unit.Attributes[0].Value;
-        //System.Xml.XmlNode value = unit.SelectSingleNode("descendant::Ship_Class");
-        //if (!(value is null)){ //Filters out fighters but can also cause problems with gunships
-        //    string check = value.LastChild.Value.ToLower();
-        //    if (check == "fighter" || check == "bomber") return;
-        //}
-        string variant = "";
-        string username = "";
-        string shield_type = "";
-        string armor_type = "";
-        string[] planets = new string[0];
-        string unitclass = "";
-        string tooltip = "";
-        string icon = "";
-        string model = "";
-        string transport = "";
-        string garrison_type = "";
-        string locomotor_type = "";
-        string container = "";
-        string bombingRunUnit = "";
-        List<string> terrainMaps = new List<string>();
-        int crew = -1;
-        int shield = -1;
-        float regen = -1;
-        int hp = -1;
-        float speed = -1;
-        float min_speed = -1;
-        float accel = -1;
-        float turn = -1;
-        float range = -1;
-        int techlevel = -1;
-        bool hero = false;
-        int namedhero = 0;
-        int superweaponkiller = 0;
-        string uniquespaceunit = "";
-        string uniquegroundunit = "";
-        int locked = -1;
-        int cost = -1;
-        int buildtime = -1;
-        int skirmcost = -1;
-        float skirmbuildtime = -1;
-        float maintenance = -1;
-        float cp = -1;
-        int limit_concurrent = -2; //Unlike most fields, -1 is a valid and even important value on limits
-        int limit_lifetime = -2;
-        int limit_planet = -2;
-        int pop = -1;
-        int percompany = -1;
-        int gui_row = -1;
-        int garrison_slots = -1;
-        int garrison_value = -1;
-        string reqstructures = null;
-        string reqorbit = "";
-        string BTS = "";
-        hardpoint builtin = new hardpoint();
-        List<string> categories = new List<string>();
-        List<string> affiliations = new List<string>();
-        List<string> companyunits = new List<string>();
-        string[] Hardpoints = new string[0];
-        List<string> flags = new List<string>();
-        List<string> behaviors = new List<string>();
-        List<string> modebehaviors = new List<string>();
-        List<ability> abilities = new List<ability>();
-        List<unitability> unitabilities = new List<unitability>();
-        List<garrison_entry> garrison = new List<garrison_entry>();
-        string[] basicSFXEvents = new string[(int)basicSoundTypes.Max];
-        int[] basicSFXEvents_baseID = new int[(int)basicSoundTypes.Max];
-        for (int sfxid = 0; sfxid < basicSFXEvents.Length; sfxid++)
+        try
         {
-            basicSFXEvents[sfxid] = "";
-            basicSFXEvents_baseID[sfxid] = -1;
-        }
-        List<string> SFXEvent_Attack_Hardpoint = new List<string>();
-        List<string> SFXEvent_Attack_Hardpoint_Type = new List<string>();
-        List<string> SFXEvent_Hardpoint_Destroyed = new List<string>();
-        List<string> SFXEvent_Hardpoint_Destroyed_Type = new List<string>();
-        List<int> SFXEvent_Attack_Hardpoint_BaseID = new List<int>();
-        List<int> SFXEvent_Hardpoint_Destroyed_BaseID = new List<int>();
+            //System.Xml.XmlNode value = unit.SelectSingleNode("descendant::Ship_Class");
+            //if (!(value is null)){ //Filters out fighters but can also cause problems with gunships
+            //    string check = value.LastChild.Value.ToLower();
+            //    if (check == "fighter" || check == "bomber") return;
+            //}
+            string variant = "";
+            string username = "";
+            string shield_type = "";
+            string armor_type = "";
+            string[] planets = new string[0];
+            string unitclass = "";
+            string tooltip = "";
+            string icon = "";
+            string model = "";
+            string transport = "";
+            string garrison_type = "";
+            string locomotor_type = "";
+            string container = "";
+            string bombingRunUnit = "";
+            List<string> terrainMaps = new List<string>();
+            int crew = -1;
+            int shield = -1;
+            float regen = -1;
+            int hp = -1;
+            float speed = -1;
+            float min_speed = -1;
+            float accel = -1;
+            float turn = -1;
+            float range = -1;
+            int techlevel = -1;
+            bool hero = false;
+            int namedhero = 0;
+            int superweaponkiller = 0;
+            string uniquespaceunit = "";
+            string uniquegroundunit = "";
+            int locked = -1;
+            int cost = -1;
+            int buildtime = -1;
+            int skirmcost = -1;
+            float skirmbuildtime = -1;
+            float maintenance = -1;
+            float cp = -1;
+            int limit_concurrent = -2; //Unlike most fields, -1 is a valid and even important value on limits
+            int limit_lifetime = -2;
+            int limit_planet = -2;
+            int pop = -1;
+            int percompany = -1;
+            int gui_row = -1;
+            int garrison_slots = -1;
+            int garrison_value = -1;
+            string reqstructures = null;
+            string reqorbit = "";
+            string BTS = "";
+            float hyperspaceSpeed = -1;
+            string highlight = "";
+            hardpoint builtin = new hardpoint();
+            List<string> categories = new List<string>();
+            List<string> affiliations = new List<string>();
+            List<string> companyunits = new List<string>();
+            string[] Hardpoints = new string[0];
+            List<string> flags = new List<string>();
+            List<string> behaviors = new List<string>();
+            List<string> modebehaviors = new List<string>();
+            List<ability> abilities = new List<ability>();
+            List<unitability> unitabilities = new List<unitability>();
+            List<garrison_entry> garrison = new List<garrison_entry>();
+            string[] basicSFXEvents = new string[(int)basicSoundTypes.Max];
+            int[] basicSFXEvents_baseID = new int[(int)basicSoundTypes.Max];
+            for (int sfxid = 0; sfxid < basicSFXEvents.Length; sfxid++)
+            {
+                basicSFXEvents[sfxid] = "";
+                basicSFXEvents_baseID[sfxid] = -1;
+            }
+            List<string> SFXEvent_Attack_Hardpoint = new List<string>();
+            List<string> SFXEvent_Attack_Hardpoint_Type = new List<string>();
+            List<string> SFXEvent_Hardpoint_Destroyed = new List<string>();
+            List<string> SFXEvent_Hardpoint_Destroyed_Type = new List<string>();
+            List<int> SFXEvent_Attack_Hardpoint_BaseID = new List<int>();
+            List<int> SFXEvent_Hardpoint_Destroyed_BaseID = new List<int>();
 
-        System.Xml.XmlNode value = unit.SelectSingleNode("descendant::Tech_Level");
-        if (!(value is null))
-        {
-            techlevel = Int32.Parse(value.InnerText);
-        }
-        value = unit.SelectSingleNode("descendant::Build_Initially_Locked");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
+            System.Xml.XmlNode value = unit.SelectSingleNode("descendant::Tech_Level");
+            if (!(value is null))
             {
-                if (value.LastChild.Value.ToLower() == "yes") locked = 1; //May need to check "true" as well?
-                else locked = 0; //Distinguish explicitly unlocked vs undefined = unlcoked for sufficiently complex variant chains
+                if (!(value.LastChild is null)) techlevel = ReadIntFromString(value.InnerText);
             }
-        }
-        value = unit.SelectSingleNode("descendant::Text_ID");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null)) username = value.InnerText.Trim();
-        }
-        value = unit.SelectSingleNode("descendant::Build_Cost_Credits");
-        if (!(value is null))
-        {
-            cost = Int32.Parse(value.LastChild.Value);
-        }
-        value = unit.SelectSingleNode("descendant::Build_Time_Seconds");
-        if (!(value is null))
-        {
-            buildtime = Int32.Parse(value.LastChild.Value);
-        }
-        value = unit.SelectSingleNode("descendant::Tactical_Build_Cost_Multiplayer");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
+            value = unit.SelectSingleNode("descendant::Build_Initially_Locked");
+            if (!(value is null))
             {
-                string trimmed = value.LastChild.Value.Trim();
-                if (trimmed != "") skirmcost = Int32.Parse(value.LastChild.Value);
-            }
-        }
-        value = unit.SelectSingleNode("descendant::Tactical_Build_Time_Seconds");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
-            {
-                string trimmed = value.LastChild.Value.Trim();
-                if (trimmed != "") skirmbuildtime = Single.Parse(value.LastChild.Value);
-            }
-        }
-        value = unit.SelectSingleNode("descendant::Population_Value");
-        if (!(value is null))
-        {
-            pop = Int32.Parse(value.LastChild.Value);
-        }
-        value = unit.SelectSingleNode("descendant::AI_Combat_Power");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null)) cp = Single.Parse(value.LastChild.Value);
-        }
-        value = unit.SelectSingleNode("descendant::Maintenance_Cost");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null)) maintenance = Single.Parse(value.LastChild.Value);
-        }
-        XmlNodeList values = unit.SelectNodes("descendant::Company_Units");
-        foreach (XmlNode val in values)
-        {
-            if (!(val is null))
-            {
-                XmlNode comp = val.LastChild;
-                if (!(comp is null))
+                if (!(value.LastChild is null))
                 {
-                    string[] units = ReadWhiteSpaceAsCommas(comp.Value);
-                    if (percompany < 0) percompany = units.Length;
-                    else percompany += units.Length;
-                    foreach (string incompany in units)
-                    {
-                        if(incompany != "") companyunits.Add(incompany);
-                    }
+                    if (value.LastChild.Value.ToLower() == "yes") locked = 1; //May need to check "true" as well?
+                    else locked = 0; //Distinguish explicitly unlocked vs undefined = unlocked for sufficiently complex variant chains
                 }
             }
-        }
-        values = unit.SelectNodes("descendant::Squadron_Units");
-        foreach(XmlNode val in values)
-        {
-            if (!(val is null))
+            value = unit.SelectSingleNode("descendant::Text_ID");
+            if (!(value is null))
             {
-                XmlNode comp = val.LastChild;
-                if (!(comp is null))
+                if (!(value.LastChild is null))
                 {
-                    string[] units = ReadWhiteSpaceAsCommas(comp.Value);
-                    if (percompany < 0) percompany = units.Length;
-                    else percompany += units.Length;
-                    foreach (string incompany in units)
-                    {
-                        if (incompany != "") companyunits.Add(incompany);
-                    }
+                    username = value.InnerText.Trim();
+                    if (!Text_Entry_Exists(username, entities)) entities.readerrors += "\nText " + username + " not found for " + name;
                 }
             }
-        }
-        for(int tech = 0; tech <= 5; tech++)
-        {
-            values = unit.SelectNodes("descendant::Starting_Spawned_Units_Tech_"+ tech.ToString());
+            value = unit.SelectSingleNode("descendant::Build_Cost_Credits");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) cost = ReadIntFromString(value.LastChild.Value);
+            }
+            value = unit.SelectSingleNode("descendant::Build_Time_Seconds");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) buildtime = ReadIntFromString(value.LastChild.Value);
+            }
+            value = unit.SelectSingleNode("descendant::Tactical_Build_Cost_Multiplayer");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null))
+                {
+                    string trimmed = value.LastChild.Value.Trim();
+                    if (trimmed != "") skirmcost = ReadIntFromString(value.LastChild.Value);
+                }
+            }
+            value = unit.SelectSingleNode("descendant::Tactical_Build_Time_Seconds");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null))
+                {
+                    string trimmed = value.LastChild.Value.Trim();
+                    if (trimmed != "") skirmbuildtime = Single.Parse(value.LastChild.Value);
+                }
+            }
+            value = unit.SelectSingleNode("descendant::Population_Value");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) pop = ReadIntFromString(value.LastChild.Value);
+            }
+            value = unit.SelectSingleNode("descendant::AI_Combat_Power");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) cp = Single.Parse(value.LastChild.Value);
+            }
+            value = unit.SelectSingleNode("descendant::Maintenance_Cost");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) maintenance = Single.Parse(value.LastChild.Value);
+            }
+            XmlNodeList values = unit.SelectNodes("descendant::Company_Units");
             foreach (XmlNode val in values)
             {
                 if (!(val is null))
                 {
-                    XmlNode spawn = val.LastChild;
-                    if (!(spawn is null))
+                    XmlNode comp = val.LastChild;
+                    if (!(comp is null))
                     {
-                        string[] data = ReadWhiteSpaceAsCommas(spawn.Value);
-                        garrison_entry gar = new garrison_entry
+                        string[] units = ReadWhiteSpaceAsCommas(comp.Value);
+                        if (percompany < 0) percompany = units.Length;
+                        else percompany += units.Length;
+                        foreach (string incompany in units)
                         {
-                            unitname = data[0],
-                            parsingupfront = Int32.Parse(data[1]),
-                            parsingreserve = 0,
-                            parsingtech = tech,
-                        };
-                        garrison.Add(gar);
+                            if (incompany != "") companyunits.Add(incompany);
+                        }
                     }
                 }
             }
-            values = unit.SelectNodes("descendant::Reserve_Spawned_Units_Tech_" + tech.ToString());
+            values = unit.SelectNodes("descendant::Squadron_Units");
             foreach (XmlNode val in values)
             {
                 if (!(val is null))
                 {
-                    XmlNode spawn = val.LastChild;
-                    if (!(spawn is null))
+                    XmlNode comp = val.LastChild;
+                    if (!(comp is null))
                     {
-                        string[] data = ReadWhiteSpaceAsCommas(spawn.Value);
-                        for(int i = 0; i < garrison.Count; i++)
+                        string[] units = ReadWhiteSpaceAsCommas(comp.Value);
+                        if (percompany < 0) percompany = units.Length;
+                        else percompany += units.Length;
+                        foreach (string incompany in units)
                         {
-                            garrison_entry gar = garrison[i];
-                            if(gar.parsingtech == tech && gar.unitname == data[0])
+                            if (incompany != "") companyunits.Add(incompany);
+                        }
+                    }
+                }
+            }
+            for (int tech = 0; tech <= 5; tech++)
+            {
+                values = unit.SelectNodes("descendant::Starting_Spawned_Units_Tech_" + tech.ToString());
+                foreach (XmlNode val in values)
+                {
+                    if (!(val is null))
+                    {
+                        XmlNode spawn = val.LastChild;
+                        if (!(spawn is null))
+                        {
+                            string[] data = ReadWhiteSpaceAsCommas(spawn.Value);
+                            garrison_entry gar = new garrison_entry
                             {
-                                gar.parsingreserve = Int32.Parse(data[1]);
-                                garrison[i] = gar;
-                                break;
+                                unitname = data[0],
+                                parsingupfront = ReadIntFromString(data[1]),
+                                parsingreserve = 0,
+                                parsingtech = tech,
+                            };
+                            garrison.Add(gar);
+                        }
+                    }
+                }
+                values = unit.SelectNodes("descendant::Reserve_Spawned_Units_Tech_" + tech.ToString());
+                foreach (XmlNode val in values)
+                {
+                    if (!(val is null))
+                    {
+                        XmlNode spawn = val.LastChild;
+                        if (!(spawn is null))
+                        {
+                            string[] data = ReadWhiteSpaceAsCommas(spawn.Value);
+                            for (int i = 0; i < garrison.Count; i++)
+                            {
+                                garrison_entry gar = garrison[i];
+                                if (gar.parsingtech == tech && gar.unitname == data[0])
+                                {
+                                    gar.parsingreserve = ReadIntFromString(data[1]);
+                                    garrison[i] = gar;
+                                    break;
+                                }
                             }
                         }
                     }
                 }
             }
-        }
-        value = unit.SelectSingleNode("descendant::Land_Model_Name");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null)) model = value.LastChild.Value;
-        }
-        values = unit.SelectNodes("descendant::Land_Terrain_Model_Mapping");
-        if(values.Count > 0)
-        {
-            foreach (XmlNode val in values)
+            value = unit.SelectSingleNode("descendant::Land_Model_Name");
+            if (!(value is null))
             {
+                if (!(value.LastChild is null)) model = value.LastChild.Value;
+            }
+            values = unit.SelectNodes("descendant::Land_Terrain_Model_Mapping");
+            if (values.Count > 0)
+            {
+                foreach (XmlNode val in values)
                 {
-                    XmlNode comp = val.LastChild;
-                    if (!(comp is null))
                     {
-                        string[] maps = fullTrim(comp.Value).Split(',');
-                        foreach (string map in maps) terrainMaps.Add(map);
+                        XmlNode comp = val.LastChild;
+                        if (!(comp is null))
+                        {
+                            string[] maps = fullTrim(comp.Value).Split(',');
+                            foreach (string map in maps) terrainMaps.Add(map);
+                        }
                     }
                 }
             }
-        }
-        value = unit.SelectSingleNode("descendant::Space_Model_Name");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null)) model = value.LastChild.Value;
-        }
-        value = unit.SelectSingleNode("descendant::Affiliation");
-        if (!(value is null))
-        {
-            XmlNode aff = value.LastChild;
-            if (!(aff is null))
+            value = unit.SelectSingleNode("descendant::Space_Model_Name");
+            if (!(value is null))
             {
-                string[] split = fullTrim(aff.Value).Split(',');
-                foreach (string affil in split)
+                if (!(value.LastChild is null)) model = value.LastChild.Value;
+            }
+            value = unit.SelectSingleNode("descendant::Affiliation");
+            if (!(value is null))
+            {
+                XmlNode aff = value.LastChild;
+                if (!(aff is null))
                 {
-                    affiliations.Add(affil);
+                    string[] split = fullTrim(aff.Value).Split(',');
+                    foreach (string affil in split)
+                    {
+                        affiliations.Add(affil);
+                    }
                 }
             }
-        }
-        value = unit.SelectSingleNode("descendant::HardPoints");
-        if (!(value is null))
-        {
-            Hardpoints = ReadWhiteSpaceAsCommas(value.InnerText);
-        }
-        else
-        {
-            value = unit.SelectSingleNode("descendant::Hardpoints");
+            value = unit.SelectSingleNode("descendant::HardPoints");
             if (!(value is null))
             {
                 Hardpoints = ReadWhiteSpaceAsCommas(value.InnerText);
             }
-        }
-        /*if (name == "T4A_Company") //parse debug
-        {
-            bool visible = false;
-        }*/
-        value = unit.SelectSingleNode("descendant::Required_Special_Structures");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
+            else
             {
-                reqstructures = value.InnerText;
-            }
-            else reqstructures = "";
-        }
-        value = unit.SelectSingleNode("descendant::Required_Orbiting_Units");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
-            {
-                reqorbit = value.InnerText;
-            }
-        }
-        value = unit.SelectSingleNode("descendant::Shield_Armor_Type");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
-            {
-                shield_type = fullTrim(value.InnerText);
-            }
-        }
-        value = unit.SelectSingleNode("descendant::Armor_Type");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
-            {
-                armor_type = fullTrim(value.InnerText);
-            }
-        }
-        value = unit.SelectSingleNode("descendant::Encyclopedia_Unit_Class");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
-            {
-                unitclass = value.LastChild.Value;
-                string[] crewarray = unitclass.Split(' ');
-                string crewst = crewarray[crewarray.Length - 1];
-                int.TryParse(crewst.Replace(",", ""), out crew);
-                unitclass = unitclass.Trim();
-            }
-        }
-        value = unit.SelectSingleNode("descendant::Required_Planets");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
-            {
-                planets = ReadWhiteSpaceAsCommas(value.InnerText);
-            }
-        }
-        value = unit.SelectSingleNode("descendant::Encyclopedia_Text");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
-            {
-                tooltip = value.InnerText;
-            }
-        }
-        value = unit.SelectSingleNode("descendant::Icon_Name");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
-            {
-                icon = value.LastChild.Value;
-            }
-        }
-        value = unit.SelectSingleNode("descendant::Land_Bomber_Type");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
-            {
-                bombingRunUnit = value.LastChild.Value;
-            }
-        }
-        value = unit.SelectSingleNode("descendant::Shield_Points");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
-            {
-                shield = Int32.Parse(value.LastChild.Value);
-            }
-        }
-        value = unit.SelectSingleNode("descendant::Shield_Refresh_Rate");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
-            {
-                regen = float.Parse(value.LastChild.Value);
-            }
-        }
-        value = unit.SelectSingleNode("descendant::Tactical_Health");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
-            {
-                hp = Int32.Parse(value.LastChild.Value);
-            }
-        }
-        value = unit.SelectSingleNode("descendant::CategoryMask");
-        if (!(value is null))
-        {
-            XmlNode mask = value.LastChild;
-            if (!(mask is null))
-            {
-                string[] split = fullTrim(mask.Value).Split('|');
-                foreach (string msk in split)
+                value = unit.SelectSingleNode("descendant::Hardpoints");
+                if (!(value is null))
                 {
-                    categories.Add(msk);
+                    Hardpoints = ReadWhiteSpaceAsCommas(value.InnerText);
                 }
             }
-        }
-        value = unit.SelectSingleNode("descendant::GUI_Row");
-        if (!(value is null))
-        {
-            gui_row = Int32.Parse(value.LastChild.Value);
-        }
-        value = unit.SelectSingleNode("descendant::Build_Limit_Current_Per_Player");
-        if (!(value is null))
-        {
-            if(!(value.LastChild is null)) limit_concurrent = Int32.Parse(value.LastChild.Value);
-        }
-        value = unit.SelectSingleNode("descendant::Build_Limit_Lifetime_Per_Player");
-        if (!(value is null))
-        {
-            limit_lifetime = Int32.Parse(value.LastChild.Value);
-        }
-        value = unit.SelectSingleNode("descendant::Build_Max_Instances_Per_Planet");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null)) limit_planet = Int32.Parse(value.LastChild.Value);
-        }
-        value = unit.SelectSingleNode("descendant::Max_Speed");
-        if (!(value is null))
-        {
-            speed = Single.Parse(value.LastChild.Value);
-        }
-        value = unit.SelectSingleNode("descendant::Min_Speed");
-        if (!(value is null))
-        {
-            min_speed = Single.Parse(value.LastChild.Value);
-        }
-        value = unit.SelectSingleNode("descendant::OverrideAcceleration");
-        if (!(value is null))
-        {
-            accel = Single.Parse(value.LastChild.Value);
-        }
-        value = unit.SelectSingleNode("descendant::Max_Rate_Of_Turn");
-        if (!(value is null))
-        {
-            turn = Single.Parse(value.LastChild.Value);
-        }
-        value = unit.SelectSingleNode("descendant::BTS");
-        if (!(value is null))
-        {
-            BTS = value.InnerText.Trim().Replace("\t","");
-        }
-        value = unit.SelectSingleNode("descendant::Targeting_Max_Attack_Distance");
-        if (!(value is null))
-        {
-            range = Single.Parse(value.LastChild.Value);
-        }
-        value = unit.SelectSingleNode("descendant::Company_Transport_Unit");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
+            /*if (name == "T4A_Company") //parse debug
             {
-                transport = value.LastChild.Value;
-            }
-        }
-        value = unit.SelectSingleNode("descendant::Garrison_Category");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
+                bool visible = false;
+            }*/
+            value = unit.SelectSingleNode("descendant::Required_Special_Structures");
+            if (!(value is null))
             {
-                garrison_type = value.LastChild.Value;
+                if (!(value.LastChild is null))
+                {
+                    reqstructures = value.InnerText;
+                }
+                else reqstructures = "";
             }
-        }
-        value = unit.SelectSingleNode("descendant::Num_Garrison_Slots");
-        if (!(value is null))
-        {
-            garrison_slots = Int32.Parse(value.LastChild.Value);
-        }
-        value = unit.SelectSingleNode("descendant::Garrison_Value");
-        if (!(value is null))
-        {
-            garrison_value = Int32.Parse(value.LastChild.Value);
-        }
-        value = unit.SelectSingleNode("descendant::Type");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
+            value = unit.SelectSingleNode("descendant::Required_Orbiting_Units");
+            if (!(value is null))
             {
-                locomotor_type = value.LastChild.Value;
+                if (!(value.LastChild is null))
+                {
+                    reqorbit = value.InnerText;
+                }
             }
-        }
-        value = unit.SelectSingleNode("descendant::Is_Named_Hero");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
+            value = unit.SelectSingleNode("descendant::Shield_Armor_Type");
+            if (!(value is null))
             {
-                if(value.LastChild.Value.ToLower().Contains("yes")) hero = true;
-                namedhero = ParseAutoResolveBool(value.LastChild.Value);
+                if (!(value.LastChild is null))
+                {
+                    shield_type = fullTrim(value.InnerText);
+                }
             }
-        }
-        else
-        {
-            value = unit.SelectSingleNode("descendant::Is_Generic_Hero");
+            value = unit.SelectSingleNode("descendant::Armor_Type");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null))
+                {
+                    armor_type = fullTrim(value.InnerText);
+                }
+            }
+            value = unit.SelectSingleNode("descendant::Encyclopedia_Unit_Class");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null))
+                {
+                    unitclass = value.LastChild.Value;
+                    string[] crewarray = unitclass.Split(' ');
+                    string crewst = crewarray[crewarray.Length - 1];
+                    int.TryParse(crewst.Replace(",", ""), out crew);
+                    unitclass = unitclass.Trim();
+                    if (crewarray.Length == 0) if (!Text_Entry_Exists(unitclass, entities)) entities.readerrors += "\nText " + unitclass + " not found for " + name;
+                }
+            }
+            value = unit.SelectSingleNode("descendant::Required_Planets");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null))
+                {
+                    planets = ReadWhiteSpaceAsCommas(value.InnerText);
+                }
+            }
+            value = unit.SelectSingleNode("descendant::Encyclopedia_Text");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null))
+                {
+                    tooltip = value.InnerText;
+                    foreach (string entry in SplitXMLWhitespaceList(tooltip))
+                    {
+                        if (!Text_Entry_Exists(entry, entities)) entities.readerrors += "\nText " + entry + " not found for " + name;
+                    }
+                }
+            }
+            value = unit.SelectSingleNode("descendant::Icon_Name");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null))
+                {
+                    icon = value.LastChild.Value;
+                }
+            }
+            value = unit.SelectSingleNode("descendant::Land_Bomber_Type");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null))
+                {
+                    bombingRunUnit = value.LastChild.Value;
+                }
+            }
+            if (bombingRunUnit == "")
+            {
+                value = unit.SelectSingleNode("descendant::Ship_Class");
+                if (!(value is null))
+                {
+                    if (!(value.LastChild is null))
+                    {
+                        if (String.Equals(value.LastChild.Value, "bomber", StringComparison.OrdinalIgnoreCase))
+                        {
+                            entities.readerrors += "\nUnit " + name + " is categorized as a bomber but does not have a Land_Bomber_Type defined.";
+                        }
+                    }
+                }
+            }
+            value = unit.SelectSingleNode("descendant::Shield_Points");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null))
+                {
+                    shield = ReadIntFromString(value.LastChild.Value);
+                }
+            }
+            value = unit.SelectSingleNode("descendant::Shield_Refresh_Rate");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null))
+                {
+                    regen = float.Parse(value.LastChild.Value);
+                }
+            }
+            value = unit.SelectSingleNode("descendant::Tactical_Health");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null))
+                {
+                    hp = ReadIntFromString(value.LastChild.Value);
+                }
+            }
+            value = unit.SelectSingleNode("descendant::CategoryMask");
+            if (!(value is null))
+            {
+                XmlNode mask = value.LastChild;
+                if (!(mask is null))
+                {
+                    string[] split = fullTrim(mask.Value).Split('|');
+                    foreach (string msk in split)
+                    {
+                        categories.Add(msk);
+                    }
+                }
+            }
+            value = unit.SelectSingleNode("descendant::GUI_Row");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) gui_row = ReadIntFromString(value.LastChild.Value);
+            }
+            value = unit.SelectSingleNode("descendant::Build_Limit_Current_Per_Player");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) limit_concurrent = ReadIntFromString(value.LastChild.Value);
+            }
+            value = unit.SelectSingleNode("descendant::Build_Limit_Lifetime_Per_Player");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) limit_lifetime = ReadIntFromString(value.LastChild.Value);
+            }
+            value = unit.SelectSingleNode("descendant::Build_Max_Instances_Per_Planet");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) limit_planet = ReadIntFromString(value.LastChild.Value);
+            }
+            value = unit.SelectSingleNode("descendant::Max_Speed");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) speed = Single.Parse(value.LastChild.Value);
+            }
+            value = unit.SelectSingleNode("descendant::Min_Speed");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) min_speed = Single.Parse(value.LastChild.Value);
+            }
+            value = unit.SelectSingleNode("descendant::OverrideAcceleration");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) accel = Single.Parse(value.LastChild.Value);
+            }
+            value = unit.SelectSingleNode("descendant::Max_Rate_Of_Turn");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) turn = Single.Parse(value.LastChild.Value);
+            }
+            value = unit.SelectSingleNode("descendant::BTS");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) BTS = value.InnerText.Trim().Replace("\t", "");
+            }
+            value = unit.SelectSingleNode("descendant::Targeting_Max_Attack_Distance");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) range = Single.Parse(value.LastChild.Value);
+            }
+            value = unit.SelectSingleNode("descendant::Company_Transport_Unit");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null))
+                {
+                    transport = value.LastChild.Value;
+                }
+            }
+            value = unit.SelectSingleNode("descendant::Garrison_Category");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null))
+                {
+                    garrison_type = value.LastChild.Value;
+                }
+            }
+            value = unit.SelectSingleNode("descendant::Num_Garrison_Slots");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) garrison_slots = ReadIntFromString(value.LastChild.Value);
+            }
+            value = unit.SelectSingleNode("descendant::Garrison_Value");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) garrison_value = ReadIntFromString(value.LastChild.Value);
+            }
+            value = unit.SelectSingleNode("descendant::Type");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null))
+                {
+                    locomotor_type = value.LastChild.Value;
+                }
+            }
+            value = unit.SelectSingleNode("descendant::Is_Named_Hero");
             if (!(value is null))
             {
                 if (!(value.LastChild is null))
                 {
                     if (value.LastChild.Value.ToLower().Contains("yes")) hero = true;
+                    namedhero = ParseAutoResolveBool(value.LastChild.Value);
                 }
             }
-        }
-        value = unit.SelectSingleNode("descendant::Is_Super_Weapon_Killer");
-        if (!(value is null) && !(value.LastChild is null)) superweaponkiller = ParseAutoResolveBool(value.LastChild.Value);
-        value = unit.SelectSingleNode("descendant::Unique_Space_Unit");
-        if (!(value is null) && !(value.LastChild is null)) uniquespaceunit = value.LastChild.Value.Trim();
-        value = unit.SelectSingleNode("descendant::Unique_Ground_Unit");
-        if (!(value is null) && !(value.LastChild is null)) uniquegroundunit = value.LastChild.Value.Trim();
-        value = unit.SelectSingleNode("descendant::Create_Team_Type");
-        if (!(value is null))
-        {
-            if (!(value.LastChild is null))
+            else
             {
-                container = value.LastChild.Value.Trim();
-            }
-        }
-        value = unit.SelectSingleNode("descendant::Property_Flags");
-        if (!(value is null))
-        {
-            XmlNode mask = value.LastChild;
-            if (!(mask is null))
-            {
-                string[] split = fullTrim(mask.Value).Split('|');
-                foreach (string flg in split)
+                value = unit.SelectSingleNode("descendant::Is_Generic_Hero");
+                if (!(value is null))
                 {
-                    flags.Add(flg);
-                }
-            }
-        }
-        value = unit.SelectSingleNode("descendant::Behavior");
-        if (!(value is null))
-        {
-            XmlNode mask = value.LastChild;
-            if (!(mask is null))
-            {
-                string[] split = fullTrim(mask.Value).Split(',');
-                foreach (string behave in split)
-                {
-                    behaviors.Add(behave);
-                }
-            }
-        }
-        value = unit.SelectSingleNode("descendant::LandBehavior");
-        if (!(value is null))
-        {
-            XmlNode mask = value.LastChild;
-            if (!(mask is null))
-            {
-                string[] split = fullTrim(mask.Value).Split(',');
-                foreach (string behave in split)
-                {
-                    modebehaviors.Add(behave); //Shouldn't need space and land behaviors separately, unless heroes prove annoying in the future
-                }
-            }
-        }
-        value = unit.SelectSingleNode("descendant::SpaceBehavior");
-        if (!(value is null))
-        {
-            XmlNode mask = value.LastChild;
-            if (!(mask is null))
-            {
-                string[] split = fullTrim(mask.Value).Split(',');
-                foreach (string behave in split)
-                {
-                    modebehaviors.Add(behave);
-                }
-            }
-        }
-        value = unit.SelectSingleNode("descendant::Projectile_Types");
-        if (!(value is null) && value.InnerText != "")
-        {
-            string proj = value.InnerText.Trim().ToLower();
-            builtin.name = "biw";
-            builtin.hpType = "BUILT-IN_WEAPON";
-            builtin.hp = -1;
-            builtin.targetable = false;
-            builtin.quantity = 1;
-            builtin.range = range;
-            if (proj.Contains("_grenade"))
-            {
-                builtin.range = 250; //Todo: read gravity tags properly instead of hardcoding
-            }
-            builtin.projectile = proj;
-            builtin.firesound = "";
-            builtin.diesound = "";
-            builtin.inaccuracyAmounts = new List<float>();
-            builtin.inaccuracyTypes = new List<string>();
-            bool notfound = true;
-            int index = LookupUntemplateID(proj);
-            if (index < entities.projectilehashes.Count)
-            {
-                for (int j = 0; j < entities.projectilehashes[index].Count; j++)
-                {
-                    projectile project = entities.projectiles[entities.projectilehashes[index][j]];
-                    if (project.name.ToLower() == proj)
+                    if (!(value.LastChild is null))
                     {
-                        builtin.damageType = project.damageType;
-                        builtin.damageAmount = project.damageAmount;
-                        builtin.blastRadius = project.blastRadius;
-                        notfound = false;
-                        break;
+                        if (value.LastChild.Value.ToLower().Contains("yes")) hero = true;
                     }
                 }
             }
-            if (notfound && proj != "") entities.readerrors += "\nCannot find projectile type " + value.InnerText.Trim() + " for unit " + name;
-            value = unit.SelectSingleNode("descendant::Projectile_Fire_Recharge_Seconds");
+            value = unit.SelectSingleNode("descendant::Is_Super_Weapon_Killer");
+            if (!(value is null) && !(value.LastChild is null)) superweaponkiller = ParseAutoResolveBool(value.LastChild.Value);
+            value = unit.SelectSingleNode("descendant::Unique_Space_Unit");
+            if (!(value is null) && !(value.LastChild is null)) uniquespaceunit = value.LastChild.Value.Trim();
+            value = unit.SelectSingleNode("descendant::Unique_Ground_Unit");
+            if (!(value is null) && !(value.LastChild is null)) uniquegroundunit = value.LastChild.Value.Trim();
+            value = unit.SelectSingleNode("descendant::Create_Team_Type");
             if (!(value is null))
             {
-                builtin.recharge = Single.Parse(value.LastChild.Value);
-            }
-            value = unit.SelectSingleNode("descendant::Projectile_Fire_Pulse_Count");
-            if (!(value is null))
-            {
-                builtin.pulseCount = Single.Parse(value.LastChild.Value);
-            }
-            else builtin.pulseCount = 1;
-            value = unit.SelectSingleNode("descendant::Projectile_Fire_Pulse_Delay_Seconds");
-            if (!(value is null))
-            {
-                builtin.pulseDelay = Single.Parse(value.LastChild.Value);
-            }
-            value = unit.SelectSingleNode("descendant::Fire_Category_Restrictions");
-            if (!(value is null))
-            {
-                XmlNode res = value.LastChild;
-                if (!(res is null))
+                if (!(value.LastChild is null))
                 {
-                    string[] split = fullTrim(res.Value).Split(',');
-                    foreach (string restrict in split)
+                    container = value.LastChild.Value.Trim();
+                }
+            }
+            value = unit.SelectSingleNode("descendant::Property_Flags");
+            if (!(value is null))
+            {
+                XmlNode mask = value.LastChild;
+                if (!(mask is null))
+                {
+                    string[] split = fullTrim(mask.Value).Split('|');
+                    foreach (string flg in split)
                     {
-                        builtin.inaccuracyTypes.Add(restrict);
-                        builtin.inaccuracyAmounts.Add(100);
+                        flags.Add(flg);
                     }
                 }
             }
-            value = unit.SelectSingleNode("descendant::SFXEvent_Fire");
-            if (!(value is null)) builtin.firesound = value.InnerText.Trim();
-            XmlNodeList inaccs = unit.SelectNodes("descendant::Targeting_Fire_Inaccuracy");
-            foreach (XmlNode inacc in inaccs)
+            value = unit.SelectSingleNode("descendant::Behavior");
+            if (!(value is null))
             {
-                if (!(inacc is null))
+                XmlNode mask = value.LastChild;
+                if (!(mask is null))
                 {
-                    if (!(inacc.LastChild is null))
+                    string[] split = fullTrim(mask.Value).Split(',');
+                    foreach (string behave in split)
                     {
-                        string[] vals = fullTrim(inacc.LastChild.Value).Split(',');
-                        if (vals.Length > 1)
-                        {
-                            builtin.inaccuracyTypes.Add(vals[0]);
-                            builtin.inaccuracyAmounts.Add(float.Parse(vals[1]));
-                        }
+                        behaviors.Add(behave);
                     }
                 }
             }
-        }
-        value = unit.SelectSingleNode("descendant::Unit_Abilities_Data");
-        if (!(value is null))
-        {
-            XmlNodeList abilityNodes = value.SelectNodes("descendant::Unit_Ability");
-            foreach (XmlNode able in abilityNodes)
+            value = unit.SelectSingleNode("descendant::LandBehavior");
+            if (!(value is null))
             {
-                unitability forlist = new unitability();
-                forlist.icon = "";
-                forlist.username = "";
-                forlist.ability = "";
-                forlist.desc = "";
-                forlist.sound = "";
-                forlist.damageMod = 1;
-                forlist.defenseMod = 1;
-                forlist.reloadMod = 1;
-                forlist.shieldMod = 1;
-                forlist.speedMod = 1;
-
-                if (!(able is null))
+                XmlNode mask = value.LastChild;
+                if (!(mask is null))
                 {
-                    XmlNode abdata = able.SelectSingleNode("descendant::Type");
-                    if (!(abdata is null))
+                    string[] split = fullTrim(mask.Value).Split(',');
+                    foreach (string behave in split)
                     {
-                        if (!(abdata.LastChild is null)) forlist.type = abdata.LastChild.Value;
-                        abdata = able.SelectSingleNode("descendant::Alternate_Name_Text");
-                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.username = abdata.LastChild.Value;
-                        else
-                        {//These seem to be consistent, unlike icon names
-                            forlist.username = "TEXT_TOOLTIP_ABILITY_" + forlist.type + "_NAME";
-                        }
-                        forlist.username = Find_Text_Entry(forlist.username, entities);
-                        abdata = able.SelectSingleNode("descendant::Alternate_Description_Text");
-                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.desc = abdata.LastChild.Value;
-                        else
+                        modebehaviors.Add(behave); //Shouldn't need space and land behaviors separately, unless heroes prove annoying in the future
+                    }
+                }
+            }
+            value = unit.SelectSingleNode("descendant::SpaceBehavior");
+            if (!(value is null))
+            {
+                XmlNode mask = value.LastChild;
+                if (!(mask is null))
+                {
+                    string[] split = fullTrim(mask.Value).Split(',');
+                    foreach (string behave in split)
+                    {
+                        modebehaviors.Add(behave);
+                    }
+                }
+            }
+            value = unit.SelectSingleNode("descendant::Projectile_Types");
+            if (!(value is null) && value.InnerText != "")
+            {
+                string proj = value.InnerText.Trim().ToLower();
+                builtin.name = "biw";
+                builtin.hpType = "BUILT-IN_WEAPON";
+                builtin.hp = -1;
+                builtin.targetable = false;
+                builtin.quantity = 1;
+                builtin.range = range;
+                if (proj.Contains("_grenade"))
+                {
+                    builtin.range = 250; //Todo: read gravity tags properly instead of hardcoding
+                }
+                builtin.projectile = proj;
+                builtin.firesound = "";
+                builtin.diesound = "";
+                builtin.inaccuracyAmounts = new List<float>();
+                builtin.inaccuracyTypes = new List<string>();
+                bool notfound = true;
+                int index = LookupUntemplateID(proj);
+                if (index < entities.projectilehashes.Count)
+                {
+                    for (int j = 0; j < entities.projectilehashes[index].Count; j++)
+                    {
+                        projectile project = entities.projectiles[entities.projectilehashes[index][j]];
+                        if (project.name.ToLower() == proj)
                         {
-                            forlist.desc = "TEXT_TOOLTIP_ABILITY_" + forlist.type + "_DESCRIPTION";
+                            builtin.damageType = project.damageType;
+                            builtin.damageAmount = project.damageAmount;
+                            builtin.blastRadius = project.blastRadius;
+                            notfound = false;
+                            break;
                         }
-                        abdata = able.SelectSingleNode("descendant::GUI_Activated_Ability_Name");
-                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.ability = abdata.LastChild.Value.Trim();
-                        abdata = able.SelectSingleNode("descendant::Recharge_Seconds");
-                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.recharge = Single.Parse(abdata.LastChild.Value.Replace("f", "").Replace("F", ""));
-                        abdata = able.SelectSingleNode("descendant::Expiration_Seconds");
-                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.expiration = Single.Parse(abdata.LastChild.Value.Replace("f", "").Replace("F", ""));
-                        abdata = able.SelectSingleNode("descendant::Effective_Radius");
-                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.radius = Single.Parse(abdata.LastChild.Value.Replace("f", "").Replace("F", ""));
-                        abdata = able.SelectSingleNode("descendant::Damage_Percent_When_Activated");
-                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.selfdamage = Single.Parse(abdata.LastChild.Value.Replace("f", "").Replace("F", ""));
-                        abdata = able.SelectSingleNode("descendant::SFXEvent_Target_Ability");
-                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
-                        if(forlist.sound == "") //Todo check if these are all the sound fields and if they can ever exist simultaneously
+                    }
+                }
+                if (notfound && proj != "") entities.readerrors += "\nCannot find projectile type " + value.InnerText.Trim() + " for unit " + name;
+                value = unit.SelectSingleNode("descendant::Projectile_Fire_Recharge_Seconds");
+                if (!(value is null))
+                {
+                    if (!(value.LastChild is null)) builtin.recharge = Single.Parse(value.LastChild.Value);
+                }
+                value = unit.SelectSingleNode("descendant::Projectile_Fire_Pulse_Count");
+                if (!(value is null))
+                {
+                    if (!(value.LastChild is null)) builtin.pulseCount = Single.Parse(value.LastChild.Value);
+                }
+                else builtin.pulseCount = 1;
+                value = unit.SelectSingleNode("descendant::Projectile_Fire_Pulse_Delay_Seconds");
+                if (!(value is null))
+                {
+                    if (!(value.LastChild is null)) builtin.pulseDelay = Single.Parse(value.LastChild.Value);
+                }
+                value = unit.SelectSingleNode("descendant::Fire_Category_Restrictions");
+                if (!(value is null))
+                {
+                    XmlNode res = value.LastChild;
+                    if (!(res is null))
+                    {
+                        string[] split = fullTrim(res.Value).Split(',');
+                        foreach (string restrict in split)
                         {
-                            abdata = able.SelectSingleNode("descendant::SFXEvent_GUI_Unit_Ability_Activated");
-                            if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
+                            builtin.inaccuracyTypes.Add(restrict);
+                            builtin.inaccuracyAmounts.Add(100);
                         }
-                        abdata = able.SelectSingleNode("descendant::SFXEvent_GUI_Unit_Ability_Deactivated");
-                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.deactivatesound = abdata.InnerText.Trim();
-                        XmlNodeList mods = able.SelectNodes("descendant::Mod_Multiplier");
-                        foreach (XmlNode mod in mods)
+                    }
+                }
+                value = unit.SelectSingleNode("descendant::SFXEvent_Fire");
+                if (!(value is null)) builtin.firesound = value.InnerText.Trim();
+                XmlNodeList inaccs = unit.SelectNodes("descendant::Targeting_Fire_Inaccuracy");
+                foreach (XmlNode inacc in inaccs)
+                {
+                    if (!(inacc is null))
+                    {
+                        if (!(inacc.LastChild is null))
                         {
-                            if (!(mod is null))
+                            string[] vals = fullTrim(inacc.LastChild.Value).Split(',');
+                            if (vals.Length > 1)
                             {
-                                if (!(mod.LastChild is null))
+                                builtin.inaccuracyTypes.Add(vals[0]);
+                                builtin.inaccuracyAmounts.Add(float.Parse(vals[1]));
+                            }
+                        }
+                    }
+                }
+            }
+            value = unit.SelectSingleNode("descendant::Hyperspace_Speed");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) hyperspaceSpeed = float.Parse(value.LastChild.Value);
+            }
+            value = unit.SelectSingleNode("descendant::Hyperspace");
+            if (!(value is null))
+            {
+                if (String.Equals(value.LastChild.Value, "no", StringComparison.OrdinalIgnoreCase)) hyperspaceSpeed = 0; //Probably more useful to mark this rather than store the useless value
+            }
+            value = unit.SelectSingleNode("descendant::Highlight_Blob_Material_Name");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null))
+                {
+                    highlight = value.LastChild.Value;
+                }
+            }
+            value = unit.SelectSingleNode("descendant::Death_Explosions");
+            if (!(value is null) && value.InnerText != "")
+            {
+                string proj = value.InnerText.Trim().ToLower();
+                //bool notfound = true;
+                int index = LookupUntemplateID(proj);
+                if (index < entities.projectilehashes.Count)
+                {
+                    for (int j = 0; j < entities.projectilehashes[index].Count; j++)
+                    {
+                        projectile project = entities.projectiles[entities.projectilehashes[index][j]];
+                        if (project.name.ToLower() == proj)
+                        {
+                            builtin.name = "dest";
+                            builtin.hpType = "DESTRUCTION";
+                            builtin.hp = -1;
+                            builtin.targetable = false;
+                            builtin.quantity = 1;
+                            builtin.range = range;
+                            builtin.projectile = proj;
+                            builtin.firesound = "";
+                            builtin.diesound = "";
+                            builtin.inaccuracyAmounts = new List<float>();
+                            builtin.inaccuracyTypes = new List<string>();
+                            builtin.recharge = 1;
+                            builtin.pulseCount = 1;
+                            builtin.pulseDelay = 0;
+
+                            builtin.damageType = project.damageType;
+                            builtin.damageAmount = project.damageAmount;
+                            builtin.blastRadius = project.blastRadius;
+                            //notfound = false;
+                            break;
+                        }
+                    }
+                }
+                //if (notfound && proj != "") entities.readerrors += "\nCannot find death explosion type " + value.InnerText.Trim() + " for unit " + name; //Comes up way too often while reading normal particles and is skipped for optimizations
+            }
+            value = unit.SelectSingleNode("descendant::Unit_Abilities_Data");
+            if (!(value is null))
+            {
+                XmlNodeList abilityNodes = value.SelectNodes("descendant::Unit_Ability");
+                foreach (XmlNode able in abilityNodes)
+                {
+                    unitability forlist = new unitability();
+                    forlist.icon = "";
+                    forlist.username = "";
+                    forlist.ability = "";
+                    forlist.desc = "";
+                    forlist.sound = "";
+                    forlist.linkedEntity = "";
+                    forlist.damageMod = 1;
+                    forlist.defenseMod = 1;
+                    forlist.reloadMod = 1;
+                    forlist.shieldMod = 1;
+                    forlist.speedMod = 1;
+
+                    if (!(able is null))
+                    {
+                        XmlNode abdata = able.SelectSingleNode("descendant::Type");
+                        if (!(abdata is null))
+                        {
+                            if (!(abdata.LastChild is null)) forlist.type = abdata.LastChild.Value;
+                            abdata = able.SelectSingleNode("descendant::Alternate_Name_Text");
+                            if (!(abdata is null) && !(abdata.LastChild is null)) forlist.username = abdata.LastChild.Value;
+                            else
+                            {//These seem to be consistent, unlike icon names
+                                forlist.username = "TEXT_TOOLTIP_ABILITY_" + forlist.type.ToUpper() + "_NAME";
+                            }
+                            forlist.username = Find_Text_Entry(forlist.username, entities);
+                            abdata = able.SelectSingleNode("descendant::Alternate_Description_Text");
+                            if (!(abdata is null) && !(abdata.LastChild is null)) forlist.desc = abdata.LastChild.Value;
+                            else
+                            {
+                                forlist.desc = "TEXT_TOOLTIP_ABILITY_" + forlist.type.ToUpper() + "_DESCRIPTION";
+                            }
+                            abdata = able.SelectSingleNode("descendant::GUI_Activated_Ability_Name");
+                            if (!(abdata is null) && !(abdata.LastChild is null)) forlist.ability = abdata.LastChild.Value.Trim();
+                            abdata = able.SelectSingleNode("descendant::Recharge_Seconds");
+                            if (!(abdata is null) && !(abdata.LastChild is null)) forlist.recharge = Single.Parse(abdata.LastChild.Value.Replace("f", "").Replace("F", ""));
+                            abdata = able.SelectSingleNode("descendant::Expiration_Seconds");
+                            if (!(abdata is null) && !(abdata.LastChild is null)) forlist.expiration = Single.Parse(abdata.LastChild.Value.Replace("f", "").Replace("F", ""));
+                            abdata = able.SelectSingleNode("descendant::Effective_Radius");
+                            if (!(abdata is null) && !(abdata.LastChild is null)) forlist.radius = Single.Parse(abdata.LastChild.Value.Replace("f", "").Replace("F", ""));
+                            abdata = able.SelectSingleNode("descendant::Damage_Percent_When_Activated");
+                            if (!(abdata is null) && !(abdata.LastChild is null)) forlist.selfdamage = Single.Parse(abdata.LastChild.Value.Replace("f", "").Replace("F", ""));
+                            abdata = able.SelectSingleNode("descendant::SFXEvent_Target_Ability");
+                            if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
+                            if (forlist.sound == "") //Todo check if these are all the sound fields and if they can ever exist simultaneously
+                            {
+                                abdata = able.SelectSingleNode("descendant::SFXEvent_GUI_Unit_Ability_Activated");
+                                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
+                            }
+                            abdata = able.SelectSingleNode("descendant::SFXEvent_GUI_Unit_Ability_Deactivated");
+                            if (!(abdata is null) && !(abdata.LastChild is null)) forlist.deactivatesound = abdata.InnerText.Trim();
+                            XmlNodeList mods = able.SelectNodes("descendant::Mod_Multiplier");
+                            foreach (XmlNode mod in mods)
+                            {
+                                if (!(mod is null))
                                 {
-                                    string[] vals = fullTrim(mod.LastChild.Value).Split(',');
-                                    if (vals.Length > 1)
+                                    if (!(mod.LastChild is null))
                                     {
-                                        float mult = float.Parse(vals[1].Replace("f", "").Replace("F", ""));
-                                        switch (vals[0])
+                                        string[] vals = fullTrim(mod.LastChild.Value).Split(',');
+                                        if (vals.Length > 1)
                                         {
-                                            case "WEAPON_DELAY_MULTIPLIER":
-                                                forlist.reloadMod *= mult;
-                                                break;
-                                            case "FIRE_RATE_MULTIPLIER":
-                                                forlist.reloadMod /= mult;
-                                                break;
-                                            case "SHIELD_REGEN_MULTIPLIER":
-                                                forlist.shieldMod = mult;
-                                                break;
-                                            case "SHIELD_REGEN_INTERVAL_MULTIPLIER": //Technically this is not what it does, but the end math is the same
-                                                forlist.shieldMod /= mult;
-                                                break;
-                                            case "TAKE_DAMAGE_MULTIPLIER":
-                                                forlist.defenseMod = mult;
-                                                break;
-                                            case "CAUSE_DAMAGE_MULTIPLIER":
-                                                forlist.damageMod = mult;
-                                                break;
-                                            case "SPEED_MULTIPLIER":
-                                                forlist.speedMod = mult;
-                                                break;
+                                            float mult = float.Parse(vals[1].Replace("f", "").Replace("F", ""));
+                                            switch (vals[0])
+                                            {
+                                                case "WEAPON_DELAY_MULTIPLIER":
+                                                    forlist.reloadMod *= mult;
+                                                    break;
+                                                case "FIRE_RATE_MULTIPLIER":
+                                                    forlist.reloadMod /= mult;
+                                                    break;
+                                                case "SHIELD_REGEN_MULTIPLIER":
+                                                    forlist.shieldMod = mult;
+                                                    break;
+                                                case "SHIELD_REGEN_INTERVAL_MULTIPLIER": //Technically this is not what it does, but the end math is the same
+                                                    forlist.shieldMod /= mult;
+                                                    break;
+                                                case "TAKE_DAMAGE_MULTIPLIER":
+                                                    forlist.defenseMod = mult;
+                                                    break;
+                                                case "CAUSE_DAMAGE_MULTIPLIER":
+                                                    forlist.damageMod = mult;
+                                                    break;
+                                                case "SPEED_MULTIPLIER":
+                                                    forlist.speedMod = mult;
+                                                    break;
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
+                            abdata = able.SelectSingleNode("descendant::Particle_Effect");
+                            if (!(abdata is null) && !(abdata.LastChild is null)) forlist.linkedEntity = abdata.InnerText.Trim();
+                            abdata = able.SelectSingleNode("descendant::Spawned_Object_Type");
+                            if (!(abdata is null) && !(abdata.LastChild is null)) forlist.linkedEntity = abdata.InnerText.Trim();
 
-                        abdata = able.SelectSingleNode("descendant::Alternate_Icon_Name");
-                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.icon = abdata.LastChild.Value;
-                        else
-                        {
-                            switch (forlist.type)
-                            { //Could do a default block for the nontrivial number that are simply I_SA_ namehere .tga, but this is already set up
-                                case "AREA_EFFECT_CONVERT":
-                                    forlist.icon = "I_SA_JOIN_ME.TGA";
-                                    break;
-                                case "AREA_EFFECT_HEAL":
-                                    forlist.icon = "I_SA_AREA_HEAL.TGA";
-                                    break;
-                                case "AREA_EFFECT_STUN":
-                                    forlist.icon = "I_SA_ELECTRONIC_SCRAMBLE.TGA";
-                                    break;
-                                case "BARRAGE":
-                                    forlist.icon = "I_SA_BARRAGE_AREA.TGA";
-                                    break;
-                                case "BERSERKER":
-                                    forlist.icon = "I_SA_BERSERKER.TGA";
-                                    break;
-                                case "BLAST":
-                                    forlist.icon = "I_SA_BLAST.TGA";
-                                    break;
-                                case "BUZZ_DROIDS":
-                                    forlist.icon = "I_SA_BUZZ_DROIDS.TGA";
-                                    break;
-                                case "CABLE_ATTACK":
-                                    forlist.icon = "I_SA_TOW_CABLE_ATTACK.TGA";
-                                    break;
-                                case "CAPTURE_VEHICLE":
-                                    forlist.icon = "I_SA_CAPTURE_VEHICLES.TGA";
-                                    break;
-                                case "CLUSTER_BOMB":
-                                    forlist.icon = "I_SA_CLUSTER_BOMB.TGA";
-                                    break;
-                                case "CONCENTRATE_FIRE":
-                                    forlist.icon = "I_SA_ALL_SHIPS_CONCENTRATE_FIRE.TGA";
-                                    break;
-                                case "CORRUPT_SYSTEMS":
-                                    forlist.icon = "I_SA_CORRUPT_SYSTEMS.TGA";
-                                    break;
-                                case "DEFEND":
-                                    forlist.icon = "I_SA_DEFEND_MODE.TGA";
-                                    break;
-                                case "DEPLOY":
-                                    forlist.icon = "I_SA_DEPLOY.TGA"; //TODO figure out when to use I_SA_DEPLOY_SQUAD.TGA
-                                    break;//Randomly switch to I_SA_UNDEPLOY.TGA for the easter egg?
-                                case "DEPLOY_TROOPERS":
-                                    forlist.icon = "I_SA_DEPLOY_STORMTROOPERS.TGA";
-                                    break;
-                                case "DETONATE_REMOTE_BOMB":
-                                    forlist.icon = "I_SA_DETONATE_REMOTE_BOMB.TGA";
-                                    break;
-                                case "DRAIN_LIFE":
-                                    forlist.icon = "I_SA_DRAIN_LIFE.TGA";
-                                    break;
-                                case "EJECT_VEHICLE_THIEF":
-                                    forlist.icon = "I_SA_CAPTURE_VEHICLES.TGA"; //Not entirely sure if this is right
-                                    break;
-                                case "ENERGY_WEAPON":
-                                    forlist.icon = "I_SA_FIRE_ENERGY_WEAPON.TGA";
-                                    break;
-                                case "FIRE_LOBBING_SUPERWEAPON":
-                                    forlist.icon = "";
-                                    break;
-                                case "FLAME_THROWER":
-                                    forlist.icon = "I_SA_FLAME_THROWER.TGA";
-                                    break;
-                                case "FORCE_CLOAK":
-                                    forlist.icon = "I_SA_FORCE_CLOAK.TGA";
-                                    break;
-                                case "FORCE_CONFUSE":
-                                    forlist.icon = "I_SA_FORCE_CONFUSE.TGA";
-                                    break;
-                                case "FORCE_LIGHTNING":
-                                    forlist.icon = "I_SA_FORCE_LIGHTING.TGA";
-                                    break;
-                                case "FORCE_SIGHT":
-                                    forlist.icon = "I_SA_FORCE_SIGHT.TGA";
-                                    break;
-                                case "FORCE_TELEKINESIS":
-                                    forlist.icon = "I_SA_FORCE_CRUSH.TGA";
-                                    break;
-                                case "FORCE_WHIRLWIND":
-                                    forlist.icon = "I_SA_FORCE_PUSH.TGA";
-                                    break;
-                                case "FOW_REVEAL_PING":
-                                    forlist.icon = "I_SA_SENSOR_PING.TGA";
-                                    break;
-                                case "FULL_SALVO":
-                                    forlist.icon = "I_SA_FULL_SALVO.TGA";
-                                    break;
-                                case "HARMONIC_BOMB":
-                                    forlist.icon = "I_SA_HARMONIC_BOMB.TGA";
-                                    break;
-                                case "HUNT":
-                                    forlist.icon = "I_SA_HUNT.TGA";
-                                    break;
-                                case "INFECTION":
-                                    forlist.icon = "I_SA_INFECTION.TGA";
-                                    break;
-                                case "INTERDICT":
-                                    forlist.icon = "I_SA_INTERDICT.TGA";
-                                    break;
-                                case "INVULNERABILITY":
-                                    forlist.icon = "I_SA_EVASIVE_MANEUVERS.TGA";
-                                    break;
-                                case "ION_CANNON_SHOT":
-                                    forlist.icon = "I_SA_ION_CANNON_SHOT.TGA";
-                                    break;
-                                case "JET_PACK":
-                                    forlist.icon = "I_SA_JETPACK_JUMP.TGA";
-                                    break;
-                                case "LASER_DEFENSE":
-                                    forlist.icon = "I_SA_LASER_DEFENSE.TGA";
-                                    break;
-                                case "LEECH_SHIELDS":
-                                    forlist.icon = "I_SA_LEECH_SHIELDS.TGA";
-                                    break;
-                                case "LUCKY_SHOT":
-                                    forlist.icon = "I_SA_LUCKY_SHOT.TGA";
-                                    break;
-                                case "LURE":
-                                    forlist.icon = "I_SA_LURE.TGA";
-                                    break;
-                                case "MAXIMUM_FIREPOWER":
-                                    forlist.icon = "I_SA_MAXIMUM_FIREPOWER.TGA";
-                                    break;
-                                case "MISSILE_SHIELD":
-                                    forlist.icon = "I_SA_MISSILE_JAMMER.TGA"; //todo sort out I_SA_MISSILE_JAMMING.TGA
-                                    break;
-                                case "PLACE_REMOTE_BOMB":
-                                    forlist.icon = "I_SA_STICKY_BOMB.TGA";
-                                    break;
-                                case "POWER_TO_WEAPONS":
-                                    forlist.icon = "I_SA_POWER_TO_WEAPONS.TGA";
-                                    break;
-                                case "PROXIMITY_MINES":
-                                    forlist.icon = "I_SA_PROXIMITY_MINES.TGA";
-                                    break;
-                                case "RADIOACTIVE_CONTAMINATE":
-                                    forlist.icon = "I_SA_CONTAMINATE.TGA";
-                                    break;
-                                case "REPLENISH_WINGMEN":
-                                    forlist.icon = "I_SA_COVER_ME.TGA";
-                                    break;
-                                case "ROCKET_ATTACK":
-                                    forlist.icon = "I_SA_ROCKET_ATTACK.TGA";
-                                    break;
-                                case "SELF_DESTRUCT":
-                                    forlist.icon = "I_SA_SELF_DESTRUCT.TGA";
-                                    break;
-                                case "SABER_THROW":
-                                    forlist.icon = "I_SA_SABER_THROW.TGA";
-                                    break;
-                                case "SENSOR_JAMMING":
-                                    forlist.icon = "I_SA_SENSOR_JAMMING.TGA";
-                                    break;
-                                case "SHIELD_FLARE":
-                                    forlist.icon = "I_SA_SHIELD_FLARE.TGA";
-                                    break;
-                                case "SPOILER_LOCK":
-                                    forlist.icon = "I_SA_S_FOIL_MODE.TGA";
-                                    break;
-                                case "SPREAD_OUT":
-                                    forlist.icon = "I_SA_SPREAD_OUT.TGA";
-                                    break;
-                                case "SPRINT":
-                                    forlist.icon = "I_SA_SPRINT.TGA";
-                                    break;
-                                case "STICKY_BOMB":
-                                    forlist.icon = "I_SA_STICKY_BOMB.TGA";
-                                    break;
-                                case "STIM_PACK":
-                                    forlist.icon = "I_SA_STIM_PACK.TGA";
-                                    break;
-                                case "STEALTH":
-                                    forlist.icon = "I_SA_STEALTH.TGA";
-                                    break;
-                                case "STUN":
-                                    forlist.icon = "I_SA_STUN.TGA";
-                                    break;
-                                case "SUMMON":
-                                    forlist.icon = "I_SA_SUMMON.TGA";
-                                    break;
-                                case "SWAP_WEAPONS":
-                                    forlist.icon = "I_SA_FORCE_CLOAK.TGA";
-                                    break;
-                                case "TARGETED_HACK":
-                                    forlist.icon = "I_SA_HACK_TURRET.TGA";
-                                    break;
-                                case "TACTICAL_BRIBE":
-                                    forlist.icon = "I_SA_TACTICAL_BRIBE.TGA";
-                                    break;
-                                case "TARGETED_INVULNERABILITY":
-                                    forlist.icon = "I_SA_FORCE_PROTECT.TGA";
-                                    break;
-                                case "TARGETED_REPAIR":
-                                    forlist.icon = "I_SA_REPAIR_VEHICLE.TGA";
-                                    break;
-                                case "TRACTOR_BEAM":
-                                    forlist.icon = "I_SA_TRACTOR_BEAM.TGA";
-                                    break;
-                                case "TURBO":
-                                    forlist.icon = "I_SA_POWER_TO_ENGINES.TGA";
-                                    break;
-                                case "UNTARGETED_STICKY_BOMB":
-                                    forlist.icon = "I_SA_DROP_BOMB.TGA";
-                                    break;
-                                case "WEAKEN_ENEMY":
-                                    forlist.icon = "I_SA_WEAKEN_ENEMY.TGA";
-                                    break;
-                            }
-                        }
-                        unitabilities.Add(forlist);
-                    }
-                    //else <Unit_Abilities_Data SubObjectList="No"> < Unit_Ability /> does not in fact block inheritance of unit abilities. It might work for regular abilities though?
-                }
-            }
-        }
-        value = unit.SelectSingleNode("descendant::Abilities");
-        if (!(value is null))
-        {
-            XmlNodeList abilityNodes = value.SelectNodes("*");
-            foreach (XmlNode able in abilityNodes)
-            {
-                ability forlist = new ability
-                {
-                    activation = "",
-                    applicable_types = new string[0],
-                    applicable_categories = new string[0],
-                    excluded_types = new string[0],
-                    linkedEntity = "",
-                    sound = "",
-                    recharge = -1,
-                    radius = -1,
-                    minradius = -1,
-                    maxradius = -1,
-                    duration = -1,
-                    genericBool = false,
-                    genericValue = -1,
-                    stacking = -1,
-
-                    damageBonus = 0, //Use the value of having no effect rather than a flag for invalid
-                    defenseBonus = 0,
-                    shieldBonus = 0,
-                    healthBonus = 0,
-                    speedBonus = 0,
-
-                    percentCredits = 0,
-                    absoluteCredits = 0,
-                    priceReduction = 0,
-                    timeReduction = 0,
-                };
-                forlist.type = able.Name;
-                if (able.Attributes is null || able.Attributes.Count == 0) {
-                    entities.readerrors += "\nUnexpected ability " + able.Name + " on unit " + name;
-                    continue;
-                }
-                forlist.name = able.Attributes[0].Value;
-
-                //Widely used generic tags
-                XmlNode abdata = able.SelectSingleNode("descendant::Activation_Style");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.activation = abdata.LastChild.Value.Trim();
-                abdata = able.SelectSingleNode("descendant::Applicable_Unit_Types");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.applicable_types = ReadWhiteSpaceAsCommas(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Excluded_Unit_Types");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.excluded_types = ReadWhiteSpaceAsCommas(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Applicable_Unit_Categories");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.applicable_categories = ReadWhiteSpaceAsCommas(abdata.LastChild.Value.Replace("|",""));
-                abdata = able.SelectSingleNode("descendant::Activation_Min_Range");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.minradius = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Activation_Max_Range");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.maxradius = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Spawned_Object_Type");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.linkedEntity = abdata.LastChild.Value.Trim();
-
-                abdata = able.SelectSingleNode("descendant::SFXEvent_Target_Affected");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
-                if (forlist.sound == "") //Todo check if these are all the sound fields and if they can ever exist simultaneously
-                {
-                    abdata = able.SelectSingleNode("descendant::SFXEvent_Activate");
-                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
-                }
-                if (forlist.sound == "") //Todo check if these are all the sound fields and if they can ever exist simultaneously
-                {
-                    abdata = able.SelectSingleNode("descendant::Activate_SFX");
-                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
-                }
-
-                //command bonus
-                abdata = able.SelectSingleNode("descendant::Damage_Bonus_Percentage");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.damageBonus = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Health_Bonus_Percentage");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.healthBonus = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Shield_Bonus_Percentage");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.shieldBonus = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Defense_Bonus_Percentage");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.defenseBonus = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Movement_Speed_Bonus_Percentage");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.speedBonus = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Stacking_Category");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.stacking = Int32.Parse(abdata.LastChild.Value);
-
-                abdata = able.SelectSingleNode("descendant::FOW_Reveal_Range_Multiplier");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
-
-                //admin
-                abdata = able.SelectSingleNode("descendant::Price_Reduction_Percentage");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.priceReduction = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Time_Reduction_Percentage");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.timeReduction = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Percentage_Income_Modifier");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.percentCredits = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Absolute_Income_Modifier");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.absoluteCredits = Single.Parse(abdata.LastChild.Value);
-
-                //Point defense
-                abdata = able.SelectSingleNode("descendant::Projectile_Types_Targeted");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.applicable_types = ReadWhiteSpaceAsCommas(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Recharge_Time_In_Secs");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.recharge = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Protection_Radius");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.radius = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Defense_Duration_In_Secs");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value);
-
-                //Heal
-                abdata = able.SelectSingleNode("descendant::Heal_Amount");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Heal_Percent");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value); //Might want another variable for this
-                abdata = able.SelectSingleNode("descendant::Heal_Range");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.radius = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Heal_Interval_In_Secs");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.recharge = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Single_Target_Heal");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericBool = !abdata.LastChild.Value.ToLower().Contains("yes");
-
-                //Stun
-                abdata = able.SelectSingleNode("descendant::Stun_Range");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.radius = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Stunned_Particle_Effect");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.linkedEntity = abdata.LastChild.Value.Trim();
-                abdata = able.SelectSingleNode("descendant::Stun_Time_In_Secs");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value);
-
-                //Grenade
-                abdata = able.SelectSingleNode("descendant::Grenade_Type");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.linkedEntity = abdata.LastChild.Value.Trim();
-                abdata = able.SelectSingleNode("descendant::Grenade_Explode_Timer_In_Secs");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value);
-
-                abdata = able.SelectSingleNode("descendant::Bomb_Countdown_Seconds");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value);
-
-                //Reflect/block
-                abdata = able.SelectSingleNode("descendant::Redirect_Chance");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Block_Chance");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.healthBonus = Single.Parse(abdata.LastChild.Value);
-
-                //Absorb
-                abdata = able.SelectSingleNode("descendant::Absorb_Chance");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Damage_Absorb_Percentage");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.healthBonus = Single.Parse(abdata.LastChild.Value);
-                abdata = able.SelectSingleNode("descendant::Damage_Absorb_Amount");
-                if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value);
-
-
-                switch (forlist.type)
-                {
-                    case "Laser_Defense_Ability": //todo, save PD stats to fields in main unit?
-                    break;
-                        //todo get damage on mines, grenades... Also average and target type it
-                        //todo be able to add command bonuses to global list for any number of heroes on the field
-                        /*
-                         * todo interdiction mines documentation. It's just fighter spawn data, right?
-                            Repair fighters needs numbers
-                            Battle mediation and suchlike
-                        UNTARGETED_STICKY_BOMB is entirely a unita bility, not an ability
-                         */
-                }
-
-                abilities.Add(forlist);
-            }
-        }
-        value = unit.SelectSingleNode("descendant::SFXEvent_Build_Started");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Started] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Build_Cancelled");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Cancelled] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Build_Complete");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Complete] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Bombard_Select_Target");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Bombard_Select_Target] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Bombard_Incoming");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Bombard_Incoming] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Tactical_Build_Started");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Started] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Tactical_Build_Complete");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Complete] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Tactical_Build_Cancelled");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Cancelled] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Select");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Select] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Move");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Fleet_Move");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Fleet_Move] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Attack");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Attack] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Guard");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Move] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Assist_Move");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Guard] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Assist_Attack");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Attack] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Health_Low_Warning");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Low_Warning] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Health_Critical_Warning");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Critical_Warning] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Move_Into_Nebula");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Nebula] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Move_Into_Asteroid_Field");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Asteroid_Field] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Engine_Idle_Loop");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Idle_Loop] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Engine_Moving_Loop");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Moving_Loop] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Engine_Cinematic_Focus_Loop");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Cinematic_Focus_Loop] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Damaged_By_Asteroid");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Damaged_By_Asteroid] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Turret_Rotating_Loop");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Turret_Rotating_Loop] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::Death_SFXEvent_Start_Die");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.Death_SFXEvent_Start_Die] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::SFXEvent_Ambient_Moving");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Ambient_Moving] = value.InnerText.Trim();
-        value = unit.SelectSingleNode("descendant::Spin_Away_On_Death_SFXEvent_Start_Die");
-        if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.Spin_Away_On_Death_SFXEvent_Start_Die] = value.InnerText.Trim();
-        values = unit.SelectNodes("descendant::SFXEvent_Attack_Hardpoint");
-        if (values.Count > 0)
-        {
-            foreach (XmlNode effect in values)
-            {
-                {
-                    if (!(effect.LastChild is null))
-                    {
-                        string[] types = ReadWhiteSpaceAsCommas(effect.InnerText);
-                        if(types.Length > 1)
-                        {
-                            if (!SFXEvent_Attack_Hardpoint_Type.Contains(types[0]))
+                            abdata = able.SelectSingleNode("descendant::Alternate_Icon_Name");
+                            if (!(abdata is null) && !(abdata.LastChild is null)) forlist.icon = abdata.LastChild.Value;
+                            else
                             {
-                                SFXEvent_Attack_Hardpoint.Add(types[1]);
-                                SFXEvent_Attack_Hardpoint_Type.Add(types[0]);
-                                SFXEvent_Attack_Hardpoint_BaseID.Add(-1);
+                                switch (forlist.type.ToUpper())
+                                { //Could do a default block for the nontrivial number that are simply I_SA_ namehere .tga, but this is already set up
+                                    case "AREA_EFFECT_CONVERT":
+                                        forlist.icon = "I_SA_JOIN_ME.TGA";
+                                        break;
+                                    case "AREA_EFFECT_HEAL":
+                                        forlist.icon = "I_SA_AREA_HEAL.TGA";
+                                        break;
+                                    case "AREA_EFFECT_STUN":
+                                        forlist.icon = "I_SA_ELECTRONIC_SCRAMBLE.TGA";
+                                        break;
+                                    case "BARRAGE":
+                                        forlist.icon = "I_SA_BARRAGE_AREA.TGA";
+                                        break;
+                                    case "BERSERKER":
+                                        forlist.icon = "I_SA_BERSERKER.TGA";
+                                        break;
+                                    case "BLAST":
+                                        forlist.icon = "I_SA_BLAST.TGA";
+                                        break;
+                                    case "BUZZ_DROIDS":
+                                        forlist.icon = "I_SA_BUZZ_DROIDS.TGA";
+                                        break;
+                                    case "CABLE_ATTACK":
+                                        forlist.icon = "I_SA_TOW_CABLE_ATTACK.TGA";
+                                        break;
+                                    case "CAPTURE_VEHICLE":
+                                        forlist.icon = "I_SA_CAPTURE_VEHICLES.TGA";
+                                        break;
+                                    case "CLUSTER_BOMB":
+                                        forlist.icon = "I_SA_CLUSTER_BOMB.TGA";
+                                        break;
+                                    case "CONCENTRATE_FIRE":
+                                        forlist.icon = "I_SA_ALL_SHIPS_CONCENTRATE_FIRE.TGA";
+                                        break;
+                                    case "CORRUPT_SYSTEMS":
+                                        forlist.icon = "I_SA_CORRUPT_SYSTEMS.TGA";
+                                        break;
+                                    case "DEFEND":
+                                        forlist.icon = "I_SA_DEFEND_MODE.TGA";
+                                        break;
+                                    case "DEPLOY":
+                                        forlist.icon = "I_SA_DEPLOY.TGA"; //TODO figure out when to use I_SA_DEPLOY_SQUAD.TGA
+                                        break;//Randomly switch to I_SA_UNDEPLOY.TGA for the easter egg?
+                                    case "DEPLOY_TROOPERS":
+                                        forlist.icon = "I_SA_DEPLOY_STORMTROOPERS.TGA";
+                                        break;
+                                    case "DETONATE_REMOTE_BOMB":
+                                        forlist.icon = "I_SA_DETONATE_REMOTE_BOMB.TGA";
+                                        break;
+                                    case "DRAIN_LIFE":
+                                        forlist.icon = "I_SA_DRAIN_LIFE.TGA";
+                                        break;
+                                    case "EJECT_VEHICLE_THIEF":
+                                        forlist.icon = "I_SA_CAPTURE_VEHICLES.TGA"; //Not entirely sure if this is right
+                                        break;
+                                    case "ENERGY_WEAPON":
+                                        forlist.icon = "I_SA_FIRE_ENERGY_WEAPON.TGA";
+                                        break;
+                                    case "FIRE_LOBBING_SUPERWEAPON":
+                                        forlist.icon = "";
+                                        break;
+                                    case "FLAME_THROWER":
+                                        forlist.icon = "I_SA_FLAME_THROWER.TGA";
+                                        break;
+                                    case "FORCE_CLOAK":
+                                        forlist.icon = "I_SA_FORCE_CLOAK.TGA";
+                                        break;
+                                    case "FORCE_CONFUSE":
+                                        forlist.icon = "I_SA_FORCE_CONFUSE.TGA";
+                                        break;
+                                    case "FORCE_LIGHTNING":
+                                        forlist.icon = "I_SA_FORCE_LIGHTING.TGA";
+                                        break;
+                                    case "FORCE_SIGHT":
+                                        forlist.icon = "I_SA_FORCE_SIGHT.TGA";
+                                        break;
+                                    case "FORCE_TELEKINESIS":
+                                        forlist.icon = "I_SA_FORCE_CRUSH.TGA";
+                                        break;
+                                    case "FORCE_WHIRLWIND":
+                                        forlist.icon = "I_SA_FORCE_PUSH.TGA";
+                                        break;
+                                    case "FOW_REVEAL_PING":
+                                        forlist.icon = "I_SA_SENSOR_PING.TGA";
+                                        break;
+                                    case "FULL_SALVO":
+                                        forlist.icon = "I_SA_FULL_SALVO.TGA";
+                                        break;
+                                    case "HARMONIC_BOMB":
+                                        forlist.icon = "I_SA_HARMONIC_BOMB.TGA";
+                                        break;
+                                    case "HUNT":
+                                        forlist.icon = "I_SA_HUNT.TGA";
+                                        break;
+                                    case "INFECTION":
+                                        forlist.icon = "I_SA_INFECTION.TGA";
+                                        break;
+                                    case "INTERDICT":
+                                        forlist.icon = "I_SA_INTERDICT.TGA";
+                                        break;
+                                    case "INVULNERABILITY":
+                                        forlist.icon = "I_SA_EVASIVE_MANEUVERS.TGA";
+                                        break;
+                                    case "ION_CANNON_SHOT":
+                                        forlist.icon = "I_SA_ION_CANNON_SHOT.TGA";
+                                        break;
+                                    case "JET_PACK":
+                                        forlist.icon = "I_SA_JETPACK_JUMP.TGA";
+                                        break;
+                                    case "LASER_DEFENSE":
+                                        forlist.icon = "I_SA_LASER_DEFENSE.TGA";
+                                        break;
+                                    case "LEECH_SHIELDS":
+                                        forlist.icon = "I_SA_LEECH_SHIELDS.TGA";
+                                        break;
+                                    case "LUCKY_SHOT":
+                                        forlist.icon = "I_SA_LUCKY_SHOT.TGA";
+                                        break;
+                                    case "LURE":
+                                        forlist.icon = "I_SA_LURE.TGA";
+                                        break;
+                                    case "MAXIMUM_FIREPOWER":
+                                        forlist.icon = "I_SA_MAXIMUM_FIREPOWER.TGA";
+                                        break;
+                                    case "MISSILE_SHIELD":
+                                        forlist.icon = "I_SA_MISSILE_JAMMER.TGA"; //todo sort out I_SA_MISSILE_JAMMING.TGA
+                                        break;
+                                    case "PLACE_REMOTE_BOMB":
+                                        forlist.icon = "I_SA_STICKY_BOMB.TGA";
+                                        break;
+                                    case "POWER_TO_WEAPONS":
+                                        forlist.icon = "I_SA_POWER_TO_WEAPONS.TGA";
+                                        break;
+                                    case "PROXIMITY_MINES":
+                                        forlist.icon = "I_SA_PROXIMITY_MINES.TGA";
+                                        break;
+                                    case "RADIOACTIVE_CONTAMINATE":
+                                        forlist.icon = "I_SA_CONTAMINATE.TGA";
+                                        break;
+                                    case "REPLENISH_WINGMEN":
+                                        forlist.icon = "I_SA_COVER_ME.TGA";
+                                        break;
+                                    case "ROCKET_ATTACK":
+                                        forlist.icon = "I_SA_ROCKET_ATTACK.TGA";
+                                        break;
+                                    case "SELF_DESTRUCT":
+                                        forlist.icon = "I_SA_SELF_DESTRUCT.TGA";
+                                        break;
+                                    case "SABER_THROW":
+                                        forlist.icon = "I_SA_SABER_THROW.TGA";
+                                        break;
+                                    case "SENSOR_JAMMING":
+                                        forlist.icon = "I_SA_SENSOR_JAMMING.TGA";
+                                        break;
+                                    case "SHIELD_FLARE":
+                                        forlist.icon = "I_SA_SHIELD_FLARE.TGA";
+                                        break;
+                                    case "SPOILER_LOCK":
+                                        forlist.icon = "I_SA_S_FOIL_MODE.TGA";
+                                        break;
+                                    case "SPREAD_OUT":
+                                        forlist.icon = "I_SA_SPREAD_OUT.TGA";
+                                        break;
+                                    case "SPRINT":
+                                        forlist.icon = "I_SA_SPRINT.TGA";
+                                        break;
+                                    case "STICKY_BOMB":
+                                        forlist.icon = "I_SA_STICKY_BOMB.TGA";
+                                        break;
+                                    case "STIM_PACK":
+                                        forlist.icon = "I_SA_STIM_PACK.TGA";
+                                        break;
+                                    case "STEALTH":
+                                        forlist.icon = "I_SA_STEALTH.TGA";
+                                        break;
+                                    case "STUN":
+                                        forlist.icon = "I_SA_STUN.TGA";
+                                        break;
+                                    case "SUPER_LASER":
+                                        forlist.icon = "I_SA_FIRE_ENERGY_WEAPON.TGA";
+                                        break;
+                                    case "SUMMON":
+                                        forlist.icon = "I_SA_SUMMON.TGA";
+                                        break;
+                                    case "SWAP_WEAPONS":
+                                        forlist.icon = "I_SA_FORCE_CLOAK.TGA";
+                                        break;
+                                    case "TARGETED_HACK":
+                                        forlist.icon = "I_SA_HACK_TURRET.TGA";
+                                        break;
+                                    case "TACTICAL_BRIBE":
+                                        forlist.icon = "I_SA_TACTICAL_BRIBE.TGA";
+                                        break;
+                                    case "TARGETED_INVULNERABILITY":
+                                        forlist.icon = "I_SA_FORCE_PROTECT.TGA";
+                                        break;
+                                    case "TARGETED_REPAIR":
+                                        forlist.icon = "I_SA_REPAIR_VEHICLE.TGA";
+                                        break;
+                                    case "TRACTOR_BEAM":
+                                        forlist.icon = "I_SA_TRACTOR_BEAM.TGA";
+                                        break;
+                                    case "TURBO":
+                                        forlist.icon = "I_SA_POWER_TO_ENGINES.TGA";
+                                        break;
+                                    case "UNTARGETED_STICKY_BOMB":
+                                        forlist.icon = "I_SA_DROP_BOMB.TGA";
+                                        break;
+                                    case "WEAKEN_ENEMY":
+                                        forlist.icon = "I_SA_WEAKEN_ENEMY.TGA";
+                                        break;
+                                }
                             }
+                            unitabilities.Add(forlist);
                         }
+                        //else <Unit_Abilities_Data SubObjectList="No"> < Unit_Ability /> does not in fact block inheritance of unit abilities. It might work for regular abilities though?
                     }
                 }
             }
-        }
-        values = unit.SelectNodes("descendant::SFXEvent_Hardpoint_Destroyed");
-        if (values.Count > 0)
-        {
-            foreach (XmlNode effect in values)
+            value = unit.SelectSingleNode("descendant::Abilities");
+            if (!(value is null))
             {
+                XmlNodeList abilityNodes = value.SelectNodes("*");
+                foreach (XmlNode able in abilityNodes)
                 {
-                    if (!(effect.LastChild is null))
+                    ability forlist = new ability
                     {
-                        string[] types = ReadWhiteSpaceAsCommas(effect.InnerText);
-                        if (types.Length > 1)
+                        activation = "",
+                        applicable_types = new string[0],
+                        applicable_categories = new string[0],
+                        excluded_types = new string[0],
+                        linkedEntity = "",
+                        sound = "",
+                        recharge = -1,
+                        radius = -1,
+                        minradius = -1,
+                        maxradius = -1,
+                        duration = -1,
+                        genericBool = false,
+                        genericValue = -1,
+                        stacking = -1,
+
+                        damageBonus = 0, //Use the value of having no effect rather than a flag for invalid
+                        defenseBonus = 0,
+                        shieldBonus = 0,
+                        healthBonus = 0,
+                        speedBonus = 0,
+
+                        percentCredits = 0,
+                        absoluteCredits = 0,
+                        priceReduction = 0,
+                        timeReduction = 0,
+                    };
+                    forlist.type = able.Name;
+                    if (able.Attributes is null || able.Attributes.Count == 0)
+                    {
+                        entities.readerrors += "\nUnexpected ability " + able.Name + " on unit " + name;
+                        continue;
+                    }
+                    forlist.name = able.Attributes[0].Value;
+
+                    //Widely used generic tags
+                    XmlNode abdata = able.SelectSingleNode("descendant::Activation_Style");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.activation = abdata.LastChild.Value.Trim();
+                    abdata = able.SelectSingleNode("descendant::Applicable_Unit_Types");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.applicable_types = ReadWhiteSpaceAsCommas(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Excluded_Unit_Types");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.excluded_types = ReadWhiteSpaceAsCommas(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Applicable_Unit_Categories");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.applicable_categories = ReadWhiteSpaceAsCommas(abdata.LastChild.Value.Replace("|", ""));
+                    abdata = able.SelectSingleNode("descendant::Activation_Min_Range");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.minradius = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Activation_Max_Range");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.maxradius = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Spawned_Object_Type");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.linkedEntity = abdata.LastChild.Value.Trim();
+
+                    abdata = able.SelectSingleNode("descendant::SFXEvent_Target_Affected");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
+                    if (forlist.sound == "") //Todo check if these are all the sound fields and if they can ever exist simultaneously
+                    {
+                        abdata = able.SelectSingleNode("descendant::SFXEvent_Activate");
+                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
+                    }
+                    if (forlist.sound == "") //Todo check if these are all the sound fields and if they can ever exist simultaneously
+                    {
+                        abdata = able.SelectSingleNode("descendant::Activate_SFX");
+                        if (!(abdata is null) && !(abdata.LastChild is null)) forlist.sound = abdata.InnerText.Trim();
+                    }
+
+                    abdata = able.SelectSingleNode("descendant::Mine_Type");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.linkedEntity = abdata.LastChild.Value.Trim();
+
+                    //command bonus
+                    abdata = able.SelectSingleNode("descendant::Damage_Bonus_Percentage");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.damageBonus = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Health_Bonus_Percentage");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.healthBonus = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Shield_Bonus_Percentage");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.shieldBonus = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Defense_Bonus_Percentage");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.defenseBonus = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Movement_Speed_Bonus_Percentage");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.speedBonus = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Stacking_Category");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.stacking = ReadIntFromString(abdata.LastChild.Value);
+
+                    abdata = able.SelectSingleNode("descendant::FOW_Reveal_Range_Multiplier");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
+
+                    //admin
+                    abdata = able.SelectSingleNode("descendant::Price_Reduction_Percentage");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.priceReduction = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Time_Reduction_Percentage");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.timeReduction = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Percentage_Income_Modifier");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.percentCredits = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Absolute_Income_Modifier");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.absoluteCredits = Single.Parse(abdata.LastChild.Value);
+
+                    //Point defense
+                    abdata = able.SelectSingleNode("descendant::Projectile_Types_Targeted");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.applicable_types = ReadWhiteSpaceAsCommas(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Recharge_Time_In_Secs");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.recharge = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Protection_Radius");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.radius = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Defense_Duration_In_Secs");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value);
+
+                    //Heal
+                    abdata = able.SelectSingleNode("descendant::Heal_Amount");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Heal_Percent");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value); //Might want another variable for this
+                    abdata = able.SelectSingleNode("descendant::Heal_Range");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.radius = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Heal_Interval_In_Secs");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.recharge = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Single_Target_Heal");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericBool = !abdata.LastChild.Value.ToLower().Contains("yes");
+
+                    //Stun
+                    abdata = able.SelectSingleNode("descendant::Stun_Range");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.radius = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Stunned_Particle_Effect");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.linkedEntity = abdata.LastChild.Value.Trim();
+                    abdata = able.SelectSingleNode("descendant::Stun_Time_In_Secs");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value);
+
+                    //Grenade
+                    abdata = able.SelectSingleNode("descendant::Grenade_Type");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.linkedEntity = abdata.LastChild.Value.Trim();
+                    abdata = able.SelectSingleNode("descendant::Grenade_Explode_Timer_In_Secs");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value);
+
+                    abdata = able.SelectSingleNode("descendant::Bomb_Countdown_Seconds");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value);
+
+                    //Reflect/block
+                    abdata = able.SelectSingleNode("descendant::Redirect_Chance");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Block_Chance");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.healthBonus = Single.Parse(abdata.LastChild.Value);
+
+                    //Absorb
+                    abdata = able.SelectSingleNode("descendant::Absorb_Chance");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.genericValue = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Damage_Absorb_Percentage");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.healthBonus = Single.Parse(abdata.LastChild.Value);
+                    abdata = able.SelectSingleNode("descendant::Damage_Absorb_Amount");
+                    if (!(abdata is null) && !(abdata.LastChild is null)) forlist.duration = Single.Parse(abdata.LastChild.Value);
+
+
+                    switch (forlist.type)
+                    {
+                        case "Laser_Defense_Ability": //todo, save PD stats to fields in main unit?
+                            break;
+                            //todo get damage on mines, grenades... Also average and target type it
+                            //todo be able to add command bonuses to global list for any number of heroes on the field
+                            /*
+                             * todo interdiction mines documentation. It's just fighter spawn data, right?
+                                Repair fighters needs numbers
+                                Battle mediation and suchlike
+                            UNTARGETED_STICKY_BOMB is entirely a unita bility, not an ability
+                             */
+                    }
+
+                    abilities.Add(forlist);
+                }
+            }
+            value = unit.SelectSingleNode("descendant::SFXEvent_Build_Started");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Started] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Build_Cancelled");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Cancelled] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Build_Complete");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Build_Complete] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Bombard_Select_Target");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Bombard_Select_Target] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Bombard_Incoming");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Bombard_Incoming] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Tactical_Build_Started");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Started] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Tactical_Build_Complete");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Complete] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Tactical_Build_Cancelled");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Tactical_Build_Cancelled] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Select");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Select] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Move");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Fleet_Move");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Fleet_Move] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Attack");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Attack] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Guard");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Move] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Assist_Move");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Guard] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Assist_Attack");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Assist_Attack] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Health_Low_Warning");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Low_Warning] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Health_Critical_Warning");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Health_Critical_Warning] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Move_Into_Nebula");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Nebula] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Move_Into_Asteroid_Field");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Move_Into_Asteroid_Field] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Engine_Idle_Loop");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Idle_Loop] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Engine_Moving_Loop");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Moving_Loop] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Engine_Cinematic_Focus_Loop");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Engine_Cinematic_Focus_Loop] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Damaged_By_Asteroid");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Damaged_By_Asteroid] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Turret_Rotating_Loop");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Turret_Rotating_Loop] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::Death_SFXEvent_Start_Die");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.Death_SFXEvent_Start_Die] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::SFXEvent_Ambient_Moving");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.SFXEvent_Ambient_Moving] = value.InnerText.Trim();
+            value = unit.SelectSingleNode("descendant::Spin_Away_On_Death_SFXEvent_Start_Die");
+            if (!(value is null)) basicSFXEvents[(int)basicSoundTypes.Spin_Away_On_Death_SFXEvent_Start_Die] = value.InnerText.Trim();
+            values = unit.SelectNodes("descendant::SFXEvent_Attack_Hardpoint");
+            if (values.Count > 0)
+            {
+                foreach (XmlNode effect in values)
+                {
+                    {
+                        if (!(effect.LastChild is null))
                         {
-                            if (!SFXEvent_Hardpoint_Destroyed_Type.Contains(types[0]))
+                            string[] types = ReadWhiteSpaceAsCommas(effect.InnerText);
+                            if (types.Length > 1)
                             {
-                                SFXEvent_Hardpoint_Destroyed.Add(types[1]);
-                                SFXEvent_Hardpoint_Destroyed_Type.Add(types[0]);
-                                SFXEvent_Hardpoint_Destroyed_BaseID.Add(-1);
+                                if (!SFXEvent_Attack_Hardpoint_Type.Contains(types[0]))
+                                {
+                                    SFXEvent_Attack_Hardpoint.Add(types[1]);
+                                    SFXEvent_Attack_Hardpoint_Type.Add(types[0]);
+                                    SFXEvent_Attack_Hardpoint_BaseID.Add(-1);
+                                }
                             }
                         }
                     }
                 }
             }
-        }
+            values = unit.SelectNodes("descendant::SFXEvent_Hardpoint_Destroyed");
+            if (values.Count > 0)
+            {
+                foreach (XmlNode effect in values)
+                {
+                    {
+                        if (!(effect.LastChild is null))
+                        {
+                            string[] types = ReadWhiteSpaceAsCommas(effect.InnerText);
+                            if (types.Length > 1)
+                            {
+                                if (!SFXEvent_Hardpoint_Destroyed_Type.Contains(types[0]))
+                                {
+                                    SFXEvent_Hardpoint_Destroyed.Add(types[1]);
+                                    SFXEvent_Hardpoint_Destroyed_Type.Add(types[0]);
+                                    SFXEvent_Hardpoint_Destroyed_BaseID.Add(-1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
-        value = unit.SelectSingleNode("descendant::Variant_Of_Existing_Type");
-        if (!(value is null))
-        {
-            variant = fullTrim(value.LastChild.Value);
-        }
-        //else
-        //{//This happens on gunships and I'll need to filter those out before it can be useful
-        //needsvariant = needsvariant; //MessageBox.Show(name + " is missing data and variant of. Panic!");
-        //}
+            value = unit.SelectSingleNode("descendant::Variant_Of_Existing_Type");
+            if (!(value is null))
+            {
+                if (!(value.LastChild is null)) variant = fullTrim(value.LastChild.Value);
+            }
+            //else
+            //{//This happens on gunships and I'll need to filter those out before it can be useful
+            //needsvariant = needsvariant; //MessageBox.Show(name + " is missing data and variant of. Panic!");
+            //}
 
-        unit unidad = new unit
-        {
-            variantof = variant,
-            variantbase = variant, //Stores the high level variantof, unlike the top field which is erased in the detemplating process
-            unitname = name,
-            username = username,
-            elementName = unit.LocalName,
-            icon = icon,
-            bombingRunUnit = bombingRunUnit,
-            cost = cost,
-            buildtime = buildtime,
-            skirmcost = skirmcost,
-            skirmbuildtime = skirmbuildtime,
-            affiliations = affiliations,
-            pop = pop,
-            techlevel = techlevel,
-            locked = locked,
-            reqstructures = reqstructures,
-            reqorbit = reqorbit,
-            cp = cp,
-            maintenance = maintenance,
-            percompany = percompany,
-            companyunits = companyunits,
-            datafile = file,
-            reqfile = file,
-            reqtemplate = name,
-            shield_type = shield_type,
-            armor_type = armor_type,
-            unitclass = unitclass,
-            planets = planets,
-            tooltip = tooltip,
-            crew = crew,
-            shield = shield,
-            regen = regen,
-            hp = hp,
-            gui_row = gui_row,
-            limit_concurrent = limit_concurrent,
-            limit_lifetime = limit_lifetime,
-            limit_planet = limit_planet,
-            speed = speed,
-            min_speed = min_speed,
-            accel = accel,
-            turn = turn,
-            range = range,
-            categories = categories,
-            Hardpoints = Hardpoints,
-            model = model,
-            terrainMaps = terrainMaps,
-            variantchain = new List<string>(),
-            BTS = BTS,
-            transport = transport,
-            garrison_slots = garrison_slots,
-            garrison_value = garrison_value,
-            garrison_type = garrison_type,
-            flags = flags,
-            modebehaviors = modebehaviors,
-            behaviors = behaviors,
-            locomotor_type = locomotor_type,
-            container = container,
-            cost_baseID = -1,
-            pop_baseID = -1,
-            crew_baseID = -1,
-            buildtime_baseID = -1,
-            skirmcost_baseID = -1,
-            skirmbuildtime_baseID = -1,
-            atype_baseID = -1,
-            stype_baseID = -1,
-            hp_baseID = -1,
-            shield_baseID = -1,
-            regen_baseID = -1,
-            gui_row_baseID = -1,
-            concurrent_baseID = -1,
-            lifetime_baseID = -1,
-            planetlimit_baseID = -1,
-            speed_baseID = -1,
-            min_speed_baseID = -1,
-            accel_baseID = -1,
-            turn_baseID = -1,
-            range_baseID = -1,
-            lomotor_baseID = -1,
-            garrisonSlots_baseID = -1,
-            garrisonValue_baseID = -1,
-            garrisonType_baseID = -1,
-            maintenance_baseID = -1,
-            cp_baseID = -1,
-            abilities = abilities,
-            unitabilities = unitabilities,
-            hero = hero,
-            namedhero = namedhero,
-            superweaponkiller = superweaponkiller,
-            uniquespaceunit = uniquespaceunit,
-            uniquegroundunit = uniquegroundunit,
-            builtin = builtin,
-            garrison = garrison,
-            BasicSFXEvents = basicSFXEvents,
-            BasicSFXEvents_baseID = basicSFXEvents_baseID,
-            SFXEvent_Attack_Hardpoint = SFXEvent_Attack_Hardpoint,
-            SFXEvent_Attack_Hardpoint_Type = SFXEvent_Attack_Hardpoint_Type,
-            SFXEvent_Attack_Hardpoint_BaseID = SFXEvent_Attack_Hardpoint_BaseID,
-            SFXEvent_Hardpoint_Destroyed = SFXEvent_Hardpoint_Destroyed,
-            SFXEvent_Hardpoint_Destroyed_Type = SFXEvent_Hardpoint_Destroyed_Type,
-            SFXEvent_Hardpoint_Destroyed_BaseID = SFXEvent_Hardpoint_Destroyed_BaseID,
-        };
+            unit unidad = new unit
+            {
+                variantof = variant,
+                variantbase = variant, //Stores the high level variantof, unlike the top field which is erased in the detemplating process
+                unitname = name,
+                username = username,
+                elementName = unit.LocalName,
+                icon = icon,
+                bombingRunUnit = bombingRunUnit,
+                cost = cost,
+                buildtime = buildtime,
+                skirmcost = skirmcost,
+                skirmbuildtime = skirmbuildtime,
+                affiliations = affiliations,
+                fake_affiliations = new List<string>(),
+                pop = pop,
+                techlevel = techlevel,
+                locked = locked,
+                reqstructures = reqstructures,
+                reqorbit = reqorbit,
+                cp = cp,
+                maintenance = maintenance,
+                percompany = percompany,
+                companyunits = companyunits,
+                datafile = file,
+                reqfile = file,
+                reqtemplate = name,
+                shield_type = shield_type,
+                armor_type = armor_type,
+                unitclass = unitclass,
+                planets = planets,
+                tooltip = tooltip,
+                crew = crew,
+                shield = shield,
+                regen = regen,
+                hp = hp,
+                gui_row = gui_row,
+                limit_concurrent = limit_concurrent,
+                limit_lifetime = limit_lifetime,
+                limit_planet = limit_planet,
+                speed = speed,
+                min_speed = min_speed,
+                accel = accel,
+                turn = turn,
+                range = range,
+                categories = categories,
+                Hardpoints = Hardpoints,
+                model = model,
+                terrainMaps = terrainMaps,
+                variantchain = new List<string>(),
+                BTS = BTS,
+                transport = transport,
+                garrison_slots = garrison_slots,
+                garrison_value = garrison_value,
+                garrison_type = garrison_type,
+                flags = flags,
+                modebehaviors = modebehaviors,
+                behaviors = behaviors,
+                locomotor_type = locomotor_type,
+                container = container,
+                cost_baseID = -1,
+                pop_baseID = -1,
+                crew_baseID = -1,
+                buildtime_baseID = -1,
+                skirmcost_baseID = -1,
+                skirmbuildtime_baseID = -1,
+                atype_baseID = -1,
+                stype_baseID = -1,
+                hp_baseID = -1,
+                shield_baseID = -1,
+                regen_baseID = -1,
+                gui_row_baseID = -1,
+                concurrent_baseID = -1,
+                lifetime_baseID = -1,
+                planetlimit_baseID = -1,
+                speed_baseID = -1,
+                min_speed_baseID = -1,
+                accel_baseID = -1,
+                turn_baseID = -1,
+                range_baseID = -1,
+                lomotor_baseID = -1,
+                garrisonSlots_baseID = -1,
+                garrisonValue_baseID = -1,
+                garrisonType_baseID = -1,
+                maintenance_baseID = -1,
+                ability_baseID = -1,
+                unitability_baseID = -1,
+                hyperspaceSpeed_baseID = -1,
+                highlight_baseID = -1,
+                cp_baseID = -1,
+                abilities = abilities,
+                unitabilities = unitabilities,
+                hero = hero,
+                namedhero = namedhero,
+                superweaponkiller = superweaponkiller,
+                uniquespaceunit = uniquespaceunit,
+                uniquegroundunit = uniquegroundunit,
+                builtin = builtin,
+                garrison = garrison,
+                hyperspaceSpeed = hyperspaceSpeed,
+                highlight = highlight,
+                BasicSFXEvents = basicSFXEvents,
+                BasicSFXEvents_baseID = basicSFXEvents_baseID,
+                SFXEvent_Attack_Hardpoint = SFXEvent_Attack_Hardpoint,
+                SFXEvent_Attack_Hardpoint_Type = SFXEvent_Attack_Hardpoint_Type,
+                SFXEvent_Attack_Hardpoint_BaseID = SFXEvent_Attack_Hardpoint_BaseID,
+                SFXEvent_Hardpoint_Destroyed = SFXEvent_Hardpoint_Destroyed,
+                SFXEvent_Hardpoint_Destroyed_Type = SFXEvent_Hardpoint_Destroyed_Type,
+                SFXEvent_Hardpoint_Destroyed_BaseID = SFXEvent_Hardpoint_Destroyed_BaseID,
+            };
 
-        entities.objects.Add(unidad);
+            entities.objects.Add(unidad);
 
-        /*if (type == 1)
-        {
-            entities.groundCompanies.Add(unidad);
+            /*if (type == 1)
+            {
+                entities.groundCompanies.Add(unidad);
+            }
+            else if (type == 2)
+            {
+                entities.groundUnits.Add(unidad);
+            }
+            else if (type == 3)
+            {
+                entities.spaceHeroes.Add(unidad);
+            }
+            else if (type == 4)
+            {
+                entities.heroCompanies.Add(unidad);
+            }
+            else if (type == 5)
+            {
+                entities.groundHeroes.Add(unidad);
+            }
+            else if (type == 6)
+            {
+                entities.structures.Add(unidad);
+            }
+            /*else if (type == 7)
+            {
+                globals.groundInfantry.Add(unidad);
+            }
+            else if (type == 8)
+            {
+                globals.squadrons.Add(unidad);
+            }
+            else if (type == 9)
+            {
+                globals.upgrades.Add(unidad);
+            }*/
+            /*else
+            {
+                entities.spaceUnits.Add(unidad);
+            }*/
         }
-        else if (type == 2)
+        catch (Exception e)
         {
-            entities.groundUnits.Add(unidad);
+            MessageBox.Show("Error parsing unit " + name +  " in file " + file + "\n" + e.Message + "\n\nParsing will continue, but data will be missing");
         }
-        else if (type == 3)
-        {
-            entities.spaceHeroes.Add(unidad);
-        }
-        else if (type == 4)
-        {
-            entities.heroCompanies.Add(unidad);
-        }
-        else if (type == 5)
-        {
-            entities.groundHeroes.Add(unidad);
-        }
-        else if (type == 6)
-        {
-            entities.structures.Add(unidad);
-        }
-        /*else if (type == 7)
-        {
-            globals.groundInfantry.Add(unidad);
-        }
-        else if (type == 8)
-        {
-            globals.squadrons.Add(unidad);
-        }
-        else if (type == 9)
-        {
-            globals.upgrades.Add(unidad);
-        }*/
-        /*else
-        {
-            entities.spaceUnits.Add(unidad);
-        }*/
 
         return false;
     }
@@ -1882,7 +2025,7 @@ public static class SharedFunctions
         }
         catch (Exception e)
         {
-            MessageBox.Show("Error parsing file " + LastFolderOrFile(path) + "\n" + e.Message + "\n\nParsing will continue, but data will be missing");
+            MessageBox.Show("Error parsing file " + path + "\n" + e.Message + "\n\nParsing will continue, but data will be missing");
         }
         
     }
@@ -2066,7 +2209,7 @@ public static class SharedFunctions
         doc.PreserveWhitespace = true;
         if (path == "")
         {
-            MessageBox.Show("Meg data not found. Data may be missing");
+            MessageBox.Show("Meg data not found. Data may be missing.\n\nNote: submods cannot be loaded without using the Data Files menu to specify main mod data location");
             return;
         }
         doc.Load(path);
@@ -3008,6 +3151,35 @@ public static class SharedFunctions
         return true;
     }
 
+    public static bool squadronsizefilter(unit unit, List<int> sizes)
+    {
+        if (unit.unitname.Contains("_Half"))
+        {
+            if (!sizes.Contains(2)) return false;
+        }
+        else if (unit.unitname.Contains("_Double"))
+        {
+            if (!sizes.Contains(3)) return false;
+        }
+        else if (unit.unitname.Contains("_Triple"))
+        {
+            if (!sizes.Contains(4)) return false;
+        }
+        else if (unit.unitname.Contains("_Third"))
+        {
+            if (!sizes.Contains(5)) return false;
+        }
+        else if (unit.unitname.Contains("_Squadron"))
+        {
+            if (!sizes.Contains(1)) return false;
+        }
+        else
+        {
+            if (!sizes.Contains(0)) return false;
+        }
+        return true;
+    }
+
     public static string ReadXMLElement(string line)
     {
         int start = line.IndexOf(">") + 1;
@@ -3159,281 +3331,6 @@ public static class SharedFunctions
         }
     }
 
-    public static void parsePlanetsTheHardWay(entities entities, bool allplanets = false)
-    {//beating builtin functions for efficiency turns out to be quite difficult
-        string path;
-        if (allplanets) path = entities.modpaths[entities.modpaths.Count - 1] + "\\XML\\Planets.xml";
-        else path = getModFile("XML\\Planets.xml", entities);
-        entities.Planets.Clear();
-        entities.PlanetBounds = 0;
-        string[] lines = File.ReadAllLines(path);
-
-        string codename = "";
-        string username = "";
-        string description = "";
-        string population_desc = "";
-        string fauna = "";
-        float x = 0;
-        float y = 0;
-        int credits = 0;
-        int shipyard = 0;
-        string groundMap = "";
-        string spaceMap = "";
-        string mapTerrain = "";
-        bool has_ground = false;
-
-        for (int i = 0; i < lines.Length; i++)
-        {
-            string line = lines[i];
-
-            if (line.Contains("<Planet Name="))
-            {
-                username = line.Substring(line.IndexOf("\"") + 1, line.IndexOf(">") - line.IndexOf("\"") - 2);
-                description = "";
-                population_desc = "";
-                fauna = "";
-                x = 0;
-                y = 0;
-                credits = 0;
-                shipyard = 0;
-                groundMap = "";
-                spaceMap = "";
-                has_ground = false;
-            }
-            else if (line.Contains("</Planet>"))
-            {
-                planet planet_obj = new planet
-                {
-                    codename = codename,
-                    username = username,
-                    desc_history = description,
-                    x_coord = x,
-                    y_coord = -y, //Inversion intentional
-                    credits = credits,
-                    groundMap = groundMap,
-                    spaceMap = spaceMap,
-                    has_ground = has_ground,
-                    desc_pop = population_desc,
-                    shipyard = shipyard,
-                    desc_fauna = fauna,
-                };
-                entities.Planets.Add(planet_obj);
-            }
-            else if (line.Contains("<Text_ID>")) username = Find_Text_Entry(ReadXMLElement(line), entities);
-            else if (line.Contains("<Galactic_Position>"))
-            {
-                string[] split = ReadWhiteSpaceAsCommas(ReadXMLElement(line));
-                x = Single.Parse(split[0]);
-                y = Single.Parse(split[1]);
-                entities.PlanetBounds = Math.Max(entities.PlanetBounds, x);
-                entities.PlanetBounds = Math.Max(entities.PlanetBounds, -x);
-                entities.PlanetBounds = Math.Max(entities.PlanetBounds, y);
-                entities.PlanetBounds = Math.Max(entities.PlanetBounds, -y);
-            }
-            else if (line.Contains("<Planet_Surface_Accessible>") && line.ToLower().Contains("yes")) has_ground = true;
-            else if (line.Contains("<Planet_Credit_Value>")) credits = (int)Single.Parse(ReadXMLElement(line));
-            else if (line.Contains("<Planet_Ability_Name>"))
-            {
-                switch (ReadXMLElement(line))
-                {
-                    case "TEXT_PLANET_LIGHT":
-                        shipyard = 1;
-                        break;
-                    case "TEXT_PLANET_HEAVY":
-                        shipyard = 2;
-                        break;
-                    case "TEXT_PLANET_CAPITAL":
-                        shipyard = 3;
-                        break;
-                    case "TEXT_PLANET_DREAD":
-                        shipyard = 4;
-                        break;
-                }
-            }
-            else if (line.Contains("<Land_Tactical_Map>"))
-            {
-                groundMap = ReadXMLElement(line);
-                if (groundMap != "")
-                {
-                    string mappath = getModFile("Art\\Maps\\" + groundMap, entities);
-                    if (mappath != "")
-                    {
-                        byte[] data = File.ReadAllBytes(mappath); //byte 46 is terrain type
-                        switch (data[46])
-                        {
-                            default:
-                                mapTerrain = "Temperate";
-                                break;
-                            case 1:
-                                mapTerrain = "Arctic";
-                                break;
-                            case 2:
-                                mapTerrain = "Desert";
-                                break;
-                            case 3:
-                                mapTerrain = "Forest";
-                                break;
-                            case 4:
-                                mapTerrain = "Swamp";
-                                break;
-                            case 5:
-                                mapTerrain = "Volcanic";
-                                break;
-                            case 6:
-                                mapTerrain = "Urban";
-                                break;
-                            case 7:
-                                mapTerrain = "Space";
-                                break;
-                        }
-                    }
-                }
-                else if (line.Contains("<Space_Tactical_Map>")) groundMap = ReadXMLElement(line);
-            }
-        }
-
-        entities.Planets.Sort((s1, s2) => s1.codename.CompareTo(s2.codename));
-    }
-
-    public static void parsePlanetsXMLLoop(entities entities, bool allplanets = false)
-    {//If there were any gains, they were modest
-        string path;
-        if (allplanets) path = entities.modpaths[entities.modpaths.Count-1] + "\\XML\\Planets.xml";
-        else path = getModFile("XML\\Planets.xml", entities);
-        entities.Planets.Clear();
-        entities.PlanetBounds = 0;
-        XmlDocument doc = new XmlDocument();
-        doc.PreserveWhitespace = true;
-        doc.Load(path);
-        XmlNode root = doc.DocumentElement;
-        XmlNodeList planets = root.SelectNodes("*");
-        foreach (XmlNode planet in planets)
-        {
-            string codename = planet.Attributes[0].Value;
-            string username = "";
-            string description = "";
-            string population_desc = "";
-            string fauna = "";
-            float x = 0;
-            float y = 0;
-            int credits = 0;
-            int shipyard = 0;
-            string mapTerrain = "";
-            string groundMap = "";
-            string spaceMap = "";
-            bool has_ground = false;
-
-            XmlNodeList xmlNodes = planet.SelectNodes("*");
-            foreach (XmlNode value in xmlNodes)
-            {
-                switch (value.Name)
-                {
-                    case "Text_ID":
-                        username = Find_Text_Entry(value.InnerText, entities);
-                        break;
-                    case "Galactic_Position":
-                        string[] split = ReadWhiteSpaceAsCommas(value.InnerText);
-                        x = Single.Parse(split[0]);
-                        y = Single.Parse(split[1]);
-                        entities.PlanetBounds = Math.Max(entities.PlanetBounds, x);
-                        entities.PlanetBounds = Math.Max(entities.PlanetBounds, -x);
-                        entities.PlanetBounds = Math.Max(entities.PlanetBounds, y);
-                        entities.PlanetBounds = Math.Max(entities.PlanetBounds, -y);
-                        break;
-                    case "Planet_Surface_Accessible":
-                        if (value.InnerText.ToLower().Contains("yes")) has_ground = true;
-                        break;
-                    case "Describe_History":
-                        description = value.InnerText;
-                        break;
-                    case "Describe_Wildlife":
-                        population_desc = value.InnerText;
-                        break;
-                    case "Planet_Credit_Value":
-                        credits = Int32.Parse(value.InnerText);
-                        break;
-                    case "Planet_Ability_Name":
-                        switch (value.InnerText)
-                        {
-                            case "TEXT_PLANET_LIGHT":
-                                shipyard = 1;
-                                break;
-                            case "TEXT_PLANET_HEAVY":
-                                shipyard = 2;
-                                break;
-                            case "TEXT_PLANET_CAPITAL":
-                                shipyard = 3;
-                                break;
-                            case "TEXT_PLANET_DREAD":
-                                shipyard = 4;
-                                break;
-                        }
-                        break;
-                    case "Land_Tactical_Map":
-                        groundMap = value.InnerText;
-                        if (groundMap != "")
-                        {
-                            string mappath = getModFile("Art\\Maps\\" + groundMap, entities);
-                            if (mappath != "")
-                            {
-                                byte[] data = File.ReadAllBytes(mappath); //byte 46 is terrain type
-                                switch (data[46])
-                                {
-                                    default:
-                                        mapTerrain = "Temperate";
-                                        break;
-                                    case 1:
-                                        mapTerrain = "Arctic";
-                                        break;
-                                    case 2:
-                                        mapTerrain = "Desert";
-                                        break;
-                                    case 3:
-                                        mapTerrain = "Forest";
-                                        break;
-                                    case 4:
-                                        mapTerrain = "Swamp";
-                                        break;
-                                    case 5:
-                                        mapTerrain = "Volcanic";
-                                        break;
-                                    case 6:
-                                        mapTerrain = "Urban";
-                                        break;
-                                    case 7:
-                                        mapTerrain = "Space";
-                                        break;
-                                }
-                            }
-                        }
-                        break;
-                    case "Space_Tactical_Map":
-                        spaceMap = value.InnerText;
-                        break;
-                }
-            }
-
-        planet planet_obj = new planet
-            {
-                codename = codename,
-                username = username,
-                desc_history = description,
-                x_coord = x,
-                y_coord = -y, //Inversion intentional
-                credits = credits,
-                groundMap = groundMap,
-                spaceMap = spaceMap,
-                has_ground = has_ground,
-                desc_pop = population_desc,
-                shipyard = shipyard,
-                desc_fauna = fauna,
-            };
-            entities.Planets.Add(planet_obj);
-        }
-
-        entities.Planets.Sort((s1, s2) => s1.codename.CompareTo(s2.codename));
-    }
-
     public static string getTerrainType(string map, entities entities)
     {
         int terraintype = getTerrainIndex(map, entities);
@@ -3468,7 +3365,7 @@ public static class SharedFunctions
                 corenne = Color.Gray; //"Urban"
                 break;
             case 7:
-                corenne = Color.Blue; //"Space"
+                corenne = Color.RoyalBlue; //"Space"
                 break;
         }
         return corenne;
@@ -3562,6 +3459,7 @@ public static class SharedFunctions
                 XmlNode value = planet.SelectSingleNode("descendant::Text_ID");
                 if (!(value is null))
                 {
+                    if (!Text_Entry_Exists(value.InnerText, entities)) entities.readerrors += "\nText " + value.InnerText + " not found for " + codename;
                     username = Find_Text_Entry(value.InnerText, entities);
                 }
                 value = planet.SelectSingleNode("descendant::Galactic_Position");
@@ -3584,21 +3482,25 @@ public static class SharedFunctions
                 if (!(value is null))
                 {
                     description = value.InnerText;
+                    if (!Text_Entry_Exists(value.InnerText, entities)) entities.readerrors += "\nText " + value.InnerText + " not found for " + codename;
                 }
                 value = planet.SelectSingleNode("descendant::Describe_Population");
                 if (!(value is null))
                 {
                     population_desc = value.InnerText;
+                    if (!Text_Entry_Exists(value.InnerText, entities)) entities.readerrors += "\nText " + value.InnerText + " not found for " + codename;
                 }
                 value = planet.SelectSingleNode("descendant::Describe_Wildlife");
                 if (!(value is null))
                 {
                     fauna = value.InnerText;
+                    if (!Text_Entry_Exists(value.InnerText, entities)) entities.readerrors += "\nText " + value.InnerText + " not found for " + codename;
                 }
                 value = planet.SelectSingleNode("descendant::Encyclopedia_Weather_Name");
                 if (!(value is null))
                 {
                     weather = value.InnerText;
+                    if (value.InnerText != "" && !Text_Entry_Exists(value.InnerText, entities)) entities.readerrors += "\nText " + value.InnerText + " not found for " + codename;
                     if (weather.Contains("_TRADE")) tradehub = true;
 
                 }
@@ -3615,17 +3517,17 @@ public static class SharedFunctions
                 value = planet.SelectSingleNode("descendant::Special_Structures_Land");
                 if (!(value is null))
                 {
-                    land_structures = Int32.Parse(value.InnerText);
+                    land_structures = ReadIntFromString(value.InnerText);
                 }
                 value = planet.SelectSingleNode("descendant::Max_Space_Base");
                 if (!(value is null))
                 {
-                    max_starbase = Int32.Parse(value.InnerText);
+                    max_starbase = ReadIntFromString(value.InnerText);
                 }
                 value = planet.SelectSingleNode("descendant::Additional_Population_Capacity");
                 if (!(value is null))
                 {
-                    pop = Int32.Parse(value.InnerText);
+                    pop = ReadIntFromString(value.InnerText);
                 }
                 value = planet.SelectSingleNode("descendant::Planet_Ability_Name");
                 if (!(value is null))
@@ -4048,6 +3950,511 @@ public static class SharedFunctions
 
     }
 
+    public static void parseMovies(entities entities)
+    {
+        entities.movies.Clear();
+        XmlDocument mvdoc = readModXmlOrMeg("XML\\Movies.xml", entities);
+        XmlNode mvroot = mvdoc.DocumentElement;
+
+        XmlNodeList mvdata = mvroot.SelectNodes("*");
+
+        foreach (XmlNode mvdat in mvdata)
+        {
+            string name = mvdat.Attributes[0].Value;
+            string file = "";
+            System.Xml.XmlNode value = mvdat.SelectSingleNode("descendant::Movie_File");
+            if (!(value is null))
+            {
+                if(!(value.LastChild is null))
+                {
+                    file = value.LastChild.Value.Trim();
+                }
+            }
+            movieLoop movie = new movieLoop
+            {
+                name = name,
+                file = file,
+            };
+            entities.movies.Add(movie);
+        }
+    }
+
+    public static List<LuaLibrarySegment> GenericLuaPartialLibraryParse(string[] Library, int startline, int endline)
+    {
+        List<LuaLibrarySegment> corenne = new List<LuaLibrarySegment>();
+        int nestedLevel = 0;
+        int decrement = 0;
+        for (int linenumber = startline; linenumber < endline; linenumber++)
+        {
+            string line = Library[linenumber];
+            string nocomment = line;
+            string comment = "";
+            int comm = nocomment.IndexOf("--");
+            if (comm >= 0)
+            {
+                nocomment = line.Substring(0, comm);
+                comment = line.Substring(comm + 2, line.Length - comm - 3);
+            }
+            string temp = nocomment.Replace("\\\"", ((char)1).ToString());
+            string reconstucted = "";
+            string[] segs = temp.Split('"');
+            for (int i = 0; i < segs.Length; i++)
+            {
+                if (i % 2 == 0) reconstucted += segs[i].Replace("\"", "").Replace("[", "").Replace("]", ""); //Need to handle the ["name"] syntax. " is unhelpful in the final string vars too
+                else reconstucted += segs[i].Replace(',', (char)2).Replace('=', (char)3).Replace('{', (char)4).Replace('}', (char)5); //Temporarily replace values within a string so the remainder are consistenly control chars
+            }
+
+            segs = reconstucted.Split(',');
+            foreach (string seg in segs)
+            {
+                nestedLevel += seg.Count(c => c == '{');
+                decrement = seg.Count(c => c == '}');
+
+                string trueseg = seg.Trim();
+                if (trueseg.Length > 0 || decrement > 0) //ignore empty lines that still picked up indententation and empty splits when a line ends with a comma
+                {
+                    trueseg = trueseg.Replace("{", "").Replace("}", ""); //Need to keep functional braces so individual changes in nesting can be detected by as the happen rather than checking that things jumped as }, was skipped 
+                    string variable = "";
+                    string value = "";
+                    string[] split = trueseg.Replace(((char)1).ToString(), "\\\"").Replace((char)2, ',').Replace((char)4, '{').Replace((char)5, '}').Split('=');
+                    if (split.Length > 1)
+                    {
+                        variable = split[0].Trim();
+                        value = split[1].Trim().Replace((char)3, '=');
+                    }
+                    else value = split[0].Trim();
+                    LuaLibrarySegment segment = new LuaLibrarySegment
+                    {
+                        nesting = nestedLevel,
+                        decrement = decrement,
+                        linenumber = linenumber,
+                        fullLine = nocomment,
+                        comment = comment,
+                        segment = trueseg,
+                        variable = variable,
+                        value = value,
+                    };
+                    corenne.Add(segment);
+                }
+                nestedLevel -= decrement;
+            }
+        }
+        return corenne;
+    }
+
+    public static List<LuaLibrarySegment> GenericLuaLibraryParse(string CorePath, entities entities)
+    {
+        List<LuaLibrarySegment> corenne = new List<LuaLibrarySegment>();
+        string path = getModFile("Scripts\\Library\\FavourRewards.lua", entities);
+        if (path != "") //fail return for getModFile
+        {
+            string[] Lib = File.ReadAllLines(path);
+            corenne = GenericLuaPartialLibraryParse(Lib, 0, Lib.Length);
+        }
+
+        return corenne;
+    }
+
+    public static string UsernameFromUnitname(string unitname, entities entities)
+    {
+        string corenne = unitname;
+        unit unit = Entities_ObjectsFirstOrDefault(unitname, entities);
+        if (!(unit.unitname is null)) return unit.username;
+        return corenne;
+    }
+
+    public static unit Entities_ObjectsFirstOrDefault(string unitname, entities entities)
+    {
+        if(entities.objecthashes.Count == 0) entities.objecthashes = setUnitHashes(entities.objects);
+        int index = LookupUntemplateID(unitname);
+        if (index < entities.objecthashes.Count)
+        {
+            foreach (int cachedindex in entities.objecthashes[index])
+            {
+                unit unidad2 = entities.objects[cachedindex];
+                if (String.Equals(unidad2.unitname, unitname, StringComparison.OrdinalIgnoreCase)) return unidad2;
+            }
+        }
+        return new unit(); ;
+    }
+
+    public static unit FindUnitAddFakeAffils(string unitname, string faction, entities entities)
+    {
+        int id = entities.spaceHeroes.FindIndex(s => String.Equals(s.unitname, unitname, StringComparison.OrdinalIgnoreCase));
+        unit unit = new unit();
+        if (id >= 0)
+        {
+            unit = entities.spaceHeroes[id];
+            unit.fake_affiliations.Add(faction);
+            entities.spaceHeroes[id] = unit;
+        }
+        else
+        {
+            unit = Entities_ObjectsFirstOrDefault(unitname, entities);
+        }
+        return unit;
+    }
+
+    public static void parseGovernment(entities entities)
+    {
+        //todo read Custom lib for fake affiliations
+        entities.FavorTracks.Clear();
+
+        List <LuaLibrarySegment> FavorLib = GenericLuaLibraryParse("Scripts\\Library\\FavourRewards.lua", entities);
+        FavorTrack Track = new FavorTrack();
+        Track.supports = new List<FavorSupport>();
+        Track.buildables = new List<FavorBuildable>();
+        Track.spawns = new List<FavorSpawn>();
+        FavorSupport support = new FavorSupport();
+        FavorBuildable buildable = new FavorBuildable();
+        FavorSpawn spawn = new FavorSpawn();
+        bool supportmode = false;
+        bool buildablemode = false;
+        bool spawnmode = false;
+        int oldnest = 0;
+        
+        foreach (LuaLibrarySegment segment in FavorLib)
+        {
+            int nest = segment.nesting - segment.decrement; //the original logic was set up before decrements. Could fix more consistently, but this works
+            if (nest == 2 && oldnest == 3)
+            {
+                entities.FavorTracks.Add(Track);
+                Track = new FavorTrack();
+                Track.supports = new List<FavorSupport>();
+                Track.buildables = new List<FavorBuildable>();
+                Track.spawns = new List<FavorSpawn>();
+            }
+            if (nest == 3 && oldnest == 2)
+            {
+                Track.integratee = segment.variable;
+            }
+            if (segment.variable == "faction_name")
+            {
+                Track.faction = segment.value;
+            }
+            else if (segment.variable == "favour_rename")
+            {
+                Track.rename = segment.value;
+            }
+            else if (nest == 3 && segment.variable == "integrates")
+            {
+                Track.integrates = segment.value == "true";
+            }
+            else if (nest == 4 && segment.variable == "integration_speech")
+            {
+                Track.integrateSpeech = segment.value;
+            }
+            else if (nest == 3 && segment.variable == "name")
+            {
+                Track.name = segment.value;
+            }
+            else if (nest == 3 && segment.variable == "max_value")
+            {
+                int.TryParse(segment.value, out Track.maxFavor);
+            }
+            else if (supportmode)
+            {
+                if (nest == 3) supportmode = false;
+                else if (segment.variable == "name")
+                {
+                    support.unit = segment.value;
+                    unit unit = Entities_ObjectsFirstOrDefault(support.unit, entities);
+                    if (unit.unitname is null)
+                    {
+                        support.username = support.unit;
+                        support.desc = "";
+                    }
+                    else
+                    {
+                        support.username = unit.username;
+                        support.desc = unit.tooltip;
+                    }
+                    
+                }
+                else if (segment.variable == "value")
+                {
+                     int.TryParse(segment.value, out support.value);
+                }
+                else if (segment.variable == "locks")
+                {
+                    support.locks = segment.value == "true";
+                }
+
+                if (nest == 4 && oldnest == 5)
+                {
+                    Track.supports.Add(support);
+                    support = new FavorSupport();
+                }
+            }
+            else if (segment.variable == "support_buildables")
+            {
+                supportmode = true;
+            }
+            else if (buildablemode)
+            {
+                if (nest == 3) buildablemode = false;
+                else if (segment.variable == "unit")
+                {
+                    buildable.unit = segment.value;
+                    buildable.username = UsernameFromUnitname(segment.value, entities);
+                }
+                else if (segment.variable == "threshold")
+                {
+                    int.TryParse(segment.value, out buildable.threshold);
+                }
+                else if (segment.variable == "tag")
+                {
+                    buildable.tag = segment.value;
+                }
+
+                if (nest == 4 && oldnest == 5)
+                {
+                    Track.buildables.Add(buildable);
+                    buildable = new FavorBuildable();
+                }
+            }
+            else if (segment.variable == "reward_list")
+            {
+                buildablemode = true;
+            }
+            else if (spawnmode)
+            {
+                if (nest == 3) spawnmode = false;
+                else if (segment.value == "" && segment.variable != "")
+                {
+                    string faction = ""; //Convert uppercase to normally used capitalization
+                    foreach(faction fac in entities.factions)
+                    {
+                        if(String.Equals(fac.codename, Track.faction, StringComparison.OrdinalIgnoreCase))
+                        {
+                            faction = fac.codename;
+                            break;
+                        }
+                    }
+                    spawn.unit = segment.variable;
+                    unit unit = FindUnitAddFakeAffils(spawn.unit, faction, entities);
+                    if (unit.unitname is null) spawn.username = spawn.unit;
+                    else spawn.username = unit.username;
+                }
+                else if (segment.variable == "threshold")
+                {
+                    int.TryParse(segment.value, out spawn.threshold);
+                }
+                else if (segment.variable == "tag")
+                {
+                    spawn.tag = segment.value;
+                }
+
+                if (nest == 4 && oldnest == 5)
+                {
+                    Track.spawns.Add(spawn);
+                    spawn = new FavorSpawn();
+                }
+            }
+            else if (segment.variable == "spawned_rewards")
+            {
+                spawnmode = true;
+            }
+
+            oldnest = nest;
+        }
+
+        entities.CommandStaffs.Clear();
+        string cmd = getModFile("Scripts\\Library\\eawx-plugins\\republic-heroes\\RepublicHeroes.lua",entities);
+        if(cmd != "")
+        {
+            string[] cmdscript = File.ReadAllLines(cmd);
+            int cmdstart = 0;
+            int cdmend = 0;
+            for (int linenum = 0; linenum < cmdscript.Length; linenum++)
+            {
+                string line = cmdscript[linenum];
+                if (line.Contains(":subscribe") || line.Contains("self.library")) cmdstart = linenum; //skip the headers, skipping .library syncs the indents of a rework within the 3.5 cycle
+                if (line.Contains("fighter_assigns") || line.Contains("function") && !line.Contains("herokilled_finished_event"))
+                {
+                    cdmend = linenum;
+                    break;
+                }
+            }
+            List<LuaLibrarySegment> cmdlib = GenericLuaPartialLibraryParse(cmdscript, cmdstart + 1, cdmend);
+            oldnest = 0;
+            int liststate = 0;
+            CommandStaff staff = new CommandStaff();
+            staff.staff = new List<CommandStaffer>();
+            CommandStaffer staffer = new CommandStaffer();
+            staffer.forms = new List<unit>();
+            staffer.enable = new List<string>();
+            staffer.disable = new List<string>();
+            List<string> avails = new List<string>();
+            bool availmode = false;
+
+            foreach (LuaLibrarySegment segment in cmdlib)
+            {
+                if ((oldnest) == 0 && segment.nesting == 1)
+                {
+                    if (staff.staff.Count > 0)
+                    {
+                        for (int i = 0; i < staff.staff.Count; i++)
+                        {
+                            CommandStaffer staf = staff.staff[i];
+                            if (avails.Contains(staf.tag))
+                            {
+                                staf.enable.Add("Default");
+                                staff.staff[i] = staf;
+                            }
+                            if (staff.faction != "")
+                            {
+                                foreach (unit form in staf.forms) FindUnitAddFakeAffils(form.unitname, staff.faction, entities); //There is no guarantee faction is defined when forms are originally found
+                            }
+                        }
+                        entities.CommandStaffs.Add(staff);
+                        staff = new CommandStaff();
+                        staff.staff = new List<CommandStaffer>();
+                    }
+                    staff.name = segment.variable;
+                }
+                else if (segment.variable == "total_slots") int.TryParse(segment.value, out staff.total_slots);
+                else if (segment.variable == "vacant_limit") int.TryParse(segment.value, out staff.vacant_limit);
+                else if (segment.variable == "active_player")
+                {
+                    staff.faction = segment.value.Replace("Find_Player(", "").Replace(")", "");
+                }
+                else if (segment.variable == "extra_name") staff.extra = Entities_ObjectsFirstOrDefault(segment.value, entities);
+                else if (segment.variable == "random_name") staff.random = Entities_ObjectsFirstOrDefault(segment.value, entities);
+                else if ((liststate == 1 || liststate == 3) && segment.nesting == 4)
+                {
+                    if (!segment.value.Contains("_RETIRE"))
+                    {
+                        unit unit = Entities_ObjectsFirstOrDefault(segment.value, entities);
+                        if (String.Equals(unit.unitname, segment.value, StringComparison.OrdinalIgnoreCase))
+                        {
+                            unit.sortstring = unit.unitname;
+                            staffer.forms.Add(unit);
+                        }
+                    }
+                }
+                else if (liststate == 1 && segment.nesting == 3) liststate = 2;
+                else if (segment.nesting == 4 && segment.variable == "Companies")
+                {
+                    liststate = 3;
+                    staffer.forms.Clear(); //ignore units if companies are defined later
+                }
+                else if (segment.nesting == 3 && liststate == 0)
+                {
+                    staffer.tag = segment.variable;
+                    liststate = 1;
+                    staffer.assign = Entities_ObjectsFirstOrDefault(segment.value, entities);
+                }
+                if (liststate > 0 && (segment.nesting - segment.decrement) == 2)
+                {
+                    liststate = 0;
+                    staff.staff.Add(staffer);
+                    staffer = new CommandStaffer();
+                    staffer.forms = new List<unit>();
+                    staffer.enable = new List<string>();
+                    staffer.disable = new List<string>();
+                }
+                else if (segment.variable == "available_list")
+                {
+                    if (segment.value != "") avails.Add(segment.value);
+                    availmode = true;
+                }
+                if (availmode)
+                {
+                    if ((segment.nesting - segment.decrement) == 1) availmode = false;
+                    else if (segment.value != "") avails.Add(segment.value);
+                }
+
+                oldnest = segment.nesting - segment.decrement; //} cannot apply to the contents of a segment itself, but does apply to the next one
+            }
+            if (entities.CommandStaffs[entities.CommandStaffs.Count - 1].name != staff.name) entities.CommandStaffs.Add(staff); //The last one listed may not be picked up by the check condition
+
+            string functionname = "";
+            bool initmode = false;
+            string techlevel = "";
+            for (int linenum = cdmend; linenum < cmdscript.Length; linenum++)
+            {
+                string line = cmdscript[linenum];
+                if (line.Contains("function"))
+                {
+                    int startindex = line.IndexOf(':');
+                    if (startindex < 0) startindex = line.IndexOf(' ');
+                    startindex++;
+                    int endex = line.IndexOf('(');
+                    if (endex < 0) endex = line.Length - 1;
+                    functionname = line.Substring(startindex, endex - startindex);
+                    initmode = false;
+                    techlevel = "";
+                }
+                if (line.Contains("init_hero_system"))
+                {
+                    initmode = true;
+                }
+                if (initmode)
+                {
+                    if (line.Contains("tech_level") || line.Contains("Era_Transitions"))
+                    {
+                        int start = line.IndexOf("tech_level");
+                        techlevel = " " + line.Substring(start, line.Length - start).Replace("then", "").TrimEnd();
+                    }
+                    if (line.Contains("current_year"))
+                    {
+                        int start = line.IndexOf("current_year");
+                        techlevel = " " + line.Substring(start, line.Length - start).Replace("then", "").TrimEnd();
+                    }
+                    if (line.Contains("end")) techlevel = "";
+                }
+                if (line.Contains("new_era_number"))
+                {
+                    int start = line.IndexOf("new_era_number");
+                    techlevel = " " + line.Substring(start, line.Length - start).Replace("then", "").TrimEnd();
+                }
+                if (line.Contains("Handle_Hero_Add"))
+                {
+                    foreach (CommandStaff command in entities.CommandStaffs)
+                    {
+                        if (line.Contains(command.name))
+                        {
+                            for (int i = 0; i < command.staff.Count; i++)
+                            {
+                                CommandStaffer staf = command.staff[i];
+                                if (line.Contains(staf.tag))
+                                {
+                                    string condition = functionname;
+                                    if (techlevel != "") condition += techlevel;
+                                    staf.enable.Add(condition);
+                                    command.staff[i] = staf;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (line.Contains("Handle_Hero_Exit"))
+                {
+                    foreach (CommandStaff command in entities.CommandStaffs)
+                    {
+                        if (line.Contains(command.name))
+                        {
+                            for (int i = 0; i < command.staff.Count; i++)
+                            {
+                                CommandStaffer staf = command.staff[i];
+                                if (line.Contains(staf.tag))
+                                {
+                                    string condition = functionname;
+                                    if (techlevel != "") condition += techlevel;
+                                    staf.disable.Add(condition);
+                                    command.staff[i] = staf;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        bool visible = true;
+    }
+
     public static List<quantizedObject> quantizedAdd(List<quantizedObject> l, quantizedObject q)
     {
         for(int i = 0; i < l.Count; i++)
@@ -4325,8 +4732,31 @@ public static class SharedFunctions
                                 {
                                     needs_templates = true; //Another iteration required
                                 }
-                                if (unidad.abilities.Count == 0) unidad.abilities = unidad2.abilities;
-                                if (unidad.unitabilities.Count == 0) unidad.unitabilities = unidad2.unitabilities;
+                                if (unidad.buildtime < 0)
+                                {
+                                    unidad.buildtime = unidad2.buildtime;
+                                    unidad.buildtime_baseID = unidad2.buildtime_baseID + 1;
+                                }
+                                if (unidad.hyperspaceSpeed < 0)
+                                {
+                                    unidad.hyperspaceSpeed = unidad2.hyperspaceSpeed;
+                                    unidad.hyperspaceSpeed_baseID = unidad2.hyperspaceSpeed_baseID + 1;
+                                }
+                                if (unidad.highlight != "")
+                                {
+                                    unidad.highlight = unidad2.highlight;
+                                    unidad.highlight_baseID = unidad2.highlight_baseID + 1;
+                                }
+                                if (unidad.abilities.Count == 0)
+                                {
+                                    unidad.abilities = unidad2.abilities;
+                                    unidad.ability_baseID = unidad2.ability_baseID + 1;
+                                }
+                                if (unidad.unitabilities.Count == 0)
+                                {
+                                    unidad.unitabilities = unidad2.unitabilities;
+                                    unidad.unitability_baseID = unidad2.unitability_baseID + 1;
+                                }
                                 if (unidad.builtin.hpType is null) unidad.builtin = unidad2.builtin;
                                 else {
                                     //Handle definitions of a builtin that partially inherit
@@ -4448,6 +4878,10 @@ public static class SharedFunctions
             if (unidad.garrison_slots < 0) unidad.garrisonSlots_baseID = -1;
             if (unidad.garrison_type == "") unidad.garrisonType_baseID = -1;
             if (unidad.garrison_value < 0) unidad.garrisonValue_baseID = -1;
+            if (unidad.hyperspaceSpeed < 0) unidad.hyperspaceSpeed_baseID = -1;
+            if (unidad.highlight == "") unidad.highlight_baseID = -1;
+            if (unidad.abilities.Count == 0) unidad.ability_baseID = -1;
+            if (unidad.unitabilities.Count == 0) unidad.unitability_baseID = -1;
             for (int sfxid = 0; sfxid < unidad.BasicSFXEvents.Length; sfxid++)
             {
                 if (unidad.BasicSFXEvents[sfxid] == "") unidad.BasicSFXEvents_baseID[sfxid] = -1;
@@ -4538,31 +4972,99 @@ public static class SharedFunctions
         entities.structures.Clear();
         entities.containers.Clear();
 
-        foreach(unit entity in entities.objects) //I love consistency!
+        bool parsearmor = false;
+        //if (entities.GroundArmors.Count == 0 && entities.SpaceArmors.Count == 0) parsearmor = true; //todo redo matrix once values are found
+
+        foreach (unit entity in entities.objects) //I love consistency!
         {
             if (!IsHiddenObject(entity))
             {
                 if (entity.behaviors.Contains("DUMMY_GROUND_STRUCTURE") || entity.modebehaviors.Contains("DUMMY_GROUND_STRUCTURE"))
                 {
                     entities.structures.Add(entity);
+                    if (parsearmor)
+                    {
+                        if (entity.armor_type != "" && !entities.GroundArmors.Contains(entity.armor_type)) entities.GroundArmors.Add(entity.armor_type);
+                        if (entity.shield_type != "" && !entities.GroundShields.Contains(entity.shield_type)) entities.GroundShields.Add(entity.shield_type);
+                    }
+                    foreach(string cat in entity.categories)
+                    {
+                        if (cat != "" && !entities.GroundCategories.Contains(cat)) entities.GroundCategories.Add(cat);
+                    }
                 }
                 else if ((entity.behaviors.Contains("DUMMY_ORBITAL_STRUCTURE") || entity.modebehaviors.Contains("DUMMY_ORBITAL_STRUCTURE")) && (entity.elementName != "W_DummyStructure" || entity.elementName != "MiscObject"))
                 {
                     entities.spaceStructures.Add(entity);
+                    if (parsearmor)
+                    {
+                        if (entity.armor_type != "" && !entities.SpaceArmors.Contains(entity.armor_type)) entities.SpaceArmors.Add(entity.armor_type);
+                        if (entity.shield_type != "" && !entities.SpaceShields.Contains(entity.shield_type)) entities.SpaceShields.Add(entity.shield_type);
+                    }
+                    foreach (string cat in entity.categories)
+                    {
+                        if (cat != "" && !entities.SpaceCategories.Contains(cat)) entities.SpaceCategories.Add(cat);
+                    }
                 }
                 else if (entity.fightermode == 0 || entity.behaviors.Contains("SIMPLE_SPACE_LOCOMOTOR") || entity.modebehaviors.Contains("SIMPLE_SPACE_LOCOMOTOR"))
                 {
                     if (entity.hero) entities.spaceHeroes.Add(entity);
                     else entities.spaceUnits.Add(entity);
+
+                    if (parsearmor)
+                    {
+                        if (entity.armor_type != "" && !entities.SpaceArmors.Contains(entity.armor_type)) entities.SpaceArmors.Add(entity.armor_type);
+                        if (entity.shield_type != "" && !entities.SpaceShields.Contains(entity.shield_type)) entities.SpaceShields.Add(entity.shield_type);
+                    }
+                    foreach (string cat in entity.categories)
+                    {
+                        if (cat != "" && !entities.SpaceCategories.Contains(cat)) entities.SpaceCategories.Add(cat);
+                    }
                 }
                 else if (entity.fightermode > 0 || entity.behaviors.Contains("DUMMY_SPACE_FIGHTER_SQUADRON") || entity.modebehaviors.Contains("DUMMY_SPACE_FIGHTER_SQUADRON"))
                 {
                     entities.fighters.Add(entity);
+
+                    //random error checking section!
+                    if(entity.bombingRunUnit != "") //todo check actual bomber trigger. Is_Bomber?
+                    {
+                        unit land = Entities_ObjectsFirstOrDefault(entity.bombingRunUnit, entities);
+                        if (land.unitname is null) entities.readerrors += "\nCannot find land bombing run unit " + entity.bombingRunUnit + " for bomber type " + entity.unitname;
+                        else
+                        {
+                            if(!(land.behaviors.Contains("LANDBOMBER_LOCOMOTOR") || land.modebehaviors.Contains("LANDBOMBER_LOCOMOTOR"))) entities.readerrors += "\nNo LANDBOMBER_LOCOMOTOR on " + land.unitname + " linked to  " + entity.unitname;
+                            if (land.model == "") entities.readerrors += "\nNo model defined for unit " + land.unitname;
+                            else
+                            {
+                                string datafile = getModFile("Art\\Models\\" + land.model, entities);
+                                if(datafile == "") entities.readerrors += "\nCannot find model " + land.model + " for unit " + land.unitname;
+                            }
+                        }
+                    }
+
+                    if (parsearmor)
+                    {
+                        if (entity.armor_type != "" && !entities.SpaceArmors.Contains(entity.armor_type)) entities.SpaceArmors.Add(entity.armor_type);
+                        if (entity.shield_type != "" && !entities.SpaceShields.Contains(entity.shield_type)) entities.SpaceShields.Add(entity.shield_type);
+                    }
+                    foreach (string cat in entity.categories)
+                    {
+                        if (cat != "" && !entities.SpaceCategories.Contains(cat)) entities.SpaceCategories.Add(cat);
+                    }
                 }
                 else if (entity.percompany > 0)
                 {
                     if (entity.hero) entities.heroCompanies.Add(entity);
                     else entities.groundCompanies.Add(entity);
+
+                    if (parsearmor)
+                    {
+                        if (entity.armor_type != "" && !entities.GroundArmors.Contains(entity.armor_type)) entities.GroundArmors.Add(entity.armor_type);
+                        if (entity.shield_type != "" && !entities.GroundShields.Contains(entity.shield_type)) entities.GroundShields.Add(entity.shield_type);
+                    }
+                    foreach (string cat in entity.categories)
+                    {
+                        if (cat != "" && !entities.GroundCategories.Contains(cat)) entities.GroundCategories.Add(cat);
+                    }
                 }
                 else if (entity.behaviors.Contains("LAND_TEAM_CONTAINER_LOCOMOTOR") || entity.modebehaviors.Contains("LAND_TEAM_CONTAINER_LOCOMOTOR"))
                 {
@@ -4572,6 +5074,15 @@ public static class SharedFunctions
                 {
                     if (entity.hero) entities.groundHeroes.Add(entity);
                     else entities.groundUnits.Add(entity);
+                    if (parsearmor)
+                    {
+                        if (entity.armor_type != "" && !entities.GroundArmors.Contains(entity.armor_type)) entities.GroundArmors.Add(entity.armor_type);
+                        if (entity.shield_type != "" && !entities.GroundShields.Contains(entity.shield_type)) entities.GroundShields.Add(entity.shield_type);
+                    }
+                    foreach (string cat in entity.categories)
+                    {
+                        if (cat != "" && !entities.GroundCategories.Contains(cat)) entities.GroundCategories.Add(cat);
+                    }
                 }
             }
         }
@@ -5633,6 +6144,11 @@ public static class SharedFunctions
         proj = proj.Replace("_Yellow", "").Replace("_yellow", "");
         proj = proj.Replace("_Purple", "").Replace("_purple", "");
         proj = proj.Replace("_Silver", "").Replace("_silver", "");
+        proj = proj.Replace("_Cyan", "").Replace("_cyan", "");
+        proj = proj.Replace("_Gold", "").Replace("_gold", "");
+
+        proj = proj.Replace("_Line2", "").Replace("_line2", "");
+        proj = proj.Replace("_Line", "").Replace("_line", "");
 
         return proj;
     }
@@ -6009,7 +6525,8 @@ public static class SharedFunctions
                 break;
             case "PD_Ion":
                 expectedRange = 1500;
-                ExpectedAccuracy = MedLaserAccs();
+                if(entities.version >= 35) ExpectedAccuracy = LightLaserAccs();
+                else ExpectedAccuracy = MedLaserAccs();
                 break;
             case "DamageS_Turbolaser":
                 if (light)
@@ -6154,7 +6671,208 @@ public static class SharedFunctions
         return corenne;
     }
 
-}
+    public static bool[,] saveIcon(string iconSource, Image image, bool[,] MTDArray, entities entities, string localmod)
+    {
+        //When setting up ports, use thusly
+        //g.DrawImage(entities.MTmaster, new Rectangle(0, 0, icondata.size_x, icondata.size_y), new Rectangle(icondata.origin_x, icondata.origin_y, icondata.size_x, icondata.size_y), GraphicsUnit.Pixel);
+
+        IconData ico = DatParser.GetIconData(iconSource, entities);
+        bool replace = false;
+        bool inplace_replace = false;
+        if (!(ico.id is null)) replace = true;
+
+        //are these are 1 or 0 indexed
+        bool found = false;
+        int finalx = 0;
+        int y = 0;
+        if (replace && image.Width == ico.size_x && image.Height == ico.size_y)
+        {
+            found = true;
+            inplace_replace = true;
+            finalx = ico.origin_x;
+            y = ico.origin_y;
+        }
+        else
+        {
+            for (; y < MTDArray.GetLength(1) - image.Height; y++)
+            {
+                for (int x = 0; x < MTDArray.GetLength(0) - image.Width; x++)
+                {
+                    bool spotbad = false;
+                    if (MTDArray[x, y] == false)
+                    {
+                        found = true;
+                        for (int cy = y; cy < y + image.Height; cy++)
+                        {
+                            for (int cx = x; cx < x + image.Width; cx++)
+                            {
+                                if (MTDArray[cx, cy])
+                                {
+                                    x = cx; //can jump ahead since all examinations before the last cx will fail, but not in y due to the x preferential search algorithm
+                                    spotbad = true;
+                                    found = false;
+                                    break;
+                                }
+                            }
+                            if (spotbad) break; //break out of outer check loop if failed
+                        }
+                    }
+                    if (found)
+                    {
+                        finalx = x;
+                        break; //stop iterating when found
+                    }
+                }
+                if (found) break;
+            }
+        }
+        
+        if (!found)
+        {
+            MessageBox.Show("No room for icon found in MT_Commandbar. Rearrage or make larger in another program.");
+            return new bool[0,0];
+        }
+
+        if (!inplace_replace)
+        {
+            for (int fx = finalx; fx < finalx + image.Width; fx++)
+            {
+                for (int fy = y; fy < y + image.Height; fy++)
+                {
+                    MTDArray[fx, fy] = true;
+                }
+            }
+        }
+        //Todo best practice would be to clear the relevant MTDarray area. But that is rebuilt on restart anyway
+        Graphics g = Graphics.FromImage(entities.MTmaster);
+        if (replace) g.FillRectangle(new SolidBrush(Color.Black), ico.origin_x, ico.origin_y, ico.size_x, ico.size_y);
+        g.DrawImage(image, new Rectangle(finalx, y, image.Width, image.Height));
+        System.IO.Directory.CreateDirectory(localmod + "\\Art\\Textures");
+        try
+        {
+            entities.MTmaster.Save(localmod + "\\Art\\Textures\\MT_CommandBar.tga", System.Drawing.Imaging.ImageFormat.Bmp);
+        }
+        catch
+        {
+            MessageBox.Show("Error writing to MT_CommandBar.tga. Is another program using it?");
+            return new bool[0, 0];
+        }
+        
+        ico.id = iconSource.ToUpper();
+        ico.origin_x = finalx;
+        ico.origin_y = y;
+        ico.size_x = image.Width;
+        ico.size_y = image.Height;
+        byte[] oldmtdfile = System.IO.File.ReadAllBytes(getModFile("Art\\Textures\\MT_CommandBar.mtd", entities));
+        if (replace)
+        {
+            if (inplace_replace)
+            {
+                for (int icid = 0; icid < entities.IconData.Count; icid++)
+                {
+                    if (entities.IconData[icid].id.ToUpper() == ico.id)
+                    {
+                        int replaceid = 4 + 81 * icid + 64;
+                        byte[] byt = DatParser.tobytesLE((uint)entities.IconData.Count);
+                        byt = DatParser.tobytesLE((uint)ico.origin_x);
+                        for (int i = 0; i < 4; i++)
+                        {
+                            oldmtdfile[replaceid + i] = byt[i];
+                        }
+                        replaceid += 4;
+                        byt = DatParser.tobytesLE((uint)ico.origin_y);
+                        for (int i = 0; i < 4; i++)
+                        {
+                            oldmtdfile[replaceid + i] = byt[i];
+                        }
+                        replaceid += 4;
+                        byt = DatParser.tobytesLE((uint)ico.size_x);
+                        for (int i = 0; i < 4; i++)
+                        {
+                            oldmtdfile[replaceid + i] = byt[i];
+                        }
+                        replaceid += 4;
+                        byt = DatParser.tobytesLE((uint)ico.size_y);
+                        for (int i = 0; i < 4; i++)
+                        {
+                            oldmtdfile[replaceid + i] = byt[i];
+                        }
+                        break;
+                    }
+                }
+            }
+            return MTDArray;
+        }
+
+        entities.IconData.Add(ico);
+        entities.IconData.Sort((s1, s2) => s1.id.CompareTo(s2.id));
+
+        byte[] newmtdfile = new byte[oldmtdfile.Length + 81];
+        //Array.Copy(oldmtdfile, 4, newmtdfile, 4, oldmtdfile.Length - 4); //Todo: rebuild MTD from scratch so new icons are alphabetized within it
+        byte[] bytes = DatParser.tobytesLE((uint)entities.IconData.Count);
+        for (int i = 0; i < 4; i++)
+        {
+            newmtdfile[i] = bytes[i];
+        }
+        int mtindex = 4;
+        for (int ic = 0; ic < entities.IconData.Count; ic++)
+        {
+            Array.Copy(Encoding.UTF8.GetBytes(entities.IconData[ic].id), 0, newmtdfile, mtindex, entities.IconData[ic].id.Length); //May explicitly need ASCII support instead of trying to extend more
+            mtindex += 64;
+            bytes = DatParser.tobytesLE((uint)entities.IconData[ic].origin_x);
+            for (int i = 0; i < 4; i++)
+            {
+                newmtdfile[mtindex + i] = bytes[i];
+            }
+            mtindex += 4;
+            bytes = DatParser.tobytesLE((uint)entities.IconData[ic].origin_y);
+            for (int i = 0; i < 4; i++)
+            {
+                newmtdfile[mtindex + i] = bytes[i];
+            }
+            mtindex += 4;
+            bytes = DatParser.tobytesLE((uint)entities.IconData[ic].size_x);
+            for (int i = 0; i < 4; i++)
+            {
+                newmtdfile[mtindex + i] = bytes[i];
+            }
+            mtindex += 4;
+            bytes = DatParser.tobytesLE((uint)entities.IconData[ic].size_y);
+            for (int i = 0; i < 4; i++)
+            {
+                newmtdfile[mtindex + i] = bytes[i];
+            }
+            mtindex += 4;
+            newmtdfile[mtindex] = 1;
+            mtindex++;
+        }
+        File.WriteAllBytes(localmod + "\\Art\\Textures\\MT_CommandBar.mtd", newmtdfile);
+
+        return MTDArray;
+    }
+
+    public static List<string> TexturesFromModel(string modelfile, entities entities)
+    {
+        List<string> corenne = new List<string>();
+        string file = File.ReadAllText(modelfile);
+        int id = file.IndexOf("Texture");
+        while (id >= 0)
+        {
+            file = file.Substring(id + 10, file.Length - id - 10);
+            string texture = "";
+            foreach(char c in file)
+            {
+                if (c == '\0') break;
+                else texture += c;
+            }
+            corenne.Add(texture);
+            id = file.IndexOf("Texture");
+        }
+
+        return corenne;
+    }
+
+} //End of function
 
 public struct MEGentry
 {
@@ -6174,6 +6892,11 @@ public struct projectile
     public float blastRadius;
     public float speed;
     public float turn;
+
+    public override string ToString()
+    {
+        return name;
+    }
 }
 
 public struct projectileAccuracyTemplate
@@ -6295,6 +7018,7 @@ public struct unit
     public int skirmcost;
     public float skirmbuildtime; //Probably none of these are actually ints
     public List<string> affiliations;
+    public List<string> fake_affiliations; //Belongs to the faction based on inclusion in spawn scripts, but not given actual affiliation for perfomance reasons. Most heroes after TR 3.5 rely on this
     public int pop;
     public int techlevel;
     public int fightermode;
@@ -6371,6 +7095,10 @@ public struct unit
     public int garrisonType_baseID;
     public int maintenance_baseID;
     public int cp_baseID;
+    public int ability_baseID;
+    public int unitability_baseID;
+    public int hyperspaceSpeed_baseID;
+    public int highlight_baseID;
     public hardpoint builtin;
     public List<string> companyunits;
     public List<quantizedObject> consolidatedUnits;
@@ -6388,6 +7116,8 @@ public struct unit
     public string BTS;
     public string sortstring;
     public float sortfloat;
+    public float hyperspaceSpeed;
+    public string highlight;
     public List<ability> abilities;
     public List<unitability> unitabilities;
     public List<garrison_entry> garrison;
@@ -6472,6 +7202,7 @@ public struct unitability
     public string ability; //GUI_Activated_Ability_Name
     public string sound;
     public string deactivatesound;
+    public string linkedEntity;
 
     public float recharge;
     public float expiration;
@@ -6577,6 +7308,12 @@ public struct tradeRoute
 {
     public string name;
     public string[] planets;
+}
+
+public struct movieLoop
+{
+    public string name;
+    public string file;
 }
 
 public enum GCType
@@ -6702,14 +7439,39 @@ public struct entities {
     public static Dictionary<string, ulong> CategoryBitMasks = new Dictionary<string, ulong>(StringComparer.OrdinalIgnoreCase);
 
     public static List<spawnSet> spawnSets = new List<spawnSet>();
+    public static List<movieLoop> movies = new List<movieLoop>();
 
     public static Bitmap MTmaster;
     public static List<IconData> IconData = new List<IconData>();
     public static AutoResolveSettings AutoResolveSettings = new AutoResolveSettings();
 
-    public static string modid; //Should be deprecated in Rev 1.0, but keep around for compatibility
+    public static string modid;
     public static float version; //Standardize on TR version, but may need to work in conjuction with modid
     public static string readerrors = "";
+
+    public static List<FavorTrack> FavorTracks = new List<FavorTrack>();
+    public static List<CommandStaff> CommandStaffs = new List<CommandStaff>();
+
+    public static Specialization[] Specializations =
+    {
+        new Specialization{ name = "Air", textID = "TEXT_TOOLTIP_TRAIT_SPECIALIZATION_AIR_COMMAND", categories = "AirSpeeder | AirGunship" },
+        new Specialization{ name = "Fortification", textID = "TEXT_TOOLTIP_TRAIT_SPECIALIZATION_FORTIFICATION", categories = "Structure | SpaceStructure" },
+        new Specialization{ name = "Infantry", textID = "TEXT_TOOLTIP_TRAIT_SPECIALIZATION_INFANTRY", categories = "Infantry | InfantryHero" },
+        new Specialization{ name = "Small_Ship", textID = "TEXT_TOOLTIP_TRAIT_SPECIALIZATION_SMALL_SHIP", categories = "Frigate | Corvette" },
+        new Specialization{ name = "Starfighter", textID = "TEXT_TOOLTIP_TRAIT_SPECIALIZATION_STARFIGHTER", categories = "Fighter | Bomber" },
+        //new Specialization{ name = "Artillery", textID = "TEXT_TOOLTIP_TRAIT_SPECIALIZATION_ARTILLERY", categories = "Structure | SpaceStructure" }, //it's a unit list, not a category
+        //TODO Tell Walker specialist to copy Veers rather than hardcode the list?
+        //likewise mando, EotH subgroups
+    };
+
+    public static CommandTrait[] CommandTraits =
+    {
+        new CommandTrait{ name = "Force Sensitive", textID = "TEXT_TOOLTIP_TRAIT_COMMAND_FORCE_SENSITIVE", speed = 0.06f, fow = 0.09f},
+        new CommandTrait{ name = "Offense Focus", textID = "TEXT_TOOLTIP_TRAIT_COMMAND_OFFENSE_FOCUS", attack = 0.06f},
+        new CommandTrait{ name = "Defense Focus", textID = "TEXT_TOOLTIP_TRAIT_COMMAND_DEFENSE_FOCUS", defense = 0.06f},
+        new CommandTrait{ name = "Intel Focus", textID = "TEXT_TOOLTIP_TRAIT_COMMAND_INTEL_FOCUS", attack = -0.06f, speed = 0.06f, fow = 0.18f},
+        new CommandTrait{ name = "Battle Meditation", textID = "TEXT_TOOLTIP_TRAIT_COMMAND_BATTLE_MEDITATION", attack = 0.09f, defense = 0.09f, speed = 0.09f, fow = 0.18f},
+    };
 }
 
 public class ArmorMods
@@ -6741,6 +7503,134 @@ public class IconData
     public int origin_y;
     public int size_x;
     public int size_y;
+}
+
+public class LuaLibrarySegment
+{
+    public int nesting;
+    public int linenumber;
+    public int decrement;
+    public string fullLine;
+    public string comment;
+    public string segment;
+    public string variable;
+    public string value;
+}
+
+public class FavorBuildable
+{
+    public string unit;
+    public string username;
+    public int threshold;
+    public string tag;
+
+    public override string ToString()
+    {
+        return username + " (" + threshold.ToString() + ")";
+    }
+}
+
+public class FavorSpawn
+{
+    public string unit;
+    public string username;
+    public int threshold;
+    public string tag;
+
+    public override string ToString()
+    {
+        return username + " (" + threshold.ToString() + ")";
+    }
+}
+
+public class FavorSupport
+{
+    public string unit;
+    public string username;
+    public string desc;
+    public int value;
+    public bool locks;
+
+    public override string ToString()
+    {
+        return username + " (" + value.ToString() + ")";
+    }
+}
+public class FavorTrack
+{
+    public string name;
+    public string faction;
+    public bool integrates;
+    public string integratee;
+    public string integrateSpeech;
+    public int maxFavor;
+    public string rename;
+    public List<FavorSupport> supports;
+    public List<FavorBuildable> buildables;
+    public List<FavorSpawn> spawns;
+    //public string perception;
+
+    public override string ToString()
+    {
+        return name;
+    }
+}
+
+public class CommandStaffer
+{
+    public string tag;
+    public List<string> enable;
+    public List<string> disable;
+    public unit assign;
+    public List<unit> forms;
+
+    public override string ToString()
+    {
+        return tag;
+    }
+}
+
+public class CommandStaff
+{
+    public string name;
+    public string faction;
+    public List<CommandStaffer> staff;
+    public int total_slots;
+    public int vacant_limit;
+    public unit extra;
+    public unit random;
+
+    public override string ToString()
+    {
+        return name;
+    }
+}
+
+public class Specialization
+{
+    public string name; //For dropdowns and Combat_Bonus_Ability/Battlefield_Modifier_Ability blocks
+    public string textID;
+    public string categories;
+
+    public override string ToString()
+    {
+        return name;
+    }
+}
+
+public class CommandTrait
+{
+    public string name;
+    public string textID;
+    public float attack;
+    public float defense;
+    public float speed;
+    public float fow;
+
+    public override string ToString()
+    {
+        return name;
+    }
 }
 
 public static class crcGlobals
@@ -6836,7 +7726,7 @@ class Key_Pair : IComparable<Key_Pair>
 
 public static class DatParser
 {
-    static byte[] tobytesLE(uint value)
+    public static byte[] tobytesLE(uint value)
     {
         byte[] corenne = new byte[4];
         corenne[0] = Convert.ToByte(value & 0xff);
