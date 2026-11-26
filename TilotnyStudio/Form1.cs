@@ -228,10 +228,6 @@ namespace TilotnyStudio
             SkirmishListBox.SelectedIndex = 0;
             populateModPage();
 
-            foreach(Specialization spec in entities.Specializations)
-            {
-                SpecializationComboBox.Items.Add(spec);
-            }
             foreach (CommandTrait cmd in entities.CommandTraits)
             {
                 Command1ComboBox.Items.Add(cmd);
@@ -1037,6 +1033,12 @@ namespace TilotnyStudio
             }
             DropshipComboBox.BeginInvoke(new Action(() => DropshipComboBox.SelectedIndex = 0));
 
+            SpecializationComboBox.BeginInvoke(new Action(() => SpecializationComboBox.Items.Clear()));
+            foreach (Specialization spec in entities.Specializations)
+            {
+                SpecializationComboBox.BeginInvoke(new Action(() => SpecializationComboBox.Items.Add(spec)));
+            }
+
             SpaceRadioButton.BeginInvoke(new Action(() => SpaceRadioButton.Checked = true));
             //populateAffilUnits(true);
             this.BeginInvoke(new Action(() => this.Enabled = true));
@@ -1445,16 +1447,21 @@ namespace TilotnyStudio
                             if(SpaceRadioButton.Checked || SpaceHeroRadioButton.Checked)
                             {
                                 (float range, float acctier) = hardpointExamine(unit);
-                                double calccp = CalculateSpaceCPfromUnit(unit, acctier);
+                                double calccp = CalculateSpaceCPfromUnit(unit, acctier, entities);
                                 try
                                 {
                                     CPCalcBox.Value = (decimal)calccp;
-                                    PopCalcBox.Value = (decimal)((calccp + getComplementCP(unit)) / 100);
+                                    calccp += getComplementCP(unit, entities, true);
+                                    PopCalcBox.Value = (decimal)(CalculateSpacePop(calccp));
+                                    CostCalcBox.Value = (decimal)(CalculateSpaceCost(calccp));
+                                    BuildTimeCalcBox.Value = (decimal)(CalculateSpaceBuildTime(calccp, 1)); //todo allow configureable crew efficiency?
                                 }
                                 catch
                                 {
                                     CPCalcBox.Value = 0;
                                     PopCalcBox.Value = 0;
+                                    CostCalcBox.Value = 0;
+                                    BuildTimeCalcBox.Value = 0;
                                 }
                                 try
                                 {
@@ -1476,7 +1483,7 @@ namespace TilotnyStudio
                             }
                             if (UnitRadioButton.Checked || GroundHeroRadioButton.Checked)
                             {
-                                double calccp = CalculateGroundCPfromUnit(unit);
+                                double calccp = CalculateGroundCPfromUnit(unit, entities);
                                 try
                                 {
                                     CPCalcBox.Value = (decimal)calccp;
@@ -1494,6 +1501,10 @@ namespace TilotnyStudio
                             RangeAdjustLabel.Visible = space;
                             AccTierBox.Visible = space;
                             AccTierLabel.Visible = space;
+                            CostCalcLabel.Visible = space;
+                            CostCalcBox.Visible = space;
+                            BuildTimeCalcLabel.Visible = space;
+                            BuildTimeCalcBox.Visible = space;
                         }
                         if (GUIRowComboBox.Visible)
                         {
@@ -1723,7 +1734,7 @@ namespace TilotnyStudio
             float defense = tierbase + trait1.defense + trait2.defense;
             float speed = tierbase + trait1.speed + trait2.speed;
             float fow = tierbase + trait1.fow + trait2.fow;
-            WriteBonusAbility(doc, node, ground, "Command_Tier_" + tier.ToString("00"), "All", damage, defense, speed, fow, 0);
+            WriteBonusAbility(doc, node, ground, "Command_Tier_" + tier.ToString("00"), "All", "", damage, defense, speed, fow, 0);
         }
 
         private void WriteSpecialization(XmlDocument doc, XmlNode node, bool ground, Specialization spec)
@@ -1731,10 +1742,10 @@ namespace TilotnyStudio
             float specbase = 0.06f;
             if (entities.version <= 35 && entities.modid != "icw") specbase = 0.03f;
 
-            WriteBonusAbility(doc, node, ground, spec.name + "_Specialist", spec.categories, specbase, specbase, specbase, specbase, 1);
+            WriteBonusAbility(doc, node, ground, spec.name + "_Specialist", spec.categories, spec.units, specbase, specbase, specbase, specbase, 1);
         }
 
-        private void WriteBonusAbility(XmlDocument doc, XmlNode node, bool ground, string name, string category, float damage, float defense, float speed, float fow, int stacking)
+        private void WriteBonusAbility(XmlDocument doc, XmlNode node, bool ground, string name, string category, string units, float damage, float defense, float speed, float fow, int stacking)
         {
             string indent = "\t\t\t";
             node.AppendChild(doc.CreateTextNode(indent));
@@ -1758,6 +1769,7 @@ namespace TilotnyStudio
 
             able.AppendChild(doc.CreateTextNode(ws));
             XmlNode types = doc.CreateElement("Applicable_Unit_Types");
+            types.InnerText = units;
             able.AppendChild(types);
             able.AppendChild(doc.CreateTextNode(ws));
             XmlNode xcl = doc.CreateElement("Excluded_Unit_Types");
@@ -1804,6 +1816,18 @@ namespace TilotnyStudio
             XmlNode act2 = doc.CreateElement("Activation_Style");
             act2.InnerText = act.InnerText;
             able2.AppendChild(act2);
+            if (category != "")
+            {
+                XmlNode cats2 = doc.CreateElement("Applicable_Unit_Categories");
+                cats2.InnerText = category;
+                able2.AppendChild(cats2);
+            }
+            if (units != "")
+            {
+                XmlNode types2 = doc.CreateElement("Applicable_Unit_Types");
+                types2.InnerText = units;
+                able2.AppendChild(types2);
+            }
 
             able2.AppendChild(doc.CreateTextNode(ws));
             XmlNode fw = doc.CreateElement("FOW_Reveal_Range_Multiplier");
@@ -5020,6 +5044,8 @@ namespace TilotnyStudio
         {
             CPBox.Value = CPCalcBox.Value;
             PopBox.Value = PopCalcBox.Value;
+            BuildTimeBox.Value = BuildTimeCalcBox.Value;
+            CostBox.Value = CostCalcBox.Value;
         }
 
         private void RecalcCPHook(object sender, EventArgs e)
@@ -5053,13 +5079,16 @@ namespace TilotnyStudio
                 {
                     defensemod = 1; //todo delete this line once 3.5 and up do use it
                     if (entities.version <= 35) defensemod = 1;
-                    double calcCP = CalculateSpaceCP(avgdps, (float)AccTierBox.Value, healscore, (float)hpBox.Value, ATypeComboBox.Text, (float)ShieldBox.Value, STypeComboBox.Text, (float)RegenBox.Value, defensemod);
+                    double calcCP = CalculateSpaceCP(avgdps, (float)AccTierBox.Value, healscore, (float)hpBox.Value, ATypeComboBox.Text, (float)ShieldBox.Value, STypeComboBox.Text, (float)RegenBox.Value, defensemod, entities);
                     CPCalcBox.Value = (decimal)calcCP;
-                    PopCalcBox.Value = (decimal)((calcCP + getComplementCP(unit)) / 100);
+                    calcCP += getComplementCP(unit, entities, true);
+                    PopCalcBox.Value = (decimal)CalculateSpacePop(calcCP);
+                    CostCalcBox.Value = (decimal)CalculateSpaceCost(calcCP);
+                    BuildTimeCalcBox.Value = (decimal)CalculateSpaceBuildTime(calcCP, 1); //todo allow configureable crew efficiency?
                 }
                 if (UnitRadioButton.Checked || GroundHeroRadioButton.Checked)
                 {
-                    CPCalcBox.Value = (decimal)CalculateGroundCP(avgdpsA, (float)hpBox.Value, ATypeComboBox.Text, (float)ShieldBox.Value, STypeComboBox.Text, (float)RegenBox.Value, defensemod);
+                    CPCalcBox.Value = (decimal)CalculateGroundCP(avgdpsA, (float)hpBox.Value, ATypeComboBox.Text, (float)ShieldBox.Value, STypeComboBox.Text, (float)RegenBox.Value, defensemod, entities);
                 }
             }
             

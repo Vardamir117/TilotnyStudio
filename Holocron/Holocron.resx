@@ -153,11 +153,11 @@ The end value is only an approximation of how many of the shots fired should lan
 
 The calculated value uses the units stats to reconstruct the value according to EaW:X formulas
 
-The calculated pop is (calculated cp + cp of tech level 1 spawns) / 100</value>
+The calculated pop is (calculated cp + cp of tech level 1 spawns) / 100 using calculated fighter values</value>
   </data>
   <data name="UnitLengthLabel.ToolTip" xml:space="preserve">
     <value>Length range derived from modifiers on weapon range, exact value derived from crew cost.
-Rounding makes crew based cost rare accurate to the meter
+Rounding makes crew based length rarely accurate to the meter
 
 Large ships (SSDs) are scaled down by 25% or 33% for gameplay purposes
 
@@ -177,6 +177,8 @@ Factions with an AI type of None are not included, or with no AI type and marked
   <data name="GCPlanetForceLabel.ToolTip" xml:space="preserve">
     <value>The forces set on the planet in the campaign file. Does not reflect heroes or units spawned from scripts.
 Multiple factions with units on the same planet is rare and Holocron will not mark this
+
+Click for details, right click to copy to clipboard
 
 EaWX often uses a "Generate_Force" placeholder that will be replaced with randomly generated forces</value>
   </data>

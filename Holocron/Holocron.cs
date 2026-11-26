@@ -362,132 +362,139 @@ namespace Holocron
 
         private void LoadThread(Loading loadscreen)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            this.BeginInvoke(new Action(() => this.Enabled = false));
-            loadscreen.ChangeText("Reading text file");
-            entities.Text = DatParser.ReadDat(getModFile("Text\\MasterTextFile_ENGLISH.dat", entities), ',', 0);
-            loadscreen.SetQuote(getLoadQuote(entities));
-            crcGlobals.initTable();
-
-            loadscreen.BeginInvoke(new Action(() => loadscreen.TopMost = false)); //Make sure it's initially on top, but then let other windows win
-
-            parsemodid(entities);
-
-            loadscreen.ChangeText("Reading MEG files");
-            parseMEGs(entities, UpOneFolder(UpOneFolder(globals.localmodpath)));
-
-            loadscreen.ChangeText("Reading icon file");
-            entities.IconData = DatParser.ReadMTD(entities);
             try
             {
-                entities.MTmaster = (Bitmap)Image.FromFile(getModFile("Art\\Textures\\MT_CommandBar.tga", entities));
-                /*using (var bmpTemp = new Bitmap(getModFile("Art\\Textures\\MT_CommandBar.tga", entities))) //The above doesn't release file locks properly. It also mysteriously resizes the icons, which is how all the boxes were originally sized and gives more color to look at
-                {
-                    entities.MTmaster = new Bitmap(bmpTemp);
-                }*/
-            }
-            catch
-            {
+                Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+                this.BeginInvoke(new Action(() => this.Enabled = false));
+                loadscreen.ChangeText("Reading text file");
+                entities.Text = DatParser.ReadDat(getModFile("Text\\MasterTextFile_ENGLISH.dat", entities), ',', 0);
+                loadscreen.SetQuote(getLoadQuote(entities));
+                crcGlobals.initTable();
+
+                loadscreen.BeginInvoke(new Action(() => loadscreen.TopMost = false)); //Make sure it's initially on top, but then let other windows win
+
+                parsemodid(entities);
+
+                loadscreen.ChangeText("Reading MEG files");
+                parseMEGs(entities, UpOneFolder(UpOneFolder(globals.localmodpath)));
+
+                loadscreen.ChangeText("Reading icon file");
+                entities.IconData = DatParser.ReadMTD(entities);
                 try
                 {
-                    entities.MTmaster = (Bitmap)(new TGA(readModBytesOrMeg("Art\\Textures\\MT_CommandBar.tga", entities)));
+                    entities.MTmaster = (Bitmap)Image.FromFile(getModFile("Art\\Textures\\MT_CommandBar.tga", entities));
+                    /*using (var bmpTemp = new Bitmap(getModFile("Art\\Textures\\MT_CommandBar.tga", entities))) //The above doesn't release file locks properly. It also mysteriously resizes the icons, which is how all the boxes were originally sized and gives more color to look at
+                    {
+                        entities.MTmaster = new Bitmap(bmpTemp);
+                    }*/
                 }
                 catch
                 {
-                    entities.MTmaster = new Bitmap(50, 50);
+                    try
+                    {
+                        entities.MTmaster = (Bitmap)(new TGA(readModBytesOrMeg("Art\\Textures\\MT_CommandBar.tga", entities)));
+                    }
+                    catch
+                    {
+                        entities.MTmaster = new Bitmap(50, 50);
+                    }
+                };
+                entities.readerrors = "";
+
+                loadscreen.ChangeText("Parsing faction data");
+                parseFactions(entities);
+                foreach (faction faction in entities.factions)
+                {
+                    FactionListBox.BeginInvoke(new Action(() => FactionListBox.Items.Add(faction.textname)));
+                    ComplementFactionListBox.BeginInvoke(new Action(() => ComplementFactionListBox.Items.Add(faction)));
                 }
-            };
-            entities.readerrors = "";
+                ComplementFactionListBox.BeginInvoke(new Action(() => ComplementFactionListBox.SelectedIndex = 0));
 
-            loadscreen.ChangeText("Parsing faction data");
-            parseFactions(entities);
-            foreach (faction faction in entities.factions)
-            {
-                FactionListBox.BeginInvoke(new Action(() => FactionListBox.Items.Add(faction.textname)));
-                ComplementFactionListBox.BeginInvoke(new Action(() => ComplementFactionListBox.Items.Add(faction)));
+                loadscreen.ChangeText("Parsing projectile data");
+                List<string> listfiles = getModFiles("XML\\Projectiles", "*.xml", entities);
+                parseProjectiles(entities);
+
+                loadscreen.ChangeText("Parsing hardpoint data");
+                parseHardpoints(entities);
+
+                loadscreen.ChangeText("Parsing sound entries");
+                parseSFX(entities);
+
+                entities.spaceUnits = new List<unit>();
+                entities.groundCompanies = new List<unit>();
+                entities.groundUnits = new List<unit>();
+                entities.structures = new List<unit>();
+                entities.spaceStructures = new List<unit>();
+                entities.spaceHeroes = new List<unit>();
+                entities.heroCompanies = new List<unit>();
+                entities.groundHeroes = new List<unit>();
+                entities.fighters = new List<unit>();
+
+                loadscreen.ChangeText("Parsing constants");
+                parseCategories(entities);
+                parseFlags(entities);
+                parseGameConstants(entities);
+                AutoResolveApplySettingsDefaults();
+
+                loadscreen.ChangeText("Parsing object data");
+                parseObjects(entities);
+                loadscreen.ChangeText("Resolving object dependencies");
+                untemplate(entities);
+                loadscreen.ChangeText("Assembing company unit lists");
+                unitToCompanyData(entities);
+                loadscreen.ChangeText("Categorizing object types");
+                categorizeObjects(entities);
+                /*listfiles = getModFiles("XML\\Units", "*.xml");
+                parseUnitFolder(listfiles, entities);
+                loadscreen.ChangeText("Parsing hero data");
+                parseHeroFolder(entities);
+                loadscreen.ChangeText("Parsing structure data");
+                parseStructureFolder(entities);*/
+                /*untemplate(entities.structures, entities.structures, entities.Text);
+                loadscreen.ChangeText("Resolving unit dependencies");
+                untemplate(entities.groundCompanies, entities.groundCompanies, entities.Text);
+                untemplate(entities.spaceUnits, entities.spaceUnits, entities.Text);
+                untemplate(entities.groundUnits, entities.groundUnits, entities.Text);
+                loadscreen.ChangeText("Resolving hero dependencies");
+                untemplate(entities.heroCompanies, entities.groundCompanies, entities.Text);
+                untemplate(entities.spaceHeroes, entities.spaceUnits, entities.Text);
+                untemplate(entities.groundHeroes, entities.groundUnits, entities.Text);*/
+                /*loadscreen.ChangeText("Assembing company unit lists");
+                entities.groundCompanies = unitToCompanyData(entities.groundCompanies, entities.groundUnits, entities.containers);
+                entities.fighters = unitToCompanyData(entities.fighters, entities.fighters, entities.containers);
+                entities.spaceUnits = unitToCompanyData(entities.spaceUnits, entities.spaceUnits, entities.containers); //Gunships
+                loadscreen.ChangeText("Assembing hero companies");
+                entities.heroCompanies = unitToCompanyData(entities.heroCompanies, entities.groundHeroes, entities.containers);*/
+                //entities.spaceHeroes = unitToCompanyData(entities.spaceHeroes, entities.spaceUnits, entities.containers); //Todo: fix for the rare gunship hero
+                //entities.spaceHeroes = unitToCompanyData(entities.spaceHeroes, entities.spaceUnits, entities.containers, true);
+                loadscreen.ChangeText("Parsing planet data");
+                parsePlanets(entities, globals.allplanets);
+                loadscreen.ChangeText("Reading Planet specific spawn sets");
+                readPlanetSpawnTables(entities);
+                loadscreen.ChangeText("Parsing trade routes");
+                parseTradeRoutes(entities);
+                loadscreen.ChangeText("Parsing galactic conquests");
+                parseGCs(entities);
+                loadscreen.ChangeText("Parsing movies");
+                parseMovies(entities);
+                loadscreen.ChangeText("Parsing government mechanics");
+                parseGovernment(entities);
+
+                loadscreen.ChangeText("Reading AI contrast values");
+                globals.ContrastValues = ReadContrastValues();
+                //Assume picturebox is a square of odd pixel count
+                globals.origin = (PlanetPictureBox.Width - 1) / 2;
+                globals.scale = globals.origin / (entities.PlanetBounds + 25);
+                //entities.hardpointhashes.Clear(); //No reason to keep these around after parsing. I found a reason
+                //entities.projectilehashes.Clear();
+
+                this.BeginInvoke(new Action(() => this.Enabled = true));
+                loadscreen.CloseLoadScreen();
             }
-            ComplementFactionListBox.BeginInvoke(new Action(() => ComplementFactionListBox.SelectedIndex = 0));
-
-            loadscreen.ChangeText("Parsing projectile data");
-            List<string> listfiles = getModFiles("XML\\Projectiles", "*.xml", entities);
-            parseProjectiles(entities);
-
-            loadscreen.ChangeText("Parsing hardpoint data");
-            parseHardpoints(entities);
-
-            loadscreen.ChangeText("Parsing sound entries");
-            parseSFX(entities);
-
-            entities.spaceUnits = new List<unit>();
-            entities.groundCompanies = new List<unit>();
-            entities.groundUnits = new List<unit>();
-            entities.structures = new List<unit>();
-            entities.spaceStructures = new List<unit>();
-            entities.spaceHeroes = new List<unit>();
-            entities.heroCompanies = new List<unit>();
-            entities.groundHeroes = new List<unit>();
-            entities.fighters = new List<unit>();
-
-            loadscreen.ChangeText("Parsing constants");
-            parseCategories(entities);
-            parseFlags(entities);
-            parseGameConstants(entities);
-            AutoResolveApplySettingsDefaults();
-
-            loadscreen.ChangeText("Parsing object data");
-            parseObjects(entities);
-            loadscreen.ChangeText("Resolving object dependencies");
-            untemplate(entities);
-            loadscreen.ChangeText("Assembing company unit lists");
-            unitToCompanyData(entities);
-            loadscreen.ChangeText("Categorizing object types");
-            categorizeObjects(entities);
-            /*listfiles = getModFiles("XML\\Units", "*.xml");
-            parseUnitFolder(listfiles, entities);
-            loadscreen.ChangeText("Parsing hero data");
-            parseHeroFolder(entities);
-            loadscreen.ChangeText("Parsing structure data");
-            parseStructureFolder(entities);*/
-            /*untemplate(entities.structures, entities.structures, entities.Text);
-            loadscreen.ChangeText("Resolving unit dependencies");
-            untemplate(entities.groundCompanies, entities.groundCompanies, entities.Text);
-            untemplate(entities.spaceUnits, entities.spaceUnits, entities.Text);
-            untemplate(entities.groundUnits, entities.groundUnits, entities.Text);
-            loadscreen.ChangeText("Resolving hero dependencies");
-            untemplate(entities.heroCompanies, entities.groundCompanies, entities.Text);
-            untemplate(entities.spaceHeroes, entities.spaceUnits, entities.Text);
-            untemplate(entities.groundHeroes, entities.groundUnits, entities.Text);*/
-            /*loadscreen.ChangeText("Assembing company unit lists");
-            entities.groundCompanies = unitToCompanyData(entities.groundCompanies, entities.groundUnits, entities.containers);
-            entities.fighters = unitToCompanyData(entities.fighters, entities.fighters, entities.containers);
-            entities.spaceUnits = unitToCompanyData(entities.spaceUnits, entities.spaceUnits, entities.containers); //Gunships
-            loadscreen.ChangeText("Assembing hero companies");
-            entities.heroCompanies = unitToCompanyData(entities.heroCompanies, entities.groundHeroes, entities.containers);*/
-            //entities.spaceHeroes = unitToCompanyData(entities.spaceHeroes, entities.spaceUnits, entities.containers); //Todo: fix for the rare gunship hero
-            //entities.spaceHeroes = unitToCompanyData(entities.spaceHeroes, entities.spaceUnits, entities.containers, true);
-            loadscreen.ChangeText("Parsing planet data");
-            parsePlanets(entities, globals.allplanets);
-            loadscreen.ChangeText("Reading Planet specific spawn sets");
-            readPlanetSpawnTables(entities);
-            loadscreen.ChangeText("Parsing trade routes");
-            parseTradeRoutes(entities);
-            loadscreen.ChangeText("Parsing galactic conquests");
-            parseGCs(entities);
-            loadscreen.ChangeText("Parsing movies");
-            parseMovies(entities);
-            loadscreen.ChangeText("Parsing government mechanics");
-            parseGovernment(entities);
-
-            loadscreen.ChangeText("Reading AI contrast values");
-            globals.ContrastValues = ReadContrastValues();
-            //Assume picturebox is a square of odd pixel count
-            globals.origin = (PlanetPictureBox.Width - 1) / 2;
-            globals.scale = globals.origin / (entities.PlanetBounds + 25);
-            //entities.hardpointhashes.Clear(); //No reason to keep these around after parsing. I found a reason
-            //entities.projectilehashes.Clear();
-
-            this.BeginInvoke(new Action(() => this.Enabled = true));
-            loadscreen.CloseLoadScreen();
+            catch (Exception e)
+            {
+                MessageBox.Show("Parsing error: " + e.Message);
+            }
         }
 
         private contrast_values ReadContrastValues()
@@ -578,9 +585,9 @@ namespace Holocron
             faction,
             conquest,
             planet,
+            galaxy,
             unit,
             govs,
-            galaxy,
             autoresolve,
             lookups,
         }
@@ -606,6 +613,9 @@ namespace Holocron
             lkRegional,
             lkGuides,
             lkAbility,
+            lkText,
+            lkIcon,
+            lkSFX
         }
 
         private void insert_history(int main, int secondary, string entity, bool go_to = false)
@@ -1232,6 +1242,15 @@ namespace Holocron
                         }
                         FillLookupAbilityListbox();
                     }
+                    break;
+                case (int)lookupsubtabs.lkText:
+                    populateTextLookupList();
+                    break;
+                case (int)lookupsubtabs.lkIcon:
+                    populateIconLookupList();
+                    break;
+                case (int)lookupsubtabs.lkSFX:
+                    populateSFXLookupList();
                     break;
                 default:
                     // code block
@@ -2150,7 +2169,6 @@ namespace Holocron
                             break;
                         }
                     }
-
                 }
                 row[y + 1] = mods.average.ToString();
                 MatrixGrid.Rows.Add(row);
@@ -2626,7 +2644,13 @@ namespace Holocron
             {
                 if (unit.username.ToLower().Contains(FactionUnitSearchTextBox.Text.ToLower()) && (unit.affiliations.Contains(faction) || unit.fake_affiliations.Contains(faction)) && !IsSkirmishObject(unit) && !IsMissionObject(unit) && !IsSurvivalObject(unit) && !IsGroundWar(unit) && !IsTransportObject(unit) && !unit.unitname.Contains("Cheat") && unit.influence == 0)
                 {
-                    FactionUnitListBox.Items.Add(unit);
+                    if (FactionSpaceHeroRB.Checked || FactionHeroTeamRB.Checked)
+                    {
+                        unit temp = unit;
+                        temp.sortstring = temp.unitname;
+                        FactionUnitListBox.Items.Add(temp);
+                    }
+                    else FactionUnitListBox.Items.Add(unit);
                 }
             }
         }
@@ -2787,14 +2811,20 @@ namespace Holocron
 
         private void FactionUnitListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            unit unit = (unit)FactionUnitListBox.SelectedItem;
-            setFactionAvailText(unit);
+            if(FactionUnitListBox.SelectedItems.Count > 0)
+            {
+                unit unit = (unit)FactionUnitListBox.SelectedItem;
+                setFactionAvailText(unit);
+            }
         }
 
         private void FactionFactoryOptionsListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            unit unit = (unit)FactionFactoryOptionsListBox.SelectedItem;
-            setFactionAvailText(unit);
+            if (FactionFactoryOptionsListBox.SelectedItems.Count > 0)
+            {
+                unit unit = (unit)FactionFactoryOptionsListBox.SelectedItem;
+                setFactionAvailText(unit);
+            }
         }
 
         private bool FullSalvoOn()
@@ -3022,7 +3052,7 @@ namespace Holocron
                 if (able.linkedEntity != "")
                 {
                     unit linked = entities.objects.FirstOrDefault(s => s.unitname == able.linkedEntity);
-                    if (!(linked.unitname is null))
+                    if (!(linked.unitname is null) && able.ability == "") //Do not clear ability if one is linked
                     {
                         foreach (ability able3 in linked.abilities)
                         {
@@ -3034,8 +3064,8 @@ namespace Holocron
                 UnitAbilityListBox.Items.Add(able2);
             }
             ResetAbilitySelection();
-            if(AbilityListBox.Items.Count > 0) AbilityListBox.SelectedIndex = 0;
-            if (UnitAbilityListBox.Items.Count > 0) UnitAbilityListBox.SelectedIndex = 0;
+            //if(AbilityListBox.Items.Count > 0) AbilityListBox.SelectedIndex = 0; //Don't do this, starting with stat modifiers on gives the wrong impression
+            //if (UnitAbilityListBox.Items.Count > 0) UnitAbilityListBox.SelectedIndex = 0;
 
             IconData icondata = DatParser.GetIconData(selectedUnit.icon, entities);
             if (icondata.size_x > 0 && entities.MTmaster != null)
@@ -3206,12 +3236,12 @@ namespace Holocron
                 {
                     if (spawn.tech[1])
                     {
-                        if (spawn.fightermode == 2)
+                        if (spawn.fightermode == fightermode.bomber)
                         {
                             bomberUpfront += spawn.squad_size * spawn.upfront[1];
                             bomberReserve += spawn.squad_size * spawn.reserve[1];
                         }
-                        else if (spawn.fightermode == 1)
+                        else if (spawn.fightermode == fightermode.fighter)
                         {
                             fighterUpfront += spawn.squad_size * spawn.upfront[1];
                             fighterReserve += spawn.squad_size * spawn.reserve[1];
@@ -3409,8 +3439,10 @@ namespace Holocron
             populateUnitSFXList();
 
             double calcCP = 0;
+            int crewlenrnd = 0;
+            float creweff = 1;
             bool space = false; //todo make a better way to check this in the general case
-            if (selectedUnit.fightermode < 0 && (SpaceRadioButton.Checked || SpaceHeroRadioButton.Checked || SpaceStructureRadioButton.Checked)) //Todo how do gunships work? Are they actually just ignored?
+            if (selectedUnit.fightermode == fightermode.not && (SpaceRadioButton.Checked || SpaceHeroRadioButton.Checked || SpaceStructureRadioButton.Checked)) //Todo how do gunships work? Are they actually just ignored?
             {
                 space = true;
                 (float range, float acctier) = hardpointExamine(selectedUnit);
@@ -3423,35 +3455,70 @@ namespace Holocron
                         float lower = range * 10 - resolution;
                         if (lower < 0) lower = 0;
                         float upper = range * 10 + resolution;
-                        float crewlen = (float) Math.Pow(selectedUnit.crew * selectedUnit.crew / 0.0075 / 0.0075, 1.0/3);
-                        int crewlenrnd = (int) Math.Round(crewlen, 0);
-                        if (crewlenrnd > upper) crewlenrnd = (int)Math.Round(crewlen / 2, 0);
-                        if (crewlenrnd < lower) crewlenrnd = (int)Math.Round(crewlen * 2, 0);
                         if (entities.modid == "rev")
                         {
                             lower /= 2;
                             upper /= 2;
-                            crewlenrnd /= 2;
+                        }
+                        float crewlen = (float) Math.Pow(selectedUnit.crew * selectedUnit.crew / 0.0075 / 0.0075, 1.0/3);
+                        crewlenrnd = (int) Math.Round(crewlen, 0);
+                        if (crewlenrnd > upper)
+                        {
+                            double badlen = (float)Math.Pow(selectedUnit.crew * selectedUnit.crew / 0.015 / 0.015, 1.0 / 3);
+                            badlen = Math.Round(badlen, 0);
+                            if (badlen <= upper)
+                            {
+                                crewlenrnd = (int)badlen;
+                                creweff = 0.5f;
+                            }
+                        }
+                        if (crewlenrnd < lower)
+                        {
+                            double goodlen = (float)Math.Pow(selectedUnit.crew * selectedUnit.crew / 0.00375 / 0.00375, 1.0 / 3);
+                            goodlen = Math.Round(goodlen, 0);
+                            if (goodlen < lower)
+                            {
+                                crewlenrnd = (int)goodlen;
+                                creweff = 2;
+                            }
                         }
                         UnitLengthLabel.Text = "Length: " + (lower).ToString("0") + "-" + (upper).ToString("0") + "m  " + crewlenrnd + "m";
                     }
                     UnitAccTierLabel.Text = "Accuracy Tier: " + acctier.ToString("0.#");
                 }
                 if (acctier is float.NaN) acctier = 0; //Don't let missile only units spoils the rest of the CP calcs
-                calcCP = CalculateSpaceCPfromUnit(selectedUnit, acctier);
+                calcCP = CalculateSpaceCPfromUnit(selectedUnit, acctier, entities);
+            }
+            else if (FighterRadioButton.Checked)
+            {
+                if (selectedUnit.companyunits.Count > 0) calcCP = CalculateSquadronCP(selectedUnit, entities);
+                else calcCP = CalculateFighterCPfromUnit(selectedUnit, entities);
             }
             else
             {
                 UnitLengthLabel.Text = "";
                 UnitAccTierLabel.Text = "";
 
-                if(UnitRadioButton.Checked || GroundHeroRadioButton.Checked) calcCP = CalculateGroundCPfromUnit(selectedUnit);
+                if(UnitRadioButton.Checked || GroundHeroRadioButton.Checked || StructureRadioButton.Checked) calcCP = CalculateGroundCPfromUnit(selectedUnit, entities);
+                if (GroundRadioButton.Checked || HeroCompaniesRadioButton.Checked) calcCP = CalculateGroundCPfromCompany(selectedUnit, entities);
             }
             UnitEngageRangeLabel.Text = "Engagement Range: " + selectedUnit.range;
 
-            UnitCPLabel.Text = "Combat Power: " + selectedUnit.cp + "    Calculated: " + calcCP;
+            UnitCPLabel.Text = "Combat Power: " + selectedUnit.cp + "    Calculated: " + calcCP.ToString("0.##");
 
-            if(space) UnitCPLabel.Text += "    Pop: " + ((calcCP + getComplementCP(selectedUnit))/100).ToString("0");
+            if (space)
+            {
+                double fightercp = getComplementCP(selectedUnit, entities, true);
+                calcCP += fightercp;
+                UnitCPLabel.Text += "    Pop: " + CalculateSpacePop(calcCP).ToString("0");
+                UnitCPLabel.Text += "\nCost: " + CalculateSpaceCost(calcCP).ToString("0") + "    Build Time: " + CalculateSpaceBuildTime(calcCP, creweff).ToString("0");
+                UnitCPLabel.Text += "   Fighter CP " + fightercp.ToString("0.##");
+            }
+            else
+            {
+                double garrisoncp = getComplementCP(selectedUnit, entities, true, false);
+                UnitCPLabel.Text += "   Spawn CP " + garrisoncp.ToString("0");
+            }
         }
 
         private void populateHostListBox()
@@ -3695,10 +3762,31 @@ namespace Holocron
                     unit.sortfloat = unit.level;
                     break;
                 case UnitSortTypes.CP:
-                    unit.sortfloat = unit.cp;
-                    if (globals.UnitSortConfig.complementCP)
+                    if (globals.UnitSortConfig.calcCP)
+                    {//todo simplify the multiple calls to sort out which cp formula
+                        if (SpaceRadioButton.Checked || SpaceHeroRadioButton.Checked || SpaceStructureRadioButton.Checked)
+                        {
+                            (float range, float acctier) = hardpointExamine(unit);
+                            unit.sortfloat = (float)CalculateSpaceCPfromUnit(unit, acctier, entities);
+                            if (globals.UnitSortConfig.complementCP) unit.sortfloat += getComplementCP(unit, entities, true);
+                        }
+                        else if (FighterRadioButton.Checked)
+                        {
+                            if (unit.companyunits.Count > 0) unit.sortfloat = (float)CalculateSquadronCP(unit, entities);
+                            else unit.sortfloat = (float)CalculateFighterCPfromUnit(unit, entities);
+                        }
+                        else if (UnitRadioButton.Checked || GroundHeroRadioButton.Checked || StructureRadioButton.Checked)
+                        {
+                            unit.sortfloat = (float)CalculateGroundCPfromUnit(unit, entities);
+                            unit.sortfloat += getComplementCP(unit, entities, true, false);
+                        }
+                        else if (GroundRadioButton.Checked || HeroCompaniesRadioButton.Checked) unit.sortfloat = (float)CalculateGroundCPfromUnit(unit, entities);
+                        else unit.sortfloat = -1;
+                    }
+                    else
                     {
-                        unit.sortfloat += getComplementCP(unit);
+                        unit.sortfloat = unit.cp;
+                        if (globals.UnitSortConfig.complementCP) unit.sortfloat += getComplementCP(unit, entities);
                     }
                     break;
                 case UnitSortTypes.Durability: //TODO modifiers for reflect/absorb
@@ -3864,7 +3952,7 @@ namespace Holocron
                         if (gar.tech[1])
                         {
                             int mode = globals.UnitSortConfig.fighterBomberMode;
-                            if ((!SpaceRadioButton.Checked && !SpaceHeroRadioButton.Checked && !SpaceStructureRadioButton.Checked) || (gar.fightermode <= 0 && (mode < 1 || mode > 3)) || (gar.fightermode == 1 && !(mode == 2 || mode == 4)) || (gar.fightermode == 2 && !(mode == 1 || mode == 4)))
+                            if ((!SpaceRadioButton.Checked && !SpaceHeroRadioButton.Checked && !SpaceStructureRadioButton.Checked) || ((int)gar.fightermode <= 0 && (mode < 1 || mode > 3)) || (gar.fightermode == fightermode.fighter && !(mode == 2 || mode == 4)) || (gar.fightermode == fightermode.bomber && !(mode == 1 || mode == 4)))
                             {
                                 /* All Count
                                     Fighter Count
@@ -4075,6 +4163,10 @@ namespace Holocron
                     break;
                 case UnitSortTypes.Highlight:
                     unit.sortstring = unit.highlight;
+                    if (unit.sortstring == "") unit.sortstring = " "; //Emptry strings trigger a sort float in the tostring function
+                    break;
+                case UnitSortTypes.BombingRun:
+                    unit.sortstring = unit.bombingRunUnit;
                     if (unit.sortstring == "") unit.sortstring = " "; //Emptry strings trigger a sort float in the tostring function
                     break;
                 case UnitSortTypes.HyperspaceSpeed:
@@ -5635,6 +5727,7 @@ namespace Holocron
 
         private void UnitAbilityListBox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            AbilityNoteLabel.Visible = false;
             if (UnitAbilityListBox.SelectedItems.Count > 0)
             {
                 unitability able = (unitability)UnitAbilityListBox.SelectedItem;
@@ -5654,7 +5747,7 @@ namespace Holocron
 
                 UATimeLabel.Text = "";
                 if (able.expiration > 0) UATimeLabel.Text = "Duration: " + able.expiration.ToString("0") + " ";
-                if (able.recharge > 0) UATimeLabel.Text = "Recharge: " + able.recharge.ToString("0");
+                if (able.recharge > 0) UATimeLabel.Text += "Recharge: " + able.recharge.ToString("0");
                 if (able.damageMod != 1) UADamageLabel.Text = "Damage Modifer: " + able.damageMod.ToString("0.###");
                 else UADamageLabel.Text = "";
                 if (able.defenseMod != 1) UADefenseLabel.Text = "Defense Modifer: " + able.defenseMod.ToString("0.###");
@@ -9064,6 +9157,7 @@ namespace Holocron
                 else ProjTurnLabel.Text = "";
                 if (proj.blastRadius > 0) ProjRadiusLabel.Text = "Blast Radius: " + proj.blastRadius;
                 else ProjRadiusLabel.Text = "";
+                ProjShieldPierceLabel.Visible = proj.shieldpierce;
 
                 ProjectileUserListBox.Items.Clear();
                 foreach (unit unit in entities.objects)
@@ -9395,6 +9489,318 @@ namespace Holocron
                     MessageBox.Show("Image saved");
                 }
             }
+        }
+
+        private void OpenCampaignFileButton_Click(object sender, EventArgs e)
+        {
+            if (GCListBox.Tag is null) return;
+            galacticConquest gc = (galacticConquest)GCListBox.Tag;
+            string datafile = gc.filepath;
+            if (File.Exists(datafile)) System.Diagnostics.Process.Start(@gc.filepath);
+            else MessageBox.Show("Could not find campaign source file. Is it in a MEG?");
+        }
+
+        private void GCPlanetForceLabel_Click(object sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+            if (me.Button == MouseButtons.Left)
+            {
+                TextDetail deets = new TextDetail();
+                deets.detail = GCPlanetForceLabel.Text;
+                deets.Show();
+            }
+            else if (me.Button == MouseButtons.Right) System.Windows.Forms.Clipboard.SetText(GCPlanetForceLabel.Text);
+        }
+
+        private void populateIconLookupList()
+        {
+            IconLookupListBox.Items.Clear();
+            string[] search = IconLookupTextBox.Text.ToUpper().Split(';');
+            foreach (IconData icon in entities.IconData)
+            {
+                foreach (string term in search)
+                {
+                    if (term == "" || icon.id.Contains(term))
+                    {
+                        IconLookupListBox.Items.Add(icon.id);
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void IconLookupTextBox_TextChanged(object sender, EventArgs e)
+        {
+            populateIconLookupList();
+        }
+
+        private void IconLookupListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(IconLookupListBox.SelectedItems.Count > 0)
+            {
+                string selected = (string)IconLookupListBox.SelectedItem;
+                IconLookupPictureBox.Image = new Bitmap(IconLookupPictureBox.Width, IconLookupPictureBox.Height);
+                IconData icondata = DatParser.GetIconData(selected, entities);
+                if (icondata.size_x > 0 && entities.MTmaster != null)
+                {
+                    // Create a Graphics object to do the drawing, *with the new bitmap as the target*
+                    using (Graphics g = Graphics.FromImage(IconLookupPictureBox.Image))
+                    {
+                        g.DrawImage(entities.MTmaster, 0, 0, new Rectangle(icondata.origin_x, icondata.origin_y, icondata.size_x, icondata.size_y), GraphicsUnit.Pixel);
+                    }
+                }
+                IconLookupNameLabel.Text = selected;
+                IconLookupPictureBox.Tag = selected;
+
+                IconLookupUsageListBox.Items.Clear();
+                foreach (unit unit in entities.objects)
+                {
+                    if (String.Equals(unit.icon, selected, StringComparison.OrdinalIgnoreCase))
+                    {
+                        unit temp = unit;
+                        temp.sortstring = unit.unitname;
+                        IconLookupUsageListBox.Items.Add(temp);
+                    }
+                    else
+                    {
+                        foreach (unitability able in unit.unitabilities)
+                        {
+                            if (String.Equals(able.icon, selected, StringComparison.OrdinalIgnoreCase))
+                            {
+                                unit temp = unit;
+                                temp.sortstring = unit.unitname;
+                                IconLookupUsageListBox.Items.Add(temp);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void IconLookupGotoButton_Click(object sender, EventArgs e)
+        {
+            if (IconLookupUsageListBox.SelectedItems.Count > 0) gotoUnitUniversal(((unit)IconLookupUsageListBox.SelectedItem).unitname);
+        }
+
+        private void IconLookupPictureBox_Click(object sender, EventArgs e)
+        {
+            MouseEventArgs me = (MouseEventArgs)e;
+
+            if (me.Button == MouseButtons.Right)
+            {
+                if (IconLookupPictureBox.Tag is null) return;
+                string icon = (string)IconLookupPictureBox.Tag;
+
+                if (IconLookupPictureBox.Image == null) return;
+                SaveFileDialog fil = new SaveFileDialog();
+                fil.Filter = ("Bitmap files (*.bmp)|*.bmp|PNG Files (*.png)|*.png|JPEG files (*.jpg)|*.jpg");
+                fil.Title = "Icon Export";
+                fil.FileName = icon;
+                if (fil.ShowDialog() == DialogResult.OK)
+                {
+                    IconData icondata = DatParser.GetIconData(icon, entities);
+                    Image export = new Bitmap(icondata.size_x, icondata.size_y);
+                    using (Graphics g = Graphics.FromImage(export))
+                    {
+                        g.DrawImage(entities.MTmaster, new Rectangle(0, 0, icondata.size_x, icondata.size_y), new Rectangle(icondata.origin_x, icondata.origin_y, icondata.size_x, icondata.size_y), GraphicsUnit.Pixel);
+                    }
+                    System.Drawing.Imaging.ImageFormat format = System.Drawing.Imaging.ImageFormat.Bmp;
+                    switch (fil.FilterIndex)
+                    {
+                        case 1:
+                            format = System.Drawing.Imaging.ImageFormat.Png;
+                            break;
+                        case 2:
+                            format = System.Drawing.Imaging.ImageFormat.Jpeg;
+                            break;
+                    }
+                    export.Save(fil.FileName, format);
+                    MessageBox.Show("Image saved");
+                }
+            }
+        }
+
+        private void populateTextLookupList()
+        {
+            TextLookupListbox.Items.Clear();
+            string[] search = TextLookupIDSearchTextBox.Text.ToUpper().Split(';');
+            foreach (Text_Entry text in entities.Text)
+            {
+                if (TextLookupValueSearchTextBox.Text == "" || text.entry.ToLower().Contains(TextLookupValueSearchTextBox.Text.ToLower()))
+                {
+                    foreach (string term in search)
+                    {
+                        if (term == "" || text.identifier.ToUpper().Contains(term.ToUpper()))
+                        {
+                            TextLookupListbox.Items.Add(text.identifier);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void TextLookupIDSearchTextBox_TextChanged(object sender, EventArgs e)
+        {
+            populateTextLookupList();
+        }
+
+        private void TextLookupValueSearchTextBox_TextChanged(object sender, EventArgs e)
+        {
+            populateTextLookupList();
+        }
+
+        private void TextLookupListbox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(TextLookupListbox.SelectedItems.Count > 0)
+            {
+                TextLookupIDLabel.Text = (string)TextLookupListbox.SelectedItem;
+                TextLookupRichTextBox.Text = Find_Text_Entry(TextLookupIDLabel.Text, entities);
+            }
+        }
+
+        private void populateSFXLookupList()
+        {
+            List<sfx> visible = new List<sfx>();
+            SoundLookupListBox.Items.Clear();
+            string[] search = SoundLookupSearchTextBox.Text.ToLower().Split(';');
+            foreach (sfx sfx in entities.sfx)
+            {
+                foreach (string term in search)
+                {
+                    if (term == "" || sfx.name.ToLower().Contains(term.ToLower())) //sfx.displayname.Contains(term) ||
+                    {
+                        sfx temp = sfx;
+                        temp.displayname = sfx.name;
+                        SoundLookupListBox.Items.Add(temp);
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void SoundLookupSearchTextBox_TextChanged(object sender, EventArgs e)
+        {
+            populateSFXLookupList();
+        }
+
+        private void SoundLookupListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            SoundLookupFileListBox.Items.Clear();
+            if (SoundLookupListBox.SelectedItems.Count > 0)
+            {
+                sfx sfx = (sfx)SoundLookupListBox.SelectedItem;
+                if (!(sfx.samples is null))
+                {
+                    foreach (string sample in sfx.samples) SoundLookupFileListBox.Items.Add(sample);
+                    if(SoundLookupFileListBox.Items.Count > 0) SoundLookupFileListBox.SelectedIndex = 0;
+                }
+                if (sfx.minpitch > 0) SoundLookupMinLabel.Text = "Minimum Pitch: " + sfx.minpitch.ToString();
+                else SoundLookupMinLabel.Text = "";
+                if (sfx.maxpitch > 0) SoundLookupMaxLabel.Text = "Maximum Pitch: " + sfx.maxpitch.ToString();
+                else SoundLookupMaxLabel.Text = "";
+
+                SoundLookupUsingListbox.Items.Clear();
+                foreach (unit unit in entities.objects)
+                {
+                    bool cont = false;
+                    foreach (string sfxev in unit.BasicSFXEvents)
+                    {
+                        if (String.Equals(sfxev, sfx.name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            unit temp = unit;
+                            temp.sortstring = unit.unitname;
+                            SoundLookupUsingListbox.Items.Add(temp);
+                            cont = true;
+                            continue;
+                        }
+                    }
+                    if (cont) continue;
+                    foreach (string sfxev in unit.SFXEvent_Attack_Hardpoint)
+                    {
+                        if (String.Equals(sfxev, sfx.name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            unit temp = unit;
+                            temp.sortstring = unit.unitname;
+                            SoundLookupUsingListbox.Items.Add(temp);
+                            cont = true;
+                            continue;
+                        }
+                    }
+                    if (cont) continue;
+                    foreach (string sfxev in unit.SFXEvent_Hardpoint_Destroyed)
+                    {
+                        if (String.Equals(sfxev, sfx.name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            unit temp = unit;
+                            temp.sortstring = unit.unitname;
+                            SoundLookupUsingListbox.Items.Add(temp);
+                            cont = true;
+                            continue;
+                        }
+                    }
+                    if (cont) continue;
+                    foreach (hardpoint hp in unit.consolidatedhps)
+                    {
+                        if (String.Equals(hp.firesound, sfx.name, StringComparison.OrdinalIgnoreCase) || String.Equals(hp.diesound, sfx.name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            unit temp = unit;
+                            temp.sortstring = unit.unitname;
+                            SoundLookupUsingListbox.Items.Add(temp);
+                            cont = true;
+                            continue;
+                        }
+                    }
+                    if (cont) continue;
+                    foreach (unitability able in unit.unitabilities)
+                    {
+                        if (String.Equals(able.sound, sfx.name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            unit temp = unit;
+                            temp.sortstring = unit.unitname;
+                            SoundLookupUsingListbox.Items.Add(temp);
+                            cont = true;
+                            continue;
+                        }
+                    }
+                    if (cont) continue;
+                    foreach (ability able in unit.abilities)
+                    {
+                        if (String.Equals(able.sound, sfx.name, StringComparison.OrdinalIgnoreCase))
+                        {
+                            unit temp = unit;
+                            temp.sortstring = unit.unitname;
+                            SoundLookupUsingListbox.Items.Add(temp);
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void SoundLookupFileListBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void SoundLookupPlayButton_Click(object sender, EventArgs e)
+        {
+            if (SoundLookupFileListBox.SelectedItems.Count > 0)
+            {
+                string path = (string)SoundLookupFileListBox.SelectedItem;
+                byte[] byteArray = readModBytesOrMeg(path.ToLower().Replace("data\\", ""), entities);
+                if (byteArray.Length > 0)
+                {
+                    Stream stream = new MemoryStream(byteArray);
+                    System.Media.SoundPlayer player = new System.Media.SoundPlayer(@stream);
+                    player.Play(); //todo implement pitch shifts
+                }
+            }
+        }
+
+        private void SoundLookupGotoButton_Click(object sender, EventArgs e)
+        {
+            if (SoundLookupUsingListbox.SelectedItems.Count > 0) gotoUnitUniversal(((unit)SoundLookupUsingListbox.SelectedItem).unitname);
         }
 
         //Don't put any functions below here if you want it to still compile

@@ -26,6 +26,7 @@ namespace Holocron
             ChainStart,
             ChainEnd,
             Highlight,
+            BombingRun,
             Name, //Put all string sort classes before Name so < can find them
             Pop,
             Price,
@@ -70,6 +71,7 @@ namespace Holocron
             public bool Descending;
             public bool Accuracy;
             public bool complementCP;
+            public bool calcCP;
             public bool[] CommandCategories;
             public int DurabilityMode;
             public int fighterBomberMode;
@@ -112,6 +114,7 @@ namespace Holocron
                     //ReserveBox.Visible = true; //Think of the XML spawns for heroes and builsings
                     GarrisonSlotsRB.Visible = false;
                     GarrisonValueRB.Visible = false;
+                    BombingRunRB.Visible = true;
                     break;
                 case 1: //ground companies
                     denomTypes.Add("Per Unit in Company");
@@ -137,6 +140,7 @@ namespace Holocron
                     FighterTypeBox.Visible = true;
                     GarrisonSlotsRB.Visible = false;
                     GarrisonValueRB.Visible = false;
+                    BombingRunRB.Visible = true;
                     break;
                 case 5: //HeroCompanies
                     PriceRB.Visible = false;
@@ -284,6 +288,9 @@ namespace Holocron
                 case UnitSortTypes.Highlight:
                     HighlightRB.Checked = true;
                     break;
+                case UnitSortTypes.BombingRun:
+                    BombingRunRB.Checked = true;
+                    break;
                 default:
                     break;
             }
@@ -316,6 +323,7 @@ namespace Holocron
             if (sortConfig.Descending) AscComboBox.SelectedIndex = 1;
             else AscComboBox.SelectedIndex = 0;
             ComplementCheckBox.Checked = sortConfig.complementCP;
+            CalcCPCheckBox.Checked = sortConfig.calcCP;
             AccuracyCheckBox.Checked = sortConfig.Accuracy;
         }
 
@@ -374,10 +382,13 @@ namespace Holocron
             else if (crcRB.Checked) sortConfig.SortType = UnitSortTypes.crc;
             else if (HyperspaceSpeedRB.Checked) sortConfig.SortType = UnitSortTypes.HyperspaceSpeed;
             else if (HighlightRB.Checked) sortConfig.SortType = UnitSortTypes.Highlight;
+            else if (BombingRunRB.Checked) sortConfig.SortType = UnitSortTypes.BombingRun;
 
 
             sortConfig.complementCP = ComplementCheckBox.Checked;
             if(sortConfig.SortType == UnitSortTypes.CP && sortConfig.complementCP) sortDocumentation += " (including complement)";
+            sortConfig.calcCP = CalcCPCheckBox.Checked;
+            if (sortConfig.SortType == UnitSortTypes.CP && sortConfig.calcCP) sortDocumentation += " (calculated)";
             sortConfig.DurabilityMode = DurabilityBox.SelectedIndex;
             if(sortConfig.SortType >= UnitSortTypes.Durability && sortConfig.SortType <= UnitSortTypes.Regen) sortDocumentation += " " + DurabilityBox.Text;
             sortConfig.fighterBomberMode = FighterTypeBox.SelectedIndex;

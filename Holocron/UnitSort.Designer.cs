@@ -96,6 +96,8 @@
             this.crcRB = new System.Windows.Forms.RadioButton();
             this.HyperspaceSpeedRB = new System.Windows.Forms.RadioButton();
             this.HighlightRB = new System.Windows.Forms.RadioButton();
+            this.BombingRunRB = new System.Windows.Forms.RadioButton();
+            this.CalcCPCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // NameRB
@@ -861,11 +863,35 @@
             this.HighlightRB.Text = "Highlight Blob";
             this.HighlightRB.UseVisualStyleBackColor = true;
             // 
+            // BombingRunRB
+            // 
+            this.BombingRunRB.AutoSize = true;
+            this.BombingRunRB.Location = new System.Drawing.Point(15, 360);
+            this.BombingRunRB.Name = "BombingRunRB";
+            this.BombingRunRB.Size = new System.Drawing.Size(111, 17);
+            this.BombingRunRB.TabIndex = 75;
+            this.BombingRunRB.TabStop = true;
+            this.BombingRunRB.Text = "Bombing Run Unit";
+            this.BombingRunRB.UseVisualStyleBackColor = true;
+            this.BombingRunRB.Visible = false;
+            // 
+            // CalcCPCheckBox
+            // 
+            this.CalcCPCheckBox.AutoSize = true;
+            this.CalcCPCheckBox.Location = new System.Drawing.Point(393, 13);
+            this.CalcCPCheckBox.Name = "CalcCPCheckBox";
+            this.CalcCPCheckBox.Size = new System.Drawing.Size(76, 17);
+            this.CalcCPCheckBox.TabIndex = 76;
+            this.CalcCPCheckBox.Text = "Calculated";
+            this.CalcCPCheckBox.UseVisualStyleBackColor = true;
+            // 
             // UnitSort
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(767, 408);
+            this.Controls.Add(this.CalcCPCheckBox);
+            this.Controls.Add(this.BombingRunRB);
             this.Controls.Add(this.HighlightRB);
             this.Controls.Add(this.HyperspaceSpeedRB);
             this.Controls.Add(this.crcRB);
@@ -1011,5 +1037,7 @@
         private System.Windows.Forms.RadioButton crcRB;
         private System.Windows.Forms.RadioButton HyperspaceSpeedRB;
         private System.Windows.Forms.RadioButton HighlightRB;
+        private System.Windows.Forms.RadioButton BombingRunRB;
+        private System.Windows.Forms.CheckBox CalcCPCheckBox;
     }
 }

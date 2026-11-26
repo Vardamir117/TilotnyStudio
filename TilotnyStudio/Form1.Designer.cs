@@ -219,6 +219,10 @@
             this.ModFilesButton = new System.Windows.Forms.Button();
             this.SuperToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.BuildTimeCalcLabel = new System.Windows.Forms.Label();
+            this.BuildTimeCalcBox = new System.Windows.Forms.NumericUpDown();
+            this.CostCalcLabel = new System.Windows.Forms.Label();
+            this.CostCalcBox = new System.Windows.Forms.NumericUpDown();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -252,6 +256,8 @@
             this.HeroCreatePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TierBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.HeroIconPictureBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BuildTimeCalcBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CostCalcBox)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -872,6 +878,10 @@
             // 
             // StatsTab
             // 
+            this.StatsTab.Controls.Add(this.BuildTimeCalcLabel);
+            this.StatsTab.Controls.Add(this.BuildTimeCalcBox);
+            this.StatsTab.Controls.Add(this.CostCalcLabel);
+            this.StatsTab.Controls.Add(this.CostCalcBox);
             this.StatsTab.Controls.Add(this.IconPictureBox);
             this.StatsTab.Controls.Add(this.ChangeIconButtonStats);
             this.StatsTab.Controls.Add(this.VariantLabel);
@@ -1415,7 +1425,7 @@
             // 
             this.BuildTimeLabel.AutoSize = true;
             this.BuildTimeLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.BuildTimeLabel.Location = new System.Drawing.Point(16, 218);
+            this.BuildTimeLabel.Location = new System.Drawing.Point(16, 220);
             this.BuildTimeLabel.Name = "BuildTimeLabel";
             this.BuildTimeLabel.Size = new System.Drawing.Size(110, 20);
             this.BuildTimeLabel.TabIndex = 11;
@@ -1429,7 +1439,7 @@
             0,
             0,
             0});
-            this.BuildTimeBox.Location = new System.Drawing.Point(129, 216);
+            this.BuildTimeBox.Location = new System.Drawing.Point(129, 218);
             this.BuildTimeBox.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -1443,7 +1453,7 @@
             // 
             this.CostLabel.AutoSize = true;
             this.CostLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CostLabel.Location = new System.Drawing.Point(16, 184);
+            this.CostLabel.Location = new System.Drawing.Point(16, 186);
             this.CostLabel.Name = "CostLabel";
             this.CostLabel.Size = new System.Drawing.Size(46, 20);
             this.CostLabel.TabIndex = 9;
@@ -2527,6 +2537,62 @@
             this.contextMenuStrip2.Name = "contextMenuStrip2";
             this.contextMenuStrip2.Size = new System.Drawing.Size(61, 4);
             // 
+            // BuildTimeCalcLabel
+            // 
+            this.BuildTimeCalcLabel.AutoSize = true;
+            this.BuildTimeCalcLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BuildTimeCalcLabel.Location = new System.Drawing.Point(724, 220);
+            this.BuildTimeCalcLabel.Name = "BuildTimeCalcLabel";
+            this.BuildTimeCalcLabel.Size = new System.Drawing.Size(110, 20);
+            this.BuildTimeCalcLabel.TabIndex = 95;
+            this.BuildTimeCalcLabel.Text = "Build TIme (s):";
+            // 
+            // BuildTimeCalcBox
+            // 
+            this.BuildTimeCalcBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BuildTimeCalcBox.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.BuildTimeCalcBox.Location = new System.Drawing.Point(837, 218);
+            this.BuildTimeCalcBox.Maximum = new decimal(new int[] {
+            9999,
+            0,
+            0,
+            0});
+            this.BuildTimeCalcBox.Name = "BuildTimeCalcBox";
+            this.BuildTimeCalcBox.Size = new System.Drawing.Size(71, 26);
+            this.BuildTimeCalcBox.TabIndex = 94;
+            // 
+            // CostCalcLabel
+            // 
+            this.CostCalcLabel.AutoSize = true;
+            this.CostCalcLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CostCalcLabel.Location = new System.Drawing.Point(724, 186);
+            this.CostCalcLabel.Name = "CostCalcLabel";
+            this.CostCalcLabel.Size = new System.Drawing.Size(46, 20);
+            this.CostCalcLabel.TabIndex = 93;
+            this.CostCalcLabel.Text = "Cost:";
+            // 
+            // CostCalcBox
+            // 
+            this.CostCalcBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CostCalcBox.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.CostCalcBox.Location = new System.Drawing.Point(837, 182);
+            this.CostCalcBox.Maximum = new decimal(new int[] {
+            9999999,
+            0,
+            0,
+            0});
+            this.CostCalcBox.Name = "CostCalcBox";
+            this.CostCalcBox.Size = new System.Drawing.Size(71, 26);
+            this.CostCalcBox.TabIndex = 92;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2585,6 +2651,8 @@
             this.HeroCreatePanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.TierBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.HeroIconPictureBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.BuildTimeCalcBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.CostCalcBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -2781,6 +2849,10 @@
         private System.Windows.Forms.Button SpecializationClearButton;
         private System.Windows.Forms.Label UnitLocksLabel;
         private System.Windows.Forms.Button TierCodeTestButton;
+        private System.Windows.Forms.Label BuildTimeCalcLabel;
+        private System.Windows.Forms.NumericUpDown BuildTimeCalcBox;
+        private System.Windows.Forms.Label CostCalcLabel;
+        private System.Windows.Forms.NumericUpDown CostCalcBox;
     }
 }
 
