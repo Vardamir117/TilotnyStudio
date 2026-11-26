@@ -58,6 +58,23 @@ namespace Holocron
             return corenne;
         }
 
+        // Lua numbers are doubles; the auto-resolve contrast weights are stored as doubles by the game.
+        public static List<double> ParseLuaDoubleArray(string line)
+        {
+            List<double> values = new List<double>();
+            int open = line.IndexOf('{');
+            int close = line.LastIndexOf('}');
+            if (open < 0 || close <= open) return values;
+
+            foreach (string entry in line.Substring(open + 1, close - open - 1).Split(','))
+            {
+                double value;
+                if (double.TryParse(entry.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out value)) values.Add(value);
+            }
+
+            return values;
+        }
+
         public static List<float> ParseLuaFloatArray(string line)
         {
             List<float> corenne = new List<float>();

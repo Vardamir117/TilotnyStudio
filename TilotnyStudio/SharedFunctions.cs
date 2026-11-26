@@ -417,6 +417,13 @@ public static class SharedFunctions
         entities.containers.Add(contain);*/
     }
 
+    //Tri-state boolean for tags that variants may inherit: 1 = yes/true, -1 = anything else
+    public static int ParseAutoResolveBool(string input)
+    {
+        string value = (input ?? "").Trim().ToLowerInvariant();
+        return (value == "yes" || value == "true" || value == "1") ? 1 : -1;
+    }
+
     public static bool parseUnit(XmlNode unit, entities entities, string file)
     {
         if (unit.LocalName == "Planet") return true;
@@ -454,7 +461,10 @@ public static class SharedFunctions
         float range = -1;
         int techlevel = -1;
         bool hero = false;
-        bool superweaponkiller = false;
+        int namedhero = 0;
+        int superweaponkiller = 0;
+        string uniquespaceunit = "";
+        string uniquegroundunit = "";
         int locked = -1;
         int cost = -1;
         int buildtime = -1;
@@ -900,6 +910,7 @@ public static class SharedFunctions
             if (!(value.LastChild is null))
             {
                 if(value.LastChild.Value.ToLower().Contains("yes")) hero = true;
+                namedhero = ParseAutoResolveBool(value.LastChild.Value);
             }
         }
         else
@@ -914,11 +925,11 @@ public static class SharedFunctions
             }
         }
         value = unit.SelectSingleNode("descendant::Is_Super_Weapon_Killer");
-        if (!(value is null) && !(value.LastChild is null))
-        {
-            superweaponkiller = value.LastChild.Value.Equals("yes", StringComparison.OrdinalIgnoreCase) ||
-                value.LastChild.Value.Equals("true", StringComparison.OrdinalIgnoreCase);
-        }
+        if (!(value is null) && !(value.LastChild is null)) superweaponkiller = ParseAutoResolveBool(value.LastChild.Value);
+        value = unit.SelectSingleNode("descendant::Unique_Space_Unit");
+        if (!(value is null) && !(value.LastChild is null)) uniquespaceunit = value.LastChild.Value.Trim();
+        value = unit.SelectSingleNode("descendant::Unique_Ground_Unit");
+        if (!(value is null) && !(value.LastChild is null)) uniquegroundunit = value.LastChild.Value.Trim();
         value = unit.SelectSingleNode("descendant::Create_Team_Type");
         if (!(value is null))
         {
@@ -1747,7 +1758,10 @@ public static class SharedFunctions
             abilities = abilities,
             unitabilities = unitabilities,
             hero = hero,
+            namedhero = namedhero,
             superweaponkiller = superweaponkiller,
+            uniquespaceunit = uniquespaceunit,
+            uniquegroundunit = uniquegroundunit,
             builtin = builtin,
             garrison = garrison,
             BasicSFXEvents = basicSFXEvents,
@@ -4206,7 +4220,10 @@ public static class SharedFunctions
                                 if (unidad.model == "") unidad.model = unidad2.model;
                                 if (unidad.terrainMaps.Count == 0) unidad.terrainMaps = unidad2.terrainMaps;
                                 if (!unidad.hero) unidad.hero = unidad2.hero; //todo might want an indeterminate ternary in theory, but a generic unit varianting off a hero should be rare
-                                if (!unidad.superweaponkiller) unidad.superweaponkiller = unidad2.superweaponkiller;
+                                if (unidad.namedhero == 0) unidad.namedhero = unidad2.namedhero;
+                                if (unidad.superweaponkiller == 0) unidad.superweaponkiller = unidad2.superweaponkiller;
+                                if (string.IsNullOrEmpty(unidad.uniquespaceunit)) unidad.uniquespaceunit = unidad2.uniquespaceunit;
+                                if (string.IsNullOrEmpty(unidad.uniquegroundunit)) unidad.uniquegroundunit = unidad2.uniquegroundunit;
                                 if (unidad.BTS == "" && (unidad.hero == unidad2.hero)) unidad.BTS = unidad2.BTS; //BTS should not be inherited from units to heroes
                                 if (unidad.bombingRunUnit == "") unidad.bombingRunUnit = unidad2.bombingRunUnit;
                                 if (unidad.transport == "") unidad.transport = unidad2.transport;
@@ -5099,7 +5116,6 @@ public static class SharedFunctions
                                     if (company.flags.Count == 0) company.flags = unit.flags;
                                     if (company.fightermode < 0) company.fightermode = unit.fightermode;
                                     if (company.bombingRunUnit == "") company.bombingRunUnit = unit.bombingRunUnit;
-                                    if (unit.superweaponkiller) company.superweaponkiller = true;
                                     if (company.abilities.Count == 0) company.abilities = unit.abilities;
                                     if (company.unitabilities.Count == 0) company.unitabilities = unit.unitabilities;
                                     foreach (string behavior in unit.behaviors)
@@ -5178,7 +5194,6 @@ public static class SharedFunctions
                                 if (company.flags.Count == 0) company.flags = subcompany.flags;
                                 if (company.fightermode < 0) company.fightermode = subcompany.fightermode;
                                 if (company.bombingRunUnit == "") company.bombingRunUnit = subcompany.bombingRunUnit;
-                                if (subcompany.superweaponkiller) company.superweaponkiller = true;
                                 if (company.abilities.Count == 0) company.abilities = subcompany.abilities;
                                 if (company.unitabilities.Count == 0) company.unitabilities = subcompany.unitabilities;
                                 foreach (string behavior in subcompany.behaviors)
@@ -6286,7 +6301,10 @@ public struct unit
     public int locked; //A boolean, but there needs to be an indeterminate state for inheritance
     public bool targetablehps;
     public bool hero;
-    public bool superweaponkiller;
+    public int namedhero; //Is_Named_Hero only (hero also covers Is_Generic_Hero). 0 = unset, 1 = yes, -1 = no, so variants can inherit
+    public int superweaponkiller; //Is_Super_Weapon_Killer, same tri-state as namedhero
+    public string uniquespaceunit; //Unique_Space_Unit, used by autoresolve container substitution
+    public string uniquegroundunit; //Unique_Ground_Unit
     public bool hpfail;
     public string reqstructures;
     public string reqorbit;
