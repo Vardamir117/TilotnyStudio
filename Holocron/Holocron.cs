@@ -2340,10 +2340,22 @@ namespace Holocron
             string ownerName = AutoResolveOwnerToName(report.SideOwnerId);
             string unitName = AutoResolveUnitNameForDisplay(report.UnitTypeName);
 
-            return sideName + " (" + ownerName + ") attrition: " + unitName +
-                " | force " + report.ForceBefore.ToString("0.###", CultureInfo.InvariantCulture) +
-                " -> " + report.ForceAfter.ToString("0.###", CultureInfo.InvariantCulture) +
-                " | decision=" + report.Decision +
+            string prefix = sideName + " (" + ownerName + ") attrition: " + unitName;
+            Func<double, string> f = v => v.ToString("0.##", CultureInfo.InvariantCulture);
+
+            if (report.HasKeepTest)
+            {
+                // Show the comparison the game makes: kept if (pool after spawned units) - power * allowance > 0.
+                double margin = report.ForceAtTest - report.UnitPower * report.AllowanceFactor;
+                string pool = "pool " + f(report.ForceBefore) +
+                    (report.SpawnedPowerRemoved > 0.0 ? " - spawned units " + f(report.SpawnedPowerRemoved) + " = " + f(report.ForceAtTest) : "");
+                return prefix + " | " + pool +
+                    " | test " + f(report.ForceAtTest) + " - " + f(report.UnitPower) + " x " + report.AllowanceFactor.ToString("0.###", CultureInfo.InvariantCulture) +
+                    " = " + f(margin) + (margin > 0.0 ? " > 0" : " <= 0") +
+                    " | " + report.Decision;
+            }
+
+            return prefix + " | pool " + f(report.ForceBefore) + " | " + report.Decision +
                 (string.IsNullOrWhiteSpace(report.Notes) ? "" : " | " + report.Notes);
         }
 

@@ -150,6 +150,12 @@ namespace Holocron
         public double ForceAfter;
         public string Decision;
         public string Notes;
+
+        // Set when the unit went through the keep test: kept if ForceAtTest - UnitPower * AllowanceFactor > 0.
+        public bool HasKeepTest;
+        public double SpawnedPowerRemoved;  // spawned units' power taken from the pool before the test
+        public double ForceAtTest;
+        public float AllowanceFactor;
     }
 
     // Port of PGLib RandomClass (SyncRandom). Internal_Get: Seed = Seed * 0x41c64e6d + 0xbdf;
@@ -996,6 +1002,7 @@ namespace Holocron
                 bool killUnit = false;
                 bool killBase = false;
                 double before = current[globalIndex].Force;
+                double? testForce = null;   // pool after spawned units, at the keep/kill test (report only)
                 string decision = "KeepUnit";
                 string notes = "";
 
@@ -1066,7 +1073,7 @@ namespace Holocron
                             }
                             killUnit = false;
                         }
-                        else if (0.0 < current[globalIndex].Force - (double)(type.AICombatPower * allowance))
+                        else if ((testForce = current[globalIndex].Force).Value - (double)(type.AICombatPower * allowance) > 0.0)
                         {
                             current[globalIndex].Force -= type.AICombatPower;
                             current[globalIndex].Force = Math.Max(current[globalIndex].Force, 0.0);
@@ -1108,7 +1115,14 @@ namespace Holocron
                     leftOvers.Add(unit);
                 }
 
-                Add_Attrition_Report(unit, index, isLoser, type.AICombatPower, before, current[globalIndex].Force, decision, notes);
+                AutoResolveAttritionReport added = Add_Attrition_Report(unit, index, isLoser, type.AICombatPower, before, current[globalIndex].Force, decision, notes);
+                if (testForce.HasValue)
+                {
+                    added.HasKeepTest = true;
+                    added.SpawnedPowerRemoved = before - testForce.Value;
+                    added.ForceAtTest = testForce.Value;
+                    added.AllowanceFactor = allowance;
+                }
                 units.RemoveAt(unitIndex);
             }
 
@@ -1214,7 +1228,7 @@ namespace Holocron
             mBattleHistory[mBattleID].Killed.Add(new KeyValuePair<string, int>(unit.TypeName, unit.OwnerId));
         }
 
-        private void Add_Attrition_Report(AutoResolveCombatant unit, int sideIndex, bool isLoser, float power, double before, double after, string decision, string notes)
+        private AutoResolveAttritionReport Add_Attrition_Report(AutoResolveCombatant unit, int sideIndex, bool isLoser, float power, double before, double after, string decision, string notes)
         {
             AutoResolveAttritionReport report = new AutoResolveAttritionReport();
             report.SideOwnerId = unit.OwnerId;
@@ -1227,6 +1241,7 @@ namespace Holocron
             report.Decision = decision;
             report.Notes = notes;
             mLastAttritionReports.Add(report);
+            return report;
         }
 
         private AutoResolveHResult Owner_Enters_Fray(int owner)
