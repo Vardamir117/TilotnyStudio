@@ -112,6 +112,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="SaveGameFile.cs" />
+    <Compile Include="SaveGameReader.cs" />
     <Compile Include="SubmodSetup.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -3708,6 +3708,7 @@ public static class SharedFunctions
                                             if (match2)
                                             {
                                                 conq.factionsPlayable.Add(faction);
+                                                conq.campaignNames?.Add(codename);
                                                 XmlNodeList valuez = campaign.SelectNodes("descendant::Starting_Forces");
                                                 List<string> owners = new List<string>();
                                                 List<string> locations = new List<string>();
@@ -3862,6 +3863,7 @@ public static class SharedFunctions
                                 codename = codename,
                                 username = username,
                                 factionsPlayable = new List<string> { faction },
+                                campaignNames = new List<string> { codename },
                                 campaign_set = set,
                                 desc = Find_Text_Entry(desc, entities),
                                 factionsPresent = factionsPresent,
@@ -7304,6 +7306,7 @@ public struct galacticConquest
     public string[] planets;
     public string[] traderoutes;
     public List<string> factionsPlayable;
+    public List<string> campaignNames; //Campaign Name attribute of every XML campaign merged into this entry, parallel to factionsPlayable
     public List<string> factionsPresent;
     public List<string> StoryPlots;
     public List<List<string>> forceOwner; //Minimally just for factions present, then benchmark to saving everything. Properly parse only on GCListboxClick
