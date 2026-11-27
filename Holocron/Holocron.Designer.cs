@@ -417,6 +417,7 @@
             this.tabGCs = new System.Windows.Forms.TabPage();
             this.GCListBox = new System.Windows.Forms.ListBox();
             this.GCPanel = new System.Windows.Forms.Panel();
+            this.ImportSaveFileButton = new System.Windows.Forms.Button();
             this.OpenCampaignFileButton = new System.Windows.Forms.Button();
             this.OpenMovieButton = new System.Windows.Forms.Button();
             this.GCgotoMapButton = new System.Windows.Forms.Button();
@@ -5107,6 +5108,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.GCPanel.AutoScroll = true;
+            this.GCPanel.Controls.Add(this.ImportSaveFileButton);
             this.GCPanel.Controls.Add(this.OpenCampaignFileButton);
             this.GCPanel.Controls.Add(this.OpenMovieButton);
             this.GCPanel.Controls.Add(this.GCgotoMapButton);
@@ -5158,6 +5160,18 @@
             this.GCPanel.Name = "GCPanel";
             this.GCPanel.Size = new System.Drawing.Size(1081, 769);
             this.GCPanel.TabIndex = 64;
+            // 
+            // ImportSaveFileButton
+            // 
+            this.ImportSaveFileButton.Location = new System.Drawing.Point(3, 120);
+            this.ImportSaveFileButton.Name = "ImportSaveFileButton";
+            this.ImportSaveFileButton.Size = new System.Drawing.Size(110, 23);
+            this.ImportSaveFileButton.TabIndex = 114;
+            this.ImportSaveFileButton.Text = "Import Save File...";
+            this.toolTip1.SetToolTip(this.ImportSaveFileButton, "Select a save file to attempt to read. The result will be added as a new Galactic" +
+        " Conquest.");
+            this.ImportSaveFileButton.UseVisualStyleBackColor = true;
+            this.ImportSaveFileButton.Click += new System.EventHandler(this.ImportSaveFileButton_Click);
             // 
             // OpenCampaignFileButton
             // 
@@ -5532,7 +5546,7 @@
             // 
             this.label26.AutoSize = true;
             this.label26.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label26.Location = new System.Drawing.Point(3, 120);
+            this.label26.Location = new System.Drawing.Point(3, 149);
             this.label26.Name = "label26";
             this.label26.Size = new System.Drawing.Size(113, 20);
             this.label26.TabIndex = 73;
@@ -5541,9 +5555,9 @@
             // GCActiveListBox
             // 
             this.GCActiveListBox.FormattingEnabled = true;
-            this.GCActiveListBox.Location = new System.Drawing.Point(0, 146);
+            this.GCActiveListBox.Location = new System.Drawing.Point(0, 172);
             this.GCActiveListBox.Name = "GCActiveListBox";
-            this.GCActiveListBox.Size = new System.Drawing.Size(113, 355);
+            this.GCActiveListBox.Size = new System.Drawing.Size(113, 329);
             this.GCActiveListBox.TabIndex = 72;
             this.toolTip1.SetToolTip(this.GCActiveListBox, "Nominally playable factions with a separate GC copy. The versions for different f" +
         "actions may have differences in planet ownership");
@@ -7526,7 +7540,7 @@
             this.AutoResolveAttritionAllowanceLabel.Text = "Attrition Allowance Factor";
             // 
             // AutoResolveSpaceRadioButton
-            //
+            // 
             this.AutoResolveSpaceRadioButton.AutoSize = true;
             this.AutoResolveSpaceRadioButton.Checked = true;
             this.AutoResolveSpaceRadioButton.Location = new System.Drawing.Point(76, 6);
@@ -7537,9 +7551,9 @@
             this.AutoResolveSpaceRadioButton.Text = "Space";
             this.AutoResolveSpaceRadioButton.UseVisualStyleBackColor = true;
             this.AutoResolveSpaceRadioButton.CheckedChanged += new System.EventHandler(this.AutoResolveInputChanged);
-            //
+            // 
             // AutoResolveLandRadioButton
-            //
+            // 
             this.AutoResolveLandRadioButton.AutoSize = true;
             this.AutoResolveLandRadioButton.Location = new System.Drawing.Point(138, 6);
             this.AutoResolveLandRadioButton.Name = "AutoResolveLandRadioButton";
@@ -8266,6 +8280,7 @@
         private System.Windows.Forms.ListBox SoundLookupListBox;
         private System.Windows.Forms.Label SoundLookupMinLabel;
         private System.Windows.Forms.Label SoundLookupMaxLabel;
+        private System.Windows.Forms.Button ImportSaveFileButton;
     }
 }
 

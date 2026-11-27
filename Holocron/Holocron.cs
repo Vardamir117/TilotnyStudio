@@ -10249,6 +10249,41 @@ namespace Holocron
             if (SoundLookupUsingListbox.SelectedItems.Count > 0) gotoUnitUniversal(((unit)SoundLookupUsingListbox.SelectedItem).unitname);
         }
 
+        private void ImportSaveFileButton_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+
+            openFileDialog1.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            openFileDialog1.Filter = "Save Files files (*.PetroglyphFoC64Save)|*.PetroglyphFoC64Save|Legacy Saves|*.PetroglyphFoCSave|All Files|*.*";
+            openFileDialog1.FilterIndex = 0;
+            openFileDialog1.RestoreDirectory = true;
+
+            if (openFileDialog1.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+            SaveGameReader.Result Result = SaveGameReader.Load(openFileDialog1.FileName, entities);
+            if(Result.Warnings.Count > 0)
+            {
+                string warnings = "There were warnings when reading the file. Continue?\n";
+                foreach (string warning in Result.Warnings) warnings += "\n" + warning;
+                DialogResult dialogResult = MessageBox.Show(warnings, "Save File Import", MessageBoxButtons.YesNo);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    galacticConquest camp = Result.Conquest;
+                    string newcamp = LastFolderOrFile(openFileDialog1.FileName);
+                    if (newcamp.Contains('.'))
+                    {
+                        newcamp = newcamp.Substring(0, newcamp.IndexOf('.'));
+                    }
+                    camp.username = newcamp;
+                    entities.Conquests.Add(camp);
+                    populateGCListbox();
+                    setMapGCOptions();
+                }
+            }
+        }
+
         //Don't put any functions below here if you want it to still compile
     }
 }

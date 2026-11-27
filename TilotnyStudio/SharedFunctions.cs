@@ -3464,7 +3464,7 @@ public static class SharedFunctions
             else if(entities.modid != "") doc.Load(getModFile("XML\\Planets.xml",entities)); //Various planets that don't really count are in other files (testing GCs, loaders...)
             else doc = readModXmlOrMeg("XML\\" + file, entities);
 
-            if (doc is null) continue; //Todo: in thoery, someone could mix planets into a unit file. Split planet parsing into its own function and call if a planet is found in the main parse objects
+            if (doc is null) continue; //Todo: in theory, someone could mix planets into a unit file. Split planet parsing into its own function and call if a planet is found in the main parse objects
             XmlNode root = doc.DocumentElement;
             if (root is null) continue;
             XmlNodeList planets = root.SelectNodes("*");
