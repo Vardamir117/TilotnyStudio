@@ -610,7 +610,8 @@
             this.AutoResolveLoserAttritionLabel = new System.Windows.Forms.Label();
             this.AutoResolveAttritionAllowanceNumeric = new System.Windows.Forms.NumericUpDown();
             this.AutoResolveAttritionAllowanceLabel = new System.Windows.Forms.Label();
-            this.AutoResolveBattleTypeComboBox = new System.Windows.Forms.ComboBox();
+            this.AutoResolveSpaceRadioButton = new System.Windows.Forms.RadioButton();
+            this.AutoResolveLandRadioButton = new System.Windows.Forms.RadioButton();
             this.AutoResolveBattleTypeLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -7209,7 +7210,8 @@
             this.tabAutoResolve.Controls.Add(this.AutoResolveLoserAttritionLabel);
             this.tabAutoResolve.Controls.Add(this.AutoResolveAttritionAllowanceNumeric);
             this.tabAutoResolve.Controls.Add(this.AutoResolveAttritionAllowanceLabel);
-            this.tabAutoResolve.Controls.Add(this.AutoResolveBattleTypeComboBox);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveSpaceRadioButton);
+            this.tabAutoResolve.Controls.Add(this.AutoResolveLandRadioButton);
             this.tabAutoResolve.Controls.Add(this.AutoResolveBattleTypeLabel);
             this.tabAutoResolve.Location = new System.Drawing.Point(4, 22);
             this.tabAutoResolve.Name = "tabAutoResolve";
@@ -7523,18 +7525,29 @@
             this.AutoResolveAttritionAllowanceLabel.TabIndex = 26;
             this.AutoResolveAttritionAllowanceLabel.Text = "Attrition Allowance Factor";
             // 
-            // AutoResolveBattleTypeComboBox
-            // 
-            this.AutoResolveBattleTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.AutoResolveBattleTypeComboBox.FormattingEnabled = true;
-            this.AutoResolveBattleTypeComboBox.Items.AddRange(new object[] {
-            "Space",
-            "Land"});
-            this.AutoResolveBattleTypeComboBox.Location = new System.Drawing.Point(76, 5);
-            this.AutoResolveBattleTypeComboBox.Name = "AutoResolveBattleTypeComboBox";
-            this.AutoResolveBattleTypeComboBox.Size = new System.Drawing.Size(121, 21);
-            this.AutoResolveBattleTypeComboBox.TabIndex = 16;
-            this.AutoResolveBattleTypeComboBox.SelectedIndexChanged += new System.EventHandler(this.AutoResolveInputChanged);
+            // AutoResolveSpaceRadioButton
+            //
+            this.AutoResolveSpaceRadioButton.AutoSize = true;
+            this.AutoResolveSpaceRadioButton.Checked = true;
+            this.AutoResolveSpaceRadioButton.Location = new System.Drawing.Point(76, 6);
+            this.AutoResolveSpaceRadioButton.Name = "AutoResolveSpaceRadioButton";
+            this.AutoResolveSpaceRadioButton.Size = new System.Drawing.Size(56, 17);
+            this.AutoResolveSpaceRadioButton.TabIndex = 16;
+            this.AutoResolveSpaceRadioButton.TabStop = true;
+            this.AutoResolveSpaceRadioButton.Text = "Space";
+            this.AutoResolveSpaceRadioButton.UseVisualStyleBackColor = true;
+            this.AutoResolveSpaceRadioButton.CheckedChanged += new System.EventHandler(this.AutoResolveInputChanged);
+            //
+            // AutoResolveLandRadioButton
+            //
+            this.AutoResolveLandRadioButton.AutoSize = true;
+            this.AutoResolveLandRadioButton.Location = new System.Drawing.Point(138, 6);
+            this.AutoResolveLandRadioButton.Name = "AutoResolveLandRadioButton";
+            this.AutoResolveLandRadioButton.Size = new System.Drawing.Size(49, 17);
+            this.AutoResolveLandRadioButton.TabIndex = 17;
+            this.AutoResolveLandRadioButton.Text = "Land";
+            this.AutoResolveLandRadioButton.UseVisualStyleBackColor = true;
+            this.AutoResolveLandRadioButton.CheckedChanged += new System.EventHandler(this.AutoResolveInputChanged);
             // 
             // AutoResolveBattleTypeLabel
             // 
@@ -7542,7 +7555,7 @@
             this.AutoResolveBattleTypeLabel.Location = new System.Drawing.Point(9, 8);
             this.AutoResolveBattleTypeLabel.Name = "AutoResolveBattleTypeLabel";
             this.AutoResolveBattleTypeLabel.Size = new System.Drawing.Size(61, 13);
-            this.AutoResolveBattleTypeLabel.TabIndex = 17;
+            this.AutoResolveBattleTypeLabel.TabIndex = 18;
             this.AutoResolveBattleTypeLabel.Text = "Battle Type";
             // 
             // contextMenuStrip2
@@ -7910,7 +7923,8 @@
         private System.Windows.Forms.Label AutoResolveSideBLabel;
         private System.Windows.Forms.Button AutoResolveRunButton;
         private System.Windows.Forms.TextBox AutoResolveResultTextBox;
-        private System.Windows.Forms.ComboBox AutoResolveBattleTypeComboBox;
+        private System.Windows.Forms.RadioButton AutoResolveSpaceRadioButton;
+        private System.Windows.Forms.RadioButton AutoResolveLandRadioButton;
         private System.Windows.Forms.Label AutoResolveBattleTypeLabel;
         private System.Windows.Forms.Label AutoResolveLoserAttritionLabel;
         private System.Windows.Forms.NumericUpDown AutoResolveLoserAttritionNumeric;
